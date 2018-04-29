@@ -7,21 +7,26 @@ buildscript {
     }
 }
 
-apply plugin: "kotlin"
 
-repositories {
-    mavenCentral()
-}
+allprojects {
+    // Plugins
+    apply plugin: "java"
+    apply plugin: "kotlin"
 
-dependencies {
-    compile group: "org.jetbrains.kotlin", name: "kotlin-stdlib-jdk8", version: kotlinVersion
+    repositories {
+        mavenCentral()
+    }
 
-    testCompile group: "junit", name: "junit", version: junitVersion
-}
+    dependencies {
+        compile group: "org.jetbrains.kotlin", name: "kotlin-stdlib-jdk8", version: kotlinVersion
 
-compileKotlin {
-    kotlinOptions.jvmTarget = "1.8"
-}
-compileTestKotlin {
-    kotlinOptions.jvmTarget = "1.8"
+        testCompile group: "junit", name: "junit", version: junitVersion
+    }
+
+    compileKotlin {
+        kotlinOptions.jvmTarget = "1.8"
+    }
+    compileTestKotlin {
+        kotlinOptions.jvmTarget = "1.8"
+    }
 }

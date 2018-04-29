@@ -1,1 +1,16 @@
+// Based on `https://github.com/griffon/griffon/blob/ed86035/settings.gradle`
+def includeModule = { String projectName ->
+    File baseDir = new File((File) rootDir, "modules")
+    File moduleDir = new File(baseDir, projectName)
+
+    assert moduleDir.isDirectory()
+
+    include projectName
+    project(":${projectName}").projectDir = moduleDir
+}
+
+
 rootProject.name = "schaapi"
+
+includeModule "pattern-detector"
+includeModule "usage-graph-generator"
