@@ -1,6 +1,6 @@
 // Based on `https://github.com/griffon/griffon/blob/ed86035/settings.gradle`
 def includeModule = { String projectName ->
-    File baseDir = new File((File) rootDir, "modules")
+    File baseDir = new File((File) rootDir, "subprojects")
     File moduleDir = new File(baseDir, projectName)
 
     assert moduleDir.isDirectory()
