@@ -9,7 +9,7 @@ internal class PatternDetectorTest : Spek({
     describe("Schaapi") {
         it("should work for strings") {
             assertThat(PatternDetector().testMe("hWR3L"))
-                .isEqualTo("hWR3asdfWR3L")
+                .isEqualTo("hWR3LhWR3L")
         }
 
         it("should work for empty strings") {
