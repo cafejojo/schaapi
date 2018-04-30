@@ -9,7 +9,7 @@ internal class SchaapiTest : Spek({
     describe("Schaapi") {
         it("should work for negative numbers") {
             assertThat(Schaapi().testMe(-49643))
-                .isEqualTo(-99288)
+                .isEqualTo(-99286)
         }
 
         it("should work for 0") {
