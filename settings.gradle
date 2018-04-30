@@ -13,4 +13,5 @@ def includeModule = { String projectName ->
 rootProject.name = "schaapi"
 
 includeModule "pattern-detector"
+includeModule "project-compiler"
 includeModule "usage-graph-generator"

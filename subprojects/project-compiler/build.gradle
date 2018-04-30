@@ -1,0 +1,6 @@
+dependencies {
+//    compile group: "org.apache.maven", name: "maven-embedder", version: mavenEmbedderVersion
+    compile group: "org.apache.maven.shared", name: "maven-invoker", version: mavenInvokerVersion
+}
+
+mainClassName = "org.cafejojo.schaapi.projectcompiler.ProjectCompiler"
