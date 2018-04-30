@@ -8,28 +8,42 @@ buildscript {
     }
 }
 
-
+// Shared config
 allprojects {
+    // Plugins
     apply plugin: "application"
     apply plugin: "java"
     apply plugin: "kotlin"
 
+    // Dependencies
     repositories {
         mavenCentral()
     }
 
     dependencies {
         compile group: "org.jetbrains.kotlin", name: "kotlin-stdlib-jdk8", version: kotlinVersion
+        compile group: "org.jetbrains.kotlin", name: "kotlin-reflect", version: kotlinVersion
 
-        testCompile group: "junit", name: "junit", version: junitVersion
+        testCompile group: "org.assertj", name: "assertj-core", version: assertjVersion
+        testCompile group: "org.jetbrains.spek", name: "spek-api", version: spekVersion
+        testRuntime group: "org.jetbrains.spek", name: "spek-junit-platform-engine", version: spekVersion
+        testCompile group: "org.junit.jupiter", name: "junit-jupiter-engine", version: junitVersion
     }
 
+    // Tasks
     compileKotlin {
         kotlinOptions.jvmTarget = "1.8"
     }
     compileTestKotlin {
         kotlinOptions.jvmTarget = "1.8"
     }
+
+    test {
+        useJUnitPlatform() {
+            includeEngines "spek"
+        }
+    }
 }
 
+// Root project config
 mainClassName = "org.cafejojo.schaapi.SchaapiKt"
