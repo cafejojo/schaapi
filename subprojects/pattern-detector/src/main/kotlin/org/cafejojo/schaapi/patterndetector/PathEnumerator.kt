@@ -28,7 +28,7 @@ fun enumeratePaths(entryNode: EntryNode, exitNode: ExitNode): Set<List<Node>> {
 
         if (state.node == exitNode || state.nextNeighbourIndex == state.node.successors.size) {
             if (state.node == exitNode) {
-                paths.add(currentPath)
+                paths.add(currentPath.toList())
             }
 
             // Backtrack
