@@ -1,9 +1,9 @@
 mainClassName = "org.cafejojo.schaapi.usagegraphgenerator.UsageGraphGeneratorKt"
 
 dependencies {
-    compile group: 'org.ow2.asm', name: 'asm', version: '6.1.1'
-    compile group: 'org.ow2.asm', name: 'asm-util', version: '6.1.1'
+    compile group: "org.ow2.asm", name: "asm", version: asmVersion
+    compile group: "org.ow2.asm", name: "asm-util", version: asmVersion
 
-    // FIND USAGE AND REMOVE:
-    compile group: 'commons-lang', name: 'commons-lang', version: '2.6'
+    // TODO: Find usages and remove this library
+    compile group: "commons-lang", name: "commons-lang", version: commonsLangVersion
 }
