@@ -116,7 +116,8 @@ internal class PathEnumeratorTest : Spek({
             assertThat(paths)
                 .isEqualTo(
                     listOf(
-                        listOf(node1, node2, node3False, node4)
+                        listOf(node1, node2, node3False, node4),
+                        listOf(node1, node2, node3True, node2, node3False, node4)
                     )
                 )
         }
