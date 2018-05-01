@@ -8,7 +8,20 @@ import java.util.UUID
  *
  * Contains references to the successor nodes.
  */
-abstract class Node(val successors: MutableList<Node> = arrayListOf(), val id: NodeId = UuidNodeId())
+abstract class Node(val successors: MutableList<Node> = arrayListOf(), val id: NodeId = UuidNodeId()) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is Node) return false
+
+        if (id != other.id) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return id.hashCode()
+    }
+}
 
 /**
  * Represents a non virtual statement nodes containing actual instructions.
