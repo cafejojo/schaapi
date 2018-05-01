@@ -82,13 +82,19 @@ class PathEnumerator(
 
     private fun hasBeenVisitedAtMostOnce(node: Node) = visited.count { it == node } <= 1
 
-    private fun pruneBranchNodes(nodes: MutableList<Node>): List<Node> {
-        nodes.forEachIndexed { index: Int, node: Node ->
+    /**
+     * Replaces all branch path on the given [path] with single-branch alternatives.
+     *
+     * @param path the path to be processed.
+     * @return the pruned list of nodes.
+     */
+    private fun pruneBranchNodes(path: MutableList<Node>): List<Node> {
+        path.forEachIndexed { index: Int, node: Node ->
             if (node is BranchNode) {
-                val chosenSuccessorIsTrue = node.trueSuccessor() === nodes[index + 1]
-                nodes[index] = node.getSingleSuccessorCopy(chosenSuccessorIsTrue, exitNode)
+                val chosenSuccessorIsTrue = node.trueSuccessor() === path[index + 1]
+                path[index] = node.getSingleSuccessorCopy(chosenSuccessorIsTrue, exitNode)
             }
         }
-        return nodes.toList()
+        return path.toList()
     }
 }
