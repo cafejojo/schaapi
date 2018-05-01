@@ -7,33 +7,39 @@ import de.codesourcery.asm.controlflow.MethodExit
 import org.objectweb.asm.tree.LabelNode
 import org.objectweb.asm.util.Printer
 
+
 class InstructionGrouper(private val cfg: ControlFlowGraph) {
     private val visited = HashMap<IBlock, Node>()
 
-    fun groupToStatements(block: IBlock = cfg.start, previous: Node? = null): Node? {
+    /**
+     * Groups instruction within CFG [block]s to statement nodes that still represent the control flow.
+     *
+     * Each block is visited and converted to statement nodes. Blocks are explicitly visited only once,
+     * to make sure 'merging' blocks do not get visited multiple times. Once blocks have been converted,
+     * the node sets itself as successor of the predecessor node.
+     *
+     * @param block CFG block.
+     * @param predecessor predecessor for newly create statement nodes.
+     * @return method entry node.
+     */
+    fun groupToStatements(block: IBlock = cfg.start, predecessor: Node? = null): Node? {
         if (visited.containsKey(block)) {
-            visited[block]?.let { previous?.successors?.add(it) }
+            visited[block]?.let { predecessor?.successors?.add(it) }
             return null
         }
 
         if (!isProcessableBlock(block)) {
-            block.edges.filter { it.dst != block }.forEach({ groupToStatements(it.dst, previous) })
+            block.edges.filter { it.dst != block }.forEach({ groupToStatements(it.dst, predecessor) })
             return null
-        }
-
-        var instructionIndex = 0
-        cfg.method.instructions.iterator().forEach { instruction ->
-            if (!block.containsInstructionNum(instructionIndex++)) return@forEach
-            println("${instructionIndex - 1}  $instruction")
         }
 
         val (first, last) = when (block) {
             is MethodEntry -> EntryNode().let { Pair(it, it) }
             is MethodExit -> ExitNode().let { Pair(it, it) }
-            else -> convertBlockToNode(block)
+            else -> convertBlockToNodes(block)
         }
 
-        previous?.successors?.add(first)
+        predecessor?.successors?.add(first)
 
         visited[block] = first
 
@@ -42,7 +48,17 @@ class InstructionGrouper(private val cfg: ControlFlowGraph) {
         return first
     }
 
-    private fun convertBlockToNode(block: IBlock): Pair<Node, Node> {
+    /**
+     * Converts a CFG [block] to statement nodes.
+     *
+     * The assumption is made that statements are separated by label nodes. If the label is the last label
+     * within a branching block, a branch node is created instead of a statement node. All consequent
+     * instructions will be added to the created node, until the next label node is encountered.
+     *
+     * @param block CFG block.
+     * @return respectively the node representing the first and the node representing the last statement in the block
+     */
+    private fun convertBlockToNodes(block: IBlock): Pair<Node, Node> {
         var instructionIndex = 0
 
         var first: InstructionsNode? = null
@@ -70,6 +86,12 @@ class InstructionGrouper(private val cfg: ControlFlowGraph) {
         return Pair(first!!, last!!)
     }
 
+    /**
+     * Finds the last label within the block.
+     *
+     * @param block CFG block.
+     * @return last label within the given block.
+     */
     private fun findLastLabelInBlock(block: IBlock): LabelNode? {
         var instructionIndex = 0
         var labelNode: LabelNode? = null
@@ -80,8 +102,20 @@ class InstructionGrouper(private val cfg: ControlFlowGraph) {
         return labelNode
     }
 
+    /**
+     * Determines if the [block] under evaluation is relevant.
+     *
+     * @param block CFG block.
+     * @return boolean indicating if the [block] under evaluation is relevant.
+     */
     private fun isProcessableBlock(block: IBlock) =
         block is MethodEntry || block is MethodExit || !block.isVirtual(cfg.method)
 
+    /**
+     * Determines if the given [block] is a branching block.
+     *
+     * @param block CFG block.
+     * @return boolean indicating if the given [block] is a branching block.
+     */
     private fun isBranchBlock(block: IBlock) = block.edges.size == 3 && block.edges.count { it.src == block } == 2
 }
