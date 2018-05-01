@@ -1,6 +1,6 @@
-package org.cafejojo.schaapi.tests;
+package org.cafejojo.schaapi.usagegraphgenerator.testclasses.users;
 
-import com.developers.library.Object1;
+import org.cafejojo.schaapi.usagegraphgenerator.testclasses.library.Object1;
 
 public class Test1 {
     public Object1 test() {

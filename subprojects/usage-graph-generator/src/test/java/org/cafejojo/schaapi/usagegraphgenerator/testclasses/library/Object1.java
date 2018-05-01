@@ -1,4 +1,4 @@
-package com.developers.library;
+package org.cafejojo.schaapi.usagegraphgenerator.testclasses.library;
 
 public class Object1 {
     public int p1 = 123;
