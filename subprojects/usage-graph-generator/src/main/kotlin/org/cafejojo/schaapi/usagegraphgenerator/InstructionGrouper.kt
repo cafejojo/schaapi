@@ -14,7 +14,7 @@ import org.objectweb.asm.util.Printer
  * @property cfg the control flow graph to operate on.
  */
 class InstructionGrouper(private val cfg: ControlFlowGraph) {
-    private val visited = HashMap<IBlock, Node>()
+    private val firstNodeOfVisitedBlocks = HashMap<IBlock, Node>()
 
     /**
      * Groups instructions within CFG [block]s into statement nodes that still represent the control flow.
@@ -28,8 +28,8 @@ class InstructionGrouper(private val cfg: ControlFlowGraph) {
      * @return method entry node.
      */
     fun groupToStatements(block: IBlock = cfg.start, predecessor: Node? = null): Node? {
-        if (visited.containsKey(block)) {
-            visited[block]?.let { predecessor?.successors?.add(it) }
+        if (firstNodeOfVisitedBlocks.containsKey(block)) {
+            firstNodeOfVisitedBlocks[block]?.let { predecessor?.successors?.add(it) }
             return null
         }
 
@@ -46,7 +46,7 @@ class InstructionGrouper(private val cfg: ControlFlowGraph) {
 
         predecessor?.successors?.add(first)
 
-        visited[block] = first
+        firstNodeOfVisitedBlocks[block] = first
 
         block.edges.filter { it.dst != block }.forEach({ groupToStatements(it.dst, last) })
 
