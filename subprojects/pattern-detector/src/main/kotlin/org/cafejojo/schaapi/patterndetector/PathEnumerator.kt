@@ -6,49 +6,70 @@ import org.cafejojo.schaapi.usagegraphgenerator.ExitNode
 import org.cafejojo.schaapi.usagegraphgenerator.Node
 import java.util.Stack
 
-internal data class SearchState(val node: Node, val nextNeighbourIndex: Int)
+internal fun BranchNode.getSingleSuccessorCopy(condition: Boolean, exitNode: ExitNode): BranchNode {
+    val branchNode = BranchNode()
 
-internal fun Node.toSingleSuccessor(successorIndex: Int, exitNode: ExitNode): Node = when (this) {
-    is BranchNode -> this.getSingleSuccessorCopy(successorIndex, exitNode)
-    else -> this
+    branchNode.successors = when (condition) {
+        true -> listOf(successors[0], exitNode)
+        false -> listOf(exitNode, successors[1])
+    }
+
+    return branchNode
 }
 
-fun enumeratePaths(entryNode: EntryNode, exitNode: ExitNode): Set<List<Node>> {
-    val paths = mutableSetOf<List<Node>>()
-    val searchStack = Stack<SearchState>()
-    val visited = mutableSetOf<Node>()
-    val currentPath = mutableListOf<Node>()
+class PathEnumerator(
+    entryNode: EntryNode,
+    private val exitNode: ExitNode
+) {
+    private val paths = mutableListOf<List<Node>>()
+    private val visited = Stack<Node>()
 
-    searchStack.push(SearchState(entryNode, 0))
-    visited.add(entryNode)
-    currentPath.add(entryNode.toSingleSuccessor(0, exitNode))
+    init {
+        visited.push(entryNode)
+    }
 
-    while (!searchStack.empty()) {
-        val state = searchStack.peek()
+    fun enumerate(): List<List<Node>> {
+        recursivelyEnumerate()
+        return paths.toList()
+    }
 
-        if (state.node == exitNode || state.nextNeighbourIndex == state.node.successors.size) {
-            if (state.node == exitNode) {
-                paths.add(currentPath.toList())
-            }
+    private fun recursivelyEnumerate() {
+        checkIfExitNodeIsReached()
+        visitSuccessors()
+    }
 
-            // Backtrack
-            visited.remove(state.node)
-            currentPath.removeAt(currentPath.size - 1)
-            searchStack.pop()
-        } else {
-            val nextNode = state.node.successors[state.nextNeighbourIndex]
+    private fun checkIfExitNodeIsReached() {
+        val unvisitedSuccessors = visited.peek().successors.filter { it !in visited }
 
-            // Move on to next neighbour
-            searchStack.pop()
-            searchStack.add(SearchState(state.node, state.nextNeighbourIndex + 1))
-
-            if (!visited.contains(nextNode)) {
-                searchStack.push(SearchState(nextNode, 0))
-                visited.add(nextNode)
-                currentPath.add(nextNode.toSingleSuccessor(0, exitNode))
+        for (successor in unvisitedSuccessors) {
+            if (successor == exitNode) {
+                visited.push(successor)
+                paths.add(pruneBranchNodes(visited.toMutableList()))
+                visited.pop()
+                break
             }
         }
     }
 
-    return paths.toSet()
+    private fun visitSuccessors() {
+        val successors = visited.peek().successors
+
+        successors
+            .filter { it !in visited && it != exitNode }
+            .forEach {
+                visited.push(it)
+                recursivelyEnumerate()
+                visited.pop()
+            }
+    }
+
+    private fun pruneBranchNodes(nodes: MutableList<Node>): List<Node> {
+        nodes.forEachIndexed { index: Int, node: Node ->
+            if (node is BranchNode) {
+                val chosenSuccessorIsTrue = node.trueSuccessor() === nodes[index + 1]
+                nodes[index] = node.getSingleSuccessorCopy(chosenSuccessorIsTrue, exitNode)
+            }
+        }
+        return nodes.toList()
+    }
 }
