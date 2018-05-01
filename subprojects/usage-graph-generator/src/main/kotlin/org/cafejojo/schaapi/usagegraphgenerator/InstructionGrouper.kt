@@ -125,5 +125,5 @@ class InstructionGrouper(private val cfg: ControlFlowGraph) {
      * @param block CFG block.
      * @return boolean indicating if the given [block] is a branching block.
      */
-    private fun isBranchBlock(block: IBlock) = block.edges.size == 3 && block.edges.count { it.src == block } == 2
+    private fun isBranchBlock(block: IBlock) = block.edges.count { it.src == block } == 2
 }
