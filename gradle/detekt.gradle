@@ -13,9 +13,10 @@ detekt {
 }
 
 
-/// Remove "--config-resource" directory that magically appears
+/// Remove directories that magically appear
 // https://github.com/arturbosch/detekt/issues/854
 task detektCleanUp(type: Delete) {
+    delete "--config"
     delete "--config-resource"
 }
 detektCheck.finalizedBy detektCleanUp
