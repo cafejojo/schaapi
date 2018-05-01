@@ -3,7 +3,7 @@ package org.cafejojo.schaapi.usagegraphgenerator
 import org.objectweb.asm.tree.AbstractInsnNode
 
 abstract class Node {
-    var successors: MutableList<Node> = arrayListOf()
+    val successors: MutableList<Node> = arrayListOf()
 }
 
 abstract class InstructionsNode : Node() {

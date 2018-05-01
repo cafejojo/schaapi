@@ -18,8 +18,13 @@ class InstructionGrouper(private val cfg: ControlFlowGraph) {
 
         if (!isProcessableBlock(block)) {
             block.edges.filter { it.dst != block }.forEach({ groupToStatements(it.dst, previous) })
-
             return null
+        }
+
+        var instructionIndex = 0
+        cfg.method.instructions.iterator().forEach { instruction ->
+            if (!block.containsInstructionNum(instructionIndex++)) return@forEach
+            println("${instructionIndex - 1}  $instruction")
         }
 
         val (first, last) = when (block) {
@@ -37,19 +42,19 @@ class InstructionGrouper(private val cfg: ControlFlowGraph) {
         return first
     }
 
-    private fun isProcessableBlock(block: IBlock) = block is MethodEntry || block is MethodExit || !block.isVirtual(cfg.method)
-
     private fun convertBlockToNode(block: IBlock): Pair<Node, Node> {
         var instructionIndex = 0
 
         var first: InstructionsNode? = null
         var last: InstructionsNode? = null
 
+        val lastLabel = findLastLabelInBlock(block)
+
         cfg.method.instructions.iterator().forEach { instruction ->
             if (!block.containsInstructionNum(instructionIndex++)) return@forEach
 
             if (instruction is LabelNode) {
-                val current = StatementNode()
+                val current = if (instruction == lastLabel && isBranchBlock(block)) BranchNode() else StatementNode()
                 last?.successors?.add(current)
                 last = current
                 if (first == null) first = last
@@ -64,4 +69,19 @@ class InstructionGrouper(private val cfg: ControlFlowGraph) {
 
         return Pair(first!!, last!!)
     }
+
+    private fun findLastLabelInBlock(block: IBlock): LabelNode? {
+        var instructionIndex = 0
+        var labelNode: LabelNode? = null
+        cfg.method.instructions.iterator().forEach { instruction ->
+            if (!block.containsInstructionNum(instructionIndex++)) return@forEach
+            if (instruction is LabelNode) labelNode = instruction
+        }
+        return labelNode
+    }
+
+    private fun isProcessableBlock(block: IBlock) =
+        block is MethodEntry || block is MethodExit || !block.isVirtual(cfg.method)
+
+    private fun isBranchBlock(block: IBlock) = block.edges.size == 3 && block.edges.count { it.src == block } == 2
 }
