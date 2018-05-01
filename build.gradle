@@ -6,9 +6,11 @@ buildscript {
 
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+        classpath "gradle.plugin.io.gitlab.arturbosch.detekt:detekt-gradle-plugin:$detektVersion"
         classpath "com.diffplug.spotless:spotless-plugin-gradle:$spotlessVersion"
     }
 }
+
 
 // Shared config
 allprojects {
@@ -53,6 +55,16 @@ allprojects {
         }
     }
 }
+
+
+// Detekt
+// Should be applied only to the root project, and will automatically analyse the remaining projects
+apply plugin: "io.gitlab.arturbosch.detekt"
+
+detekt {
+    //
+}
+
 
 // Root project config
 mainClassName = "org.cafejojo.schaapi.SchaapiKt"
