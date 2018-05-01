@@ -3,7 +3,7 @@ failFast: true
 test-pattern:
   active: true
   patterns:
-    - ".*/test/.*"
+    - ".*[/\\\\]test[/\\\\].*"
   exclude-rule-sets:
     - "comments"
   exclude-rules:
