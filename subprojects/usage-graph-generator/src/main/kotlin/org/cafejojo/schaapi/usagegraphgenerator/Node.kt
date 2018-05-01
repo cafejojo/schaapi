@@ -17,6 +17,6 @@ class ExitNode : Node()
 class StatementNode : InstructionsNode()
 
 class BranchNode : InstructionsNode() {
-    fun trueSuccessor() = successors[0]
-    fun falseSuccessor() = successors[1]
+    fun trueSuccessor() = successors[1]
+    fun falseSuccessor() = successors[0]
 }
