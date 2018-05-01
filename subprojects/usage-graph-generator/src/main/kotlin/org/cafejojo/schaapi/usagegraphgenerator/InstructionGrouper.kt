@@ -9,7 +9,7 @@ import org.objectweb.asm.tree.LabelNode
 import org.objectweb.asm.util.Printer
 
 /**
- * Groups instruction within CFG [block]s to statement nodes that still represent the control flow.
+ * Groups instruction within CFG blocks into statement nodes that still represent the control flow.
  *
  * @property cfg the control flow graph to operate on.
  */
@@ -17,11 +17,11 @@ class InstructionGrouper(private val cfg: ControlFlowGraph) {
     private val visited = HashMap<IBlock, Node>()
 
     /**
-     * Groups instruction within CFG [block]s to statement nodes that still represent the control flow.
+     * Groups instruction within CFG [block]s into statement nodes that still represent the control flow.
      *
      * Each block is visited and converted to statement nodes. Blocks are explicitly visited only once,
-     * to make sure 'merging' blocks do not get visited multiple times. Once blocks have been converted,
-     * the node sets itself as successor of the predecessor node.
+     * to make sure 'merging' blocks do not get visited multiple times. Once blocks have been merged,
+     * the new node is set as successor of the predecessor node.
      *
      * @param block CFG block.
      * @param predecessor predecessor for newly created statement nodes.
@@ -63,7 +63,7 @@ class InstructionGrouper(private val cfg: ControlFlowGraph) {
      * instructions will be added to the created node, until the next label node is encountered.
      *
      * @param block CFG block.
-     * @return respectively the node representing the first and the node representing the last statement in the block
+     * @return respectively the node representing the first and the node representing the last statement in the block.
      */
     private fun convertBlockToNodes(block: IBlock): Pair<Node?, Node?> {
         var instructionIndex = 0
