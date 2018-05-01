@@ -10,9 +10,9 @@ import org.objectweb.asm.ClassReader
 import org.objectweb.asm.tree.ClassNode
 
 internal class InstructionGrouperTest : Spek({
-    describe("grouping of instructions to statements while remaining the control flow") {
+    describe("grouping of instructions to statements while preserving the control flow") {
 
-        it("should remain the control flow") {
+        it("should preserve the control flow") {
             val cfg = constructCFG("org.cafejojo.schaapi.usagegraphgenerator.testclasses.users.Test1")
 
             val scfg = InstructionGrouper(cfg).groupToStatements()

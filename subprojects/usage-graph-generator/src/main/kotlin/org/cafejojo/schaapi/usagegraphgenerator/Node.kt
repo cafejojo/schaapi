@@ -24,7 +24,7 @@ abstract class Node(val successors: MutableList<Node> = arrayListOf(), val id: N
 }
 
 /**
- * Represents a non virtual statement nodes containing actual instructions.
+ * Represents a non virtual statement node containing actual instructions.
  */
 abstract class InstructionsNode(successors: MutableList<Node> = arrayListOf(), id: NodeId = UuidNodeId()) :
     Node(successors, id) {
@@ -55,12 +55,12 @@ class StatementNode(successors: MutableList<Node> = arrayListOf(), id: NodeId = 
 class BranchNode(successors: MutableList<Node> = arrayListOf(), id: NodeId = UuidNodeId()) :
     InstructionsNode(successors, id) {
     /**
-     * Return the successor of the 'positive' conditional branch.
+     * Returns the successor of the 'positive' conditional branch.
      */
     fun trueSuccessor() = successors[1]
 
     /**
-     * Return the successor of the 'negative' conditional branch.
+     * Returns the successor of the 'negative' conditional branch.
      */
     fun falseSuccessor() = successors[0]
 }

@@ -24,7 +24,7 @@ class InstructionGrouper(private val cfg: ControlFlowGraph) {
      * the node sets itself as successor of the predecessor node.
      *
      * @param block CFG block.
-     * @param predecessor predecessor for newly create statement nodes.
+     * @param predecessor predecessor for newly created statement nodes.
      * @return method entry node.
      */
     fun groupToStatements(block: IBlock = cfg.start, predecessor: Node? = null): Node? {
