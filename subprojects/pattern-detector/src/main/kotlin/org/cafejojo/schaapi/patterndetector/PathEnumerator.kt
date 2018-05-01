@@ -56,7 +56,7 @@ class PathEnumerator(
     }
 
     private fun checkIfExitNodeIsReached() {
-        val unvisitedSuccessors = visited.peek().successors.filter { it !in visited }
+        val unvisitedSuccessors = visited.peek().successors.filter { hasBeenVisitedAtMostOnce(it) }
 
         for (successor in unvisitedSuccessors) {
             if (successor == exitNode) {
@@ -72,13 +72,15 @@ class PathEnumerator(
         val successors = visited.peek().successors
 
         successors
-            .filter { it !in visited && it != exitNode }
+            .filter { hasBeenVisitedAtMostOnce(it) && it != exitNode }
             .forEach {
                 visited.push(it)
                 recursivelyEnumerate()
                 visited.pop()
             }
     }
+
+    private fun hasBeenVisitedAtMostOnce(node: Node) = visited.count { it == node } <= 1
 
     private fun pruneBranchNodes(nodes: MutableList<Node>): List<Node> {
         nodes.forEachIndexed { index: Int, node: Node ->
