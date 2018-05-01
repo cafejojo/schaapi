@@ -102,10 +102,9 @@ class InstructionGrouper(private val cfg: ControlFlowGraph) {
     private fun findLastLabelInBlock(block: IBlock): LabelNode? {
         var instructionIndex = 0
         var labelNode: LabelNode? = null
-        cfg.method.instructions.iterator().forEach(fun(instruction) {
-            if (!block.containsInstructionNum(instructionIndex++)) return
-            if (instruction is LabelNode) labelNode = instruction
-        })
+        cfg.method.instructions.iterator().forEach {
+            if (block.containsInstructionNum(instructionIndex++) && it is LabelNode) labelNode = it
+        }
         return labelNode
     }
 
