@@ -43,9 +43,11 @@ class InstructionGrouper(private val cfg: ControlFlowGraph) {
             else -> convertBlockToNodes(block)
         }
 
-        predecessor?.successors?.add(first)
+        if (first != null) {
+            predecessor?.successors?.add(first)
 
-        visited[block] = first
+            visited[block] = first
+        }
 
         block.edges.filter { it.dst != block }.forEach({ groupToStatements(it.dst, last) })
 
@@ -62,7 +64,7 @@ class InstructionGrouper(private val cfg: ControlFlowGraph) {
      * @param block CFG block.
      * @return respectively the node representing the first and the node representing the last statement in the block
      */
-    private fun convertBlockToNodes(block: IBlock): Pair<Node, Node> {
+    private fun convertBlockToNodes(block: IBlock): Pair<Node?, Node?> {
         var instructionIndex = 0
 
         var first: InstructionsNode? = null
@@ -84,10 +86,10 @@ class InstructionGrouper(private val cfg: ControlFlowGraph) {
 
             if (last == null) throw IllegalStateException("Instruction found before label")
 
-            last!!.instructions.add(instruction)
+            last?.instructions?.add(instruction)
         }
 
-        return Pair(first!!, last!!)
+        return Pair(first, last)
     }
 
     /**
