@@ -4,6 +4,7 @@ import de.codesourcery.asm.controlflow.ControlFlowGraph
 import de.codesourcery.asm.controlflow.IBlock
 import de.codesourcery.asm.controlflow.MethodEntry
 import de.codesourcery.asm.controlflow.MethodExit
+import org.objectweb.asm.tree.AbstractInsnNode
 import org.objectweb.asm.tree.LabelNode
 import org.objectweb.asm.util.Printer
 
@@ -72,8 +73,8 @@ class InstructionGrouper(private val cfg: ControlFlowGraph) {
 
         val lastLabel = findLastLabelInBlock(block)
 
-        cfg.method.instructions.iterator().forEach { instruction ->
-            if (!block.containsInstructionNum(instructionIndex++)) return@forEach
+        cfg.method.instructions.iterator().forEach(fun(instruction: AbstractInsnNode) {
+            if (!block.containsInstructionNum(instructionIndex++)) return
 
             if (instruction is LabelNode) {
                 val current = if (instruction == lastLabel && isBranchBlock(block)) BranchNode() else StatementNode()
@@ -82,12 +83,12 @@ class InstructionGrouper(private val cfg: ControlFlowGraph) {
                 if (first == null) first = last
             }
 
-            if (instruction.opcode < 0 || instruction.opcode >= Printer.OPCODES.size) return@forEach
+            if (instruction.opcode < 0 || instruction.opcode >= Printer.OPCODES.size) return
 
             if (last == null) throw IllegalStateException("Instruction found before label")
 
             last?.instructions?.add(instruction)
-        }
+        })
 
         return Pair(first, last)
     }
@@ -101,10 +102,10 @@ class InstructionGrouper(private val cfg: ControlFlowGraph) {
     private fun findLastLabelInBlock(block: IBlock): LabelNode? {
         var instructionIndex = 0
         var labelNode: LabelNode? = null
-        cfg.method.instructions.iterator().forEach { instruction ->
-            if (!block.containsInstructionNum(instructionIndex++)) return@forEach
+        cfg.method.instructions.iterator().forEach(fun(instruction) {
+            if (!block.containsInstructionNum(instructionIndex++)) return
             if (instruction is LabelNode) labelNode = instruction
-        }
+        })
         return labelNode
     }
 
