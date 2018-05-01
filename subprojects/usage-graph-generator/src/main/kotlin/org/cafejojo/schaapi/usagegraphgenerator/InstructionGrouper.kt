@@ -7,7 +7,11 @@ import de.codesourcery.asm.controlflow.MethodExit
 import org.objectweb.asm.tree.LabelNode
 import org.objectweb.asm.util.Printer
 
-
+/**
+ * Groups instruction within CFG [block]s to statement nodes that still represent the control flow.
+ *
+ * @property cfg the control flow graph to operate on.
+ */
 class InstructionGrouper(private val cfg: ControlFlowGraph) {
     private val visited = HashMap<IBlock, Node>()
 
