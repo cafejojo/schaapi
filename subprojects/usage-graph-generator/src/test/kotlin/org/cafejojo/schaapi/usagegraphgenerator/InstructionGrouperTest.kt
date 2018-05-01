@@ -41,11 +41,10 @@ internal class InstructionGrouperTest : Spek({
                 scfg
             )
         }
-
     }
 })
 
-fun constructCFG(className: String): ControlFlowGraph {
+private fun constructCFG(className: String): ControlFlowGraph {
     val classNode = ClassNode()
     ClassReader(className).accept(classNode, 0)
 
@@ -54,7 +53,7 @@ fun constructCFG(className: String): ControlFlowGraph {
     return ControlFlowAnalyzer().analyze(className, method)
 }
 
-fun assertThatStructureMatches(structure: Node, scfg: Node?) {
+private fun assertThatStructureMatches(structure: Node, scfg: Node?) {
     assertThat(scfg?.javaClass).isEqualTo(structure.javaClass)
     assertThat(scfg?.successors).hasSameSizeAs(structure.successors)
     structure.successors.forEachIndexed { index, structureSuccessor ->
@@ -62,7 +61,7 @@ fun assertThatStructureMatches(structure: Node, scfg: Node?) {
     }
 }
 
-fun entryNode(vararg nodes: Node) = EntryNode(nodes.toCollection(ArrayList()))
-fun exitNode(vararg nodes: Node) = ExitNode(nodes.toCollection(ArrayList()))
-fun statementNode(vararg nodes: Node) = StatementNode(nodes.toCollection(ArrayList()))
-fun branchNode(vararg nodes: Node) = BranchNode(nodes.toCollection(ArrayList()))
+private fun entryNode(vararg nodes: Node) = EntryNode(nodes.toCollection(ArrayList()))
+private fun exitNode(vararg nodes: Node) = ExitNode(nodes.toCollection(ArrayList()))
+private fun statementNode(vararg nodes: Node) = StatementNode(nodes.toCollection(ArrayList()))
+private fun branchNode(vararg nodes: Node) = BranchNode(nodes.toCollection(ArrayList()))
