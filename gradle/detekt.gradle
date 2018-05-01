@@ -1,0 +1,21 @@
+/// Detekt applies itself to all subprojects
+// https://github.com/arturbosch/detekt/issues/420
+// https://github.com/arturbosch/detekt/issues/540
+apply plugin: "io.gitlab.arturbosch.detekt"
+
+
+/// Configure profile
+// https://arturbosch.github.io/detekt/kotlindsl.html
+detekt {
+    defaultProfile {
+        config = file("$rootDir/config/detekt/detekt-config.yml")
+    }
+}
+
+
+/// Remove "--config-resource" directory that magically appears
+// https://github.com/arturbosch/detekt/issues/854
+task detektCleanUp(type: Delete) {
+    delete "--config-resource"
+}
+detektCheck.finalizedBy detektCleanUp

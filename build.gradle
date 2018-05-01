@@ -57,13 +57,7 @@ allprojects {
 }
 
 
-// Detekt
-// Should be applied only to the root project, and will automatically analyse the remaining projects
-apply plugin: "io.gitlab.arturbosch.detekt"
-
-detekt {
-    //
-}
+apply from: "gradle/detekt.gradle"
 
 
 // Root project config

@@ -1,0 +1,11 @@
+failFast: true
+
+test-pattern:
+  active: true
+  patterns:
+    - ".*/test/.*"
+  exclude-rule-sets:
+    - "comments"
+  exclude-rules:
+    - "MagicNumber"
+    - "TooManyFunctions"
