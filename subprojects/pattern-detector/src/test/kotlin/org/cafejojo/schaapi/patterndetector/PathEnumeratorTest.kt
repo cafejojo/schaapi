@@ -121,5 +121,40 @@ internal class PathEnumeratorTest : Spek({
                     )
                 )
         }
+
+        it("should find the simple path in a graph containing a nested cycle") {
+            val node1 = EntryNode(id = CustomNodeId(1))
+            val node2 = StatementNode(id = CustomNodeId(2))
+            val node3 = StatementNode(id = CustomNodeId(3))
+            val node4 = BranchNode(id = CustomNodeId(4))
+            val node5 = BranchNode(id = CustomNodeId(5))
+            val node6 = ExitNode(id = CustomNodeId(6))
+
+            node1.successors.addAll(listOf(node2))
+            node2.successors.addAll(listOf(node3))
+            node3.successors.addAll(listOf(node4))
+            node4.successors.addAll(listOf(node5, node3))
+            node5.successors.addAll(listOf(node6, node2))
+
+            val node4False = BranchNode(id = CustomNodeId(4))
+            val node4True = BranchNode(id = CustomNodeId(4))
+            val node5False = BranchNode(id = CustomNodeId(5))
+            val node5True = BranchNode(id = CustomNodeId(5))
+            node4False.successors.addAll(listOf(node5, node6))
+            node4True.successors.addAll(listOf(node6, node3))
+            node5False.successors.addAll(listOf(node6, node6))
+            node5True.successors.addAll(listOf(node6, node2))
+
+            val paths = PathEnumerator(node1, node6).enumerate()
+
+            assertThat(paths)
+                .isEqualTo(
+                    listOf(
+                        listOf(node1, node2, node3, node4False, node5False, node6),
+                        listOf(node1, node2, node3, node4False, node5True, node2, node3, node4False, node5False, node6),
+                        listOf(node1, node2, node3, node4True, node3, node4False, node5False, node6)
+                    )
+                )
+        }
     }
 })
