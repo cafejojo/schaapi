@@ -9,18 +9,14 @@ import java.util.UUID
  * Contains references to the successor nodes.
  */
 abstract class Node(val successors: MutableList<Node> = arrayListOf(), val id: NodeId = UuidNodeId()) {
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other !is Node) return false
-
-        if (id != other.id) return false
-
-        return true
+    override fun equals(other: Any?) = when {
+        this === other -> true
+        other !is Node -> false
+        id != other.id -> false
+        else -> true
     }
 
-    override fun hashCode(): Int {
-        return id.hashCode()
-    }
+    override fun hashCode() = id.hashCode()
 }
 
 /**
