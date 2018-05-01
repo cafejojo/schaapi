@@ -20,7 +20,7 @@ abstract class Node(val successors: MutableList<Node> = arrayListOf(), val id: N
 }
 
 /**
- * Represents a non virtual statement node containing actual instructions.
+ * Represents a non-virtual statement node containing actual instructions.
  */
 abstract class InstructionsNode(successors: MutableList<Node> = arrayListOf(), id: NodeId = UuidNodeId()) :
     Node(successors, id) {
@@ -74,7 +74,7 @@ interface NodeId
 data class UuidNodeId(val id: UUID = UUID.randomUUID()) : NodeId
 
 /**
- * Represents a customer integer based node id.
+ * Represents a custom integer based node id.
  *
  * @property id custom integer based node id.
  */
