@@ -3,7 +3,6 @@ package org.cafejojo.schaapi.projectcompiler
 import org.apache.maven.shared.invoker.DefaultInvocationRequest
 import org.apache.maven.shared.invoker.DefaultInvoker
 import java.io.File
-import java.util.Collections
 
 fun main(args: Array<String>) {
     if (args.size != 2) {
@@ -40,9 +39,10 @@ class ProjectCompiler(private val projectDir: File, private val mavenHome: File)
     fun compileProject(): List<File> {
         val request = DefaultInvocationRequest()
         request.pomFile = pomFile
-        request.goals = Collections.singletonList("install")
+        request.goals = listOf("clean", "install")
 
         val invoker = DefaultInvoker()
+        invoker.setOutputHandler(null)
         invoker.mavenHome = mavenHome
         val result = invoker.execute(request)
         if (result.exitCode != 0) {
