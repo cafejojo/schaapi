@@ -7,6 +7,8 @@ import java.util.UUID
  * Represents a statement node.
  *
  * Contains references to the successor nodes.
+ *
+ * @property id a unique id for the node.
  */
 abstract class Node(val successors: MutableList<Node> = arrayListOf(), val id: NodeId = UuidNodeId()) {
     override fun equals(other: Any?) = when {
