@@ -6,9 +6,11 @@ buildscript {
 
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+        classpath "gradle.plugin.io.gitlab.arturbosch.detekt:detekt-gradle-plugin:$detektVersion"
         classpath "com.diffplug.spotless:spotless-plugin-gradle:$spotlessVersion"
     }
 }
+
 
 // Shared config
 allprojects {
@@ -53,6 +55,10 @@ allprojects {
         }
     }
 }
+
+
+apply from: "gradle/detekt.gradle"
+
 
 // Root project config
 mainClassName = "org.cafejojo.schaapi.SchaapiKt"

@@ -1,0 +1,28 @@
+failFast: true
+
+comments:
+  CommentOverPrivateFunction:
+    active: false
+
+complexity:
+  ComplexMethod:
+    threshold: 16
+
+style:
+  ReturnCount:
+    active: false
+  UnnecessaryAbstractClass:
+    active: false
+  UnusedPrivateMember:
+    active: false
+
+
+test-pattern:
+  active: true
+  patterns:
+    - ".*[/\\\\]test[/\\\\].*"
+  exclude-rule-sets:
+    - "comments"
+  exclude-rules:
+    - "MagicNumber"
+    - "TooManyFunctions"
