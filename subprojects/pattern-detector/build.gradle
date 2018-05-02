@@ -1,1 +1,5 @@
 mainClassName = "org.cafejojo.schaapi.patterndetector.PatternDetectorKt"
+
+dependencies {
+    compile project(":usage-graph-generator")
+}
