@@ -54,6 +54,9 @@ internal class InstructionGrouperTest : Spek({
                     statementNode(
                         branchNode(
                             statementNode(
+                                exitNode()
+                            ),
+                            statementNode(
                                 statementNode(
                                     branchNode(
                                         statementNode(
@@ -68,9 +71,6 @@ internal class InstructionGrouperTest : Spek({
                                         )
                                     )
                                 )
-                            ),
-                            statementNode(
-                                exitNode()
                             )
                         )
                     )
