@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
@@ -43,7 +44,7 @@ public abstract class AbstractBlock implements IBlock {
     protected String id;
 
     protected final Set<Integer> instructions = new HashSet<>();
-    protected final Set<Edge> edges = new HashSet<>();
+    protected final Set<Edge> edges = new LinkedHashSet<>();
 
     @Override
     public String disassemble(MethodNode method, boolean includeVirtual, boolean printInsnIndices) {
