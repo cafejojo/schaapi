@@ -1,20 +1,22 @@
 package org.cafejojo.schaapi.usagegraphgenerator
 
-import java.io.File
-
+/**
+ * Creates DOT graph files of statement control flow graphs.
+ */
 class DotGraphRenderer(private val name: String, private val scfg: Node) {
-    val result = StringBuilder()
+    private val result = StringBuilder()
     private val visited = HashSet<Node>()
 
-    fun render(): DotGraphRenderer {
+    /**
+     * Renders a scfg in DOT format.
+     */
+    fun render(): String {
         result.append("digraph \"$name()\" {\n")
         render(scfg)
         result.append("}")
 
-        return this
+        return result.toString()
     }
-
-    fun write(fileName: String) = File(fileName).writeText(result.toString())
 
     private fun render(scfg: Node) {
         visited.add(scfg)

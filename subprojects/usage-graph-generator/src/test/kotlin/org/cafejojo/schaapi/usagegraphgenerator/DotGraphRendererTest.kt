@@ -32,7 +32,7 @@ internal class DotGraphRendererTest : Spek({
                     )
                 )
             )
-            val result = DotGraphRenderer("graph-name", cfg).render().result.toString()
+            val result = DotGraphRenderer("graph-name", cfg).render()
 
             assertThat(result).isEqualTo(
                 """
