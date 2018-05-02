@@ -11,9 +11,9 @@ class DotGraphRenderer(private val name: String, private val scfg: Node) {
     private val visited = HashSet<Node>()
 
     /**
-     * Renders a scfg in DOT format.
+     * Renders a statement control flow graph in DOT format.
      *
-     * @return a scfg in DOT format.
+     * @return a statement control flow graph in DOT format.
      */
     fun render(): String {
         result.append("digraph \"$name()\" {\n")
