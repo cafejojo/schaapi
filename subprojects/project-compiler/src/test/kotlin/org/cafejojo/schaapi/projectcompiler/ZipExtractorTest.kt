@@ -11,14 +11,14 @@ internal class ZipExtractorTest : Spek({
         val target = File("./test")
 
         beforeGroup {
-            target.mkdirs()
+            target.deleteRecursively()
         }
 
         afterEachTest {
             target.deleteRecursively()
         }
 
-        it ("extracts an empty ZIP") {
+        it("extracts an empty ZIP") {
             val emptyZip = javaClass.getResourceAsStream("/zip/empty.zip")
             ZipExtractor(emptyZip).extractTo(target)
 

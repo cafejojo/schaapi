@@ -14,6 +14,8 @@ fun main(args: Array<String>) {
         return
     }
 
+    MavenInstaller().installMaven(MAVEN_HOME)
+
     val projectDir = File(args[0])
     val classes = ProjectCompiler(projectDir).compileProject()
 
@@ -25,7 +27,6 @@ fun main(args: Array<String>) {
  * Compiles a project.
  */
 class ProjectCompiler(private val projectDir: File) {
-    private val mavenHome = File(System.getProperty("user.home") + "/schaapi/maven")
     private val pomFile = projectDir.resolve("pom.xml")
 
     init {
@@ -35,8 +36,6 @@ class ProjectCompiler(private val projectDir: File) {
         if (!pomFile.isFile) {
             throw IllegalArgumentException("Given project directory is not a Maven project")
         }
-
-        installMaven()
     }
 
     /**
@@ -44,23 +43,18 @@ class ProjectCompiler(private val projectDir: File) {
      * @return the class files that were created
      */
     fun compileProject(): List<File> {
-        mavenInstall()
+        runMavenInstall()
         return findClassFiles()
     }
 
-    private fun installMaven() {
-        val zipStream = javaClass.getResourceAsStream("/maven/apache-maven-3.5.3-bin.zip")
-        ZipExtractor(zipStream).extractTo(mavenHome)
-    }
-
-    private fun mavenInstall() {
+    private fun runMavenInstall() {
         val request = DefaultInvocationRequest()
         request.pomFile = pomFile
         request.goals = listOf("clean", "install")
 
         val invoker = DefaultInvoker()
         invoker.setOutputHandler(null)
-        invoker.mavenHome = mavenHome
+        invoker.mavenHome = MAVEN_HOME
 
         val result = invoker.execute(request)
         if (result.exitCode != 0) {
