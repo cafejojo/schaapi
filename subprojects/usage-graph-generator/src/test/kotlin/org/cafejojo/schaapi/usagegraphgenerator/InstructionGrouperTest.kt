@@ -42,6 +42,43 @@ internal class InstructionGrouperTest : Spek({
             )
         }
     }
+
+    it("should correctly link a loop") {
+        val cfg = constructCFG("org.cafejojo.schaapi.usagegraphgenerator.testclasses.users.LoopTest")
+
+        val scfg = InstructionGrouper(cfg).groupToStatements()
+
+        assertThatStructureMatches(
+            entryNode(
+                statementNode(
+                    statementNode(
+                        branchNode(
+                            statementNode(
+                                statementNode(
+                                    branchNode(
+                                        statementNode(
+                                            statementNode(
+                                                previousBranchNode()
+                                            )
+                                        ),
+                                        statementNode(
+                                            statementNode(
+                                                previousBranchNode()
+                                            )
+                                        )
+                                    )
+                                )
+                            ),
+                            statementNode(
+                                exitNode()
+                            )
+                        )
+                    )
+                )
+            ),
+            scfg
+        )
+    }
 })
 
 private fun constructCFG(className: String): ControlFlowGraph {
@@ -57,7 +94,8 @@ private fun assertThatStructureMatches(structure: Node, scfg: Node?) {
     assertThat(scfg?.javaClass).isEqualTo(structure.javaClass)
     assertThat(scfg?.successors).hasSameSizeAs(structure.successors)
     structure.successors.forEachIndexed { index, structureSuccessor ->
-        assertThatStructureMatches(structureSuccessor, scfg?.successors?.get(index))
+        if (structureSuccessor !is PreviousBranchNode)
+            assertThatStructureMatches(structureSuccessor, scfg?.successors?.get(index))
     }
 }
 
@@ -65,3 +103,6 @@ private fun entryNode(vararg nodes: Node) = EntryNode(nodes.toCollection(ArrayLi
 private fun exitNode(vararg nodes: Node) = ExitNode(nodes.toCollection(ArrayList()))
 private fun statementNode(vararg nodes: Node) = StatementNode(nodes.toCollection(ArrayList()))
 private fun branchNode(vararg nodes: Node) = BranchNode(nodes.toCollection(ArrayList()))
+private fun previousBranchNode() = PreviousBranchNode()
+
+private class PreviousBranchNode : Node()
