@@ -34,7 +34,7 @@ class InstructionGrouper(private val cfg: ControlFlowGraph) {
         }
 
         if (!isProcessableBlock(block)) {
-            block.edges.filter { it.dst != block }.forEach({ groupToStatements(it.dst, predecessor) })
+            block.edges.filter { it.dst != block }.forEach { groupToStatements(it.dst, predecessor) }
             return null
         }
 
@@ -48,7 +48,7 @@ class InstructionGrouper(private val cfg: ControlFlowGraph) {
 
         firstNodeOfVisitedBlocks[block] = first
 
-        block.edges.filter { it.dst != block }.forEach({ groupToStatements(it.dst, last) })
+        block.edges.filter { it.dst != block }.forEach { groupToStatements(it.dst, last) }
 
         return first
     }
