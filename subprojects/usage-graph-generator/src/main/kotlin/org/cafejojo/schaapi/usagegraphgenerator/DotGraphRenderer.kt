@@ -2,6 +2,9 @@ package org.cafejojo.schaapi.usagegraphgenerator
 
 /**
  * Creates DOT graph files of statement control flow graphs.
+ *
+ * @property name name of the graph.
+ * @property scfg statement control flow graph.
  */
 class DotGraphRenderer(private val name: String, private val scfg: Node) {
     private val result = StringBuilder()
@@ -9,6 +12,8 @@ class DotGraphRenderer(private val name: String, private val scfg: Node) {
 
     /**
      * Renders a scfg in DOT format.
+     *
+     * @return a scfg in DOT format.
      */
     fun render(): String {
         result.append("digraph \"$name()\" {\n")
