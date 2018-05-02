@@ -19,14 +19,14 @@ internal class ZipExtractorTest : Spek({
         }
 
         it("extracts an empty ZIP") {
-            val emptyZip = javaClass.getResourceAsStream("/zip/empty.zip")
+            val emptyZip = javaClass.getResourceAsStream("/ZipExtractor/empty.zip")
             ZipExtractor(emptyZip).extractTo(target)
 
             assertThat(target.listFiles()).isEmpty()
         }
 
         it("extracts a ZIP with only directories") {
-            val dirZip = javaClass.getResourceAsStream("/zip/dir.zip")
+            val dirZip = javaClass.getResourceAsStream("/ZipExtractor/dirs.zip")
             ZipExtractor(dirZip).extractTo(target)
 
             assertThat(target.resolve("dirA")).isDirectory()
@@ -36,7 +36,7 @@ internal class ZipExtractorTest : Spek({
         }
 
         it("extracts a ZIP with files and directories") {
-            val dirZip = javaClass.getResourceAsStream("/zip/files.zip")
+            val dirZip = javaClass.getResourceAsStream("/ZipExtractor/files.zip")
             ZipExtractor(dirZip).extractTo(target)
 
             assertThat(target.resolve("dirA")).isDirectory()
