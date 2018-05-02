@@ -31,7 +31,7 @@ internal class ProjectCompilerTest : Spek({
         val target = File("./test")
 
         beforeGroup {
-            MavenInstaller().installMaven(MAVEN_HOME)
+            MavenInstaller().installMaven(MavenInstaller.DEFAULT_MAVEN_HOME)
         }
 
         afterEachTest {

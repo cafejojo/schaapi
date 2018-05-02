@@ -14,7 +14,7 @@ fun main(args: Array<String>) {
         return
     }
 
-    MavenInstaller().installMaven(MAVEN_HOME)
+    MavenInstaller().installMaven(MavenInstaller.DEFAULT_MAVEN_HOME)
 
     val projectDir = File(args[0])
     val classes = ProjectCompiler(projectDir).compileProject()
@@ -54,7 +54,7 @@ class ProjectCompiler(private val projectDir: File) {
 
         val invoker = DefaultInvoker()
         invoker.setOutputHandler(null)
-        invoker.mavenHome = MAVEN_HOME
+        invoker.mavenHome = MavenInstaller.DEFAULT_MAVEN_HOME
 
         val result = invoker.execute(request)
         if (result.exitCode != 0) {
