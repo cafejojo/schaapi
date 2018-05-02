@@ -1,4 +1,4 @@
-#failFast: true
+failFast: true
 
 test-pattern:
   active: true
