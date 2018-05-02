@@ -36,7 +36,7 @@ internal fun BranchNode.getSingleSuccessorCopy(condition: Boolean, exitNode: Exi
  * @property exitNode the exit node of the method graph.
  */
 class PathEnumerator(
-    entryNode: EntryNode,
+    private val entryNode: EntryNode,
     private val exitNode: ExitNode
 ) {
     private val allPaths = mutableListOf<List<Node>>()
@@ -50,17 +50,17 @@ class PathEnumerator(
      * Enumerates all paths of the control flow graph.
      */
     fun enumerate(): List<List<Node>> {
-        recursivelyEnumerate()
+        recursivelyEnumerate(entryNode)
         return allPaths.toList()
     }
 
-    private fun recursivelyEnumerate() {
-        checkIfExitNodeIsReached()
-        visitSuccessors()
+    private fun recursivelyEnumerate(node: Node) {
+        checkIfExitNodeIsReached(node)
+        visitSuccessors(node)
     }
 
-    private fun checkIfExitNodeIsReached() {
-        val unvisitedSuccessors = visited.peek().successors.filter { hasBeenVisitedAtMostOnce(it) }
+    private fun checkIfExitNodeIsReached(node: Node) {
+        val unvisitedSuccessors = node.successors.filter { hasBeenVisitedAtMostOnce(it) }
 
         for (successor in unvisitedSuccessors) {
             if (successor == exitNode) {
@@ -72,14 +72,12 @@ class PathEnumerator(
         }
     }
 
-    private fun visitSuccessors() {
-        val successors = visited.peek().successors
-
-        successors
+    private fun visitSuccessors(node: Node) {
+        node.successors
             .filter { hasBeenVisitedAtMostOnce(it) && it != exitNode }
             .forEach {
                 visited.push(it)
-                recursivelyEnumerate()
+                recursivelyEnumerate(visited.peek())
                 visited.pop()
             }
     }
