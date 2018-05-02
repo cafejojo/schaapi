@@ -87,7 +87,7 @@ class PathEnumerator(
     private fun hasBeenVisitedAtMostOnce(node: Node) = visited.count { it == node } <= 1
 
     /**
-     * Replaces all branch path on the given [path] with single-branch alternatives.
+     * Replaces all branch paths on the given [path] with single-branch alternatives.
      *
      * @param path the path to be processed.
      * @return the pruned list of nodes.
