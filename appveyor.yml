@@ -13,7 +13,7 @@ init:
 build_script:
 - cmd: gradlew assemble
 test_script:
-- cmd: gradlew detektCheck --project-cache-dir=../cache check
+- cmd: gradlew detektCheck --project-cache-dir=../schaapi-cache check
 
 
 # Caching
