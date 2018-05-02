@@ -71,11 +71,15 @@ interface NodeId
  *
  * @property id [UUID] based node id.
  */
-data class UuidNodeId(val id: UUID = UUID.randomUUID()) : NodeId
+data class UuidNodeId(val id: UUID = UUID.randomUUID()) : NodeId {
+    override fun toString() = id.toString()
+}
 
 /**
  * Represents a custom integer based node id.
  *
  * @property id custom integer based node id.
  */
-data class CustomNodeId(val id: Int) : NodeId
+data class CustomNodeId(val id: Int) : NodeId {
+    override fun toString() = id.toString()
+}
