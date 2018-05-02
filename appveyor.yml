@@ -1,0 +1,20 @@
+version: "{branch}.{build}"
+
+
+# Environment
+environment:
+  JAVA_HOME: C:\Program Files\Java\jdk1.8.0
+
+init:
+- cmd: git config --global core.autocrlf true
+
+
+# Build
+build_script:
+- cmd: gradlew assemble
+test_script:
+- cmd: gradlew detektCheck --project-cache-dir=../schaapi-cache check
+
+
+# Caching
+cache: C:\Users\appveyor\.gradle
