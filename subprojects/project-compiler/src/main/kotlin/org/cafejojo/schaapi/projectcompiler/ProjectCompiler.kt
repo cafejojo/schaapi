@@ -50,7 +50,7 @@ class ProjectCompiler(private val projectDir: File) {
 
     private fun installMaven() {
         val zipStream = javaClass.getResourceAsStream("/maven/apache-maven-3.5.3-bin.zip")
-        ZipExtractor(zipStream).extract(mavenHome)
+        ZipExtractor(zipStream).extractTo(mavenHome)
     }
 
     private fun mavenInstall() {

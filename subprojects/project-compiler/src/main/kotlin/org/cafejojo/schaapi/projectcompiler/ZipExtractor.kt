@@ -4,8 +4,6 @@ import java.io.BufferedOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
-import java.nio.file.Files
-import java.nio.file.Path
 import java.util.zip.ZipInputStream
 
 /**
@@ -16,19 +14,7 @@ class ZipExtractor(private val zipStream: InputStream) {
      * Extracts the ZIP archive to [target].
      * @param target the location to extract the ZIP archive to
      */
-    fun extract(target: Path) {
-        if (!Files.exists(target) || !Files.isDirectory(target)) {
-            throw IllegalArgumentException("${target.toAbsolutePath()} is not a valid target directory")
-        }
-
-        extract(target.toFile())
-    }
-
-    /**
-     * Extracts the ZIP archive to [target].
-     * @param target the location to extract the ZIP archive to
-     */
-    fun extract(target: File) {
+    fun extractTo(target: File) {
         if (!target.exists() || !target.isDirectory) {
             target.mkdirs()
         }
