@@ -33,7 +33,7 @@ class ZipExtractor(private val zipStream: InputStream) {
             target.mkdirs()
         }
 
-        val buffer = Array<Byte>(1024, { 0 }).toByteArray()
+        val buffer = Array<Byte>(BUFFER_SIZE, { 0 }).toByteArray()
         val zis = ZipInputStream(zipStream)
 
         var entry = zis.nextEntry
@@ -62,5 +62,9 @@ class ZipExtractor(private val zipStream: InputStream) {
 
         zis.closeEntry()
         zis.close()
+    }
+
+    companion object {
+        internal const val BUFFER_SIZE = 1024
     }
 }

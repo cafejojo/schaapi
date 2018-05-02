@@ -10,14 +10,15 @@ import java.io.File
  */
 fun main(args: Array<String>) {
     if (args.size != 1) {
-        throw IllegalArgumentException("Invalid number of arguments")
+        print("Invalid number of arguments")
+        return
     }
 
     val projectDir = File(args[0])
     val classes = ProjectCompiler(projectDir).compileProject()
 
     println("Found ${classes.size} classes")
-    classes.forEach({ println(it.absolutePath) })
+    classes.forEach { println(it.absolutePath) }
 }
 
 /**
