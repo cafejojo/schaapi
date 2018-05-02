@@ -1,7 +1,7 @@
 package org.cafejojo.schaapi.usagegraphgenerator
 
 /**
- * Creates DOT graph files of statement control flow graphs.
+ * Creates DOT graphs of statement control flow graphs.
  *
  * @property name name of the graph.
  * @property scfg statement control flow graph.
