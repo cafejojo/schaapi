@@ -28,12 +28,14 @@ fun main(args: Array<String>) {
  * Compiles a project.
  */
 class ProjectCompiler(private val projectDir: File) {
-    private val pomFile = projectDir.resolve("pom.xml")
+    private val pomFile: File
 
     init {
         if (!projectDir.isDirectory) {
             throw IllegalArgumentException("Given project directory does not exist")
         }
+
+        pomFile = projectDir.resolve("pom.xml")
         if (!pomFile.isFile) {
             throw IllegalArgumentException("Given project directory is not a Maven project")
         }
@@ -50,13 +52,15 @@ class ProjectCompiler(private val projectDir: File) {
     }
 
     private fun runMavenInstall() {
-        val request = DefaultInvocationRequest()
-        request.pomFile = pomFile
-        request.goals = listOf("clean", "install")
+        val request = DefaultInvocationRequest().also {
+            it.pomFile = pomFile
+            it.goals = listOf("clean", "install")
+        }
 
-        val invoker = DefaultInvoker()
-        invoker.setOutputHandler(null)
-        invoker.mavenHome = MavenInstaller.DEFAULT_MAVEN_HOME
+        val invoker = DefaultInvoker().also {
+            it.setOutputHandler(null)
+            it.mavenHome = MavenInstaller.DEFAULT_MAVEN_HOME
+        }
 
         val result = invoker.execute(request)
         if (result.exitCode != 0) {

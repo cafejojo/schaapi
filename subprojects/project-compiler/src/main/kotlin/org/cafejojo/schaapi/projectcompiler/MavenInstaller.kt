@@ -18,6 +18,6 @@ class MavenInstaller {
     }
 
     companion object {
-        val DEFAULT_MAVEN_HOME = File(System.getProperty("user.home") + "/schaapi/maven")
+        val DEFAULT_MAVEN_HOME = File(System.getProperty("user.home") + "/.schaapi/maven")
     }
 }
