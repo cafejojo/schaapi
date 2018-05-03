@@ -85,7 +85,7 @@ internal class PatternDetectorTest : Spek({
             val path = listOf(node1, node2, node3)
 
             val paths = listOf(path)
-            val frequent = PatternDetector(paths).frequentPatterns(1)
+            val frequent = PatternDetector(paths).findFrequentPatterns(1)
 
             assertThat(frequent).hasSize(6)
             assertThat(frequent).contains(path)
@@ -108,7 +108,7 @@ internal class PatternDetectorTest : Spek({
             val path3 = listOf(node7, node8, node9, node10)
 
             val paths = listOf(path1, path2, path3)
-            val frequent = PatternDetector(paths).frequentPatterns(2)
+            val frequent = PatternDetector(paths).findFrequentPatterns(2)
 
             assertThat(frequent).hasSize(0)
         }
@@ -121,7 +121,7 @@ internal class PatternDetectorTest : Spek({
             val path = listOf(node1, node2, node3, node1, node2, node3)
 
             val paths = listOf(path)
-            val frequent = PatternDetector(paths).frequentPatterns(2)
+            val frequent = PatternDetector(paths).findFrequentPatterns(2)
 
             assertThat(frequent).contains(listOf(node1, node2, node3))
         }
@@ -143,7 +143,7 @@ internal class PatternDetectorTest : Spek({
             val path3 = listOf(node7, node8, node9, node10, node1, node2, node3)
 
             val paths = listOf(path1, path2, path3)
-            val frequent = PatternDetector(paths).frequentPatterns(2)
+            val frequent = PatternDetector(paths).findFrequentPatterns(2)
 
             assertThat(frequent).contains(path1)
         }
