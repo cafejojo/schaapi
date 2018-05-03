@@ -3,7 +3,7 @@ package org.cafejojo.schaapi.patterndetector
 import org.cafejojo.schaapi.usagegraphgenerator.Node
 
 /**
- * Aims to find all the frequent sequences of [Node]s in the given collection of paths.
+ * Finds all the frequent sequences of [Node]s in the given collection of paths.
  *
  * @property allPaths all paths in which patterns should be detected. Each path is a list of [Node]s.
  */
@@ -32,36 +32,38 @@ class PatternDetector(private val allPaths: Collection<List<Node>>) {
     }
 
     /**
-     * Finds all the frequent sequences of [Node]s in the given collection of paths set using the PrefixSpace algorithm
-     * by Pei et al. (2004).
+     * Finds frequent (sub)sequences of [Node]s using the PrefixSpan algorithm by Pei et al. (2004). The algorithm uses
+     * the 'divide and conquer' principle, and is partially inspired by the FP-tree structure used to mine sets of
+     * unordered items.
      *
-     * The algorithm operates on the 'divide and conquer' principle. During each iteration, a new prefix is generated
-     * based on the observed sequences and items in the ```frequent_item``` set. All suffixes of sequences which start
-     * with this prefix are then mined during the next call, with the suffix of a path being everything that follows the
-     * prefix.
+     * During each iteration, a new prefix is generated based on the current prefix and nodes observed to be frequent in
+     * the set of paths. If this prefix is observed in the set of paths it is added to the set of frequent sequences.
+     * After this, all suffixes of sequences which start with this prefix are then mined recursively, with the suffix of
+     * a sequence being everything that follows said prefix. This improves upon the a priori method by foregoing the
+     * need to generate candidate sequences during each iteration. A pseudocode representation is given below.
      *
      * ```
-     * Procedure PrefixSpace(all_paths, minimum_support)
+     * Procedure PrefixSpace(all_sequences, minimum_support)
      *   frequent_items = all nodes in all_paths with occurrence >= minimum_support
-     *   return PrefixSpace([], frequent_items, all_paths, [])
+     *   return PrefixSpace([], frequent_items, all_sequences, [])
      * EndProcedure
      *
-     * SubProcedure PrefixSpace(prefix, frequent_items, projected_paths, frequent_sequences)
+     * SubProcedure PrefixSpace(prefix, frequent_items, projected_sequences, frequent_sequences)
      *   for all item in frequent_items
-     *     if (prefix + item) in a path in projected_paths or
-     *        (prefix.last + item) in a path in projected_paths
+     *     if (prefix + item) in a path in projected_sequences or
+     *        (prefix.last + item) in a path in projected_sequences
      *
      *       new_prefix <- prefix + item
      *       frequent_sequences <- frequent_sequences U new_prefix
-     *       new_projected_paths <- empty_set
+     *       new_projected_sequences <- empty_set
      *
      *       for all sequence in projected_paths
      *         if item starts with prefix
-     *           new_projected_paths <- new_projected_paths U (item - prefix)
+     *           new_projected_sequences <- new_projected_paths U (item - prefix)
      *         end if
      *       end for
      *
-     *       PrefixSpace(new_prefix, frequent_items, new_projected_paths, frequent_sequences)
+     *       PrefixSpace(new_prefix, frequent_items, new_projected_sequences, frequent_sequences)
      *     end if
      *   end for
      *
@@ -69,8 +71,8 @@ class PatternDetector(private val allPaths: Collection<List<Node>>) {
      * SubEndProcedure
      * ```
      *
-     * @param initialMinimumCount the minimum amount of times a node must appear in ```all_paths``` for it to be
-     * considered a frequent item. These nodes are passed as the ```frequent_items``` argument in the above algorithm.
+     * @param initialMinimumCount the minimum amount of times a node must appear in the collection of sequences for it
+     * to be considered a frequent item. The found set of frequent items are used during the mining process.
      * @return the list of sequences, each a list of nodes, that are common within the given paths.
      */
     fun findFrequentPatterns(initialMinimumCount: Int) =
@@ -79,11 +81,11 @@ class PatternDetector(private val allPaths: Collection<List<Node>>) {
     private fun prefixSpace(
         prefix: List<Node> = emptyList(),
         frequentItems: Set<Node>,
-        projectedPaths: Collection<List<Node>> = allPaths,
+        projectedSequences: Collection<List<Node>> = allPaths,
         frequentSequences: MutableList<List<Node>> = mutableListOf()
     ): List<List<Node>> {
         frequentItems.forEach { frequentItem ->
-            val aPathContainsPrefixPlusFrequentItem = projectedPaths.any { path ->
+            val aPathContainsPrefixPlusFrequentItem = projectedSequences.any { path ->
                 pathContainsSequence(path, prefix + frequentItem) ||
                     prefix.isNotEmpty() && pathContainsSequence(path, listOf(prefix.last(), frequentItem))
             }
@@ -92,45 +94,28 @@ class PatternDetector(private val allPaths: Collection<List<Node>>) {
                 val newPrefix = prefix + frequentItem
                 frequentSequences += newPrefix
 
-                val newProjectedPaths: List<List<Node>> = createProjectedPaths(prefix, projectedPaths)
-                prefixSpace(newPrefix, frequentItems, newProjectedPaths, frequentSequences)
+                val newProjectedSequences: List<List<Node>> = extractSuffixes(prefix, projectedSequences)
+                prefixSpace(newPrefix, frequentItems, newProjectedSequences, frequentSequences)
             }
         }
 
         return frequentSequences
     }
 
-    /**
-     * Creates a projection of the projected Paths.
-     *
-     * A projection is a list of suffixes of all paths which contain the given prefix as a prefix. In this context, the
-     * suffix of a path is everything following the prefix of the path.
-     *
-     * @param prefix the prefix which a path should have.
-     * @param projectedPaths the list of paths which should be checked for said prefix.
-     * @return suffixes of paths with the given prefix.
-     */
-    private fun createProjectedPaths(prefix: List<Node>, projectedPaths: Collection<List<Node>>): List<List<Node>> {
-        val newProjectedPaths: MutableList<List<Node>> = mutableListOf()
+    private fun extractSuffixes(prefix: List<Node>, sequences: Collection<List<Node>>): List<List<Node>> {
+        val suffixes: MutableList<List<Node>> = mutableListOf()
 
-        projectedPaths.forEach { sequence ->
+        sequences.forEach { sequence ->
             val extractedPrefix = sequence.subList(0, prefix.size)
             if (extractedPrefix == prefix) {
                 val extractedSuffix = sequence.subList(prefix.size, sequence.size)
-                newProjectedPaths += extractedSuffix
+                suffixes += extractedSuffix
             }
         }
 
-        return newProjectedPaths
+        return suffixes
     }
 
-    /**
-     * Gives all nodes in the collection of paths which occur the given minimum amount of times. These length-1
-     * sequential patterns.
-     *
-     * @param minimumCount the minimum amount of times a node should occur.
-     * @return set of nodes which occur at least the given minimum amount of times.
-     */
     private fun getFrequentItems(minimumCount: Int): Set<Node> {
         val values: MutableMap<Node, Int> = HashMap()
         allPaths.forEach { sequence ->
