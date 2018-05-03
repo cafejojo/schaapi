@@ -85,7 +85,7 @@ class PatternDetector(private val allPaths: Collection<List<Node>>) {
         frequentItems.forEach { frequentItem ->
             val aPathContainsPrefixPlusFrequentItem = projectedPaths.any { path ->
                 pathContainsSequence(path, prefix + frequentItem) ||
-                    (prefix.isNotEmpty() && pathContainsSequence(path, listOf(prefix.last(), frequentItem)))
+                    prefix.isNotEmpty() && pathContainsSequence(path, listOf(prefix.last(), frequentItem))
             }
 
             if (aPathContainsPrefixPlusFrequentItem) {
