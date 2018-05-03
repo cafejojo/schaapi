@@ -7,6 +7,8 @@ comments:
 complexity:
   ComplexMethod:
     threshold: 16
+  StringLiteralDuplication:
+    active: false
 
 style:
   ReturnCount:
