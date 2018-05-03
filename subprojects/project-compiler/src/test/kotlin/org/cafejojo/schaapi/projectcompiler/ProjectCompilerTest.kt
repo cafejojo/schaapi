@@ -1,5 +1,6 @@
 package org.cafejojo.schaapi.projectcompiler
 
+import net.lingala.zip4j.core.ZipFile
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
@@ -39,8 +40,8 @@ internal class ProjectCompilerTest : Spek({
         }
 
         it("compiles codeless projects") {
-            val projectZip = javaClass.getResourceAsStream("/ProjectCompiler/no-sources.zip")
-            ZipExtractor(projectZip).extractTo(target)
+            val projectZip = javaClass.getResource("/ProjectCompiler/no-sources.zip")
+            ZipFile(projectZip.path).extractAll(target.absolutePath)
 
             val classFiles = ProjectCompiler(target).compileProject()
 
@@ -48,8 +49,8 @@ internal class ProjectCompilerTest : Spek({
         }
 
         it("compiles simple projects") {
-            val projectZip = javaClass.getResourceAsStream("/ProjectCompiler/simple.zip")
-            ZipExtractor(projectZip).extractTo(target)
+            val projectZip = javaClass.getResource("/ProjectCompiler/simple.zip")
+            ZipFile(projectZip.path).extractAll(target.absolutePath)
 
             val classFiles = ProjectCompiler(target).compileProject()
 
