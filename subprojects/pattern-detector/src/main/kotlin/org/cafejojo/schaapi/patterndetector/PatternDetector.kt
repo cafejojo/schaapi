@@ -8,6 +8,28 @@ import org.cafejojo.schaapi.usagegraphgenerator.Node
  * @param allPaths all paths in which patterns should be detected. Each path is a list of [Node]s.
  */
 class PatternDetector(private val allPaths: Collection<List<Node>>) {
+    companion object {
+        /**
+         * Checks whether a given sequence can be found withing a given path.
+         *
+         * @param path the path which may contain the given sequence.
+         * @param sequence the sequence which may be contained in path.
+         * @return true if path contains the given sequence.
+         */
+        internal fun pathContainsSequence(path: List<Node>, sequence: List<Node>): Boolean {
+            for (pathPos in 0 until path.size) {
+                for (patternPos in 0 until sequence.size) {
+                    if (pathPos + patternPos > path.size - 1 ||
+                        path[pathPos + patternPos] != sequence[patternPos]
+                    ) break
+
+                    if (patternPos == sequence.size - 1) return true
+                }
+            }
+
+            return false
+        }
+    }
 
     /**
      * Find all the frequent sequences of [Node]s in the given collection of paths set using the PrefixSpace algorithm
@@ -27,15 +49,16 @@ class PatternDetector(private val allPaths: Collection<List<Node>>) {
      *
      * SubProcedure PrefixSpace(prefix, frequent_items, projected_paths, frequent_sequences)
      *   for all item in frequent_items
-     *     if item is first node in path in projected_paths
+     *     if (prefix + item) in a path in projected_paths or
+     *        (prefix.last + item) in a path in projected_paths
      *
      *       new_prefix <- prefix + item
      *       frequent_sequences <- frequent_sequences U new_prefix
      *       new_projected_paths <- empty set
      *
      *       for all sequence in projected_paths
-     *         if item starts with new_prefix
-     *           new_projected_paths <- new_projected_paths U (item - new_prefix)
+     *         if item starts with prefix
+     *           new_projected_paths <- new_projected_paths U (item - prefix)
      *         end if
      *       end for
      *
@@ -60,16 +83,17 @@ class PatternDetector(private val allPaths: Collection<List<Node>>) {
         frequentSequences: MutableList<List<Node>> = mutableListOf()
     ): List<List<Node>> {
         frequentItems.forEach { frequentItem ->
-            if (projectedPaths.any { path -> path.first() == frequentItem }) {
+            if (projectedPaths.any { path -> pathContainsSequence(path, prefix + frequentItem) ||
+                prefix.isNotEmpty() &&
+                pathContainsSequence(path, listOf(prefix.last(), frequentItem)) }) {
                 val newPrefix = prefix + frequentItem
                 frequentSequences += newPrefix
 
                 val newProjectedPaths: MutableList<List<Node>> = mutableListOf()
                 projectedPaths.forEach { sequence ->
-                    val extractedPrefix = sequence.subList(0, newPrefix.size)
-
-                    if (extractedPrefix == newPrefix) {
-                        val extractedSuffix = sequence.subList(newPrefix.size, sequence.size)
+                    val extractedPrefix = sequence.subList(0, prefix.size)
+                    if (extractedPrefix == prefix) {
+                        val extractedSuffix = sequence.subList(prefix.size, sequence.size)
                         newProjectedPaths += extractedSuffix
                     }
                 }
