@@ -74,6 +74,16 @@ internal class PatternDetectorTest : Spek({
 
             assertThat(pathContainsSequence(path, listOf(node5, node4))).isFalse()
         }
+
+        it("it should not find a non-consecutive sequence that is not in a path") {
+            val node2 = EntryNode(id = CustomNodeId(2))
+            val node3 = EntryNode(id = CustomNodeId(3))
+            val node4 = EntryNode(id = CustomNodeId(4))
+            val node5 = EntryNode(id = CustomNodeId(5))
+            val path = listOf(node2, node3, node4, node5)
+
+            assertThat(pathContainsSequence(path, listOf(node2, node4, node5))).isFalse()
+        }
     }
 
     describe("detecting patterns in a set of paths") {

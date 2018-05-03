@@ -73,7 +73,8 @@ class PatternDetector(private val allPaths: Collection<List<Node>>) {
      * considered a frequent item. These nodes are passed as the ```frequent_items``` argument in the above algorithm.
      * @return the list of sequences, each a list of nodes, that are common within the given paths.
      */
-    fun findFrequentPatterns(initialMinimumCount: Int) = prefixSpace(frequentItems = getFrequentItems(initialMinimumCount))
+    fun findFrequentPatterns(initialMinimumCount: Int) =
+        prefixSpace(frequentItems = getFrequentItems(initialMinimumCount))
 
     private fun prefixSpace(
         prefix: List<Node> = emptyList(),
@@ -83,9 +84,8 @@ class PatternDetector(private val allPaths: Collection<List<Node>>) {
     ): List<List<Node>> {
         frequentItems.forEach { frequentItem ->
             val aPathContainsPrefixPlusFrequentItem = projectedPaths.any { path ->
-                pathContainsSequence(path, prefix + frequentItem) or
-                    prefix.isNotEmpty() and
-                    pathContainsSequence(path, listOf(prefix.last(), frequentItem))
+                pathContainsSequence(path, prefix + frequentItem) ||
+                    (prefix.isNotEmpty() && pathContainsSequence(path, listOf(prefix.last(), frequentItem)))
             }
 
             if (aPathContainsPrefixPlusFrequentItem) {
