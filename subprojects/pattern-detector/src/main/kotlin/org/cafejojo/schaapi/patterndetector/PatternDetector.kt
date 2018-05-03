@@ -31,13 +31,16 @@ class PatternDetector(private val allPaths: Collection<List<Node>>) {
         }
     }
 
+    private var frequentPatterns = emptyList<List<Node>>()
+    private var foundFrequentPatterns = false
+
     /**
      * Finds frequent (sub)sequences of [Node]s using the PrefixSpan algorithm by Pei et al. (2004). The algorithm uses
      * the 'divide and conquer' principle, and is partially inspired by the FP-tree structure used to mine sets of
      * unordered items.
      *
      * During each iteration, a new prefix is generated based on the current prefix and nodes observed to be frequent in
-     * the set of paths. If this prefix is observed in the set of paths it is added to the set of frequent sequences.
+     * the set of paths. If this prefix is observed in the set of paths it is added to the set of frequent patterns.
      * After this, all suffixes of sequences which start with this prefix are then mined recursively, with the suffix of
      * a sequence being everything that follows said prefix. This improves upon the a priori method by foregoing the
      * need to generate candidate sequences during each iteration. A pseudocode representation is given below.
@@ -71,12 +74,55 @@ class PatternDetector(private val allPaths: Collection<List<Node>>) {
      * SubEndProcedure
      * ```
      *
-     * @param initialMinimumCount the minimum amount of times a node must appear in the collection of sequences for it
-     * to be considered a frequent item. The found set of frequent items are used during the mining process.
-     * @return the list of sequences, each a list of nodes, that are common within the given paths.
+     * @return the list of patterns, each a list of nodes, that are common within [allSequences].
      */
-    fun findFrequentPatterns(initialMinimumCount: Int) =
-        prefixSpace(frequentItems = getFrequentItems(initialMinimumCount))
+    fun findFrequentPatterns(): List<List<Node>> {
+        frequentPatterns = prefixSpace(frequentItems = getFrequentItems(initialMinimumCount))
+        foundFrequentPatterns = true
+
+        return frequentPatterns
+    }
+
+    /**
+     * Creates a mapping from the found frequent patterns to a list of sequences of the passed [allSequences] which
+     * contain said pattern.
+     *
+     * If [findFrequentPatterns] has not been run before, this will be run first.
+     *
+     * @return a mapping from the frequent patterns to sequences which contain that pattern.
+     */
+    fun mapFrequentPatternsToSequences(): Map<List<Node>, List<List<Node>>> {
+        if (!foundFrequentPatterns) findFrequentPatterns()
+
+        val mapping = frequentPatterns.map { pattern -> Pair(pattern, mutableListOf<List<Node>>()) }.toMap()
+        allSequences.forEach { sequence ->
+            mapping.forEach { pattern, sequences ->
+                if (sequenceContainsPattern(sequence, pattern)) sequences.add(sequence)
+            }
+        }
+
+        return mapping
+    }
+
+    /**
+     * Creates a mapping from [allSequences] to the list of the found frequent patterns.
+     *
+     * If [findFrequentPatterns] has not been run before, this will be run first.
+     *
+     * @return a mapping from [allSequences] to the list of the found frequent patterns.
+     */
+    fun mapSequencesToFrequentPatterns(): Map<List<Node>, List<List<Node>>> {
+        if (!foundFrequentPatterns) findFrequentPatterns()
+
+        val mapping = allSequences.map { sequence -> Pair(sequence, mutableListOf<List<Node>>()) }.toMap()
+        allSequences.forEach { sequence ->
+            mapping.forEach { pattern, sequences ->
+                if (sequenceContainsPattern(sequence, pattern)) sequences.add(pattern)
+            }
+        }
+
+        return mapping
+    }
 
     private fun prefixSpace(
         prefix: List<Node> = emptyList(),
