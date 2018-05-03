@@ -1,6 +1,7 @@
 package org.cafejojo.schaapi.patterndetector
 
 import org.assertj.core.api.Assertions.assertThat
+import org.cafejojo.schaapi.patterndetector.PatternDetector.Companion.pathContainsSequence
 import org.cafejojo.schaapi.usagegraphgenerator.CustomNodeId
 import org.cafejojo.schaapi.usagegraphgenerator.EntryNode
 import org.cafejojo.schaapi.usagegraphgenerator.ExitNode
@@ -10,6 +11,71 @@ import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 
 internal class PatternDetectorTest : Spek({
+    describe("when looking for a pattern in a path") {
+        it("it should find a sequence in a path of length 1") {
+            val node1 = EntryNode(id = CustomNodeId(1))
+            val path = listOf(node1)
+
+            assertThat(pathContainsSequence(path, listOf(node1))).isTrue()
+        }
+
+        it("it should not find a sequence that isn't in the path") {
+            val node1 = EntryNode(id = CustomNodeId(1))
+            val node2 = EntryNode(id = CustomNodeId(2))
+            val path = listOf(node1)
+
+            assertThat(pathContainsSequence(path, listOf(node2))).isFalse()
+        }
+
+        it("it should find a sequence at the start of a path") {
+            val node1 = EntryNode(id = CustomNodeId(1))
+            val node2 = EntryNode(id = CustomNodeId(2))
+            val node3 = EntryNode(id = CustomNodeId(3))
+            val node4 = EntryNode(id = CustomNodeId(4))
+            val node5 = EntryNode(id = CustomNodeId(5))
+            val node6 = EntryNode(id = CustomNodeId(6))
+            val path = listOf(node1, node2, node3, node4, node5, node6)
+
+            assertThat(pathContainsSequence(path, listOf(node1, node2))).isTrue()
+        }
+
+        it("it should find a sequence in the middle of a path") {
+            val node1 = EntryNode(id = CustomNodeId(1))
+            val node2 = EntryNode(id = CustomNodeId(2))
+            val node3 = EntryNode(id = CustomNodeId(3))
+            val node4 = EntryNode(id = CustomNodeId(4))
+            val node5 = EntryNode(id = CustomNodeId(5))
+            val node6 = EntryNode(id = CustomNodeId(6))
+            val path = listOf(node1, node2, node3, node4, node5, node6)
+
+            assertThat(pathContainsSequence(path, listOf(node3, node4, node5))).isTrue()
+        }
+
+        it("it should find a sequence at the end of a path") {
+            val node1 = EntryNode(id = CustomNodeId(1))
+            val node2 = EntryNode(id = CustomNodeId(2))
+            val node3 = EntryNode(id = CustomNodeId(3))
+            val node4 = EntryNode(id = CustomNodeId(4))
+            val node5 = EntryNode(id = CustomNodeId(5))
+            val node6 = EntryNode(id = CustomNodeId(6))
+            val path = listOf(node1, node2, node3, node4, node5, node6)
+
+            assertThat(pathContainsSequence(path, listOf(node5, node6))).isTrue()
+        }
+
+        it("it should not find a out of order sequence that is not in a path") {
+            val node1 = EntryNode(id = CustomNodeId(1))
+            val node2 = EntryNode(id = CustomNodeId(2))
+            val node3 = EntryNode(id = CustomNodeId(3))
+            val node4 = EntryNode(id = CustomNodeId(4))
+            val node5 = EntryNode(id = CustomNodeId(5))
+            val node6 = EntryNode(id = CustomNodeId(6))
+            val path = listOf(node1, node2, node3, node4, node5, node6)
+
+            assertThat(pathContainsSequence(path, listOf(node5, node4))).isFalse()
+        }
+    }
+
     describe("detecting patterns in a set of paths") {
         it("should find the entire pattern in one path") {
             val node1 = EntryNode(id = CustomNodeId(1))
@@ -57,7 +123,6 @@ internal class PatternDetectorTest : Spek({
             val paths = listOf(path)
             val frequent = PatternDetector(paths).frequentPatterns(2)
 
-            assertThat(frequent).hasSize(6)
             assertThat(frequent).contains(listOf(node1, node2, node3))
         }
 
@@ -80,7 +145,6 @@ internal class PatternDetectorTest : Spek({
             val paths = listOf(path1, path2, path3)
             val frequent = PatternDetector(paths).frequentPatterns(2)
 
-            assertThat(frequent).hasSize(6)
             assertThat(frequent).contains(path1)
         }
     }
