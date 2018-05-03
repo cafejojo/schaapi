@@ -5,7 +5,6 @@ import org.cafejojo.schaapi.patterndetector.PatternDetector.Companion.sequenceCo
 import org.cafejojo.schaapi.usagegraphgenerator.CustomNodeId
 import org.cafejojo.schaapi.usagegraphgenerator.EntryNode
 import org.cafejojo.schaapi.usagegraphgenerator.ExitNode
-import org.cafejojo.schaapi.usagegraphgenerator.Node
 import org.cafejojo.schaapi.usagegraphgenerator.StatementNode
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
@@ -183,32 +182,6 @@ internal class PatternDetectorTest : Spek({
             val patterns = patternDetector.mapFrequentPatternsToSequences()
 
             assertThat(patterns[listOf(node1, node2, node3)]).isEqualTo(listOf(path1, path3))
-        }
-
-        it("should find a mapping from nodes to ") {
-            val node1 = EntryNode(id = CustomNodeId(1))
-            val node2 = StatementNode(id = CustomNodeId(2))
-            val node3 = ExitNode(id = CustomNodeId(3))
-            val node4 = EntryNode(id = CustomNodeId(4))
-            val node5 = StatementNode(id = CustomNodeId(5))
-            val node6 = ExitNode(id = CustomNodeId(6))
-            val node7 = EntryNode(id = CustomNodeId(7))
-            val node8 = StatementNode(id = CustomNodeId(8))
-            val node9 = StatementNode(id = CustomNodeId(9))
-            val node10 = ExitNode(id = CustomNodeId(10))
-
-            val path1 = listOf(node1, node2, node3)
-            val path2 = listOf(node4, node5, node6)
-            val path3 = listOf(node7, node8, node9, node10, node1, node2, node3)
-
-            val paths = listOf(path1, path2, path3)
-            val patternDetector = PatternDetector(paths, 2)
-
-            val patterns = patternDetector.mapSequencesToFrequentPatterns()
-
-            assertThat(patterns[path1]).isEqualTo(listOf(listOf(node1, node2, node3)))
-            assertThat(patterns[path2]).isEqualTo(emptyList<List<Node>>())
-            assertThat(patterns[path3]).isEqualTo(listOf(listOf(node1, node2, node3)))
         }
     }
 })
