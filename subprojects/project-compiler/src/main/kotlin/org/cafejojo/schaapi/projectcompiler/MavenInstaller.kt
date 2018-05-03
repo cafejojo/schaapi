@@ -15,6 +15,7 @@ class MavenInstaller {
     fun installMaven(path: File) {
         val zipStream = javaClass.getResource("/maven/apache-maven-3.5.3-bin.zip")
         ZipFile(zipStream.path).extractAll(path.absolutePath)
+        path.resolve("bin/mvn").setExecutable(true)
     }
 
     companion object {
