@@ -9,6 +9,7 @@ import java.io.File
 class MavenInstaller {
     /**
      * Installs Maven at [path].
+     *
      * @param path the directory to install Maven in
      */
     fun installMaven(path: File) {

@@ -6,6 +6,7 @@ import java.io.File
 
 /**
  * Takes the path to a Maven project, compiles it with Maven, and prints the paths to the class files that were created.
+ *
  * @param args the path to a Maven project
  */
 fun main(args: Array<String>) {
@@ -40,6 +41,7 @@ class ProjectCompiler(private val projectDir: File) {
 
     /**
      * Runs `maven install` and finds the class files that were created.
+     *
      * @return the class files that were created
      */
     fun compileProject(): List<File> {
