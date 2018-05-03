@@ -10,6 +10,16 @@ import java.io.File
 
 internal class ProjectCompilerTest : Spek({
     describe("project compiler errors") {
+        val target = File("test/")
+
+        beforeEachTest {
+            target.mkdirs()
+        }
+
+        afterEachTest {
+            target.deleteRecursively()
+        }
+
         it("detects non-existing directories") {
             assertThrows<IllegalArgumentException> {
                 ProjectCompiler(File("./invalid-path"))
@@ -17,14 +27,9 @@ internal class ProjectCompilerTest : Spek({
         }
 
         it("detects non-maven directories") {
-            val target = File("test/")
-            target.mkdirs()
-
             assertThrows<IllegalArgumentException> {
                 ProjectCompiler(target)
             }
-
-            target.delete()
         }
     }
 
@@ -50,6 +55,17 @@ internal class ProjectCompilerTest : Spek({
 
         it("compiles simple projects") {
             val projectZip = javaClass.getResource("/ProjectCompiler/simple.zip")
+            ZipFile(projectZip.path).extractAll(target.absolutePath)
+
+            val classFiles = ProjectCompiler(target).compileProject()
+
+            assertThat(classFiles).containsExactly(
+                target.resolve("target/classes/org/cafejojo/schaapi/test/MyClass.class")
+            )
+        }
+
+        it("compiles projects with dependencies") {
+            val projectZip = javaClass.getResource("/ProjectCompiler/dependencies.zip")
             ZipFile(projectZip.path).extractAll(target.absolutePath)
 
             val classFiles = ProjectCompiler(target).compileProject()

@@ -18,7 +18,7 @@ internal class MavenInstallerTest : Spek({
             target.deleteRecursively()
         }
 
-        it("should install Maven") {
+        it("installs Maven") {
             MavenInstaller().installMaven(target)
 
             assertThat(target.resolve("README.txt")).isFile()
@@ -26,11 +26,16 @@ internal class MavenInstallerTest : Spek({
             assertThat(target.resolve("bin/mvn.cmd")).isFile()
         }
 
-        it("should install Maven twice") {
+        it("repairs a broken Maven installation") {
             MavenInstaller().installMaven(target)
+            val oldReadMeContent = target.resolve("README.txt").readText()
+
+            target.resolve("README.txt").writeText("")
+            target.resolve("bin/mvn").delete()
+
             MavenInstaller().installMaven(target)
 
-            assertThat(target.resolve("README.txt")).isFile()
+            assertThat(target.resolve("README.txt")).hasContent(oldReadMeContent)
             assertThat(target.resolve("bin/mvn")).isFile()
             assertThat(target.resolve("bin/mvn.cmd")).isFile()
         }
