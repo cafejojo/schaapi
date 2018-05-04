@@ -43,27 +43,27 @@ class PatternDetector(private val allPaths: Collection<List<Node>>) {
      * need to generate candidate sequences during each iteration. A pseudocode representation is given below.
      *
      * ```
-     * Procedure PrefixSpace(all_sequences, minimum_support)
+     * Procedure PrefixSpace(all_paths, minimum_support)
      *   frequent_items = all nodes in all_paths with occurrence >= minimum_support
-     *   return PrefixSpace([], frequent_items, all_sequences, [])
+     *   return PrefixSpace([], frequent_items, all_paths, [])
      * EndProcedure
      *
-     * SubProcedure PrefixSpace(prefix, frequent_items, projected_sequences, frequent_sequences)
+     * SubProcedure PrefixSpace(prefix, frequent_items, projected_paths, frequent_sequences)
      *   for all item in frequent_items
-     *     if (prefix + item) in a path in projected_sequences or
-     *        (prefix.last + item) in a path in projected_sequences
+     *     if (prefix + item) in a path in projected_paths or
+     *        (prefix.last + item) in a path in projected_paths
      *
      *       new_prefix <- prefix + item
      *       frequent_sequences <- frequent_sequences U new_prefix
-     *       new_projected_sequences <- empty_set
+     *       new_projected_paths <- empty_set
      *
      *       for all sequence in projected_paths
      *         if item starts with prefix
-     *           new_projected_sequences <- new_projected_paths U (item - prefix)
+     *           new_projected_paths <- new_projected_paths U (item - prefix)
      *         end if
      *       end for
      *
-     *       PrefixSpace(new_prefix, frequent_items, new_projected_sequences, frequent_sequences)
+     *       PrefixSpace(new_prefix, frequent_items, new_projected_paths, frequent_sequences)
      *     end if
      *   end for
      *
@@ -81,11 +81,11 @@ class PatternDetector(private val allPaths: Collection<List<Node>>) {
     private fun prefixSpace(
         prefix: List<Node> = emptyList(),
         frequentItems: Set<Node>,
-        projectedSequences: Collection<List<Node>> = allPaths,
+        projectedPaths: Collection<List<Node>> = allPaths,
         frequentSequences: MutableList<List<Node>> = mutableListOf()
     ): List<List<Node>> {
         frequentItems.forEach { frequentItem ->
-            val aPathContainsPrefixPlusFrequentItem = projectedSequences.any { path ->
+            val aPathContainsPrefixPlusFrequentItem = projectedPaths.any { path ->
                 pathContainsSequence(path, prefix + frequentItem) ||
                     prefix.isNotEmpty() && pathContainsSequence(path, listOf(prefix.last(), frequentItem))
             }
@@ -94,7 +94,7 @@ class PatternDetector(private val allPaths: Collection<List<Node>>) {
                 val newPrefix = prefix + frequentItem
                 frequentSequences += newPrefix
 
-                val newProjectedSequences: List<List<Node>> = extractSuffixes(prefix, projectedSequences)
+                val newProjectedSequences: List<List<Node>> = extractSuffixes(prefix, projectedPaths)
                 prefixSpace(newPrefix, frequentItems, newProjectedSequences, frequentSequences)
             }
         }
@@ -118,13 +118,10 @@ class PatternDetector(private val allPaths: Collection<List<Node>>) {
 
     private fun getFrequentItems(minimumCount: Int): Set<Node> {
         val values: MutableMap<Node, Int> = HashMap()
-        allPaths.forEach { sequence ->
-            sequence.forEach { node -> values[node] = values[node]?.inc() ?: 1 }
+        allPaths.forEach { path ->
+            path.forEach { node -> values[node] = values[node]?.inc() ?: 1 }
         }
 
-        val items: MutableSet<Node> = HashSet()
-        values.forEach { node, amount -> if (amount >= minimumCount) items += node }
-
-        return items
+        return values.filter { (_, amount) -> amount >= minimumCount }.keys
     }
 }
