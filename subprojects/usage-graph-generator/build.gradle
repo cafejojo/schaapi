@@ -13,4 +13,6 @@ dependencies {
 
     // TODO: Find usages and remove this library
     compile group: "commons-lang", name: "commons-lang", version: commonsLangVersion
+
+    compile project(":common")
 }
