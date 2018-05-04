@@ -179,6 +179,7 @@ internal class PatternDetectorTest : Spek({
             val paths = listOf(path1, path2, path3)
             val patternDetector = PatternDetector(paths, 2)
 
+            patternDetector.findFrequentSequences()
             val patterns = patternDetector.mapFrequentSequencesToPaths()
 
             assertThat(patterns[listOf(node1, node2, node3)]).isEqualTo(listOf(path1, path3))

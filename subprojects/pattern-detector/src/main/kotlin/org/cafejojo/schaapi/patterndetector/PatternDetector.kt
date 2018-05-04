@@ -32,13 +32,13 @@ class PatternDetector(private val allPaths: Collection<List<Node>>, private val 
             return false
         }
 
-        private fun extractSuffixes(prefix: List<Node>, sequences: Collection<List<Node>>): List<List<Node>> {
+        private fun extractSuffixes(prefix: List<Node>, paths: Collection<List<Node>>): List<List<Node>> {
             val suffixes: MutableList<List<Node>> = mutableListOf()
 
-            sequences.forEach { sequence ->
-                val extractedPrefix = sequence.subList(0, prefix.size)
+            paths.forEach { path ->
+                val extractedPrefix = path.subList(0, prefix.size)
                 if (extractedPrefix == prefix) {
-                    val extractedSuffix = sequence.subList(prefix.size, sequence.size)
+                    val extractedSuffix = path.subList(prefix.size, path.size)
                     suffixes += extractedSuffix
                 }
             }
@@ -100,11 +100,11 @@ class PatternDetector(private val allPaths: Collection<List<Node>>, private val 
     }
 
     /**
-     * Creates a mapping from the found frequent patterns to [allPaths] which contain said pattern.
+     * Creates a mapping from the found frequent patterns to [allPaths] which contain said sequence.
      *
      * If [findFrequentSequences] has not been run before, the resulting map will not contain any keys.
      *
-     * @return a mapping from the frequent patterns to sequences which contain said pattern.
+     * @return a mapping from the frequent patterns to sequences which contain said sequence.
      */
     fun mapFrequentSequencesToPaths(): Map<List<Node>, List<List<Node>>> {
         return frequentSequences.map { sequence ->
@@ -130,11 +130,11 @@ class PatternDetector(private val allPaths: Collection<List<Node>>, private val 
     }
 
     private fun generateFrequentItems(minimumCount: Int) {
-        val values: MutableMap<Node, Int> = HashMap()
+        val nodeCounts: MutableMap<Node, Int> = HashMap()
         allPaths.forEach { path ->
-            path.forEach { node -> values[node] = values[node]?.inc() ?: 1 }
+            path.forEach { node -> nodeCounts[node] = nodeCounts[node]?.inc() ?: 1 }
         }
 
-        frequentItems.addAll(values.filter { (_, amount) -> amount >= minimumCount }.keys)
+        frequentItems.addAll(nodeCounts.filter { (_, amount) -> amount >= minimumCount }.keys)
     }
 }
