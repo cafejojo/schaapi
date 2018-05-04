@@ -6,11 +6,6 @@ repositories {
 
 dependencies {
     compile group: "ca.mcgill.sable", name: "soot", version: "3.1.0"
-    compile group: "org.ow2.asm", name: "asm", version: asmVersion
-    compile group: "org.ow2.asm", name: "asm-util", version: asmVersion
-
-    // TODO: Find usages and remove this library
-    compile group: "commons-lang", name: "commons-lang", version: commonsLangVersion
 
     compile project(":common")
 }
