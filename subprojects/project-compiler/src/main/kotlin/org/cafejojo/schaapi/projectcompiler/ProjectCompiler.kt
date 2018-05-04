@@ -46,14 +46,14 @@ class ProjectCompiler {
      * @param project the directory to run Maven in
      */
     private fun runMaven(project: Project) {
-        val request = DefaultInvocationRequest().also {
-            it.pomFile = project.pomFile
-            it.goals = listOf("clean", "install", "dependency:copy-dependencies")
+        val request = DefaultInvocationRequest().apply {
+            pomFile = project.pomFile
+            goals = listOf("clean", "install", "dependency:copy-dependencies")
         }
 
-        val invoker = DefaultInvoker().also {
-            it.setOutputHandler(null)
-            it.mavenHome = MavenInstaller.DEFAULT_MAVEN_HOME
+        val invoker = DefaultInvoker().apply {
+            setOutputHandler(null)
+            mavenHome = MavenInstaller.DEFAULT_MAVEN_HOME
         }
 
         val result = invoker.execute(request)
@@ -94,12 +94,12 @@ data class Project(val projectDir: File) {
      */
     val classpath: String
         get() {
-            return if (dependencies.isEmpty()) {
-                classDir.absolutePath
-            } else {
-                classDir.absolutePath + File.pathSeparator +
-                    dependencies.joinToString(File.pathSeparator) { dependency -> dependency.absolutePath }
+            if (dependencies.isEmpty()) {
+                return classDir.absolutePath
             }
+
+            return classDir.absolutePath + File.pathSeparator +
+                dependencies.joinToString(File.pathSeparator) { it.absolutePath }
         }
 
     init {

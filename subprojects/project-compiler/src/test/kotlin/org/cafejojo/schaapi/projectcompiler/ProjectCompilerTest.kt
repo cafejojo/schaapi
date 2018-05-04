@@ -12,10 +12,6 @@ internal class ProjectCompilerTest : Spek({
     describe("project compiler errors") {
         val target = File("test/")
 
-        beforeEachTest {
-            target.mkdirs()
-        }
-
         afterEachTest {
             target.deleteRecursively()
         }
