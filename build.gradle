@@ -89,6 +89,7 @@ allprojects {
 
 apply from: "gradle/detekt.gradle"
 
+apply plugin: "application"
 
 // Root project config
 mainClassName = "org.cafejojo.schaapi.SchaapiKt"
