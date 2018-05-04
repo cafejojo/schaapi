@@ -27,4 +27,5 @@ test-pattern:
     - "comments"
   exclude-rules:
     - "MagicNumber"
+    - "StringLiteralDuplication"
     - "TooManyFunctions"
