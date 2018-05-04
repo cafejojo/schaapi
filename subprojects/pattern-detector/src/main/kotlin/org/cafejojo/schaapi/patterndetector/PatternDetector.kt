@@ -108,18 +108,16 @@ class PatternDetector(private val allPaths: Collection<List<Node>>, private val 
      * Creates a mapping from the found frequent patterns to [allPaths] which contain said pattern.
      *
      * If [findFrequentSequences] has not been run before, this will be run first. Otherwise, the found frequent
-     * sequences will be used.
+     * patterns will be used for mapping.
      *
-     * @return a mapping from the frequent patterns to sequences which contain that pattern.
+     * @return a mapping from the frequent patterns to sequences which contain said pattern.
      */
     fun mapFrequentPatternsToSequences(): Map<List<Node>, List<List<Node>>> {
         findFrequentSequences()
 
         val mapping = frequentSequences.map { sequence -> Pair(sequence, mutableListOf<List<Node>>()) }.toMap()
-        allPaths.forEach { path ->
-            mapping.forEach { sequence, paths ->
-                if (pathContainsSequence(path, sequence)) paths.add(path)
-            }
+        mapping.forEach {
+            sequence, paths -> paths.addAll(allPaths.filter { path -> pathContainsSequence(path, sequence) })
         }
 
         return mapping
