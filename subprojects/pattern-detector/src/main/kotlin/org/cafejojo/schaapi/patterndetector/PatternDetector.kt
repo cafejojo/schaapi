@@ -106,9 +106,10 @@ class PatternDetector(private val allPaths: Collection<List<Node>>, private val 
      *
      * @return a mapping from the frequent patterns to sequences which contain said sequence.
      */
-    fun mapFrequentSequencesToPaths(): Map<List<Node>, List<List<Node>>> = frequentSequences.map { sequence ->
-        Pair(sequence, allPaths.filter { path -> pathContainsSequence(path, sequence) })
-    }.toMap()
+    fun mapFrequentSequencesToPaths(): Map<List<Node>, List<List<Node>>> =
+        frequentSequences.map { sequence ->
+            Pair(sequence, allPaths.filter { pathContainsSequence(it, sequence) })
+        }.toMap()
 
     private fun runPrefixSpace(prefix: List<Node> = emptyList(), projectedPaths: Collection<List<Node>> = allPaths) {
         frequentItems.forEach { frequentItem ->
