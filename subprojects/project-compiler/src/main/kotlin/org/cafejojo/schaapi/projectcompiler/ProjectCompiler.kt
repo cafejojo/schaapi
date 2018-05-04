@@ -18,43 +18,37 @@ fun main(args: Array<String>) {
     MavenInstaller().installMaven(MavenInstaller.DEFAULT_MAVEN_HOME)
 
     val projectDir = File(args[0])
-    val classes = ProjectCompiler(projectDir).compileProject()
+    val project = ProjectCompiler().compileProject(projectDir)
 
-    println("Found ${classes.size} classes")
-    classes.forEach { println(it.absolutePath) }
+    println(project)
 }
 
 /**
- * Compiles a project.
+ * Compiles projects with Maven.
  */
-class ProjectCompiler(private val projectDir: File) {
-    private val pomFile: File
+class ProjectCompiler {
+    /**
+     * Runs Maven in [projectDir] and returns the [Project] that is created.
+     *
+     * @param projectDir the directory of the project to compile
+     * @return the [Project] that is created
+     */
+    fun compileProject(projectDir: File): Project {
+        val project = Project(projectDir)
 
-    init {
-        if (!projectDir.isDirectory) {
-            throw IllegalArgumentException("Given project directory does not exist")
-        }
+        runMaven(project)
 
-        pomFile = projectDir.resolve("pom.xml")
-        if (!pomFile.isFile) {
-            throw IllegalArgumentException("Given project directory is not a Maven project")
-        }
+        return project
     }
 
     /**
-     * Runs `maven install` and finds the class files that were created.
-     *
-     * @return the class files that were created
+     * Using Maven, cleans the project, compiles the source, and downloads the dependencies as JARs.
+     * @param project the directory to run Maven in
      */
-    fun compileProject(): List<File> {
-        runMavenInstall()
-        return findClassFiles()
-    }
-
-    private fun runMavenInstall() {
+    private fun runMaven(project: Project) {
         val request = DefaultInvocationRequest().also {
-            it.pomFile = pomFile
-            it.goals = listOf("clean", "install")
+            it.pomFile = project.pomFile
+            it.goals = listOf("clean", "install", "dependency:copy-dependencies")
         }
 
         val invoker = DefaultInvoker().also {
@@ -67,14 +61,57 @@ class ProjectCompiler(private val projectDir: File) {
             throw ProjectCompilationException("`maven install` executed unsuccessfully")
         }
     }
+}
 
-    private fun findClassFiles(): List<File> {
-        val classDir = File(projectDir, "target/classes")
-        if (!classDir.isDirectory) {
-            throw ProjectCompilationException("Could not find `target/classes` directory after running `maven install`")
+/**
+ * A compiled Maven project.
+ */
+data class Project(val projectDir: File) {
+    /**
+     * The Maven configuration file.
+     */
+    val pomFile = File(projectDir, "pom.xml")
+    /**
+     * The directory containing the project's compiled class files.
+     */
+    val classDir = File(projectDir, "target/classes")
+    /**
+     * The directory containing the project's dependencies as JARs.
+     */
+    val dependencyDir = File(projectDir, "target/dependency")
+    /**
+     * The project's compiled class files.
+     */
+    val classes: List<File>
+        get() = classDir.walk().filter { it.isFile && it.extension == "class" }.toList()
+    /**
+     * The project's dependencies as JARs.
+     */
+    val dependencies: List<File>
+        get() = dependencyDir.listFiles().orEmpty().toList()
+    /**
+     * The classpath needed to load the complete project.
+     */
+    val classpath: String
+        get() {
+            return if (dependencies.isEmpty()) {
+                classDir.absolutePath
+            } else {
+                classDir.absolutePath + File.pathSeparator +
+                    dependencies.joinToString(File.pathSeparator) { dependency -> dependency.absolutePath }
+            }
         }
 
-        return classDir.walk().filter { it.isFile && it.extension == "class" }.toList()
+    init {
+        if (!projectDir.isDirectory) {
+            throw IllegalArgumentException("Given project directory does not exist")
+        }
+        if (!pomFile.isFile) {
+            throw IllegalArgumentException("Given project directory is not a Maven project")
+        }
+
+        classDir.mkdirs()
+        dependencyDir.mkdirs()
     }
 }
 

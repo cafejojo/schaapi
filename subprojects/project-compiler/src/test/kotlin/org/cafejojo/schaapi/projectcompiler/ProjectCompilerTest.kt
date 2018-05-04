@@ -22,13 +22,13 @@ internal class ProjectCompilerTest : Spek({
 
         it("detects non-existing directories") {
             assertThrows<IllegalArgumentException> {
-                ProjectCompiler(File("./invalid-path"))
+                ProjectCompiler().compileProject(File("./invalid-path"))
             }
         }
 
         it("detects non-maven directories") {
             assertThrows<IllegalArgumentException> {
-                ProjectCompiler(target)
+                ProjectCompiler().compileProject(target)
             }
         }
     }
@@ -48,19 +48,29 @@ internal class ProjectCompilerTest : Spek({
             val projectZip = javaClass.getResource("/ProjectCompiler/no-sources.zip")
             ZipFile(projectZip.path).extractAll(target.absolutePath)
 
-            val classFiles = ProjectCompiler(target).compileProject()
+            val project = ProjectCompiler().compileProject(target)
 
-            assertThat(classFiles).isEmpty()
+            assertThat(project.projectDir).isEqualTo(target)
+            assertThat(project.classes).isEmpty()
+            assertThat(project.dependencies).isEmpty()
+            assertThat(project.classpath.split(File.pathSeparator)).containsExactlyInAnyOrder(
+                target.resolve("target/classes").absolutePath
+            )
         }
 
         it("compiles simple projects") {
             val projectZip = javaClass.getResource("/ProjectCompiler/simple.zip")
             ZipFile(projectZip.path).extractAll(target.absolutePath)
 
-            val classFiles = ProjectCompiler(target).compileProject()
+            val project = ProjectCompiler().compileProject(target)
 
-            assertThat(classFiles).containsExactly(
+            assertThat(project.projectDir).isEqualTo(target)
+            assertThat(project.classes).containsExactlyInAnyOrder(
                 target.resolve("target/classes/org/cafejojo/schaapi/test/MyClass.class")
+            )
+            assertThat(project.dependencies).isEmpty()
+            assertThat(project.classpath.split(File.pathSeparator)).containsExactlyInAnyOrder(
+                target.resolve("target/classes").absolutePath
             )
         }
 
@@ -68,10 +78,18 @@ internal class ProjectCompilerTest : Spek({
             val projectZip = javaClass.getResource("/ProjectCompiler/dependencies.zip")
             ZipFile(projectZip.path).extractAll(target.absolutePath)
 
-            val classFiles = ProjectCompiler(target).compileProject()
+            val project = ProjectCompiler().compileProject(target)
 
-            assertThat(classFiles).containsExactly(
+            assertThat(project.projectDir).isEqualTo(target)
+            assertThat(project.classes).containsExactlyInAnyOrder(
                 target.resolve("target/classes/org/cafejojo/schaapi/test/MyClass.class")
+            )
+            assertThat(project.dependencies).containsExactlyInAnyOrder(
+                target.resolve("target/dependency/zip4j-1.3.2.jar")
+            )
+            assertThat(project.classpath.split(File.pathSeparator)).containsExactlyInAnyOrder(
+                target.resolve("target/classes").absolutePath,
+                target.resolve("target/dependency").resolve("zip4j-1.3.2.jar").absolutePath
             )
         }
     }
