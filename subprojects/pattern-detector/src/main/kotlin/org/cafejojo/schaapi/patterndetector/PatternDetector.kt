@@ -18,12 +18,12 @@ class PatternDetector(private val allPaths: Collection<List<Node>>) {
          */
         internal fun pathContainsSequence(path: List<Node>, sequence: List<Node>): Boolean {
             for (pathPos in 0 until path.size) {
-                for (patternPos in 0 until sequence.size) {
-                    if (pathPos + patternPos > path.size - 1 ||
-                        path[pathPos + patternPos] != sequence[patternPos]
-                    ) break
+                for (sequencePos in 0 until sequence.size) {
+                    val endOfPathOrNodeUnequal =
+                        pathPos + sequencePos > path.size - 1 || path[pathPos + sequencePos] != sequence[sequencePos]
 
-                    if (patternPos == sequence.size - 1) return true
+                    if (endOfPathOrNodeUnequal) break
+                    if (sequencePos == sequence.size - 1) return true
                 }
             }
 
