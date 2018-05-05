@@ -16,7 +16,6 @@ buildscript {
 allprojects {
     /// Plugins
     // Compilation
-    apply plugin: "application"
     apply plugin: "java"
     apply plugin: "kotlin"
 
