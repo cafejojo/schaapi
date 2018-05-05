@@ -2,11 +2,10 @@ package org.cafejojo.schaapi.projectcompiler
 
 import java.io.File
 
-
 /**
  * A Maven project.
  */
-data class Project(val projectDir: File) {
+class Project(val projectDir: File) {
     /**
      * The Maven configuration file.
      */
