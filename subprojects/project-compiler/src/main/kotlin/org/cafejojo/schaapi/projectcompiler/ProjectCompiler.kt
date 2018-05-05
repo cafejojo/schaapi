@@ -64,58 +64,6 @@ class ProjectCompiler {
 }
 
 /**
- * A compiled Maven project.
- */
-data class Project(val projectDir: File) {
-    /**
-     * The Maven configuration file.
-     */
-    val pomFile = File(projectDir, "pom.xml")
-    /**
-     * The directory containing the project's compiled class files.
-     */
-    val classDir = File(projectDir, "target/classes")
-    /**
-     * The directory containing the project's dependencies as JARs.
-     */
-    val dependencyDir = File(projectDir, "target/dependency")
-    /**
-     * The project's compiled class files.
-     */
-    val classes: List<File>
-        get() = classDir.walk().filter { it.isFile && it.extension == "class" }.toList()
-    /**
-     * The project's dependencies as JARs.
-     */
-    val dependencies: List<File>
-        get() = dependencyDir.listFiles().orEmpty().toList()
-    /**
-     * The classpath needed to load the complete project.
-     */
-    val classpath: String
-        get() {
-            if (dependencies.isEmpty()) {
-                return classDir.absolutePath
-            }
-
-            return classDir.absolutePath + File.pathSeparator +
-                dependencies.joinToString(File.pathSeparator) { it.absolutePath }
-        }
-
-    init {
-        if (!projectDir.isDirectory) {
-            throw IllegalArgumentException("Given project directory does not exist")
-        }
-        if (!pomFile.isFile) {
-            throw IllegalArgumentException("Given project directory is not a Maven project")
-        }
-
-        classDir.mkdirs()
-        dependencyDir.mkdirs()
-    }
-}
-
-/**
  * Indicates that the compilation of a project was unsuccessful.
  */
 class ProjectCompilationException(message: String? = null) : Exception(message)
