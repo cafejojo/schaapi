@@ -14,15 +14,21 @@ buildscript {
 
 // Shared config
 allprojects {
-    // Plugins
+    /// Plugins
+    // Compilation
     apply plugin: "application"
     apply plugin: "java"
     apply plugin: "kotlin"
-    apply plugin: "com.diffplug.gradle.spotless"
 
-    // Dependencies
+    // Static analysis
+    apply plugin: "com.diffplug.gradle.spotless"
+    apply plugin: "jacoco"
+
+
+    /// Dependencies
     repositories {
         mavenCentral()
+        maven { url "https://plugins.gradle.org/m2/" }
     }
 
     dependencies {
@@ -35,7 +41,9 @@ allprojects {
         testCompile group: "org.junit.jupiter", name: "junit-jupiter-engine", version: junitVersion
     }
 
-    // Tasks
+
+    /// Configuration
+    // Kotlin
     compileKotlin {
         kotlinOptions.jvmTarget = "1.8"
     }
@@ -43,15 +51,37 @@ allprojects {
         kotlinOptions.jvmTarget = "1.8"
     }
 
+    // JUnit / Spek
     test {
         useJUnitPlatform() {
             includeEngines "spek"
         }
     }
 
+    // Spotless
     spotless {
         kotlin {
             ktlint()
+        }
+    }
+
+    // Jacoco
+    test {
+        jacoco {
+            append = true
+            destinationFile = file("$rootProject.buildDir/jacoco/test.exec")
+        }
+    }
+
+    jacocoTestReport {
+        additionalSourceDirs = files(sourceSets.main.allSource.srcDirs)
+        sourceDirectories = files(sourceSets.main.allSource.srcDirs)
+        classDirectories = files(sourceSets.main.output)
+
+        reports {
+            csv.enabled = false
+            html.enabled = true
+            xml.enabled = true
         }
     }
 }
@@ -62,3 +92,26 @@ apply from: "gradle/detekt.gradle"
 
 // Root project config
 mainClassName = "org.cafejojo.schaapi.SchaapiKt"
+
+// Jacoco report combining all reports
+task jacocoRootReport(type: JacocoReport) {
+    dependsOn = allprojects.test
+    additionalSourceDirs = files(allprojects.sourceSets.main.allSource.srcDirs)
+    sourceDirectories = files(allprojects.sourceSets.main.allSource.srcDirs)
+    classDirectories = files(allprojects.sourceSets.main.output)
+    executionData = files(allprojects.jacocoTestReport.executionData)
+
+    reports {
+        html.enabled = true
+        xml.enabled = true
+        csv.enabled = false
+    }
+
+    doFirst {
+        executionData = files(executionData.findAll {
+            it.exists()
+        })
+    }
+
+    onlyIf = { true }
+}
