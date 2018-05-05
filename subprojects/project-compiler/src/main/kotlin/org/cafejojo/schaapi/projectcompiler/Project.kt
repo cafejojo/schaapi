@@ -53,4 +53,17 @@ data class Project(val projectDir: File) {
         classDir.mkdirs()
         dependencyDir.mkdirs()
     }
+
+    /**
+     * Returns true if the given class is part of this project.
+     *
+     * @param className the name of a class, including the package
+     */
+    fun containsClass(className: String): Boolean =
+        classes
+            .map { it.relativeTo(classDir) }
+            .map { it.toString() }
+            .map { it.dropLast(".class".length) }
+            .map { it.replace(File.separatorChar, '.') }
+            .contains(className)
 }
