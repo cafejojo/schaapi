@@ -115,7 +115,7 @@ internal class JavaMavenProjectTest : Spek({
             val project = JavaMavenProject(target)
             project.compile()
 
-            assertThat(project.containsClass("MyClass")).isFalse()
+            assertThat(project.containsClass("org.cafejojo.schaapi.test.MyClass")).isTrue()
         }
 
         it("is specific about packages") {
