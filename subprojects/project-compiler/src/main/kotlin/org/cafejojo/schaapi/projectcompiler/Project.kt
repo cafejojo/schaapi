@@ -58,11 +58,13 @@ class Project(val projectDir: File) {
      *
      * @param className the name of a class, including the package
      */
-    fun containsClass(className: String): Boolean =
+    fun containsClass(className: String) =
         classes
-            .map { it.relativeTo(classDir) }
-            .map { it.toString() }
-            .map { it.dropLast(".class".length) }
-            .map { it.replace(File.separatorChar, '.') }
+            .map {
+                it.relativeTo(classDir)
+                    .toString()
+                    .dropLast(".class".length)
+                    .replace(File.separatorChar, '.')
+            }
             .contains(className)
 }
