@@ -41,9 +41,11 @@ internal class StatementFilterTest : Spek({
         }
 
         it("filters if statements") {
+            // todo
         }
 
         it("filters switch statements") {
+            // todo
         }
 
         it("filters invoke statements") {

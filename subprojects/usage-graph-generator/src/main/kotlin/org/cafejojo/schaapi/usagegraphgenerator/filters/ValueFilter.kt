@@ -86,7 +86,7 @@ object ValueFilter {
         else -> throwUnrecognizedValue(immediate)
     }
 
-    private fun isLibraryClass(className: String) = className.startsWith("testclasses.library")
+    private fun isLibraryClass(className: String) = className.startsWith("testclasses.library") // todo
 
     private fun throwUnrecognizedValue(value: Value): Nothing =
         throw UnsupportedValueException("Value of type ${value.javaClass} is not supported by the value filter.")
