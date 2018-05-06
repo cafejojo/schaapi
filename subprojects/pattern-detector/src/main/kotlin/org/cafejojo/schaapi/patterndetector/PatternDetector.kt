@@ -1,6 +1,6 @@
 package org.cafejojo.schaapi.patterndetector
 
-import org.cafejojo.schaapi.usagegraphgenerator.Node
+import org.cafejojo.schaapi.common.Node
 
 /**
  * Finds all the frequent sequences of [Node]s in the given collection of paths.

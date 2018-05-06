@@ -1,49 +1,41 @@
 package org.cafejojo.schaapi.usagegraphgenerator
 
+import org.cafejojo.schaapi.common.Node
+
 /**
- * Creates DOT graphs of statement control flow graphs.
+ * Creates DOT graphs of control flow graphs.
  *
  * @property name name of the graph.
- * @property scfg statement control flow graph.
+ * @property cfg control flow graph.
  */
-class DotGraphRenderer(private val name: String, private val scfg: Node) {
+class DotGraphRenderer(private val name: String, private val cfg: Node) {
     private val result = StringBuilder()
     private val visited = HashSet<Node>()
 
     /**
-     * Renders a statement control flow graph in DOT format.
+     * Renders a control flow graph in DOT format.
      *
-     * @return a statement control flow graph in DOT format.
+     * @return a control flow graph in DOT format.
      */
     fun render(): String {
         result.append("digraph \"$name()\" {\n")
-        render(scfg)
+        render(cfg)
         result.append("}")
 
         return result.toString()
     }
 
-    private fun render(scfg: Node) {
-        visited.add(scfg)
+    private fun render(node: Node) {
+        visited.add(node)
 
-        result.append("    \"${sanitizeId(scfg.id)}\" [")
-        result.append(
-            when (scfg) {
-                is EntryNode -> "shape=ellipse, label=method_entry"
-                is ExitNode -> "shape=ellipse, label=method_exit"
-                is StatementNode -> "shape=box, label=statement"
-                is BranchNode -> "shape=box, label=branch"
-                else -> "shape=box, label=UNKNOWN"
-            }
-        )
-        result.append("]\n")
+        result.append("    \"${node.hashCode()}\" [shape=ellipse, label=\"${getNodeLabel(node)}\"]\n")
 
-        scfg.successors.forEach { successor ->
-            result.append("    \"${sanitizeId(scfg.id)}\" -> \"${sanitizeId(successor.id)}\"\n")
+        node.successors.forEach { successor ->
+            result.append("    \"${node.hashCode()}\" -> \"${successor.hashCode()}\"\n")
 
             if (!visited.contains(successor)) render(successor)
         }
     }
 
-    private fun sanitizeId(id: NodeId) = id.toString().replace("-", "")
+    private fun getNodeLabel(node: Node) = node.toString().replace("\"", "^")
 }

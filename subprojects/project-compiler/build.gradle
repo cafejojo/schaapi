@@ -1,6 +1,8 @@
+apply plugin: "application"
+
+mainClassName = "org.cafejojo.schaapi.projectcompiler.ProjectCompiler"
+
 dependencies {
     compile group: "net.lingala.zip4j", name: "zip4j", version: zip4jVersion
     compile group: "org.apache.maven.shared", name: "maven-invoker", version: mavenInvokerVersion
 }
-
-mainClassName = "org.cafejojo.schaapi.projectcompiler.ProjectCompiler"
