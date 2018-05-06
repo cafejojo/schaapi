@@ -7,7 +7,7 @@ import org.cafejojo.schaapi.usagegraphgenerator.Node
  *
  * @property allPaths all paths in which patterns should be detected. Each path is a list of [Node]s.
  * @property minimumCount the minimum amount of times a node must appear in [allPaths] for it to be considered a
- * frequent node. This node will then be used during the mining process.
+ * frequent node. This node will then be used by the Prefix Space algorithm to find frequent sequences of [Node]s.
  */
 class PatternDetector(private val allPaths: Collection<List<Node>>, private val minimumCount: Int) {
     companion object {
@@ -38,8 +38,7 @@ class PatternDetector(private val allPaths: Collection<List<Node>>, private val 
             paths.forEach { path ->
                 val extractedPrefix = path.subList(0, prefix.size)
                 if (extractedPrefix == prefix) {
-                    val extractedSuffix = path.subList(prefix.size, path.size)
-                    suffixes += extractedSuffix
+                    suffixes += path.subList(prefix.size, path.size)
                 }
             }
 
@@ -56,9 +55,9 @@ class PatternDetector(private val allPaths: Collection<List<Node>>, private val 
      * unordered items.
      *
      * During each iteration, a new prefix is generated based on the current prefix and nodes observed to be frequent in
-     * the set of paths. If this prefix is observed in the set of paths it is added to the set of frequent patterns.
-     * After this, all suffixes of sequences which start with this prefix are then mined recursively, with the suffix of
-     * a sequence being everything that follows said prefix. This improves upon the a priori method by foregoing the
+     * the set of paths. If this prefix is observed in the set of paths it is added to the set of frequent sequences.
+     * After this, all suffixes of paths which start with this prefix are then mined recursively, with the suffix of
+     * a path being everything that follows said prefix. This improves upon the a priori method by foregoing the
      * need to generate candidate sequences during each iteration. A pseudocode representation is given below.
      *
      * ```
@@ -90,11 +89,11 @@ class PatternDetector(private val allPaths: Collection<List<Node>>, private val 
      * SubEndProcedure
      * ```
      *
-     * @return the list of patterns, each a list of nodes, that are common within [allPaths].
+     * @return the list of sequences, each a list of nodes, that are common within [allPaths].
      */
     fun findFrequentSequences(): List<List<Node>> {
         generateFrequentItems(minimumCount)
-        runPrefixSpace()
+        runPrefixSpaceAlgorithm()
 
         return frequentSequences
     }
@@ -111,7 +110,10 @@ class PatternDetector(private val allPaths: Collection<List<Node>>, private val 
             Pair(sequence, allPaths.filter { pathContainsSequence(it, sequence) })
         }.toMap()
 
-    private fun runPrefixSpace(prefix: List<Node> = emptyList(), projectedPaths: Collection<List<Node>> = allPaths) {
+    private fun runPrefixSpaceAlgorithm(
+        prefix: List<Node> = emptyList(),
+        projectedPaths: Collection<List<Node>> = allPaths
+    ) {
         frequentItems.forEach { frequentItem ->
             val aPathContainsPrefixPlusFrequentItem = projectedPaths.any { path ->
                 pathContainsSequence(path, prefix + frequentItem) ||
@@ -123,7 +125,7 @@ class PatternDetector(private val allPaths: Collection<List<Node>>, private val 
                 frequentSequences += newPrefix
 
                 val newProjectedSequences: List<List<Node>> = extractSuffixes(prefix, projectedPaths)
-                runPrefixSpace(newPrefix, newProjectedSequences)
+                runPrefixSpaceAlgorithm(newPrefix, newProjectedSequences)
             }
         }
     }
