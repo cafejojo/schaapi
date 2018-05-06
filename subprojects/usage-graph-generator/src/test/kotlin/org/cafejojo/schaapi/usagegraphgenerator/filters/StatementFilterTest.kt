@@ -71,6 +71,10 @@ internal class StatementFilterTest : Spek({
         it("filters return void statements") {
             itRetains(mock<ReturnVoidStmt>())
         }
+
+        it("filters unknown statements") {
+            itDoesNotRetain(mock<Unit>())
+        }
     }
 })
 
