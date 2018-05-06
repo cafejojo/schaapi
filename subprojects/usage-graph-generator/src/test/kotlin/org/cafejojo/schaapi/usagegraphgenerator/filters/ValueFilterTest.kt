@@ -48,103 +48,103 @@ internal class ValueFilterTest : Spek({
 
     describe("filtering of expression values based on library usage") {
         it("filters invoke expressions") {
-            itRetains(libraryInvokeExpr)
-            itDoesNotRetain(nonLibraryInvokeExpr)
+            assertThatItRetains(libraryInvokeExpr)
+            assertThatItDoesNotRetain(nonLibraryInvokeExpr)
         }
 
         it("filters unary operation expression") {
-            itRetains(mock<UnopExpr> {
+            assertThatItRetains(mock<UnopExpr> {
                 on { op } doReturn libraryInvokeExpr
             })
-            itDoesNotRetain(mock<UnopExpr> {
+            assertThatItDoesNotRetain(mock<UnopExpr> {
 
                 on { op } doReturn nonLibraryInvokeExpr
             })
         }
 
         it("filters binary operation expressions") {
-            itRetains(mock<BinopExpr> {
+            assertThatItRetains(mock<BinopExpr> {
                 on { op1 } doReturn libraryInvokeExpr
                 on { op2 } doReturn libraryInvokeExpr
             })
-            itRetains(mock<BinopExpr> {
+            assertThatItRetains(mock<BinopExpr> {
                 on { op1 } doReturn libraryInvokeExpr
                 on { op2 } doReturn nonLibraryInvokeExpr
             })
-            itRetains(mock<BinopExpr> {
+            assertThatItRetains(mock<BinopExpr> {
                 on { op1 } doReturn nonLibraryInvokeExpr
                 on { op2 } doReturn libraryInvokeExpr
             })
-            itDoesNotRetain(mock<BinopExpr> {
+            assertThatItDoesNotRetain(mock<BinopExpr> {
                 on { op1 } doReturn nonLibraryInvokeExpr
                 on { op2 } doReturn nonLibraryInvokeExpr
             })
         }
 
         it("filters abstract binary operation expressions") {
-            itRetains(mock<AbstractBinopExpr> {
+            assertThatItRetains(mock<AbstractBinopExpr> {
                 on { op1 } doReturn libraryInvokeExpr
                 on { op2 } doReturn libraryInvokeExpr
             })
-            itRetains(mock<AbstractBinopExpr> {
+            assertThatItRetains(mock<AbstractBinopExpr> {
                 on { op1 } doReturn libraryInvokeExpr
                 on { op2 } doReturn nonLibraryInvokeExpr
             })
-            itRetains(mock<AbstractBinopExpr> {
+            assertThatItRetains(mock<AbstractBinopExpr> {
                 on { op1 } doReturn nonLibraryInvokeExpr
                 on { op2 } doReturn libraryInvokeExpr
             })
-            itDoesNotRetain(mock<AbstractBinopExpr> {
+            assertThatItDoesNotRetain(mock<AbstractBinopExpr> {
                 on { op1 } doReturn nonLibraryInvokeExpr
                 on { op2 } doReturn nonLibraryInvokeExpr
             })
         }
 
         it("filters phi expressions") {
-            itRetains(mock<PhiExpr> {
+            assertThatItRetains(mock<PhiExpr> {
                 on { values } doReturn listOf(libraryInvokeExpr, nonLibraryInvokeExpr)
             })
-            itDoesNotRetain(mock<PhiExpr> {
+            assertThatItDoesNotRetain(mock<PhiExpr> {
                 on { values } doReturn listOf(nonLibraryInvokeExpr)
             })
         }
 
         it("does not recognize unknown shimple expressions") {
-            itDoesNotRecognize(mock<ShimpleExpr>())
+            assertThatItDoesNotRecognize(mock<ShimpleExpr>())
         }
 
         it("filters new expressions") {
-            itRetains(mock<NewExpr> {
+            assertThatItRetains(mock<NewExpr> {
                 on { type } doReturn libraryType
             })
-            itDoesNotRetain(mock<NewExpr> {
+            assertThatItDoesNotRetain(mock<NewExpr> {
                 on { type } doReturn nonLibraryType
             })
         }
 
         it("filters new array expressions") {
-            itDoesNotRetain(mock<NewArrayExpr>())
+            assertThatItDoesNotRetain(mock<NewArrayExpr>())
         }
 
         it("filters new multi array expressions") {
-            itDoesNotRetain(mock<NewMultiArrayExpr>())
+            assertThatItDoesNotRetain(mock<NewMultiArrayExpr>())
         }
 
         it("does not recognize unknown new expressions") {
-            itDoesNotRecognize(mock<AnyNewExpr>())
+            assertThatItDoesNotRecognize(mock<AnyNewExpr>())
         }
 
         it("filters cast expressions") {
-            itRetains(mock<CastExpr> {
+            assertThatItRetains(mock<CastExpr> {
                 on { op } doReturn libraryInvokeExpr
             })
-            itDoesNotRetain(mock<CastExpr> {
+            assertThatItDoesNotRetain(mock<CastExpr> {
                 on { op } doReturn nonLibraryInvokeExpr
             })
         }
 
         it("does not recognize unknown expressions") {
-            itDoesNotRecognize(mock<Expr>())
+            assertThatItDoesNotRecognize(mock<Expr>())
         }
     }
 
@@ -160,65 +160,65 @@ internal class ValueFilterTest : Spek({
         }
 
         it("filters identity refs") {
-            itDoesNotRetain(mock<IdentityRef>())
+            assertThatItDoesNotRetain(mock<IdentityRef>())
         }
 
         it("filters field refs") {
-            itRetains(mock<FieldRef> {
+            assertThatItRetains(mock<FieldRef> {
                 on { field } doReturn libraryField
             })
-            itDoesNotRetain(mock<FieldRef> {
+            assertThatItDoesNotRetain(mock<FieldRef> {
                 on { field } doReturn nonLibraryField
             })
         }
 
         it("filters array refs") {
-            itRetains(mock<ArrayRef> {
+            assertThatItRetains(mock<ArrayRef> {
                 on { base } doReturn libraryInvokeExpr
             })
-            itDoesNotRetain(mock<ArrayRef> {
+            assertThatItDoesNotRetain(mock<ArrayRef> {
                 on { base } doReturn nonLibraryInvokeExpr
             })
         }
 
         it("does not recognize unknown refs") {
-            itDoesNotRecognize(mock<Ref>())
+            assertThatItDoesNotRecognize(mock<Ref>())
         }
 
         it("does not recognize unknown concrete refs") {
-            itDoesNotRecognize(mock<ConcreteRef>())
+            assertThatItDoesNotRecognize(mock<ConcreteRef>())
         }
     }
 
     describe("filtering of immediate values based on library usage") {
         it("filters local immediates") {
-            itDoesNotRetain(mock<Local>())
+            assertThatItDoesNotRetain(mock<Local>())
         }
 
         it("filters constant immediates") {
-            itDoesNotRetain(mock<Constant>())
+            assertThatItDoesNotRetain(mock<Constant>())
         }
 
         it("does not recognize unknown immediates") {
-            itDoesNotRecognize(mock<Immediate>())
+            assertThatItDoesNotRecognize(mock<Immediate>())
         }
     }
 
     describe("filtering of static lock values based on library usage") {
         it("filters new static locks") {
-            itDoesNotRetain(mock<NewStaticLock>())
+            assertThatItDoesNotRetain(mock<NewStaticLock>())
         }
     }
 
     describe("filtering of data sources based on library usage") {
         it("filters data sources") {
-            itDoesNotRetain(mock<AbstractDataSource>())
+            assertThatItDoesNotRetain(mock<AbstractDataSource>())
         }
     }
 
     describe("filtering of unrecognized values based on library usage") {
         it("does not recognize unknown values") {
-            itDoesNotRecognize(mock<Value>())
+            assertThatItDoesNotRecognize(mock<Value>())
         }
     }
 })
@@ -239,6 +239,11 @@ private fun constructInvokeExprMock(declaringClassName: String): InvokeExpr {
     }
 }
 
-private fun itDoesNotRecognize(value: Value) = assertThrows<UnsupportedValueException> { ValueFilter.retain(value) }
-private fun itRetains(value: Value) = assertThat(ValueFilter.retain(value)).isTrue()
-private fun itDoesNotRetain(value: Value) = assertThat(ValueFilter.retain(value)).isFalse()
+private fun assertThatItDoesNotRecognize(value: Value) =
+    assertThrows<UnsupportedValueException> { ValueFilter.retain(value) }
+
+private fun assertThatItRetains(value: Value) =
+    assertThat(ValueFilter.retain(value)).isTrue()
+
+private fun assertThatItDoesNotRetain(value: Value) =
+    assertThat(ValueFilter.retain(value)).isFalse()

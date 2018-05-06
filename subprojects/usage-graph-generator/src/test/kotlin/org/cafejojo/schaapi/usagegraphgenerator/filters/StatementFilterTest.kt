@@ -23,19 +23,19 @@ internal class StatementFilterTest : Spek({
         val nonLibraryValue = constructInvokeExprMock("org.cafejojo.schaapi")
 
         it("filters throw statements") {
-            itRetains(mock<ThrowStmt> {
+            assertThatItRetains(mock<ThrowStmt> {
                 on { op } doReturn libraryValue
             })
-            itDoesNotRetain(mock<ThrowStmt> {
+            assertThatItDoesNotRetain(mock<ThrowStmt> {
                 on { op } doReturn nonLibraryValue
             })
         }
 
         it("filters definition statements") {
-            itRetains(mock<DefinitionStmt> {
+            assertThatItRetains(mock<DefinitionStmt> {
                 on { rightOp } doReturn libraryValue
             })
-            itDoesNotRetain(mock<DefinitionStmt> {
+            assertThatItDoesNotRetain(mock<DefinitionStmt> {
                 on { rightOp } doReturn nonLibraryValue
             })
         }
@@ -49,33 +49,33 @@ internal class StatementFilterTest : Spek({
         }
 
         it("filters invoke statements") {
-            itRetains(mock<InvokeStmt> {
+            assertThatItRetains(mock<InvokeStmt> {
                 on { invokeExpr } doReturn libraryValue
             })
-            itDoesNotRetain(mock<InvokeStmt> {
+            assertThatItDoesNotRetain(mock<InvokeStmt> {
                 on { invokeExpr } doReturn nonLibraryValue
             })
         }
 
         it("filters return statements") {
-            itRetains(mock<ReturnStmt> {
+            assertThatItRetains(mock<ReturnStmt> {
                 on { op } doReturn libraryValue
             })
-            itDoesNotRetain(mock<ReturnStmt> {
+            assertThatItDoesNotRetain(mock<ReturnStmt> {
                 on { op } doReturn nonLibraryValue
             })
         }
 
         it("filters goto statements") {
-            itRetains(mock<GotoStmt>())
+            assertThatItRetains(mock<GotoStmt>())
         }
 
         it("filters return void statements") {
-            itRetains(mock<ReturnVoidStmt>())
+            assertThatItRetains(mock<ReturnVoidStmt>())
         }
 
         it("filters unknown statements") {
-            itDoesNotRetain(mock<Unit>())
+            assertThatItDoesNotRetain(mock<Unit>())
         }
     }
 })
@@ -92,5 +92,5 @@ private fun constructInvokeExprMock(declaringClassName: String): InvokeExpr {
     }
 }
 
-private fun itRetains(unit: Unit) = assertThat(StatementFilter.retain(unit)).isTrue()
-private fun itDoesNotRetain(unit: Unit) = assertThat(StatementFilter.retain(unit)).isFalse()
+private fun assertThatItRetains(unit: Unit) = assertThat(StatementFilter.retain(unit)).isTrue()
+private fun assertThatItDoesNotRetain(unit: Unit) = assertThat(StatementFilter.retain(unit)).isFalse()
