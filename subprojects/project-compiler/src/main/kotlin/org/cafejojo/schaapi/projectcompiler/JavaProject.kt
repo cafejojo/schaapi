@@ -52,7 +52,6 @@ interface JavaProject : Project {
      */
     var classpath: String
 
-
     /**
      * Returns true if the given class is part of this project.
      *
