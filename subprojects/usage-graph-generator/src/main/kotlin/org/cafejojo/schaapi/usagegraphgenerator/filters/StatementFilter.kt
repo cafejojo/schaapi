@@ -11,11 +11,11 @@ import soot.jimple.SwitchStmt
 import soot.jimple.ThrowStmt
 
 /**
- * Performs filtering of library using statements.
+ * Performs filtering of library-using statements.
  */
 object StatementFilter {
     /**
-     * Filters out non library using statements.
+     * Filters out non library-using statements.
      *
      * @param unit a statement.
      * @return whether or not the statement should be kept.
