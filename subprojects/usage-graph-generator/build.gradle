@@ -1,8 +1,15 @@
 mainClassName = "org.cafejojo.schaapi.usagegraphgenerator.UsageGraphGeneratorKt"
 
+repositories {
+    maven { url "https://soot-build.cs.uni-paderborn.de/nexus/repository/soot-release/" }
+}
+
 dependencies {
     compile group: "org.ow2.asm", name: "asm", version: asmVersion
     compile group: "org.ow2.asm", name: "asm-util", version: asmVersion
+
+    compile group: "ca.mcgill.sable", name: "soot", version: sootVersion
+    testCompile group: "com.nhaarman", name: "mockito-kotlin", version: mockitoKotlinVersion
 
     // TODO: Find usages and remove this library
     compile group: "commons-lang", name: "commons-lang", version: commonsLangVersion
