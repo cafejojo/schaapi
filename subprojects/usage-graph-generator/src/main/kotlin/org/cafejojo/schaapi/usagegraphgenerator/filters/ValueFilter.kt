@@ -27,11 +27,11 @@ import soot.shimple.PhiExpr
 import soot.shimple.ShimpleExpr
 
 /**
- * Performs filtering of library using values.
+ * Performs filtering of library-using values.
  */
 object ValueFilter {
     /**
-     * Filters out non library using values.
+     * Filters out non library-using values.
      *
      * @param value a value.
      * @return whether or not the value should be kept.
