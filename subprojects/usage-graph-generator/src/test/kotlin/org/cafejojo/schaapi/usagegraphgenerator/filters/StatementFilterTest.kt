@@ -17,10 +17,13 @@ import soot.jimple.ReturnStmt
 import soot.jimple.ReturnVoidStmt
 import soot.jimple.ThrowStmt
 
+private const val NON_LIBRARY_CLASS = "java.lang.String"
+private const val LIBRARY_CLASS = "org.cafejojo.schaapi.usagegraphgenerator.testclasses.library"
+
 internal class StatementFilterTest : Spek({
     describe("filters statements based on library usage") {
-        val libraryValue = constructInvokeExprMock("testclasses.library")
-        val nonLibraryValue = constructInvokeExprMock("org.cafejojo.schaapi")
+        val libraryValue = constructInvokeExprMock(LIBRARY_CLASS)
+        val nonLibraryValue = constructInvokeExprMock(NON_LIBRARY_CLASS)
 
         it("filters throw statements") {
             itRetains(mock<ThrowStmt> {

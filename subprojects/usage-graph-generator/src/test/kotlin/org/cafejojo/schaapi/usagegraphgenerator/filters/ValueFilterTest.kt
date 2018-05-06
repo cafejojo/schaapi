@@ -35,15 +35,18 @@ import soot.jimple.toolkits.thread.synchronization.NewStaticLock
 import soot.shimple.PhiExpr
 import soot.shimple.ShimpleExpr
 
+private const val NON_LIBRARY_CLASS = "java.lang.String"
+private const val LIBRARY_CLASS = "org.cafejojo.schaapi.usagegraphgenerator.testclasses.library"
+
 internal class ValueFilterTest : Spek({
-    val libraryInvokeExpr = constructInvokeExprMock("testclasses.library")
-    val nonLibraryInvokeExpr = constructInvokeExprMock("org.cafejojo.schaapi")
+    val libraryInvokeExpr = constructInvokeExprMock(LIBRARY_CLASS)
+    val nonLibraryInvokeExpr = constructInvokeExprMock(NON_LIBRARY_CLASS)
 
     val libraryType = mock<Type> {
-        on { toString() } doReturn "testclasses.library"
+        on { toString() } doReturn LIBRARY_CLASS
     }
     val nonLibraryType = mock<Type> {
-        on { toString() } doReturn "org.cafejojo.schaapi"
+        on { toString() } doReturn NON_LIBRARY_CLASS
     }
 
     describe("filtering of expression values based on library usage") {
@@ -149,8 +152,8 @@ internal class ValueFilterTest : Spek({
     }
 
     describe("filtering of ref values based on library usage") {
-        val libraryClass = constructDeclaringClass("testclasses.library")
-        val nonLibraryClass = constructDeclaringClass("org.cafejojo.schaapi")
+        val libraryClass = constructDeclaringClass(LIBRARY_CLASS)
+        val nonLibraryClass = constructDeclaringClass(NON_LIBRARY_CLASS)
 
         val libraryField = mock<SootField> {
             on { declaringClass } doReturn libraryClass
