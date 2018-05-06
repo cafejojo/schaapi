@@ -95,7 +95,7 @@ internal class PatternDetectorTest : Spek({
             val path = listOf(node1, node2, node3)
 
             val paths = listOf(path)
-            val frequent = PatternDetector(paths).findFrequentPatterns(1)
+            val frequent = PatternDetector(paths, 1).findFrequentSequences()
 
             assertThat(frequent).hasSize(6)
             assertThat(frequent).contains(path)
@@ -118,7 +118,7 @@ internal class PatternDetectorTest : Spek({
             val path3 = listOf(node7, node8, node9, node10)
 
             val paths = listOf(path1, path2, path3)
-            val frequent = PatternDetector(paths).findFrequentPatterns(2)
+            val frequent = PatternDetector(paths, 2).findFrequentSequences()
 
             assertThat(frequent).hasSize(0)
         }
@@ -131,7 +131,7 @@ internal class PatternDetectorTest : Spek({
             val path = listOf(node1, node2, node3, node1, node2, node3)
 
             val paths = listOf(path)
-            val frequent = PatternDetector(paths).findFrequentPatterns(2)
+            val frequent = PatternDetector(paths, 2).findFrequentSequences()
 
             assertThat(frequent).contains(listOf(node1, node2, node3))
         }
@@ -153,9 +153,36 @@ internal class PatternDetectorTest : Spek({
             val path3 = listOf(node7, node8, node9, node10, node1, node2, node3)
 
             val paths = listOf(path1, path2, path3)
-            val frequent = PatternDetector(paths).findFrequentPatterns(2)
+            val frequent = PatternDetector(paths, 2).findFrequentSequences()
 
             assertThat(frequent).contains(path1)
+        }
+    }
+
+    describe("When mapping between sequences and patterns") {
+        it("should find a mapping from nodes to ") {
+            val node1 = EntryNode(id = CustomNodeId(1))
+            val node2 = StatementNode(id = CustomNodeId(2))
+            val node3 = ExitNode(id = CustomNodeId(3))
+            val node4 = EntryNode(id = CustomNodeId(4))
+            val node5 = StatementNode(id = CustomNodeId(5))
+            val node6 = ExitNode(id = CustomNodeId(6))
+            val node7 = EntryNode(id = CustomNodeId(7))
+            val node8 = StatementNode(id = CustomNodeId(8))
+            val node9 = StatementNode(id = CustomNodeId(9))
+            val node10 = ExitNode(id = CustomNodeId(10))
+
+            val path1 = listOf(node1, node2, node3)
+            val path2 = listOf(node4, node5, node6)
+            val path3 = listOf(node7, node8, node9, node10, node1, node2, node3)
+
+            val paths = listOf(path1, path2, path3)
+            val patternDetector = PatternDetector(paths, 2)
+
+            patternDetector.findFrequentSequences()
+            val patterns = patternDetector.mapFrequentSequencesToPaths()
+
+            assertThat(patterns[listOf(node1, node2, node3)]).isEqualTo(listOf(path1, path3))
         }
     }
 })
