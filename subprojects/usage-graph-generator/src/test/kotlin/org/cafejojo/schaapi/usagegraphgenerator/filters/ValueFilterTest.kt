@@ -7,27 +7,33 @@ import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 import org.junit.jupiter.api.assertThrows
+import soot.Immediate
 import soot.Local
 import soot.SootClass
 import soot.SootField
 import soot.SootMethod
 import soot.Type
 import soot.Value
+import soot.jimple.AnyNewExpr
 import soot.jimple.ArrayRef
 import soot.jimple.BinopExpr
 import soot.jimple.CastExpr
+import soot.jimple.ConcreteRef
 import soot.jimple.Constant
+import soot.jimple.Expr
 import soot.jimple.FieldRef
 import soot.jimple.IdentityRef
 import soot.jimple.InvokeExpr
 import soot.jimple.NewArrayExpr
 import soot.jimple.NewExpr
 import soot.jimple.NewMultiArrayExpr
+import soot.jimple.Ref
 import soot.jimple.UnopExpr
 import soot.jimple.internal.AbstractBinopExpr
 import soot.jimple.toolkits.infoflow.AbstractDataSource
 import soot.jimple.toolkits.thread.synchronization.NewStaticLock
 import soot.shimple.PhiExpr
+import soot.shimple.ShimpleExpr
 
 internal class ValueFilterTest : Spek({
     val libraryInvokeExpr = constructInvokeExprMock("testclasses.library")
@@ -51,6 +57,7 @@ internal class ValueFilterTest : Spek({
                 on { op } doReturn libraryInvokeExpr
             })
             itDoesNotRetain(mock<UnopExpr> {
+
                 on { op } doReturn nonLibraryInvokeExpr
             })
         }
@@ -102,6 +109,10 @@ internal class ValueFilterTest : Spek({
             })
         }
 
+        it("does not recognize unknown shimple expressions") {
+            itDoesNotRecognize(mock<ShimpleExpr>())
+        }
+
         it("filters new expressions") {
             itRetains(mock<NewExpr> {
                 on { type } doReturn libraryType
@@ -119,6 +130,10 @@ internal class ValueFilterTest : Spek({
             itDoesNotRetain(mock<NewMultiArrayExpr>())
         }
 
+        it("does not recognize unknown new expressions") {
+            itDoesNotRecognize(mock<AnyNewExpr>())
+        }
+
         it("filters cast expressions") {
             itRetains(mock<CastExpr> {
                 on { op } doReturn libraryInvokeExpr
@@ -126,6 +141,10 @@ internal class ValueFilterTest : Spek({
             itDoesNotRetain(mock<CastExpr> {
                 on { op } doReturn nonLibraryInvokeExpr
             })
+        }
+
+        it("does not recognize unknown expressions") {
+            itDoesNotRecognize(mock<Expr>())
         }
     }
 
@@ -161,14 +180,27 @@ internal class ValueFilterTest : Spek({
                 on { base } doReturn nonLibraryInvokeExpr
             })
         }
+
+        it("does not recognize unknown refs") {
+            itDoesNotRecognize(mock<Ref>())
+        }
+
+        it("does not recognize unknown concrete refs") {
+            itDoesNotRecognize(mock<ConcreteRef>())
+        }
     }
 
     describe("filtering of immediate values based on library usage") {
         it("filters local immediates") {
             itDoesNotRetain(mock<Local>())
         }
+
         it("filters constant immediates") {
             itDoesNotRetain(mock<Constant>())
+        }
+
+        it("does not recognize unknown immediates") {
+            itDoesNotRecognize(mock<Immediate>())
         }
     }
 
@@ -181,6 +213,12 @@ internal class ValueFilterTest : Spek({
     describe("filtering of data sources based on library usage") {
         it("filters data sources") {
             itDoesNotRetain(mock<AbstractDataSource>())
+        }
+    }
+
+    describe("filtering of unrecognized values based on library usage") {
+        it("does not recognize unknown values") {
+            itDoesNotRecognize(mock<Value>())
         }
     }
 })
