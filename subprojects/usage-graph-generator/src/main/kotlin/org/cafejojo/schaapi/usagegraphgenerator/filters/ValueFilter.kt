@@ -41,8 +41,8 @@ object ValueFilter {
         is Ref -> retainRef(value)
         is Immediate -> retainImmediate(value)
         is EquivalentValue -> retain(value.value)
-        is NewStaticLock -> false
-        is AbstractDataSource -> false
+        is NewStaticLock -> false // can never involve library usage
+        is AbstractDataSource -> false // is only used for analysis purposes
         else -> throwUnrecognizedValue(value)
     }
 
