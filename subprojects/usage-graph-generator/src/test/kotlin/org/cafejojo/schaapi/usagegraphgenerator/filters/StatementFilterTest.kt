@@ -6,6 +6,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
+import soot.Body
 import soot.SootClass
 import soot.SootMethod
 import soot.Unit
@@ -61,12 +62,7 @@ internal class StatementFilterTest : Spek({
         }
 
         it("filters return statements") {
-            assertThatItRetains(mock<ReturnStmt> {
-                on { op } doReturn libraryValue
-            })
-            assertThatItDoesNotRetain(mock<ReturnStmt> {
-                on { op } doReturn nonLibraryValue
-            })
+            assertThatItRetains(mock<ReturnStmt>())
         }
 
         it("filters goto statements") {
@@ -95,5 +91,8 @@ private fun constructInvokeExprMock(declaringClassName: String): InvokeExpr {
     }
 }
 
-private fun assertThatItRetains(unit: Unit) = assertThat(StatementFilter.retain(unit)).isTrue()
-private fun assertThatItDoesNotRetain(unit: Unit) = assertThat(StatementFilter.retain(unit)).isFalse()
+private fun assertThatItRetains(unit: Unit, body: Body = mock()) =
+    assertThat(StatementFilter(body).retain(unit)).isTrue()
+
+private fun assertThatItDoesNotRetain(unit: Unit, body: Body = mock()) =
+    assertThat(StatementFilter(body).retain(unit)).isFalse()

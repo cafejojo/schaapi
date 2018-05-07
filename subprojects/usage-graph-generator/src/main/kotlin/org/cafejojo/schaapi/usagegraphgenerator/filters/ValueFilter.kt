@@ -81,7 +81,7 @@ object ValueFilter {
     }
 
     private fun retainImmediate(immediate: Immediate) = when (immediate) {
-        is Local -> false
+        is Local -> isLibraryClass(immediate.type.toString())
         is Constant -> false
         else -> throwUnrecognizedValue(immediate)
     }

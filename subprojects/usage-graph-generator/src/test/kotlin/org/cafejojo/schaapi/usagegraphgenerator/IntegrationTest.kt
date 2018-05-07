@@ -7,6 +7,7 @@ import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 import soot.Unit
+import soot.jimple.ReturnStmt
 import soot.jimple.internal.JAssignStmt
 import soot.jimple.internal.JInvokeStmt
 
@@ -25,7 +26,11 @@ internal class IntegrationTest : Spek({
             assertThatStructureMatches(
                 node<JAssignStmt>(
                     node<JInvokeStmt>(
-                        node<JInvokeStmt>()
+                        node<JAssignStmt>(
+                            node<JInvokeStmt>(
+                                node<ReturnStmt>()
+                            )
+                        )
                     )
                 ),
                 cfg

@@ -195,7 +195,13 @@ internal class ValueFilterTest : Spek({
 
     describe("filtering of immediate values based on library usage") {
         it("filters local immediates") {
-            assertThatItDoesNotRetain(mock<Local>())
+            assertThatItRetains(mock<Local> {
+                on { type } doReturn libraryType
+            })
+
+            assertThatItDoesNotRetain(mock<Local> {
+                on { type } doReturn nonLibraryType
+            })
         }
 
         it("filters constant immediates") {
