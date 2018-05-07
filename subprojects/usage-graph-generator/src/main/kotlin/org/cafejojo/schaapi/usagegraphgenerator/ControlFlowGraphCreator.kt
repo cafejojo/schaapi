@@ -9,7 +9,7 @@ import soot.toolkits.graph.UnitGraph
 /**
  * Creates the control flow graph of a method body.
  */
-class ControlFlowGraph(body: Body) {
+class ControlFlowGraphCreator(body: Body) {
     private val cfg: UnitGraph
     private val mappedUnits = HashMap<Unit, Node>()
 
