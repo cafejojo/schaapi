@@ -11,6 +11,22 @@ import soot.jimple.Stmt
 import soot.jimple.SwitchStmt
 import soot.jimple.ThrowStmt
 
+class StmtComparator {
+    fun areEqual(left: Stmt, right: Stmt): Boolean {
+        return when (left) {
+            is ThrowStmt -> right is ThrowStmt && left.op.type == right.op.type
+            is DefinitionStmt -> right is DefinitionStmt && left.leftOp.type == right.leftOp.type && left.rightOp.type == right.rightOp.type
+            is IfStmt -> right is IfStmt && left.condition.type == right.condition.type
+            is SwitchStmt -> right is SwitchStmt && left.key.type == right.key.type
+            is InvokeStmt -> right is InvokeStmt && left.invokeExpr.method == right.invokeExpr.method
+            is ReturnStmt -> right is ReturnStmt && left.op.type == right.op.type
+            is GotoStmt -> true
+            is ReturnVoidStmt -> true
+            else -> false // todo
+        }
+    }
+}
+
 class SootTagginator {
     private val tagOrigins = HashMap<Tag, Stmt>()
     private val tags = HashMap<Value, Tag>()
