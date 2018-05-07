@@ -36,9 +36,7 @@ class ControlFlowGraphCreator(body: Body) {
 
         mappedUnits[unit] = node
 
-        cfg.getSuccsOf(unit).forEach { successor ->
-            generate(successor, node)
-        }
+        cfg.getSuccsOf(unit).forEach { generate(it, node) }
 
         return node
     }
