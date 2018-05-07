@@ -94,6 +94,19 @@ internal class DfsIteratorTest : Spek({
 
             assertThat(iterator).containsExactly(node1, node2, node3, node4, node5, node6)
         }
+
+        it("handles reflexive edges") {
+            val node1 = TestNode()
+            val node2 = TestNode()
+            val node3 = TestNode()
+
+            node1.successors.addAll(listOf(node1, node2))
+            node2.successors.addAll(listOf(node2, node3))
+
+            val iterator = DfsIterator(node1)
+
+            assertThat(iterator).containsExactly(node1, node2, node3)
+        }
     }
 })
 
