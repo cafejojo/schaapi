@@ -38,15 +38,12 @@ class PathEnumerator(private val entryNode: Node) {
     private fun checkIfExitNodeIsReached(node: Node) {
         val unvisitedSuccessors = node.successors.filter { hasBeenVisitedAtMostOnce(it) }
 
-        for (successor in unvisitedSuccessors) {
-            if (successor == exitNode) {
-                allPaths.add(visited.toMutableList())
-                break
-            }
-        }
+        unvisitedSuccessors
+            .find { it == exitNode }
+            ?.let { allPaths.add(visited.toMutableList()) }
     }
 
-    private fun visitSuccessors(node: Node) {
+    private fun visitSuccessors(node: Node) =
         node.successors
             .filter { hasBeenVisitedAtMostOnce(it) && it != exitNode }
             .forEach {
@@ -54,7 +51,6 @@ class PathEnumerator(private val entryNode: Node) {
                 recursivelyEnumerate(visited.peek())
                 visited.pop()
             }
-    }
 
     private fun hasBeenVisitedAtMostOnce(node: Node) = visited.count { it == node } <= 1
 }
@@ -67,8 +63,7 @@ class ExitNode(override val successors: MutableList<Node> = mutableListOf()) : N
 /**
  * Connects all nodes with no successors (connected to this node) with a single [ExitNode].
  */
-internal fun Node.connectLeavesToExitNode(): ExitNode {
-    val exitNode = ExitNode()
+internal fun Node.connectLeavesToExitNode() = ExitNode().also { exitNode ->
     iterator().asSequence().toList()
         .filter { it.successors.isEmpty() }
         .also {
@@ -77,13 +72,10 @@ internal fun Node.connectLeavesToExitNode(): ExitNode {
             }
         }
         .forEach { it.successors.add(exitNode) }
-    return exitNode
 }
 
 /**
  * Removes all [ExitNode]s from the graph of nodes connected to this node.
  */
-internal fun Node.removeExitNodes() {
-    iterator().asSequence().toList()
-        .forEach { it.successors.removeIf { it is ExitNode } }
-}
+internal fun Node.removeExitNodes() =
+    iterator().asSequence().toList().forEach { it.successors.removeIf { it is ExitNode } }
