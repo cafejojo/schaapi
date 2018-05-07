@@ -35,13 +35,10 @@ class PathEnumerator(private val entryNode: Node) {
         visitSuccessors(node)
     }
 
-    private fun checkIfExitNodeIsReached(node: Node) {
-        val unvisitedSuccessors = node.successors.filter { hasBeenVisitedAtMostOnce(it) }
-
-        unvisitedSuccessors
+    private fun checkIfExitNodeIsReached(node: Node) =
+        node.successors.filter { hasBeenVisitedAtMostOnce(it) }
             .find { it == exitNode }
             ?.let { allPaths.add(visited.toMutableList()) }
-    }
 
     private fun visitSuccessors(node: Node) =
         node.successors
