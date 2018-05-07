@@ -6,7 +6,7 @@ import java.util.Stack
 /**
  * Depth-First Search iterator for directed [Node] graphs.
  */
-class DFSIterator(entryNode: Node) : Iterator<Node> {
+class DfsIterator(entryNode: Node) : Iterator<Node> {
     private val visited = mutableSetOf<Node>()
     private val successorStack = Stack<Iterator<Node>>()
     private var nextNode: Node? = entryNode

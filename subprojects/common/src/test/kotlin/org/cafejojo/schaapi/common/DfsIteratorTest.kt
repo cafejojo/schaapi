@@ -5,12 +5,12 @@ import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 
-internal class DFSIteratorTest : Spek({
+internal class DfsIteratorTest : Spek({
     describe("iteration of a graph in DFS order") {
         it("should handle a single-node graph") {
             val node1 = TestNode()
 
-            val iterator = DFSIterator(node1)
+            val iterator = DfsIterator(node1)
 
             assertThat(iterator).containsExactly(node1)
         }
@@ -21,7 +21,7 @@ internal class DFSIteratorTest : Spek({
 
             node1.successors.add(node2)
 
-            val iterator = DFSIterator(node1)
+            val iterator = DfsIterator(node1)
 
             assertThat(iterator).containsExactly(node1, node2)
         }
@@ -35,7 +35,7 @@ internal class DFSIteratorTest : Spek({
             node1.successors.add(node2)
             node2.successors.addAll(listOf(node3, node4))
 
-            val iterator = DFSIterator(node1)
+            val iterator = DfsIterator(node1)
 
             assertThat(iterator).containsExactly(node1, node2, node3, node4)
         }
@@ -54,7 +54,7 @@ internal class DFSIteratorTest : Spek({
             node5.successors.add(node6)
             node6.successors.add(node4)
 
-            val iterator = DFSIterator(node1)
+            val iterator = DfsIterator(node1)
 
             assertThat(iterator).containsExactly(node1, node2, node3, node4, node5, node6)
         }
@@ -71,7 +71,7 @@ internal class DFSIteratorTest : Spek({
             node3.successors.addAll(listOf(node4, node2))
             node4.successors.add(node5)
 
-            val iterator = DFSIterator(node1)
+            val iterator = DfsIterator(node1)
 
             assertThat(iterator).containsExactly(node1, node2, node3, node4, node5)
         }
@@ -90,7 +90,7 @@ internal class DFSIteratorTest : Spek({
             node4.successors.add(node5)
             node6.successors.add(node2)
 
-            val iterator = DFSIterator(node1)
+            val iterator = DfsIterator(node1)
 
             assertThat(iterator).containsExactly(node1, node2, node3, node4, node5, node6)
         }

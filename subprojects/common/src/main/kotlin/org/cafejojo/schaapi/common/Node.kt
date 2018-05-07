@@ -8,5 +8,5 @@ package org.cafejojo.schaapi.common
 interface Node : Iterable<Node> {
     val successors: MutableList<Node>
 
-    override fun iterator() = DFSIterator(this)
+    override fun iterator() = DfsIterator(this)
 }
