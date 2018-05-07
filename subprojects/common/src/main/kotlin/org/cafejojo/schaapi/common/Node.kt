@@ -5,6 +5,8 @@ package org.cafejojo.schaapi.common
  *
  * Contains references to the successor nodes.
  */
-interface Node {
+interface Node : Iterable<Node> {
     val successors: MutableList<Node>
+
+    override fun iterator() = DfsIterator(this)
 }
