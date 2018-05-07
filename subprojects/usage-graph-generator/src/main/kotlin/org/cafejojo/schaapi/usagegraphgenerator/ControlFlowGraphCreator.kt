@@ -9,22 +9,29 @@ import soot.toolkits.graph.UnitGraph
 /**
  * Creates the control flow graph of a method body.
  */
-class ControlFlowGraphCreator(body: Body) {
-    private val cfg: UnitGraph
-    private val mappedUnits = HashMap<Unit, Node>()
-
-    init {
-        cfg = BriefUnitGraph(body)
-    }
+object ControlFlowGraphCreator {
+    /**
+     * Creates the control flow graph of a method body.
+     *
+     * @param body a soot method body
+     */
+    fun create(body: Body): Node? = BriefUnitGraph(body).let { transform(it, HashMap(), it.rootUnitIfExists()) }
 
     /**
      * Wraps the control flow graph recursively within [Node] objects.
      *
+     * @param cfg the soot control flow graph
+     * @param mappedUnits visited units and
      * @param unit the unit to wrap
      * @param predecessor the predecessor of the to be created [Node]
      * @return the [unit] wrapped within a [Node]
      */
-    fun generate(unit: Unit = cfg.rootUnitIfExists(), predecessor: Node? = null): Node? {
+    private fun transform(
+        cfg: UnitGraph,
+        mappedUnits: HashMap<Unit, Node>,
+        unit: Unit,
+        predecessor: Node? = null
+    ): Node? {
         if (mappedUnits.containsKey(unit)) {
             mappedUnits[unit]?.let { predecessor?.successors?.add(it) }
             return mappedUnits[unit]
@@ -36,7 +43,7 @@ class ControlFlowGraphCreator(body: Body) {
 
         mappedUnits[unit] = node
 
-        cfg.getSuccsOf(unit).forEach { generate(it, node) }
+        cfg.getSuccsOf(unit).forEach { transform(cfg, mappedUnits, it, node) }
 
         return node
     }

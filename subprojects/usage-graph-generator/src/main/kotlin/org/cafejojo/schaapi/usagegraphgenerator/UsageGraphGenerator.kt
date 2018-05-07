@@ -41,6 +41,6 @@ fun generateLibraryUsageGraph(classPath: String, className: String, methodName: 
         body.units.snapshotIterator().forEach { if (!StatementFilter.retain(it)) body.units.remove(it) }
     }
 
-    return ControlFlowGraphCreator(methodBody).generate()
+    return ControlFlowGraphCreator.create(methodBody)
         ?: throw IllegalStateException("Control flow graph could not be generated")
 }
