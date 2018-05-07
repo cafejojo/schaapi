@@ -1,13 +1,12 @@
 package org.cafejojo.schaapi.projectcompiler
 
-import net.lingala.zip4j.core.ZipFile
-import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 import org.junit.jupiter.api.assertThrows
 import java.io.File
+import java.io.FileNotFoundException
 
 internal class JavaMavenProjectTest : Spek({
     describe("Java Maven project validation") {
@@ -42,8 +41,7 @@ internal class JavaMavenProjectTest : Spek({
         }
 
         it("compiles codeless projects") {
-            val projectZip = javaClass.getResource("/ProjectCompiler/no-sources.zip")
-            ZipFile(projectZip.path).extractAll(target.absolutePath)
+            setUpTestFiles("/ProjectCompiler/no-sources", target)
 
             val project = JavaMavenProject(target)
             project.compile()
@@ -57,8 +55,7 @@ internal class JavaMavenProjectTest : Spek({
         }
 
         it("compiles simple projects") {
-            val projectZip = javaClass.getResource("/ProjectCompiler/simple.zip")
-            ZipFile(projectZip.path).extractAll(target.absolutePath)
+            setUpTestFiles("/ProjectCompiler/simple", target)
 
             val project = JavaMavenProject(target)
             project.compile()
@@ -74,8 +71,7 @@ internal class JavaMavenProjectTest : Spek({
         }
 
         it("compiles projects with dependencies") {
-            val projectZip = javaClass.getResource("/ProjectCompiler/dependencies.zip")
-            ZipFile(projectZip.path).extractAll(target.absolutePath)
+            setUpTestFiles("/ProjectCompiler/dependencies", target)
 
             val project = JavaMavenProject(target)
             project.compile()
@@ -98,13 +94,7 @@ internal class JavaMavenProjectTest : Spek({
         val target = File("./test")
 
         beforeEachTest {
-            val projectURI = javaClass.getResource("/Project/dependencies-classes")
-            if (projectURI == null) {
-                Assertions.fail("Project source directory could not be found.")
-            }
-
-            val projectFiles = File(projectURI.toURI())
-            projectFiles.copyRecursively(target, true)
+            setUpTestFiles("/Project/dependencies-classes", target)
         }
 
         afterEachTest {
@@ -133,3 +123,11 @@ internal class JavaMavenProjectTest : Spek({
         }
     }
 })
+
+private fun setUpTestFiles(resourceString: String, target: File) {
+    val projectURI = JavaMavenProjectTest::class.java.getResource(resourceString)
+        ?: throw FileNotFoundException("Could not find test resources at $resourceString.")
+
+    val projectFiles = File(projectURI.toURI())
+    projectFiles.copyRecursively(target, true)
+}
