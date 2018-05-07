@@ -16,7 +16,6 @@ buildscript {
 allprojects {
     /// Plugins
     // Compilation
-    apply plugin: "application"
     apply plugin: "java"
     apply plugin: "kotlin"
 
@@ -89,6 +88,7 @@ allprojects {
 
 apply from: "gradle/detekt.gradle"
 
+apply plugin: "application"
 
 // Root project config
 mainClassName = "org.cafejojo.schaapi.SchaapiKt"
