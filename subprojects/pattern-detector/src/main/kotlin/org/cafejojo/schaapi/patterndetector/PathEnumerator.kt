@@ -85,6 +85,5 @@ internal fun Node.connectLeavesToExitNode(): ExitNode {
  */
 internal fun Node.removeExitNodes() {
     iterator().asSequence().toList()
-        .filter { it.successors.any { it is ExitNode } }
         .forEach { it.successors.removeIf { it is ExitNode } }
 }
