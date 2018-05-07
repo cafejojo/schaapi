@@ -18,7 +18,11 @@ class ControlFlowGraphCreator(body: Body) {
     }
 
     /**
-     * Wraps the control flow graph within [Node] objects.
+     * Wraps the control flow graph recursively within [Node] objects.
+     *
+     * @param unit the unit to wrap
+     * @param predecessor the predecessor of the to be created [Node]
+     * @return the [unit] wrapped within a [Node]
      */
     fun generate(unit: Unit = cfg.rootUnitIfExists(), predecessor: Node? = null): Node? {
         if (mappedUnits.containsKey(unit)) {
