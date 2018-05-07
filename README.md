@@ -2,3 +2,4 @@
 [![Travis build status](https://img.shields.io/travis/cafejojo/schaapi/master.svg?style=for-the-badge)](https://travis-ci.org/cafejojo/schaapi)
 [![AppVeyor](https://img.shields.io/appveyor/ci/CafeJojo/schaapi/master.svg?style=for-the-badge)](https://ci.appveyor.com/project/CafeJojo/schaapi/branch/master)
 [![CodeCov](https://img.shields.io/codecov/c/github/cafejojo/schaapi/master.svg?style=for-the-badge)](https://codecov.io/gh/cafejojo/schaapi/)
+[![Built with love](https://img.shields.io/badge/built%20with-%E2%9D%A4%EF%B8%8F-red.svg?style=for-the-badge)](https://github.com/cafejojo/)
