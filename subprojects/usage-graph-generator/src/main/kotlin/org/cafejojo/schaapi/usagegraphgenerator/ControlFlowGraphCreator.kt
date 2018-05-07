@@ -13,18 +13,19 @@ object ControlFlowGraphCreator {
     /**
      * Creates the control flow graph of a method body.
      *
-     * @param body a soot method body
+     * @param body a Soot method [Body]
+     * @return the [Body]'s root [Unit] wrapped in a [Node]
      */
     fun create(body: Body): Node? = BriefUnitGraph(body).let { transform(it, HashMap(), it.rootUnitIfExists()) }
 
     /**
      * Wraps the control flow graph recursively within [Node] objects.
      *
-     * @param cfg the soot control flow graph
-     * @param mappedUnits visited units and
+     * @param cfg the Soot control flow graph
+     * @param mappedUnits visited units
      * @param unit the unit to wrap
-     * @param predecessor the predecessor of the to be created [Node]
-     * @return the [unit] wrapped within a [Node]
+     * @param predecessor the predecessor of the [Node] to be created
+     * @return [unit] wrapped within a [Node]
      */
     private fun transform(
         cfg: UnitGraph,
