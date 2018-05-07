@@ -1,7 +1,6 @@
 package org.cafejojo.schaapi.patterndetector
 
 import org.assertj.core.api.Assertions.assertThat
-import org.cafejojo.schaapi.common.Node
 import org.cafejojo.schaapi.patterndetector.PatternDetector.Companion.pathContainsSequence
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
@@ -183,5 +182,3 @@ internal class PatternDetectorTest : Spek({
         }
     }
 })
-
-private class TestNode(override val successors: MutableList<Node> = mutableListOf()) : Node
