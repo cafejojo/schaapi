@@ -18,13 +18,10 @@ class DFSIterator(entryNode: Node) : Iterator<Node> {
     override fun hasNext() = nextNode != null
 
     override fun next(): Node {
-        try {
-            val node = nextNode ?: throw NoSuchElementException()
-            visited.add(node)
-            return node
-        } finally {
-            advance()
-        }
+        val node = nextNode ?: throw NoSuchElementException()
+        visited.add(node)
+        advance()
+        return node
     }
 
     private fun advance() {
