@@ -20,6 +20,7 @@ fun main(args: Array<String>) {
  * @param classPath class path of the library user
  * @param className class name of the user class for which to generate the graph
  * @param methodName method name of the user method for which to generate the graph
+ * @return library usage graph
  */
 fun generateLibraryUsageGraph(classPath: String, className: String, methodName: String): Node {
     Options.v().set_soot_classpath(
