@@ -7,7 +7,7 @@ import org.jetbrains.spek.api.dsl.it
 
 internal class DfsIteratorTest : Spek({
     describe("iteration of a graph in DFS order") {
-        it("should handle a single-node graph") {
+        it("handles a single-node graph") {
             val node1 = TestNode()
 
             val iterator = DfsIterator(node1)
@@ -15,7 +15,7 @@ internal class DfsIteratorTest : Spek({
             assertThat(iterator).containsExactly(node1)
         }
 
-        it("should handle a linear 2-node graph") {
+        it("handles a linear 2-node graph") {
             val node1 = TestNode()
             val node2 = TestNode()
 
@@ -26,7 +26,7 @@ internal class DfsIteratorTest : Spek({
             assertThat(iterator).containsExactly(node1, node2)
         }
 
-        it("should handle a split in a graph") {
+        it("handles a split in a graph") {
             val node1 = TestNode()
             val node2 = TestNode()
             val node3 = TestNode()
@@ -40,7 +40,7 @@ internal class DfsIteratorTest : Spek({
             assertThat(iterator).containsExactly(node1, node2, node3, node4)
         }
 
-        it("should handle a split in a graph that is joined again afterwards") {
+        it("handles a split in a graph that is joined again afterwards") {
             val node1 = TestNode()
             val node2 = TestNode()
             val node3 = TestNode()
@@ -59,7 +59,7 @@ internal class DfsIteratorTest : Spek({
             assertThat(iterator).containsExactly(node1, node2, node3, node4, node5, node6)
         }
 
-        it("should handle a double edge cycle") {
+        it("handles a double edge cycle") {
             val node1 = TestNode()
             val node2 = TestNode()
             val node3 = TestNode()
@@ -76,7 +76,7 @@ internal class DfsIteratorTest : Spek({
             assertThat(iterator).containsExactly(node1, node2, node3, node4, node5)
         }
 
-        it("should handle a 1-node cycle") {
+        it("handles a 1-node cycle") {
             val node1 = TestNode()
             val node2 = TestNode()
             val node3 = TestNode()
