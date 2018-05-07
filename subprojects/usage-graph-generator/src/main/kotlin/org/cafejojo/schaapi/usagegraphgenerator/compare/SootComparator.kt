@@ -11,11 +11,21 @@ import soot.jimple.Stmt
 import soot.jimple.SwitchStmt
 import soot.jimple.ThrowStmt
 
+/**
+ * Comparator of [Stmt]s by structure.
+ */
 class StmtComparator {
-    fun areEqual(left: Stmt, right: Stmt): Boolean {
-        return when (left) {
+    /**
+     * Returns true iff [left] and [right] have the same structure.
+     *
+     * @param left a [Stmt]
+     * @param right a [Stmt]
+     */
+    fun areEqual(left: Stmt, right: Stmt) =
+        when (left) {
             is ThrowStmt -> right is ThrowStmt && left.op.type == right.op.type
-            is DefinitionStmt -> right is DefinitionStmt && left.leftOp.type == right.leftOp.type && left.rightOp.type == right.rightOp.type
+            is DefinitionStmt -> right is DefinitionStmt && left.leftOp.type == right.leftOp.type
+                && left.rightOp.type == right.rightOp.type
             is IfStmt -> right is IfStmt && left.condition.type == right.condition.type
             is SwitchStmt -> right is SwitchStmt && left.key.type == right.key.type
             is InvokeStmt -> right is InvokeStmt && left.invokeExpr.method == right.invokeExpr.method
@@ -24,13 +34,20 @@ class StmtComparator {
             is ReturnVoidStmt -> true
             else -> false // todo
         }
-    }
 }
 
-class SootTagginator {
+/**
+ * Comparator of [Stmt]s by abstractified [Value]s.
+ */
+class StmtTagginator {
     private val tagOrigins = HashMap<Tag, Stmt>()
     private val tags = HashMap<Value, Tag>()
 
+    /**
+     * Returns true iff [leftStmt] and [rightStmt] use the same abstractified [Value]s.
+     * @param leftStmt a [Stmt]
+     * @param rightStmt a [Stmt]
+     */
     fun compare(leftStmt: Stmt, rightStmt: Stmt): Boolean {
         if (leftStmt != rightStmt) {
             return false
@@ -86,8 +103,8 @@ class SootTagginator {
         return true
     }
 
-    private fun getValues(stmt: Stmt): List<Value> {
-        return when (stmt) {
+    private fun getValues(stmt: Stmt) =
+        when (stmt) {
             is ThrowStmt -> listOf(stmt.op)
             is DefinitionStmt -> listOf(stmt.leftOp, stmt.rightOp)
             is IfStmt -> listOf(stmt.condition)
@@ -98,7 +115,9 @@ class SootTagginator {
             is ReturnVoidStmt -> emptyList()
             else -> emptyList()
         }
-    }
 }
 
+/**
+ * A tag.
+ */
 class Tag
