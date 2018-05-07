@@ -3,7 +3,7 @@ package org.cafejojo.schaapi.usagegraphgenerator
 import org.cafejojo.schaapi.common.Node
 
 /**
- * Creates DOT graphs of control flow graphs.
+ * Creates a DOT graph of a control flow graph.
  *
  * @property name name of the graph.
  * @property cfg control flow graph.
