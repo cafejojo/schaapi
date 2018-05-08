@@ -77,6 +77,8 @@ internal class ShimpleGeneratorTest : Spek({
 
             assertThat(shimpleMethod.parameterTypes).containsExactly(IntType.v())
             assertThat(shimpleMethod.activeBody.parameterLocals.map { it.name }).containsExactly(b.name)
+            assertThat(shimpleMethod.activeBody.locals.map { it.name })
+                .containsExactlyInAnyOrder(a.name, b.name, c.name)
         }
 
         it("should generate a method with all the locals used") {

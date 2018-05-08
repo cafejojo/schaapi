@@ -49,7 +49,10 @@ internal class ShimpleGenerator(private val c: SootClass) {
             .map { it.unit }
             .forEach { unit ->
                 body.units.add(unit)
-                body.locals.addAll(unit.defBoxes.map { Jimple.v().newLocal(it.value.toString(), it.value.type) })
+                body.locals.addAll(unit.defBoxes
+                    .filter { !methodParams.contains(it.value) }
+                    .map { Jimple.v().newLocal(it.value.toString(), it.value.type) }
+                )
             }
 
         val last = statements.last().unit
