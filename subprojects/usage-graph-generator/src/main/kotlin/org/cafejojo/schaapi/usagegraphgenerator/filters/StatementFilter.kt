@@ -25,7 +25,7 @@ class StatementFilter(val body: Body) {
     fun retain(unit: Unit) = when (unit) {
         is ThrowStmt -> ValueFilter.retain(unit.op)
         is DefinitionStmt -> ValueFilter.retain(unit.rightOp)
-        is IfStmt -> true // defer to JumpFilter
+        is IfStmt -> true // defer to IfStatementFilter
         is SwitchStmt -> throw UnsupportedOperationException("Switch statements are not supported at this time") // todo
         is InvokeStmt -> ValueFilter.retain(unit.invokeExpr)
         is ReturnStmt -> true

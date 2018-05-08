@@ -15,7 +15,7 @@ import soot.jimple.InvokeStmt
 import soot.jimple.ReturnVoidStmt
 import soot.util.HashChain
 
-internal class JumpFilterTest : Spek({
+internal class IfStatementFilterTest : Spek({
     describe("filtering of if statements where branches determine existence after filtering") {
         val libraryInvokeExpr = constructInvokeExprMock(LIBRARY_CLASS)
         val nonLibraryInvokeExpr = constructInvokeExprMock(NON_LIBRARY_CLASS)
@@ -39,7 +39,7 @@ internal class JumpFilterTest : Spek({
             whenever(goToTrueBranchEnd.target).thenReturn(ifEnd)
 
             body.units.snapshotIterator().forEach { if (!StatementFilter(body).retain(it)) body.units.remove(it) }
-            JumpFilter.apply(body)
+            IfStatementFilter.apply(body)
 
             assertThat(unitChain).containsExactly(
                 ifStart,
@@ -69,7 +69,7 @@ internal class JumpFilterTest : Spek({
             whenever(goToTrueBranchEnd.target).thenReturn(ifEnd)
 
             body.units.snapshotIterator().forEach { if (!StatementFilter(body).retain(it)) body.units.remove(it) }
-            JumpFilter.apply(body)
+            IfStatementFilter.apply(body)
 
             assertThat(unitChain).containsExactly(
                 ifStart,
@@ -98,7 +98,7 @@ internal class JumpFilterTest : Spek({
             whenever(goToTrueBranchEnd.target).thenReturn(ifEnd)
 
             body.units.snapshotIterator().forEach { if (!StatementFilter(body).retain(it)) body.units.remove(it) }
-            JumpFilter.apply(body)
+            IfStatementFilter.apply(body)
 
             assertThat(unitChain).containsExactly(
                 ifStart,
@@ -129,7 +129,7 @@ internal class JumpFilterTest : Spek({
             whenever(goToTrueBranchEnd.target).thenReturn(ifEnd)
 
             body.units.snapshotIterator().forEach { if (!StatementFilter(body).retain(it)) body.units.remove(it) }
-            JumpFilter.apply(body)
+            IfStatementFilter.apply(body)
 
             assertThat(unitChain).containsExactly(
                 ifEnd

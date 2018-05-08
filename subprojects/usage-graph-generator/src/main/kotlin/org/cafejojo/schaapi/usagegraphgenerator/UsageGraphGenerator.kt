@@ -1,7 +1,7 @@
 package org.cafejojo.schaapi.usagegraphgenerator
 
 import org.cafejojo.schaapi.common.Node
-import org.cafejojo.schaapi.usagegraphgenerator.filters.JumpFilter
+import org.cafejojo.schaapi.usagegraphgenerator.filters.IfStatementFilter
 import org.cafejojo.schaapi.usagegraphgenerator.filters.StatementFilter
 import soot.Scene
 import soot.SootClass
@@ -40,7 +40,7 @@ fun generateLibraryUsageGraph(classPath: String, className: String, methodName: 
 
     val methodBody = sootClass.getMethodByName(methodName).retrieveActiveBody().also { body ->
         body.units.snapshotIterator().forEach { if (!StatementFilter(body).retain(it)) body.units.remove(it) }
-        JumpFilter.apply(body)
+        IfStatementFilter.apply(body)
     }
 
     return ControlFlowGraphCreator.create(methodBody)

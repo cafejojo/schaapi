@@ -8,7 +8,7 @@ import soot.jimple.IfStmt
 /**
  * Performs filtering of library-using if statements.
  */
-object JumpFilter {
+object IfStatementFilter {
     private val toDelete = HashSet<Unit>()
 
     /**
