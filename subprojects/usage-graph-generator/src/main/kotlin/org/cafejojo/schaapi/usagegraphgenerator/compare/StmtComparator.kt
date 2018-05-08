@@ -115,6 +115,7 @@ class StmtComparator {
      * Returns a list of the [Value]s contained in [stmt] as fields.
      *
      * @param stmt a [Stmt]
+     * @return a list of the [Value]s contained in [stmt] as fields
      */
     private fun getValues(stmt: Stmt) =
         when (stmt) {
