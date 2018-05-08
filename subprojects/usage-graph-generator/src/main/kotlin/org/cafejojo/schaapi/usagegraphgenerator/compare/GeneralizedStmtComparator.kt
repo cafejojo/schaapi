@@ -17,7 +17,7 @@ import soot.jimple.ThrowStmt
  * This comparator is stateful and is sensitive to the order in which methods are called. Refer to the documentation of
  * [satisfies].
  */
-class StmtComparator {
+class GeneralizedStmtComparator {
     /**
      * Maps [Value]s to tags.
      */
