@@ -3,7 +3,7 @@ package org.cafejojo.schaapi.testgenerator
 import org.cafejojo.schaapi.usagegraphgenerator.SootNode
 import soot.SootClass
 import soot.SootMethod
-import soot.ValueBox
+import soot.Value
 import soot.VoidType
 import soot.jimple.Jimple
 import soot.jimple.internal.ImmediateBox
@@ -33,12 +33,10 @@ internal class ShimpleGenerator(private val c: SootClass) {
     fun generateShimpleMethod(methodName: String, statements: List<SootNode>): SootMethod {
         val methodParams = generateMethodParams(statements)
 
-        val method = SootMethod(methodName, methodParams.map { it.value.type }, VoidType.v())
+        val method = SootMethod(methodName, methodParams.map { it.type }, VoidType.v())
         val body = Shimple.v().newBody(method)
 
-        methodParams.forEachIndexed { paramIndex, valueBox ->
-            val value = valueBox.value
-
+        methodParams.forEachIndexed { paramIndex, value ->
             val argument = Jimple.v().newLocal(value.toString(), value.type)
             val identityReference = Jimple.v().newParameterRef(value.type, paramIndex)
             val identityStatement = Jimple.v().newIdentityStmt(argument, identityReference)
@@ -63,21 +61,18 @@ internal class ShimpleGenerator(private val c: SootClass) {
         return method
     }
 
-    private fun generateMethodParams(statements: List<SootNode>): Set<ValueBox> {
-        val methodParams = mutableSetOf<ValueBox>()
+    private fun generateMethodParams(statements: List<SootNode>): Set<Value> {
+        val methodParams = mutableSetOf<Value>()
         val definitions = mutableSetOf<String>()
 
         statements.forEach { sootNode ->
-            val unit = sootNode.unit
-
-            unit.useAndDefBoxes
+            sootNode.unit.useAndDefBoxes
                 .filter { it is VariableBox || it is ImmediateBox }
                 .forEach { box ->
                     val identifier = box.value.toString()
-
                     when {
-                        unit.defBoxes.contains(box) -> definitions.add(identifier)
-                        !definitions.contains(identifier) -> methodParams.add(box)
+                        sootNode.unit.defBoxes.contains(box) -> definitions.add(identifier)
+                        !definitions.contains(identifier) -> methodParams.add(box.value)
                     }
                 }
         }
