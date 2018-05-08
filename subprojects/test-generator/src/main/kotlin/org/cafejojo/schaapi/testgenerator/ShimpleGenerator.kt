@@ -46,9 +46,7 @@ internal class ShimpleGenerator(private val c: SootClass) {
             .map { it.unit }
             .forEach { unit ->
                 body.units.add(unit)
-                body.locals.addAll(
-                    unit.defBoxes.map { Jimple.v().newLocal(it.value.toString(), it.value.type) }
-                )
+                body.locals.addAll(unit.defBoxes.map { Jimple.v().newLocal(it.value.toString(), it.value.type) })
             }
 
         c.addMethod(method)

@@ -16,8 +16,8 @@ import soot.jimple.Jimple
 import soot.jimple.StringConstant
 
 internal class ShimpleGeneratorTest : Spek({
-    describe("When passed a list of nodes") {
-        it("should generate a method with no parameters if all variables are bound") {
+    describe("When passed a list of nodes, it should generate a method") {
+        it("should not create parameters if all variables are bound") {
             val a = Jimple.v().newLocal("a", CharType.v())
             val b = Jimple.v().newLocal("b", CharType.v())
             val c = Jimple.v().newLocal("c", CharType.v())
@@ -38,7 +38,24 @@ internal class ShimpleGeneratorTest : Spek({
             assertThat(shimpleMethod.parameterCount).isZero()
         }
 
-        it("should generate a method with variable that is bound only later as parameter") {
+        it("should generate parameters for all unbound variables") {
+            val a = Jimple.v().newLocal("a", IntType.v())
+            val b = Jimple.v().newLocal("b", IntType.v())
+            val c = Jimple.v().newLocal("c", IntType.v())
+
+            val assignC = Jimple.v().newAssignStmt(c, Jimple.v().newAddExpr(a, b))
+
+            val node = SootNode(assignC, mutableListOf())
+
+            val sClass = SootClass("class", Modifier.PUBLIC)
+            val shimpleMethod = ShimpleGenerator(sClass)
+                .generateShimpleMethod("method", listOf(node))
+
+            assertThat(shimpleMethod.parameterTypes).containsExactly(IntType.v(), IntType.v())
+            assertThat(shimpleMethod.activeBody.parameterLocals.map { it.name }).containsExactly(a.name, b.name)
+        }
+
+        it("should generate parameters for variables only bound after their use") {
             val a = Jimple.v().newLocal("a", IntType.v())
             val b = Jimple.v().newLocal("b", IntType.v())
             val c = Jimple.v().newLocal("c", IntType.v())
@@ -56,60 +73,11 @@ internal class ShimpleGeneratorTest : Spek({
             val shimpleMethod = ShimpleGenerator(sClass)
                 .generateShimpleMethod("method", listOf(node1, node3, node2))
 
-            assertThat(shimpleMethod.parameterCount).isOne()
+            assertThat(shimpleMethod.parameterTypes).containsExactly(IntType.v())
+            assertThat(shimpleMethod.activeBody.parameterLocals.map { it.name }).containsExactly(b.name)
         }
 
-        it("should generate a method with the unbound variable as parameter") {
-            val a = Jimple.v().newLocal("a", IntType.v())
-            val b = Jimple.v().newLocal("b", IntType.v())
-            val c = Jimple.v().newLocal("c", IntType.v())
-
-            val assignC = Jimple.v().newAssignStmt(c, Jimple.v().newAddExpr(a, b))
-
-            val node = SootNode(assignC, mutableListOf())
-
-            val sClass = SootClass("class", Modifier.PUBLIC)
-            val shimpleMethod = ShimpleGenerator(sClass)
-                .generateShimpleMethod("method", listOf(node))
-
-            assertThat(shimpleMethod.parameterCount).isEqualTo(2)
-            assertThat(shimpleMethod.parameterTypes).isEqualTo(listOf(IntType.v(), IntType.v()))
-        }
-
-        it("should generate a method with the unbound variable as parameter") {
-            val a = Jimple.v().newLocal("a", IntType.v())
-            val b = Jimple.v().newLocal("b", IntType.v())
-            val c = Jimple.v().newLocal("c", IntType.v())
-
-            val assignC = Jimple.v().newAssignStmt(c, Jimple.v().newAddExpr(a, b))
-
-            val node = SootNode(assignC, mutableListOf())
-
-            val sClass = SootClass("class", Modifier.PUBLIC)
-            val shimpleMethod = ShimpleGenerator(sClass)
-                .generateShimpleMethod("method", listOf(node))
-
-            assertThat(shimpleMethod.parameterCount).isEqualTo(2)
-            assertThat(shimpleMethod.parameterTypes).isEqualTo(listOf(IntType.v(), IntType.v()))
-        }
-
-        it("should generate a method with the locals for the parameters") {
-            val a = Jimple.v().newLocal("a", BooleanType.v())
-            val b = Jimple.v().newLocal("b", BooleanType.v())
-            val c = Jimple.v().newLocal("c", BooleanType.v())
-
-            val assignC = Jimple.v().newAssignStmt(c, Jimple.v().newAndExpr(a, b))
-
-            val node = SootNode(assignC, mutableListOf())
-
-            val sClass = SootClass("class", Modifier.PUBLIC)
-            val shimpleMethod = ShimpleGenerator(sClass)
-                .generateShimpleMethod("method", listOf(node))
-
-            assertThat(shimpleMethod.activeBody.parameterLocals.map { it.name }).isEqualTo(listOf(a.name, b.name))
-        }
-
-        it("should generate a method with the all locals") {
+        it("should generate a method with all the locals used") {
             val a = Jimple.v().newLocal("a", BooleanType.v())
             val b = Jimple.v().newLocal("b", BooleanType.v())
             val c = Jimple.v().newLocal("c", BooleanType.v())
