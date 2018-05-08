@@ -11,7 +11,6 @@ import soot.Immediate
 import soot.Local
 import soot.SootClass
 import soot.SootField
-import soot.SootMethod
 import soot.Type
 import soot.Value
 import soot.jimple.AnyNewExpr
@@ -23,7 +22,6 @@ import soot.jimple.Constant
 import soot.jimple.Expr
 import soot.jimple.FieldRef
 import soot.jimple.IdentityRef
-import soot.jimple.InvokeExpr
 import soot.jimple.NewArrayExpr
 import soot.jimple.NewExpr
 import soot.jimple.NewMultiArrayExpr
@@ -34,9 +32,6 @@ import soot.jimple.toolkits.infoflow.AbstractDataSource
 import soot.jimple.toolkits.thread.synchronization.NewStaticLock
 import soot.shimple.PhiExpr
 import soot.shimple.ShimpleExpr
-
-private const val NON_LIBRARY_CLASS = "java.lang.String"
-private const val LIBRARY_CLASS = "org.cafejojo.schaapi.usagegraphgenerator.testclasses.library"
 
 internal class ValueFilterTest : Spek({
     val libraryInvokeExpr = constructInvokeExprMock(LIBRARY_CLASS)
@@ -234,18 +229,6 @@ internal class ValueFilterTest : Spek({
 
 private fun constructDeclaringClass(declaringClassName: String) = mock<SootClass> {
     on { name } doReturn declaringClassName
-}
-
-private fun constructInvokeExprMock(declaringClassName: String): InvokeExpr {
-    val clazz = mock<SootClass> {
-        on { name } doReturn declaringClassName
-    }
-    val method = mock<SootMethod> {
-        on { declaringClass } doReturn clazz
-    }
-    return mock {
-        on { getMethod() } doReturn method
-    }
 }
 
 private fun assertThatItDoesNotRecognize(value: Value) =

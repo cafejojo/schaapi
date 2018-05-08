@@ -9,14 +9,17 @@ import org.jetbrains.spek.api.dsl.it
 import soot.Unit
 import soot.jimple.ReturnStmt
 import soot.jimple.internal.JAssignStmt
+import soot.jimple.internal.JGotoStmt
+import soot.jimple.internal.JIfStmt
 import soot.jimple.internal.JInvokeStmt
+import soot.jimple.internal.JReturnStmt
 
 private const val TEST_CLASSES_PACKAGE = "org.cafejojo.schaapi.usagegraphgenerator.testclasses"
 private val testClassesClassPath = IntegrationTest::class.java.getResource("../../../../").toURI().path
 
 internal class IntegrationTest : Spek({
     describe("the integration of different components of the library usage graph generation") {
-        it("converts a class to a filtered cfg") {
+        it("converts a simple class to a filtered cfg") {
             val cfg = generateLibraryUsageGraph(
                 testClassesClassPath,
                 "$TEST_CLASSES_PACKAGE.users.SimpleTest",
@@ -30,6 +33,105 @@ internal class IntegrationTest : Spek({
                             node<JInvokeStmt>(
                                 node<ReturnStmt>()
                             )
+                        )
+                    )
+                ),
+                cfg
+            )
+        }
+
+        it("converts a class containing an if with a library usage in the false-branch to a filtered cfg") {
+            val cfg = generateLibraryUsageGraph(
+                testClassesClassPath,
+                "$TEST_CLASSES_PACKAGE.users.IfFalseUseTest",
+                "test"
+            )
+
+            assertThatStructureMatches(
+                node<JAssignStmt>(
+                    node<JInvokeStmt>(
+                        node<JAssignStmt>(
+                            node<JIfStmt>(
+                                node<JGotoStmt>(
+                                    node<JReturnStmt>()
+                                ),
+                                node<JInvokeStmt>(
+                                    node<JReturnStmt>()
+                                )
+                            )
+                        )
+                    )
+                ),
+                cfg
+            )
+        }
+
+        it("converts a class containing an if with a library usage in the true-branch to a filtered cfg") {
+            val cfg = generateLibraryUsageGraph(
+                testClassesClassPath,
+                "$TEST_CLASSES_PACKAGE.users.IfTrueUseTest",
+                "test"
+            )
+
+            assertThatStructureMatches(
+                node<JAssignStmt>(
+                    node<JInvokeStmt>(
+                        node<JAssignStmt>(
+                            node<JIfStmt>(
+                                node<JInvokeStmt>(
+                                    node<JGotoStmt>(
+                                        node<JReturnStmt>()
+                                    )
+                                ),
+                                node<JReturnStmt>()
+                            )
+                        )
+                    )
+                ),
+                cfg
+            )
+        }
+
+        it("converts a class containing an if with a library usage in both branches to a filtered cfg") {
+            val cfg = generateLibraryUsageGraph(
+                testClassesClassPath,
+                "$TEST_CLASSES_PACKAGE.users.IfBothUseTest",
+                "test"
+            )
+
+            assertThatStructureMatches(
+                node<JAssignStmt>(
+                    node<JInvokeStmt>(
+                        node<JAssignStmt>(
+                            node<JIfStmt>(
+                                node<JInvokeStmt>(
+                                    node<JGotoStmt>(
+                                        node<JReturnStmt>()
+                                    )
+                                ),
+                                node<JInvokeStmt>(
+                                    node<JReturnStmt>()
+                                )
+                            )
+                        )
+                    )
+                ),
+                cfg
+            )
+        }
+
+        it("converts a class containing an if with a library usage in both branches to a filtered cfg") {
+            val cfg = generateLibraryUsageGraph(
+                testClassesClassPath,
+                "$TEST_CLASSES_PACKAGE.users.IfNoUseTest",
+                "test"
+            )
+
+            assertThatStructureMatches(
+                node<JAssignStmt>(
+                    node<JInvokeStmt>(
+                        node<JAssignStmt>(
+                            node<JReturnStmt>()
                         )
                     )
                 ),

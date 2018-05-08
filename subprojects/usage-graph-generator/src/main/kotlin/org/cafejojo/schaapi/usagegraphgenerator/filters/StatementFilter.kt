@@ -21,6 +21,7 @@ class StatementFilter(val body: Body) {
      * @param unit a statement.
      * @return whether or not the statement should be kept.
      */
+
     fun retain(unit: Unit) = when (unit) {
         is ThrowStmt -> ValueFilter.retain(unit.op)
         is DefinitionStmt -> ValueFilter.retain(unit.rightOp)

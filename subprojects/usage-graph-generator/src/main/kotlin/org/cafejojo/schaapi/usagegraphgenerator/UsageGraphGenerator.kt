@@ -40,7 +40,7 @@ fun generateLibraryUsageGraph(classPath: String, className: String, methodName: 
 
     val methodBody = sootClass.getMethodByName(methodName).retrieveActiveBody().also { body ->
         body.units.snapshotIterator().forEach { if (!StatementFilter(body).retain(it)) body.units.remove(it) }
-        JumpFilter(body).apply()
+        JumpFilter.apply(body)
     }
 
     return ControlFlowGraphCreator.create(methodBody)
