@@ -3,6 +3,7 @@ package org.cafejojo.schaapi.usagegraphgenerator.filters
 import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.mock
 import org.assertj.core.api.Assertions.assertThat
+import org.cafejojo.schaapi.usagegraphgenerator.libraryProject
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
@@ -10,6 +11,7 @@ import soot.Body
 import soot.Unit
 import soot.jimple.DefinitionStmt
 import soot.jimple.GotoStmt
+import soot.jimple.IfStmt
 import soot.jimple.InvokeStmt
 import soot.jimple.ReturnStmt
 import soot.jimple.ReturnVoidStmt
@@ -39,7 +41,7 @@ internal class StatementFilterTest : Spek({
         }
 
         it("filters if statements") {
-            // todo
+            assertThatItRetains(mock<IfStmt>())
         }
 
         it("filters switch statements") {
@@ -74,7 +76,7 @@ internal class StatementFilterTest : Spek({
 })
 
 private fun assertThatItRetains(unit: Unit, body: Body = mock()) =
-    assertThat(StatementFilter(body).retain(unit)).isTrue()
+    assertThat(StatementFilter(libraryProject, body).retain(unit)).isTrue()
 
 private fun assertThatItDoesNotRetain(unit: Unit, body: Body = mock()) =
-    assertThat(StatementFilter(body).retain(unit)).isFalse()
+    assertThat(StatementFilter(libraryProject, body).retain(unit)).isFalse()

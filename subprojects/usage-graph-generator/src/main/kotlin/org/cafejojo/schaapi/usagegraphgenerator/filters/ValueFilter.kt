@@ -1,5 +1,6 @@
 package org.cafejojo.schaapi.usagegraphgenerator.filters
 
+import org.cafejojo.schaapi.common.JavaProject
 import soot.EquivalentValue
 import soot.Immediate
 import soot.Local
@@ -28,8 +29,10 @@ import soot.shimple.ShimpleExpr
 
 /**
  * Performs filtering of library-using values.
+ *
+ * @property project library project
  */
-object ValueFilter {
+class ValueFilter(private val project: JavaProject) {
     /**
      * Filters out non library-using values.
      *
@@ -86,8 +89,7 @@ object ValueFilter {
         else -> throwUnrecognizedValue(immediate)
     }
 
-    private fun isLibraryClass(className: String) =
-        className.startsWith("org.cafejojo.schaapi.usagegraphgenerator.testclasses.library") // todo
+    private fun isLibraryClass(className: String) = project.containsClass(className)
 
     private fun throwUnrecognizedValue(value: Value): Nothing =
         throw UnsupportedValueException("Value of type ${value.javaClass} is not supported by the value filter.")

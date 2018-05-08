@@ -1,4 +1,4 @@
-package org.cafejojo.schaapi.projectcompiler
+package org.cafejojo.schaapi.common
 
 import java.io.File
 

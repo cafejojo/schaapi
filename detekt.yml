@@ -33,3 +33,4 @@ test-pattern:
     - "MagicNumber"
     - "StringLiteralDuplication"
     - "TooManyFunctions"
+    - "MatchingDeclarationName"

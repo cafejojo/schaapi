@@ -4,6 +4,7 @@ import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.whenever
 import org.assertj.core.api.Assertions.assertThat
+import org.cafejojo.schaapi.usagegraphgenerator.libraryProject
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
@@ -38,8 +39,8 @@ internal class IfStatementFilterTest : Spek({
             whenever(ifStart.target).thenReturn(falseBranchStart)
             whenever(goToTrueBranchEnd.target).thenReturn(ifEnd)
 
-            body.units.snapshotIterator().forEach { if (!StatementFilter(body).retain(it)) body.units.remove(it) }
-            IfStatementFilter.apply(body)
+            StatementFilter(libraryProject, body).apply()
+            IfStatementFilter(libraryProject, body).apply()
 
             assertThat(unitChain).containsExactly(
                 ifStart,
@@ -68,8 +69,8 @@ internal class IfStatementFilterTest : Spek({
             whenever(ifStart.target).thenReturn(falseBranchStart)
             whenever(goToTrueBranchEnd.target).thenReturn(ifEnd)
 
-            body.units.snapshotIterator().forEach { if (!StatementFilter(body).retain(it)) body.units.remove(it) }
-            IfStatementFilter.apply(body)
+            StatementFilter(libraryProject, body).apply()
+            IfStatementFilter(libraryProject, body).apply()
 
             assertThat(unitChain).containsExactly(
                 ifStart,
@@ -97,8 +98,8 @@ internal class IfStatementFilterTest : Spek({
             whenever(ifStart.target).thenReturn(falseBranchStart)
             whenever(goToTrueBranchEnd.target).thenReturn(ifEnd)
 
-            body.units.snapshotIterator().forEach { if (!StatementFilter(body).retain(it)) body.units.remove(it) }
-            IfStatementFilter.apply(body)
+            StatementFilter(libraryProject, body).apply()
+            IfStatementFilter(libraryProject, body).apply()
 
             assertThat(unitChain).containsExactly(
                 ifStart,
@@ -128,8 +129,8 @@ internal class IfStatementFilterTest : Spek({
             whenever(ifStart.target).thenReturn(ifEnd) // looks counter intuitive, but this is how the structure ends up
             whenever(goToTrueBranchEnd.target).thenReturn(ifEnd)
 
-            body.units.snapshotIterator().forEach { if (!StatementFilter(body).retain(it)) body.units.remove(it) }
-            IfStatementFilter.apply(body)
+            StatementFilter(libraryProject, body).apply()
+            IfStatementFilter(libraryProject, body).apply()
 
             assertThat(unitChain).containsExactly(
                 ifEnd

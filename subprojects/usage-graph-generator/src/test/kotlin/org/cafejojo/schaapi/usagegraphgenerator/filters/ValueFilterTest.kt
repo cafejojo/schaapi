@@ -3,6 +3,7 @@ package org.cafejojo.schaapi.usagegraphgenerator.filters
 import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.mock
 import org.assertj.core.api.Assertions.assertThat
+import org.cafejojo.schaapi.usagegraphgenerator.libraryProject
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
@@ -232,10 +233,10 @@ private fun constructDeclaringClass(declaringClassName: String) = mock<SootClass
 }
 
 private fun assertThatItDoesNotRecognize(value: Value) =
-    assertThrows<UnsupportedValueException> { ValueFilter.retain(value) }
+    assertThrows<UnsupportedValueException> { ValueFilter(libraryProject).retain(value) }
 
 private fun assertThatItRetains(value: Value) =
-    assertThat(ValueFilter.retain(value)).isTrue()
+    assertThat(ValueFilter(libraryProject).retain(value)).isTrue()
 
 private fun assertThatItDoesNotRetain(value: Value) =
-    assertThat(ValueFilter.retain(value)).isFalse()
+    assertThat(ValueFilter(libraryProject).retain(value)).isFalse()

@@ -1,5 +1,6 @@
 package org.cafejojo.schaapi.usagegraphgenerator.filters
 
+import org.cafejojo.schaapi.common.JavaProject
 import soot.Body
 import soot.Unit
 import soot.jimple.GotoStmt
@@ -7,14 +8,17 @@ import soot.jimple.IfStmt
 
 /**
  * Performs filtering of library-using if statements.
+ *
+ * @param project library project
+ * @property body method body
  */
-object IfStatementFilter {
+class IfStatementFilter(project: JavaProject, private val body: Body) : Filter {
+    private val valueFilter = ValueFilter(project)
+
     /**
      * Removes if statements if branches do not contain library usages.
-     *
-     * @param body method body
      */
-    fun apply(body: Body) {
+    override fun apply() {
         var changed = true
 
         while (changed) {
@@ -33,7 +37,7 @@ object IfStatementFilter {
     }
 
     private fun retain(ifStatement: IfStatement) =
-        ifStatement.hasNonEmptyBranches() || ValueFilter.retain(ifStatement.statement.condition)
+        ifStatement.hasNonEmptyBranches() || valueFilter.retain(ifStatement.statement.condition)
 }
 
 private class IfStatement(body: Body, val statement: IfStmt) {
