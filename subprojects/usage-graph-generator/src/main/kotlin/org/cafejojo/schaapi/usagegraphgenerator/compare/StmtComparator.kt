@@ -77,7 +77,7 @@ class StmtComparator {
                 // Template does not have a tag
                 if (instanceTag == null) {
                     // Neither value was encountered before; assign a new tag to both
-                    val newTag = tagOrigins.size
+                    val newTag = createNewTag()
                     valueTags[templateValue] = newTag
                     valueTags[instanceValue] = newTag
                     tagOrigins[newTag] = templateStmt
@@ -128,4 +128,6 @@ class StmtComparator {
             is ReturnVoidStmt -> emptyList()
             else -> emptyList()
         }
+
+    private fun createNewTag() = tagOrigins.size
 }
