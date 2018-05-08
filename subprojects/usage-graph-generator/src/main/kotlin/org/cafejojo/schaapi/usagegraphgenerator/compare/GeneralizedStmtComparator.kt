@@ -74,6 +74,7 @@ class GeneralizedStmtComparator {
         return true
     }
 
+    @SuppressWarnings("UnsafeCallOnNullableType") // The !! is implicitly avoided by checking `templateHasTag`
     private fun generalizedValuesAreEqual(templateStmt: Stmt, instanceStmt: Stmt): Boolean {
         val templateValues = getValues(templateStmt)
         val instanceValues = getValues(instanceStmt)
@@ -81,41 +82,26 @@ class GeneralizedStmtComparator {
         templateValues.forEachIndexed { index, templateValue ->
             val instanceValue = instanceValues[index]
 
+            val templateHasTag = hasTag(templateValue)
+            val instanceHasTag = hasTag(instanceValue)
+            val templateIsFinalized = isDefinedIn(templateValue, templateStmt)
+
             val templateTag = valueTags[templateValue]
             val instanceTag = valueTags[instanceValue]
 
-            if (templateTag == null) {
-                // Template does not have a tag
-                if (instanceTag == null) {
-                    // Neither value was encountered before; assign a new tag to both
+            when {
+                !templateHasTag && !instanceHasTag -> {
                     val newTag = createNewTag()
                     valueTags[templateValue] = newTag
                     valueTags[instanceValue] = newTag
                     tagOrigins[newTag] = templateStmt
-                } else {
-                    // Instance cannot have a tag that template doesn't have
-                    return false
                 }
-            } else if (tagOrigins[templateTag] === templateStmt) {
-                // `templateValue` has a tag, and `templateStmt` is the first `Stmt` in which `templateValue` was found
-                // Therefore, some instances of the template are still missing the tag
-                if (instanceTag == null) {
-                    // Instance does not have the tag yet; assign it to the instance as well
-                    valueTags[instanceValue] = templateTag
-                } else if (templateTag !== instanceTag) {
-                    // Instance has a tag already, but it's the wrong one
-                    return false
-                }
-            } else {
-                // `templateValue` has a tag, though `templateValue` was first encountered in a different `Stmt`
-                // Therefore, all instances of the template should have the same tag already
-                if (instanceTag == null) {
-                    // Instance does not have a tag, though it should have had one
-                    return false
-                } else if (templateTag !== instanceTag) {
-                    // Instance has a tag already, but it's the wrong one
-                    return false
-                }
+                !templateHasTag && instanceHasTag -> return false
+
+                templateHasTag && !instanceHasTag && templateIsFinalized -> valueTags[instanceValue] = templateTag!!
+                templateHasTag && !instanceHasTag && !templateIsFinalized -> return false
+
+                templateHasTag && instanceHasTag && templateTag != instanceTag -> return false
             }
         }
 
@@ -142,6 +128,10 @@ class GeneralizedStmtComparator {
         }
 
     private fun createNewTag() = tagOrigins.size
+
+    private fun hasTag(value: Value) = valueTags.contains(value)
+
+    private fun isDefinedIn(value: Value, stmt: Stmt) = tagOrigins[valueTags[value]] === stmt
 }
 
 /**
