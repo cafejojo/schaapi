@@ -7,6 +7,7 @@ import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.context
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
+import soot.RefType
 import soot.Type
 import soot.Value
 import soot.jimple.DefinitionStmt
@@ -25,6 +26,106 @@ internal class GeneralizedStmtComparatorStructureTest : Spek({
 
     beforeEachTest {
         comparator = GeneralizedStmtComparator()
+    }
+
+    describe("type comparison of statements") {
+        it("finds equality for the same type") {
+            val templateValue = mock<Value> {
+                on { it.type } doReturn RefType.v("MyClass")
+            }
+            val template = mock<IfStmt> {
+                on { it.condition } doReturn templateValue
+            }
+
+            val instanceValue = mock<Value> {
+                on { it.type } doReturn RefType.v("MyClass")
+            }
+            val instance = mock<IfStmt> {
+                on { it.condition } doReturn instanceValue
+            }
+
+            assertThat(comparator.satisfies(template, instance)).isTrue()
+        }
+
+        it("finds equality if instance has subclass of template") {
+            val templateValue = mock<Value> {
+                on { it.type } doReturn RefType.v("java.lang.Object")
+            }
+            val template = mock<IfStmt> {
+                on { it.condition } doReturn templateValue
+            }
+
+            val instanceValue = mock<Value> {
+                on { it.type } doReturn RefType.v("java.lang.String")
+            }
+            val instance = mock<IfStmt> {
+                on { it.condition } doReturn instanceValue
+            }
+
+            assertThat(comparator.satisfies(template, instance)).isTrue()
+        }
+
+        it("finds equality if template has subclass of instance") {
+            val templateValue = mock<Value> {
+                on { it.type } doReturn RefType.v("java.lang.String")
+            }
+            val template = mock<IfStmt> {
+                on { it.condition } doReturn templateValue
+            }
+
+            val instanceValue = mock<Value> {
+                on { it.type } doReturn RefType.v("java.lang.Object")
+            }
+            val instance = mock<IfStmt> {
+                on { it.condition } doReturn instanceValue
+            }
+
+            assertThat(comparator.satisfies(template, instance)).isTrue()
+        }
+
+        it("finds inequality for different classes") {
+            val templateValue = mock<Value> {
+                on { it.type } doReturn RefType.v("MyClass")
+            }
+            val template = mock<IfStmt> {
+                on { it.condition } doReturn templateValue
+            }
+
+            val instanceValue = mock<Value> {
+                on { it.type } doReturn RefType.v("NotMyClass")
+            }
+            val instance = mock<IfStmt> {
+                on { it.condition } doReturn instanceValue
+            }
+
+            assertThat(comparator.satisfies(template, instance)).isFalse()
+        }
+
+        it("finds inequality on dinges") {
+            @SuppressWarnings("EqualsWithHashCodeExist")
+            class NullType : Type() {
+                override fun toString() = "null"
+
+                @SuppressWarnings("EqualsAlwaysReturnsTrueOrFalse")
+                override fun equals(other: Any?) = true
+            }
+
+            val templateValue = mock<Value> {
+                on { it.type } doReturn NullType()
+            }
+            val template = mock<IfStmt> {
+                on { it.condition } doReturn templateValue
+            }
+
+            val instanceValue = mock<Value> {
+                on { it.type } doReturn NullType()
+            }
+            val instance = mock<IfStmt> {
+                on { it.condition } doReturn instanceValue
+            }
+
+            assertThat(comparator.satisfies(template, instance)).isFalse()
+        }
     }
 
     describe("structural comparison of statements") {
@@ -242,7 +343,9 @@ internal class GeneralizedStmtComparatorStructureTest : Spek({
 
         context("invoke statements") {
             fun mockInvokeExpr() =
-                mock<InvokeExpr> {}
+                mock<InvokeExpr> {
+                    on { it.type } doReturn RefType.v("java.lang.Object")
+                }
 
             fun mockTypedInvokeExpr() =
                 mock<InvokeExpr> {

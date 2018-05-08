@@ -1,5 +1,7 @@
 package org.cafejojo.schaapi.usagegraphgenerator.compare
 
+import soot.Scene
+import soot.Type
 import soot.Value
 import soot.jimple.DefinitionStmt
 import soot.jimple.GotoStmt
@@ -60,7 +62,16 @@ class GeneralizedStmtComparator {
 
         val templateTypes = getValues(template).map { it.type }
         val instanceTypes = getValues(instance).map { it.type }
-        return templateTypes == instanceTypes
+
+        templateTypes.forEachIndexed { index, templateType ->
+            val instanceType = instanceTypes[index]
+
+            if (!templateType.isSubclassOf(instanceType) && !instanceType.isSubclassOf(templateType)) {
+                return false
+            }
+        }
+
+        return true
     }
 
     private fun generalizedValuesAreEqual(templateStmt: Stmt, instanceStmt: Stmt): Boolean {
@@ -132,3 +143,17 @@ class GeneralizedStmtComparator {
 
     private fun createNewTag() = tagOrigins.size
 }
+
+/**
+ * Returns true iff [this] is a subclass of [that].
+ *
+ * @param that a [Type]
+ * @return true iff [this] is a subclass of [that]
+ */
+@SuppressWarnings("TooGenericExceptionCaught") // Part of signature of Soot's [merge] method
+fun Type.isSubclassOf(that: Type) =
+    try {
+        this.merge(that, Scene.v()) == that
+    } catch (e: RuntimeException) {
+        false
+    }
