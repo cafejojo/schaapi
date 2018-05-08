@@ -8,7 +8,7 @@ import java.util.Stack
  *
  * Enumeration is done through a depth-first search of the directed graph. All simple paths from entry to exit are
  * identified in a recursive manner. Additionally, all paths that have at most two occurrences of each node are found
- * (such paths are not necessarily simple paths), to execute loop bodies at once and twice.
+ * (such paths are not necessarily simple paths), to execute loop bodies once and twice.
  *
  * @property entryNode the entry node of the method graph.
  */
