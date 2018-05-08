@@ -5,6 +5,5 @@ import org.jetbrains.spek.api.dsl.describe
 
 internal class TestGeneratorTest : Spek({
     describe("") {
-
     }
 })

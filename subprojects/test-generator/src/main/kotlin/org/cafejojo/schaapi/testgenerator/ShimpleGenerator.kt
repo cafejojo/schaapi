@@ -7,23 +7,28 @@ import soot.ValueBox
 import soot.VoidType
 import soot.jimple.Jimple
 import soot.jimple.internal.ImmediateBox
+import soot.jimple.internal.JReturnStmt
 import soot.jimple.internal.VariableBox
 import soot.shimple.Shimple
 
 /**
- * Shimple IR generator.
+ * Shimple IR code generator.
  *
- * @property SootClass
+ * This IR code can then be converted to Java Bytecode.
+ *
+ * @property SootClass the class to generate tests for.
  */
 internal class ShimpleGenerator(private val c: SootClass) {
     /**
-     * Generates a soot method with a body written in shimple code.
+     * Generates a soot method with a body written in Shimple code.
      *
-     * Unbounded variables in the list of [SootNode]s are used as method parameters.
+     * Unbounded variables in the list of [SootNode]s are used as method parameters. All variables are stored as locals
+     * of the method. If the last statement is a return statement, then its value is the return value of the method.
+     * Else the method returns nothing.
      *
-     * @param methodName the name the method should have
-     * @param statements a list of [SootNode]s which should be turned into a method
-     * @return [SootMethod] with Shimple body, and unbound variables as method parameters
+     * @param methodName the name the method should have.
+     * @param statements a list of [SootNode]s which should be converted into a method.
+     * @return [SootMethod] with a body of Shimple IR, and unbound variables as method parameters.
      */
     fun generateShimpleMethod(methodName: String, statements: List<SootNode>): SootMethod {
         val methodParams = generateMethodParams(statements)
@@ -48,6 +53,9 @@ internal class ShimpleGenerator(private val c: SootClass) {
                 body.units.add(unit)
                 body.locals.addAll(unit.defBoxes.map { Jimple.v().newLocal(it.value.toString(), it.value.type) })
             }
+
+        val last = statements.last().unit
+        if (last is JReturnStmt) method.returnType = last.op.type
 
         c.addMethod(method)
         method.activeBody = body
