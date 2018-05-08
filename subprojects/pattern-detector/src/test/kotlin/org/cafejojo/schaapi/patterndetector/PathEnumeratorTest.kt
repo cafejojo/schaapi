@@ -144,7 +144,7 @@ internal class PathEnumeratorTest : Spek({
             assertThat(node4.successors).contains(exitNode)
         }
 
-        it("throws an an exception when faced with a tree without leaves") {
+        it("throws an exception when faced with a tree without leaves") {
             val node1 = TestNode()
             val node2 = TestNode()
             val node3 = TestNode()
