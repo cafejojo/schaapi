@@ -7,8 +7,6 @@ import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.context
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
-import soot.Type
-import soot.Value
 import soot.jimple.DefinitionStmt
 import soot.jimple.IfStmt
 import soot.jimple.ReturnStmt
@@ -22,20 +20,6 @@ internal class StmtComparatorGeneralizedValueTest : Spek({
     beforeEachTest {
         comparator = StmtComparator()
     }
-
-    /**
-     * Creates a simple mock of a [Value].
-     */
-    fun mockValue() =
-        mock<Value> {}
-
-    /**
-     * Creates a mock of a [Value] such that no such two mocks equal each other.
-     */
-    fun mockTypedValue() =
-        mock<Value> {
-            on { it.type } doReturn mock<Type> {}
-        }
 
     describe("generalized value comparison of statements") {
         context("(in)equality does not change for the same check") {

@@ -27,20 +27,6 @@ internal class StmtComparatorStructureTest : Spek({
         comparator = StmtComparator()
     }
 
-    /**
-     * Creates a simple mock of a [Value].
-     */
-    fun mockValue() =
-        mock<Value> {}
-
-    /**
-     * Creates a mock of a [Value] such that no such two mocks equal each other.
-     */
-    fun mockTypedValue() =
-        mock<Value> {
-            on { it.type } doReturn mock<Type> {}
-        }
-
     describe("structural comparison of statements") {
         context("throw statements") {
             fun mockThrowStmt(value: Value) =
