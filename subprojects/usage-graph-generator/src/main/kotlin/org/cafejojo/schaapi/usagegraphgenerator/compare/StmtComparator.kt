@@ -48,6 +48,7 @@ class StmtComparator {
      *
      * @param template the template [Stmt]
      * @param instance the instance [Stmt]
+     * @return true iff [instance] satisfies the structure and generalized values of [template]
      */
     fun satisfies(template: Stmt, instance: Stmt) =
         structuresAreEqual(template, instance) && generalizedValuesAreEqual(template, instance)
@@ -57,9 +58,9 @@ class StmtComparator {
             return false
         }
 
-        val leftTypes = getValues(template).map { it.type }
-        val rightTypes = getValues(instance).map { it.type }
-        return leftTypes == rightTypes
+        val templateTypes = getValues(template).map { it.type }
+        val instanceTypes = getValues(instance).map { it.type }
+        return templateTypes == instanceTypes
     }
 
     private fun generalizedValuesAreEqual(templateStmt: Stmt, instanceStmt: Stmt): Boolean {
@@ -112,6 +113,7 @@ class StmtComparator {
 
     /**
      * Returns a list of the [Value]s contained in [stmt] as fields.
+     *
      * @param stmt a [Stmt]
      */
     private fun getValues(stmt: Stmt) =
