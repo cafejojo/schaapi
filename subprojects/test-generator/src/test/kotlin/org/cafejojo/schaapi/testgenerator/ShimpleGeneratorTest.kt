@@ -1,10 +1,10 @@
 package org.cafejojo.schaapi.testgenerator
 
 import org.assertj.core.api.Assertions.assertThat
-import org.cafejojo.schaapi.usagegraphgenerator.SootNode
 import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.describe
+import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
+import org.jetbrains.spek.api.dsl.on
 import soot.BooleanType
 import soot.CharType
 import soot.IntType
@@ -18,129 +18,111 @@ import soot.jimple.Jimple
 import soot.jimple.StringConstant
 
 internal class ShimpleGeneratorTest : Spek({
-    describe("When passed a list of nodes, it should generate a method") {
-        it("should not create parameters if all variables are bound") {
-            val a = Jimple.v().newLocal("a", CharType.v())
-            val b = Jimple.v().newLocal("b", CharType.v())
-            val c = Jimple.v().newLocal("c", CharType.v())
+    given("a list of nodes") {
+        on("generating a method") {
+            it("should not create parameters if all variables are bound") {
+                val a = Jimple.v().newLocal("a", CharType.v())
+                val b = Jimple.v().newLocal("b", CharType.v())
+                val c = Jimple.v().newLocal("c", CharType.v())
 
-            val assignA = Jimple.v().newAssignStmt(a, StringConstant.v("hello"))
-            val assignB = Jimple.v().newAssignStmt(b, StringConstant.v("world"))
-            val assignC = Jimple.v().newAssignStmt(c, Jimple.v().newAddExpr(a, b))
+                val assignA = Jimple.v().newAssignStmt(a, StringConstant.v("hello"))
+                val assignB = Jimple.v().newAssignStmt(b, StringConstant.v("world"))
+                val assignC = Jimple.v().newAssignStmt(c, Jimple.v().newAddExpr(a, b))
 
-            val node3 = SootNode(assignC, mutableListOf())
-            val node2 = SootNode(assignB, mutableListOf(node3))
-            val node1 = SootNode(assignA, mutableListOf(node2))
+                val sClass = SootClass("asdf", Modifier.PUBLIC)
+                Scene.v().addClass(sClass)
+                val shimpleMethod = ShimpleGenerator(sClass)
+                    .generateShimpleMethod("method", listOf(assignA, assignB, assignC))
 
-            val sClass = SootClass("asdf", Modifier.PUBLIC)
-            Scene.v().addClass(sClass)
-            val shimpleMethod = ShimpleGenerator(sClass)
-                .generateShimpleMethod("method", listOf(node1, node2, node3))
+                assertThat(shimpleMethod.parameterCount).isZero()
+            }
 
-            assertThat(shimpleMethod.parameterCount).isZero()
-        }
+            it("should generate parameters for all unbound variables") {
+                val a = Jimple.v().newLocal("a", IntType.v())
+                val b = Jimple.v().newLocal("b", IntType.v())
+                val c = Jimple.v().newLocal("c", IntType.v())
 
-        it("should generate parameters for all unbound variables") {
-            val a = Jimple.v().newLocal("a", IntType.v())
-            val b = Jimple.v().newLocal("b", IntType.v())
-            val c = Jimple.v().newLocal("c", IntType.v())
+                val assignC = Jimple.v().newAssignStmt(c, Jimple.v().newAddExpr(a, b))
 
-            val assignC = Jimple.v().newAssignStmt(c, Jimple.v().newAddExpr(a, b))
+                val sClass = SootClass("class", Modifier.PUBLIC)
+                val shimpleMethod = ShimpleGenerator(sClass)
+                    .generateShimpleMethod("method", listOf(assignC))
 
-            val node = SootNode(assignC, mutableListOf())
+                assertThat(shimpleMethod.parameterTypes).containsExactly(IntType.v(), IntType.v())
+                assertThat(shimpleMethod.activeBody.parameterLocals.map { it.name }).containsExactly(a.name, b.name)
+            }
 
-            val sClass = SootClass("class", Modifier.PUBLIC)
-            val shimpleMethod = ShimpleGenerator(sClass)
-                .generateShimpleMethod("method", listOf(node))
+            it("should generate parameters for variables only bound after their use") {
+                val a = Jimple.v().newLocal("a", IntType.v())
+                val b = Jimple.v().newLocal("b", IntType.v())
+                val c = Jimple.v().newLocal("c", IntType.v())
 
-            assertThat(shimpleMethod.parameterTypes).containsExactly(IntType.v(), IntType.v())
-            assertThat(shimpleMethod.activeBody.parameterLocals.map { it.name }).containsExactly(a.name, b.name)
-        }
+                val assignA = Jimple.v().newAssignStmt(a, IntConstant.v(10))
+                val assignC = Jimple.v().newAssignStmt(c, Jimple.v().newAddExpr(a, b))
+                val assignB = Jimple.v().newAssignStmt(b, IntConstant.v(20))
 
-        it("should generate parameters for variables only bound after their use") {
-            val a = Jimple.v().newLocal("a", IntType.v())
-            val b = Jimple.v().newLocal("b", IntType.v())
-            val c = Jimple.v().newLocal("c", IntType.v())
+                val sClass = SootClass("class", Modifier.PUBLIC)
+                Scene.v().addClass(sClass)
+                val shimpleMethod = ShimpleGenerator(sClass)
+                    .generateShimpleMethod("method", listOf(assignA, assignC, assignB))
 
-            val assignA = Jimple.v().newAssignStmt(a, IntConstant.v(10))
-            val assignC = Jimple.v().newAssignStmt(c, Jimple.v().newAddExpr(a, b))
-            val assignB = Jimple.v().newAssignStmt(b, IntConstant.v(20))
+                assertThat(shimpleMethod.parameterTypes).containsExactly(IntType.v())
+                assertThat(shimpleMethod.activeBody.parameterLocals.map { it.name }).containsExactly(b.name)
+                assertThat(shimpleMethod.activeBody.locals.map { it.name })
+                    .containsExactlyInAnyOrder(a.name, b.name, c.name)
+            }
 
-            val node3 = SootNode(assignC, mutableListOf())
-            val node1 = SootNode(assignA, mutableListOf(node3))
-            val node2 = SootNode(assignB, mutableListOf(node1))
+            it("should generate a method with all the locals used") {
+                val a = Jimple.v().newLocal("a", BooleanType.v())
+                val b = Jimple.v().newLocal("b", BooleanType.v())
+                val c = Jimple.v().newLocal("c", BooleanType.v())
 
-            val sClass = SootClass("class", Modifier.PUBLIC)
-            Scene.v().addClass(sClass)
-            val shimpleMethod = ShimpleGenerator(sClass)
-                .generateShimpleMethod("method", listOf(node1, node3, node2))
+                val assignC = Jimple.v().newAssignStmt(c, Jimple.v().newAndExpr(a, b))
 
-            assertThat(shimpleMethod.parameterTypes).containsExactly(IntType.v())
-            assertThat(shimpleMethod.activeBody.parameterLocals.map { it.name }).containsExactly(b.name)
-            assertThat(shimpleMethod.activeBody.locals.map { it.name })
-                .containsExactlyInAnyOrder(a.name, b.name, c.name)
-        }
+                val sClass = SootClass("class", Modifier.PUBLIC)
+                val shimpleMethod = ShimpleGenerator(sClass)
+                    .generateShimpleMethod("method", listOf(assignC))
 
-        it("should generate a method with all the locals used") {
-            val a = Jimple.v().newLocal("a", BooleanType.v())
-            val b = Jimple.v().newLocal("b", BooleanType.v())
-            val c = Jimple.v().newLocal("c", BooleanType.v())
+                assertThat(shimpleMethod.activeBody.locals.map { it.name }).containsExactly(a.name, b.name, c.name)
+            }
 
-            val assignC = Jimple.v().newAssignStmt(c, Jimple.v().newAndExpr(a, b))
+            it("should generate a method with return type void if last statement is not return") {
+                val c = Jimple.v().newLocal("c", BooleanType.v())
 
-            val node = SootNode(assignC, mutableListOf())
+                val assignC = Jimple.v().newAssignStmt(c, IntConstant.v(10))
 
-            val sClass = SootClass("class", Modifier.PUBLIC)
-            val shimpleMethod = ShimpleGenerator(sClass)
-                .generateShimpleMethod("method", listOf(node))
+                val sClass = SootClass("class", Modifier.PUBLIC)
+                val shimpleMethod = ShimpleGenerator(sClass)
+                    .generateShimpleMethod("method", listOf(assignC))
 
-            assertThat(shimpleMethod.activeBody.locals.map { it.name }).containsExactly(a.name, b.name, c.name)
-        }
+                assertThat(shimpleMethod.returnType).isEqualTo(VoidType.v())
+            }
 
-        it("should generate a method with return type void if last statement is not return") {
-            val c = Jimple.v().newLocal("c", BooleanType.v())
+            it("should generate a method with return type boolean of last statement is return boolean") {
+                val c = Jimple.v().newLocal("c", BooleanType.v())
 
-            val assignC = Jimple.v().newAssignStmt(c, IntConstant.v(10))
+                val assignC = Jimple.v().newAssignStmt(c, IntConstant.v(10))
+                val returnC = Jimple.v().newReturnStmt(c)
 
-            val node = SootNode(assignC, mutableListOf())
+                val sClass = SootClass("class", Modifier.PUBLIC)
+                val shimpleMethod = ShimpleGenerator(sClass)
+                    .generateShimpleMethod("method", listOf(assignC, returnC))
 
-            val sClass = SootClass("class", Modifier.PUBLIC)
-            val shimpleMethod = ShimpleGenerator(sClass)
-                .generateShimpleMethod("method", listOf(node))
+                assertThat(shimpleMethod.returnType).isEqualTo(c.type)
+            }
 
-            assertThat(shimpleMethod.returnType).isEqualTo(VoidType.v())
-        }
+            it("should generate a method with custom return type if last statement is custom return type") {
+                val c = Jimple.v().newLocal("c", RefType.v("myClass"))
 
-        it("should generate a method with return type boolean of last statement is return boolean") {
-            val c = Jimple.v().newLocal("c", BooleanType.v())
+                val assignC = Jimple.v().newAssignStmt(c, IntConstant.v(10))
+                val returnC = Jimple.v().newReturnStmt(c)
 
-            val assignC = Jimple.v().newAssignStmt(c, IntConstant.v(10))
-            val returnC = Jimple.v().newReturnStmt(c)
+                val sClass = SootClass("class", Modifier.PUBLIC)
+                val shimpleMethod = ShimpleGenerator(sClass)
+                    .generateShimpleMethod("method", listOf(assignC, returnC))
 
-            val assignNode = SootNode(assignC, mutableListOf())
-            val returnNode = SootNode(returnC, mutableListOf(assignNode))
-
-            val sClass = SootClass("class", Modifier.PUBLIC)
-            val shimpleMethod = ShimpleGenerator(sClass)
-                .generateShimpleMethod("method", listOf(assignNode, returnNode))
-
-            assertThat(shimpleMethod.returnType).isEqualTo(c.type)
-        }
-
-        it("should generate a method with custom return type if last statement is custom return type") {
-            val c = Jimple.v().newLocal("c", RefType.v("myClass"))
-
-            val assignC = Jimple.v().newAssignStmt(c, IntConstant.v(10))
-            val returnC = Jimple.v().newReturnStmt(c)
-
-            val assignNode = SootNode(assignC, mutableListOf())
-            val returnNode = SootNode(returnC, mutableListOf(assignNode))
-
-            val sClass = SootClass("class", Modifier.PUBLIC)
-            val shimpleMethod = ShimpleGenerator(sClass)
-                .generateShimpleMethod("method", listOf(assignNode, returnNode))
-
-            assertThat(shimpleMethod.returnType).isEqualTo(c.type)
+                assertThat(shimpleMethod.returnType).isEqualTo(c.type)
+            }
         }
     }
 })
