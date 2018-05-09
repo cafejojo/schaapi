@@ -89,7 +89,7 @@ class ValueFilter(private val project: JavaProject) {
         else -> throwUnrecognizedValue(immediate)
     }
 
-    private fun isLibraryClass(className: String) = project.containsClass(className)
+    private fun isLibraryClass(className: String) = project.classNames.contains(className)
 
     private fun throwUnrecognizedValue(value: Value): Nothing =
         throw UnsupportedValueException("Value of type ${value.javaClass} is not supported by the value filter.")

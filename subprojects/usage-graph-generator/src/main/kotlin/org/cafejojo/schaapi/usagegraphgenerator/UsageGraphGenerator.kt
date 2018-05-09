@@ -6,6 +6,7 @@ import org.cafejojo.schaapi.usagegraphgenerator.filters.IfStatementFilter
 import org.cafejojo.schaapi.usagegraphgenerator.filters.StatementFilter
 import soot.Scene
 import soot.SootClass
+import soot.SootMethod
 import soot.options.Options
 import java.io.File
 
@@ -17,35 +18,49 @@ fun main(args: Array<String>) {
 }
 
 /**
- * Generates a library usage graph.
+ * Generates usage graphs for each method in each class of the user project.
  *
- * @param libraryProject library project containing the classes defined by the library
- * @param userProject library user project containing the class path of its compiled files
- * @param className class name of the user class for which to generate the graph
- * @param methodName method name of the user method for which to generate the graph
- * @return library usage graph
+ * @param libraryProject library project
+ * @param userProject library user project
+ * @return list of list of graphs
  */
-fun generateLibraryUsageGraph(
-    libraryProject: JavaProject,
-    userProject: JavaProject,
-    className: String,
-    methodName: String
-): Node {
+fun generateProjectLibraryUsageGraphs(libraryProject: JavaProject, userProject: JavaProject) =
+    userProject.classNames.map {
+        val sootClass = createSootClass(userProject.classpath, it)
+
+        sootClass.methods.map { generateMethodLibraryUsageGraph(libraryProject, it) }
+    }
+
+/**
+ * Creates instance of a Soot class.
+ *
+ * @param classpath classpath of the project
+ * @param className name of the class
+ * @return a Soot class
+ */
+fun createSootClass(classpath: String, className: String): SootClass {
     Options.v().set_soot_classpath(
         arrayOf(
             System.getProperty("java.home") + "${File.separator}lib${File.separator}rt.jar",
             System.getProperty("java.home") + "${File.separator}lib${File.separator}jce.jar",
-            userProject.classpath
+            classpath
         ).joinToString(File.pathSeparator)
     )
 
     Scene.v().loadNecessaryClasses()
 
-    val sootClass = Scene.v().forceResolve(className, SootClass.BODIES).apply {
-        setApplicationClass()
-    }
+    return Scene.v().forceResolve(className, SootClass.BODIES).apply { setApplicationClass() }
+}
 
-    val methodBody = sootClass.getMethodByName(methodName).retrieveActiveBody()
+/**
+ * Generates a library usage graph for a method.
+ *
+ * @param libraryProject library project containing the classes defined by the library
+ * @param method method for which to generate the graph
+ * @return library usage graph
+ */
+fun generateMethodLibraryUsageGraph(libraryProject: JavaProject, method: SootMethod): Node {
+    val methodBody = method.retrieveActiveBody()
     val filters = listOf(StatementFilter(libraryProject), IfStatementFilter(libraryProject))
     filters.forEach { it.apply(methodBody) }
 
