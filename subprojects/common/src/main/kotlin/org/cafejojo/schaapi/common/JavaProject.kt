@@ -39,6 +39,13 @@ interface JavaProject : Project {
     var classes: List<File>
 
     /**
+     * The names of the project's compiled classes.
+     *
+     * May be null before the project is [compile]d.
+     */
+    var classNames: List<String>
+
+    /**
      * The project's dependencies as JARs.
      *
      * May be null before the project is [compile]d.
@@ -51,13 +58,6 @@ interface JavaProject : Project {
      * May be null before the project is [compile]d.
      */
     var classpath: String
-
-    /**
-     * Returns true if the given class is part of this project.
-     *
-     * @param className the name of a class, including the package
-     */
-    fun containsClass(className: String): Boolean
 }
 
 /**

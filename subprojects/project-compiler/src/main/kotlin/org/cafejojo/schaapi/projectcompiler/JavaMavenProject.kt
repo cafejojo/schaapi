@@ -36,6 +36,7 @@ class JavaMavenProject(override val projectDir: File) : JavaProject, MavenProjec
     override val dependencyDir = File(projectDir, "target/dependency")
 
     override lateinit var classes: List<File>
+    override lateinit var classNames: List<String>
     override lateinit var dependencies: List<File>
     override lateinit var classpath: String
 
@@ -55,6 +56,12 @@ class JavaMavenProject(override val projectDir: File) : JavaProject, MavenProjec
         runMaven()
 
         classes = classDir.walk().filter { it.isFile && it.extension == "class" }.toList()
+        classNames = classes.map {
+            it.relativeTo(classDir)
+                .toString()
+                .dropLast(".class".length)
+                .replace(File.separatorChar, '.')
+        }
         dependencies = dependencyDir.listFiles().orEmpty().toList()
         classpath =
             if (dependencies.isEmpty()) {
@@ -82,14 +89,4 @@ class JavaMavenProject(override val projectDir: File) : JavaProject, MavenProjec
             throw ProjectCompilationException("`maven install` executed unsuccessfully: " + result.executionException)
         }
     }
-
-    override fun containsClass(className: String) =
-        classes
-            .map {
-                it.relativeTo(classDir)
-                    .toString()
-                    .dropLast(".class".length)
-                    .replace(File.separatorChar, '.')
-            }
-            .contains(className)
 }
