@@ -59,10 +59,7 @@ internal class StatementFilterTest : Spek({
             assertThatItRetains(mock<ReturnStmt>())
         }
 
-        it(
-            "filters goto statemen" +
-                "ts"
-        ) {
+        it("filters goto statements") {
             assertThatItRetains(mock<GotoStmt>())
         }
 
