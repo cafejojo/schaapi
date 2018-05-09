@@ -31,6 +31,6 @@ test-pattern:
     - "LargeClass"
     - "LateinitUsage"
     - "MagicNumber"
+    - "MatchingDeclarationName"
     - "StringLiteralDuplication"
     - "TooManyFunctions"
-    - "MatchingDeclarationName"
