@@ -9,47 +9,48 @@ import soot.jimple.IfStmt
  * Performs filtering of library-using if statements.
  */
 object IfStatementFilter {
-    private val toDelete = HashSet<Unit>()
-
     /**
      * Removes if statements if branches do not contain library usages.
      *
      * @param body method body
      */
     fun apply(body: Body) {
-        var changed = false
+        var changed = true
 
-        body.units.snapshotIterator().forEach {
-            if (it is IfStmt && !retain(body, it)) {
-                changed = true
-                body.units.remove(it)
-                toDelete.forEach { body.units.remove(it) }
-                toDelete.clear()
-            }
+        while (changed) {
+            changed = false
+
+            body.units.snapshotIterator().asSequence()
+                .filterIsInstance(IfStmt::class.java)
+                .map { IfStatement(body, it) }
+                .filter { !retain(it) }
+                .forEach {
+                    changed = true
+                    body.units.remove(it.statement)
+                    body.units.remove(it.trueBranchGoto)
+                }
         }
-
-        if (changed) apply(body)
     }
 
-    private fun retain(body: Body, jump: IfStmt) = hasNonEmptyBranches(body, jump) || ValueFilter.retain(jump.condition)
+    private fun retain(ifStatement: IfStatement) =
+        ifStatement.hasNonEmptyBranches() || ValueFilter.retain(ifStatement.statement.condition)
+}
 
-    private fun hasNonEmptyBranches(body: Body, jump: IfStmt): Boolean {
-        val trueBranchWithGoto = body.units.dropWhile { it !== jump }.drop(1).takeWhile { it !== jump.target }
+private class IfStatement(body: Body, val statement: IfStmt) {
+    val trueBranchWithGoto = body.units.dropWhile { it !== statement }.drop(1).takeWhile { it !== statement.target }
 
-        val trueBranchGoto: GotoStmt = trueBranchWithGoto.findLast { it is GotoStmt }.let {
-            if (it !is GotoStmt) throw TrueBranchOfIfHasNoGotoException()
-            toDelete.add(it)
-            it
-        }
-
-        val ifEnd: Unit = trueBranchGoto.target
-
-        val trueBranch = trueBranchWithGoto.takeWhile { it !== trueBranchGoto }
-
-        val falseBranch = body.units.dropWhile { it !== jump.target }.takeWhile { it !== ifEnd }
-
-        return trueBranch.isNotEmpty() || falseBranch.isNotEmpty()
+    val trueBranchGoto: GotoStmt = trueBranchWithGoto.findLast { it is GotoStmt }.let {
+        if (it !is GotoStmt) throw TrueBranchOfIfHasNoGotoException()
+        it
     }
+
+    val ifEnd: Unit = trueBranchGoto.target
+
+    val trueBranch = trueBranchWithGoto.takeWhile { it !== trueBranchGoto }
+
+    val falseBranch = body.units.dropWhile { it !== statement.target }.takeWhile { it !== ifEnd }
+
+    fun hasNonEmptyBranches() = trueBranch.isNotEmpty() || falseBranch.isNotEmpty()
 }
 
 /**
