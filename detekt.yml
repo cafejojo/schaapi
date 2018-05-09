@@ -3,6 +3,8 @@ failFast: true
 comments:
   CommentOverPrivateFunction:
     active: false
+  CommentOverPrivateProperty:
+    active: false
 
 complexity:
   ComplexMethod:
@@ -26,6 +28,8 @@ test-pattern:
   exclude-rule-sets:
     - "comments"
   exclude-rules:
+    - "LargeClass"
+    - "LateinitUsage"
     - "MagicNumber"
     - "StringLiteralDuplication"
     - "TooManyFunctions"
