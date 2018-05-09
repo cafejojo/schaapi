@@ -454,17 +454,25 @@ internal class GeneralizedStmtComparatorStructureTest : Spek({
         }
 
         context("goto statements") {
-            fun mockReturnStmt() =
+            fun mockGotoStmt() =
                 mock<GotoStmt> {}
 
             it("equals itself") {
-                val stmt = mockReturnStmt()
+                val stmt = mockGotoStmt()
 
                 assertThat(comparator.satisfies(stmt, stmt)).isTrue()
             }
 
+            it("equals any other goto") {
+                val template = mockGotoStmt()
+
+                val instance = mockGotoStmt()
+
+                assertThat(comparator.satisfies(template, instance)).isTrue()
+            }
+
             it("does not equal statements of a different class") {
-                val template = mockReturnStmt()
+                val template = mockGotoStmt()
 
                 val instance = mock<Stmt> {}
 
@@ -473,17 +481,25 @@ internal class GeneralizedStmtComparatorStructureTest : Spek({
         }
 
         context("return-void statements") {
-            fun mockReturnStmt() =
+            fun mockReturnVoidStmt() =
                 mock<ReturnVoidStmt> {}
 
             it("equals itself") {
-                val stmt = mockReturnStmt()
+                val stmt = mockReturnVoidStmt()
 
                 assertThat(comparator.satisfies(stmt, stmt)).isTrue()
             }
 
+            it("equals any other return void") {
+                val template = mockReturnVoidStmt()
+
+                val instance = mockReturnVoidStmt()
+
+                assertThat(comparator.satisfies(template, instance)).isTrue()
+            }
+
             it("does not equal statements of a different class") {
-                val template = mockReturnStmt()
+                val template = mockReturnVoidStmt()
 
                 val instance = mock<Stmt> {}
 
