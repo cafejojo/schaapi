@@ -10,15 +10,16 @@ import soot.jimple.IfStmt
  * Performs filtering of library-using if statements.
  *
  * @param project library project
- * @property body method body
  */
-class IfStatementFilter(project: JavaProject, private val body: Body) : Filter {
+class IfStatementFilter(project: JavaProject) : Filter {
     private val valueFilter = ValueFilter(project)
 
     /**
      * Removes if statements if branches do not contain library usages.
+     *
+     * @param body method body
      */
-    override fun apply() {
+    override fun apply(body: Body) {
         var changed = true
 
         while (changed) {

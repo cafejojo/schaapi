@@ -7,7 +7,6 @@ import org.cafejojo.schaapi.usagegraphgenerator.libraryProject
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
-import soot.Body
 import soot.Unit
 import soot.jimple.DefinitionStmt
 import soot.jimple.GotoStmt
@@ -75,8 +74,8 @@ internal class StatementFilterTest : Spek({
     }
 })
 
-private fun assertThatItRetains(unit: Unit, body: Body = mock()) =
-    assertThat(StatementFilter(libraryProject, body).retain(unit)).isTrue()
+private fun assertThatItRetains(unit: Unit) =
+    assertThat(StatementFilter(libraryProject).retain(unit)).isTrue()
 
-private fun assertThatItDoesNotRetain(unit: Unit, body: Body = mock()) =
-    assertThat(StatementFilter(libraryProject, body).retain(unit)).isFalse()
+private fun assertThatItDoesNotRetain(unit: Unit) =
+    assertThat(StatementFilter(libraryProject).retain(unit)).isFalse()

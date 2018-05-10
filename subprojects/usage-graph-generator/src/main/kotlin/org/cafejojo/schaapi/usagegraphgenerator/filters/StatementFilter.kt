@@ -16,12 +16,11 @@ import soot.jimple.ThrowStmt
  * Performs filtering of library-using statements.
  *
  * @param project library project
- * @property body method body
  */
-class StatementFilter(project: JavaProject, private val body: Body) : Filter {
+class StatementFilter(project: JavaProject) : Filter {
     private val valueFilter = ValueFilter(project)
 
-    override fun apply() = body.units.snapshotIterator().forEach { if (!retain(it)) body.units.remove(it) }
+    override fun apply(body: Body) = body.units.snapshotIterator().forEach { if (!retain(it)) body.units.remove(it) }
 
     /**
      * Filters out non library-using statements.

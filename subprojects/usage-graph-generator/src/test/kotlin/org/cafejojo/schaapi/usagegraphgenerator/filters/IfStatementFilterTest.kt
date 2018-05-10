@@ -39,8 +39,8 @@ internal class IfStatementFilterTest : Spek({
             whenever(ifStart.target).thenReturn(falseBranchStart)
             whenever(goToTrueBranchEnd.target).thenReturn(ifEnd)
 
-            StatementFilter(libraryProject, body).apply()
-            IfStatementFilter(libraryProject, body).apply()
+            StatementFilter(libraryProject).apply(body)
+            IfStatementFilter(libraryProject).apply(body)
 
             assertThat(unitChain).containsExactly(
                 ifStart,
@@ -69,8 +69,8 @@ internal class IfStatementFilterTest : Spek({
             whenever(ifStart.target).thenReturn(falseBranchStart)
             whenever(goToTrueBranchEnd.target).thenReturn(ifEnd)
 
-            StatementFilter(libraryProject, body).apply()
-            IfStatementFilter(libraryProject, body).apply()
+            StatementFilter(libraryProject).apply(body)
+            IfStatementFilter(libraryProject).apply(body)
 
             assertThat(unitChain).containsExactly(
                 ifStart,
@@ -98,8 +98,8 @@ internal class IfStatementFilterTest : Spek({
             whenever(ifStart.target).thenReturn(falseBranchStart)
             whenever(goToTrueBranchEnd.target).thenReturn(ifEnd)
 
-            StatementFilter(libraryProject, body).apply()
-            IfStatementFilter(libraryProject, body).apply()
+            StatementFilter(libraryProject).apply(body)
+            IfStatementFilter(libraryProject).apply(body)
 
             assertThat(unitChain).containsExactly(
                 ifStart,
@@ -129,8 +129,8 @@ internal class IfStatementFilterTest : Spek({
             whenever(ifStart.target).thenReturn(ifEnd) // looks counter intuitive, but this is how the structure ends up
             whenever(goToTrueBranchEnd.target).thenReturn(ifEnd)
 
-            StatementFilter(libraryProject, body).apply()
-            IfStatementFilter(libraryProject, body).apply()
+            StatementFilter(libraryProject).apply(body)
+            IfStatementFilter(libraryProject).apply(body)
 
             assertThat(unitChain).containsExactly(
                 ifEnd
