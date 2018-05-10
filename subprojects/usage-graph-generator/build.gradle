@@ -1,6 +1,6 @@
 apply plugin: "application"
 
-mainClassName = "org.cafejojo.schaapi.usagegraphgenerator.UsageGraphGeneratorKt"
+mainClassName = "org.cafejojo.schaapi.usagegraphgenerator.SootProjectLibraryUsageGraphGeneratorKt"
 
 repositories {
     maven { url "https://soot-build.cs.uni-paderborn.de/nexus/repository/soot-release/" }

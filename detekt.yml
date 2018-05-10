@@ -12,6 +12,10 @@ complexity:
   StringLiteralDuplication:
     active: false
 
+naming:
+  FunctionMaxLength:
+    active: false
+
 style:
   ReturnCount:
     active: false

@@ -48,6 +48,7 @@ internal class JavaMavenProjectTest : Spek({
 
             assertThat(project.projectDir).isEqualTo(target)
             assertThat(project.classes).isEmpty()
+            assertThat(project.classNames).isEmpty()
             assertThat(project.dependencies).isEmpty()
             assertThat(project.classpath.split(File.pathSeparator)).containsExactlyInAnyOrder(
                 target.resolve("target/classes").absolutePath
@@ -63,6 +64,9 @@ internal class JavaMavenProjectTest : Spek({
             assertThat(project.projectDir).isEqualTo(target)
             assertThat(project.classes).containsExactlyInAnyOrder(
                 target.resolve("target/classes/org/cafejojo/schaapi/test/MyClass.class")
+            )
+            assertThat(project.classNames).containsExactlyInAnyOrder(
+                "org.cafejojo.schaapi.test.MyClass"
             )
             assertThat(project.dependencies).isEmpty()
             assertThat(project.classpath.split(File.pathSeparator)).containsExactlyInAnyOrder(
@@ -80,6 +84,9 @@ internal class JavaMavenProjectTest : Spek({
             assertThat(project.classes).containsExactlyInAnyOrder(
                 target.resolve("target/classes/org/cafejojo/schaapi/test/MyClass.class")
             )
+            assertThat(project.classNames).containsExactlyInAnyOrder(
+                "org.cafejojo.schaapi.test.MyClass"
+            )
             assertThat(project.dependencies).containsExactlyInAnyOrder(
                 target.resolve("target/dependency/zip4j-1.3.2.jar")
             )
@@ -87,39 +94,6 @@ internal class JavaMavenProjectTest : Spek({
                 target.resolve("target/classes").absolutePath,
                 target.resolve("target/dependency").resolve("zip4j-1.3.2.jar").absolutePath
             )
-        }
-    }
-
-    describe("Java Maven project classes") {
-        val target = File("./test")
-
-        beforeEachTest {
-            setUpTestFiles("/Project/dependencies-classes", target)
-        }
-
-        afterEachTest {
-            target.deleteRecursively()
-        }
-
-        it("knows which classes it contains") {
-            val project = JavaMavenProject(target)
-            project.compile()
-
-            assertThat(project.containsClass("org.cafejojo.schaapi.test.MyClass")).isTrue()
-        }
-
-        it("is specific about packages") {
-            val project = JavaMavenProject(target)
-            project.compile()
-
-            assertThat(project.containsClass("MyClass")).isFalse()
-        }
-
-        it("does not think it contains classes from its dependencies") {
-            val project = JavaMavenProject(target)
-            project.compile()
-
-            assertThat(project.containsClass("net.lingala.zip4j.core.ZipFile")).isFalse()
         }
     }
 })
