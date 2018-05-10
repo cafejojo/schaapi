@@ -2,6 +2,9 @@ package org.cafejojo.schaapi.projectcompiler
 
 import org.apache.maven.shared.invoker.DefaultInvocationRequest
 import org.apache.maven.shared.invoker.DefaultInvoker
+import org.cafejojo.schaapi.common.JavaProject
+import org.cafejojo.schaapi.common.MavenProject
+import org.cafejojo.schaapi.common.ProjectCompilationException
 import java.io.File
 
 /**

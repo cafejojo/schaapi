@@ -1,5 +1,6 @@
 package org.cafejojo.schaapi.usagegraphgenerator
 
+import org.cafejojo.schaapi.common.JavaProject
 import org.cafejojo.schaapi.common.Node
 import org.cafejojo.schaapi.usagegraphgenerator.filters.IfStatementFilter
 import org.cafejojo.schaapi.usagegraphgenerator.filters.StatementFilter
@@ -18,17 +19,23 @@ fun main(args: Array<String>) {
 /**
  * Generates a library usage graph.
  *
- * @param classPath class path of the library user
+ * @param libraryProject library project containing the classes defined by the library
+ * @param userProject library user project containing the class path of its compiled files
  * @param className class name of the user class for which to generate the graph
  * @param methodName method name of the user method for which to generate the graph
  * @return library usage graph
  */
-fun generateLibraryUsageGraph(classPath: String, className: String, methodName: String): Node {
+fun generateLibraryUsageGraph(
+    libraryProject: JavaProject,
+    userProject: JavaProject,
+    className: String,
+    methodName: String
+): Node {
     Options.v().set_soot_classpath(
         arrayOf(
             System.getProperty("java.home") + "${File.separator}lib${File.separator}rt.jar",
             System.getProperty("java.home") + "${File.separator}lib${File.separator}jce.jar",
-            classPath
+            userProject.classpath
         ).joinToString(File.pathSeparator)
     )
 
@@ -38,10 +45,9 @@ fun generateLibraryUsageGraph(classPath: String, className: String, methodName: 
         setApplicationClass()
     }
 
-    val methodBody = sootClass.getMethodByName(methodName).retrieveActiveBody().also { body ->
-        body.units.snapshotIterator().forEach { if (!StatementFilter(body).retain(it)) body.units.remove(it) }
-        IfStatementFilter.apply(body)
-    }
+    val methodBody = sootClass.getMethodByName(methodName).retrieveActiveBody()
+    val filters = listOf(StatementFilter(libraryProject), IfStatementFilter(libraryProject))
+    filters.forEach { it.apply(methodBody) }
 
     return ControlFlowGraphCreator.create(methodBody)
         ?: throw IllegalStateException("Control flow graph could not be generated")

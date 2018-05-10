@@ -21,7 +21,8 @@ internal class IntegrationTest : Spek({
     describe("the integration of different components of the library usage graph generation") {
         it("converts a simple class to a filtered cfg") {
             val cfg = generateLibraryUsageGraph(
-                testClassesClassPath,
+                libraryProject,
+                TestProject(classpath = testClassesClassPath),
                 "$TEST_CLASSES_PACKAGE.users.SimpleTest",
                 "test"
             )
@@ -42,7 +43,8 @@ internal class IntegrationTest : Spek({
 
         it("converts a class containing an if with a library usage in the false-branch to a filtered cfg") {
             val cfg = generateLibraryUsageGraph(
-                testClassesClassPath,
+                libraryProject,
+                TestProject(classpath = testClassesClassPath),
                 "$TEST_CLASSES_PACKAGE.users.IfFalseUseTest",
                 "test"
             )
@@ -68,7 +70,8 @@ internal class IntegrationTest : Spek({
 
         it("converts a class containing an if with a library usage in the true-branch to a filtered cfg") {
             val cfg = generateLibraryUsageGraph(
-                testClassesClassPath,
+                libraryProject,
+                TestProject(classpath = testClassesClassPath),
                 "$TEST_CLASSES_PACKAGE.users.IfTrueUseTest",
                 "test"
             )
@@ -94,7 +97,8 @@ internal class IntegrationTest : Spek({
 
         it("converts a class containing an if with a library usage in both branches to a filtered cfg") {
             val cfg = generateLibraryUsageGraph(
-                testClassesClassPath,
+                libraryProject,
+                TestProject(classpath = testClassesClassPath),
                 "$TEST_CLASSES_PACKAGE.users.IfBothUseTest",
                 "test"
             )
@@ -122,7 +126,8 @@ internal class IntegrationTest : Spek({
 
         it("converts a class containing an if with a library usage in both branches to a filtered cfg") {
             val cfg = generateLibraryUsageGraph(
-                testClassesClassPath,
+                libraryProject,
+                TestProject(classpath = testClassesClassPath),
                 "$TEST_CLASSES_PACKAGE.users.IfNoUseTest",
                 "test"
             )
