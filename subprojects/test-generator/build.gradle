@@ -1,6 +1,6 @@
 apply plugin: "application"
 
-mainClassName = "org.cafejojo.schaapi.testgenerator.EvoSuiteRunner"
+mainClassName = "org.cafejojo.schaapi.testgenerator.EvoSuiteRunnerKt"
 
 dependencies {
     compile group: "org.evosuite", name: "evosuite-master", version: evosuiteMasterVersion
