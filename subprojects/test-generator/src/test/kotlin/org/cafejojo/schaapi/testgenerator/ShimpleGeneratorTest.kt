@@ -31,10 +31,10 @@ internal class ShimpleGeneratorTest : Spek({
 
                 val sClass = SootClass("asdf", Modifier.PUBLIC)
                 Scene.v().addClass(sClass)
-                val shimpleMethod = ShimpleGenerator(sClass)
-                    .generateShimpleMethod("method", listOf(assignA, assignB, assignC))
+                val jimpleMethod = JimpleGenerator(sClass)
+                    .generateJimpleMethod("method", listOf(assignA, assignB, assignC))
 
-                assertThat(shimpleMethod.parameterCount).isZero()
+                assertThat(jimpleMethod.parameterCount).isZero()
             }
 
             it("should generate parameters for all unbound variables") {
@@ -45,11 +45,11 @@ internal class ShimpleGeneratorTest : Spek({
                 val assignC = Jimple.v().newAssignStmt(c, Jimple.v().newAddExpr(a, b))
 
                 val sClass = SootClass("class", Modifier.PUBLIC)
-                val shimpleMethod = ShimpleGenerator(sClass)
-                    .generateShimpleMethod("method", listOf(assignC))
+                val jimpleMethod = JimpleGenerator(sClass)
+                    .generateJimpleMethod("method", listOf(assignC))
 
-                assertThat(shimpleMethod.parameterTypes).containsExactly(IntType.v(), IntType.v())
-                assertThat(shimpleMethod.activeBody.parameterLocals.map { it.name }).containsExactly(a.name, b.name)
+                assertThat(jimpleMethod.parameterTypes).containsExactly(IntType.v(), IntType.v())
+                assertThat(jimpleMethod.activeBody.parameterLocals.map { it.name }).containsExactly(a.name, b.name)
             }
 
             it("should generate parameters for variables only bound after their use") {
@@ -63,12 +63,12 @@ internal class ShimpleGeneratorTest : Spek({
 
                 val sClass = SootClass("class", Modifier.PUBLIC)
                 Scene.v().addClass(sClass)
-                val shimpleMethod = ShimpleGenerator(sClass)
-                    .generateShimpleMethod("method", listOf(assignA, assignC, assignB))
+                val jimpleMethod = JimpleGenerator(sClass)
+                    .generateJimpleMethod("method", listOf(assignA, assignC, assignB))
 
-                assertThat(shimpleMethod.parameterTypes).containsExactly(IntType.v())
-                assertThat(shimpleMethod.activeBody.parameterLocals.map { it.name }).containsExactly(b.name)
-                assertThat(shimpleMethod.activeBody.locals.map { it.name })
+                assertThat(jimpleMethod.parameterTypes).containsExactly(IntType.v())
+                assertThat(jimpleMethod.activeBody.parameterLocals.map { it.name }).containsExactly(b.name)
+                assertThat(jimpleMethod.activeBody.locals.map { it.name })
                     .containsExactlyInAnyOrder(a.name, b.name, c.name)
             }
 
@@ -80,10 +80,10 @@ internal class ShimpleGeneratorTest : Spek({
                 val assignC = Jimple.v().newAssignStmt(c, Jimple.v().newAndExpr(a, b))
 
                 val sClass = SootClass("class", Modifier.PUBLIC)
-                val shimpleMethod = ShimpleGenerator(sClass)
-                    .generateShimpleMethod("method", listOf(assignC))
+                val jimpleMethod = JimpleGenerator(sClass)
+                    .generateJimpleMethod("method", listOf(assignC))
 
-                assertThat(shimpleMethod.activeBody.locals.map { it.name }).containsExactly(a.name, b.name, c.name)
+                assertThat(jimpleMethod.activeBody.locals.map { it.name }).containsExactly(a.name, b.name, c.name)
             }
 
             it("should generate a method with return type void if last statement is not return") {
@@ -92,8 +92,8 @@ internal class ShimpleGeneratorTest : Spek({
                 val assignC = Jimple.v().newAssignStmt(c, IntConstant.v(10))
 
                 val sClass = SootClass("class", Modifier.PUBLIC)
-                val shimpleMethod = ShimpleGenerator(sClass)
-                    .generateShimpleMethod("method", listOf(assignC))
+                val shimpleMethod = JimpleGenerator(sClass)
+                    .generateJimpleMethod("method", listOf(assignC))
 
                 assertThat(shimpleMethod.returnType).isEqualTo(VoidType.v())
             }
@@ -105,10 +105,10 @@ internal class ShimpleGeneratorTest : Spek({
                 val returnC = Jimple.v().newReturnStmt(c)
 
                 val sClass = SootClass("class", Modifier.PUBLIC)
-                val shimpleMethod = ShimpleGenerator(sClass)
-                    .generateShimpleMethod("method", listOf(assignC, returnC))
+                val jimpleMethod = JimpleGenerator(sClass)
+                    .generateJimpleMethod("method", listOf(assignC, returnC))
 
-                assertThat(shimpleMethod.returnType).isEqualTo(c.type)
+                assertThat(jimpleMethod.returnType).isEqualTo(c.type)
             }
 
             it("should generate a method with custom return type if last statement is custom return type") {
@@ -118,10 +118,10 @@ internal class ShimpleGeneratorTest : Spek({
                 val returnC = Jimple.v().newReturnStmt(c)
 
                 val sClass = SootClass("class", Modifier.PUBLIC)
-                val shimpleMethod = ShimpleGenerator(sClass)
-                    .generateShimpleMethod("method", listOf(assignC, returnC))
+                val jimpleMethod = JimpleGenerator(sClass)
+                    .generateJimpleMethod("method", listOf(assignC, returnC))
 
-                assertThat(shimpleMethod.returnType).isEqualTo(c.type)
+                assertThat(jimpleMethod.returnType).isEqualTo(c.type)
             }
         }
     }

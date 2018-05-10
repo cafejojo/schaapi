@@ -9,18 +9,17 @@ import soot.jimple.Stmt
 import soot.jimple.internal.ImmediateBox
 import soot.jimple.internal.JReturnStmt
 import soot.jimple.internal.VariableBox
-import soot.shimple.Shimple
 
 /**
- * Shimple IR code generator.
+ * Jimple IR code generator.
  *
  * This IR code can then be converted to Java Bytecode.
  *
  * @property SootClass the class to generate tests for.
  */
-internal class ShimpleGenerator(private val c: SootClass) {
+internal class JimpleGenerator(private val sootClass: SootClass) {
     /**
-     * Generates a soot method with a body written in Shimple code.
+     * Generates a soot method with a body written in Jimple IR.
      *
      * Unbounded variables in the list of [Stmt]s are used as method parameters. All variables are stored as locals
      * of the method. If the last statement is a return statement, then its value is the return value of the method.
@@ -28,26 +27,26 @@ internal class ShimpleGenerator(private val c: SootClass) {
      *
      * @param methodName the name the method should have.
      * @param statements a list of [Stmt]s which should be converted into a method.
-     * @return [SootMethod] with a body of Shimple IR, and unbound variables as method parameters.
+     * @return [SootMethod] with a body of Jimple IR, and unbound variables as method parameters.
      */
-    fun generateShimpleMethod(methodName: String, statements: List<Stmt>): SootMethod {
+    fun generateJimpleMethod(methodName: String, statements: List<Stmt>): SootMethod {
         val methodParams = findUnboundVariables(statements)
 
         val method = SootMethod(methodName, methodParams.map { it.type }, VoidType.v())
-        val body = Shimple.v().newBody(method)
+        val jimpleBody = Jimple.v().newBody(method)
 
         methodParams.forEachIndexed { paramIndex, param ->
             val argument = Jimple.v().newLocal(param.toString(), param.type)
             val identityReference = Jimple.v().newParameterRef(param.type, paramIndex)
             val identityStatement = Jimple.v().newIdentityStmt(argument, identityReference)
 
-            body.locals.add(argument)
-            body.units.add(identityStatement)
+            jimpleBody.locals.add(argument)
+            jimpleBody.units.add(identityStatement)
         }
 
         statements.forEach { statement ->
-            body.units.add(statement)
-            body.locals.addAll(statement.defBoxes
+            jimpleBody.units.add(statement)
+            jimpleBody.locals.addAll(statement.defBoxes
                 .filter { !methodParams.contains(it.value) }
                 .map { Jimple.v().newLocal(it.value.toString(), it.value.type) }
             )
@@ -56,8 +55,8 @@ internal class ShimpleGenerator(private val c: SootClass) {
         val lastStatement = statements.last()
         if (lastStatement is JReturnStmt) method.returnType = lastStatement.op.type
 
-        c.addMethod(method)
-        method.activeBody = body
+        sootClass.addMethod(method)
+        method.activeBody = jimpleBody
 
         return method
     }
