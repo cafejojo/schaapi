@@ -85,7 +85,7 @@ internal class ShimpleGeneratorTest : Spek({
                 assertThat(jimpleMethod.parameterTypes).containsExactly(IntType.v())
                 assertThat(jimpleMethod.activeBody.parameterLocals.map { it.name }).containsExactly(b.name)
                 assertThat(jimpleMethod.activeBody.locals.map { it.name })
-                    .containsExactlyInAnyOrder(a.name, b.name, c.name)
+                    .contains(a.name, b.name, c.name)
             }
 
             it("should generate a method with all the locals used") {
@@ -99,7 +99,7 @@ internal class ShimpleGeneratorTest : Spek({
                 val jimpleMethod = JimpleGenerator(sClass)
                     .generateJimpleMethod("method", listOf(assignC))
 
-                assertThat(jimpleMethod.activeBody.locals.map { it.name }).containsExactly(a.name, b.name, c.name)
+                assertThat(jimpleMethod.activeBody.locals.map { it.name }).contains(a.name, b.name, c.name)
             }
 
             it("should generate a method with return type void if last statement is not return") {
