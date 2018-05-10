@@ -51,7 +51,7 @@ internal class IfStatementFilterTest : Spek({
             )
         }
 
-        it("retains ifs with library usage in true branch") {
+        it("retains ifs with library usage in the true branch") {
             val unitChain = PatchingChain(HashChain())
             val body = mock<Body> {
                 on { units } doReturn unitChain
@@ -80,7 +80,7 @@ internal class IfStatementFilterTest : Spek({
             )
         }
 
-        it("retains ifs with library usage in false branch") {
+        it("retains ifs with library usage in the false branch") {
             val unitChain = PatchingChain(HashChain())
             val body = mock<Body> {
                 on { units } doReturn unitChain
@@ -109,7 +109,7 @@ internal class IfStatementFilterTest : Spek({
             )
         }
 
-        it("filters ifs with no library usages in it branches") {
+        it("filters ifs with no library usages in its branches") {
             val unitChain = PatchingChain(HashChain())
             val body = mock<Body> {
                 on { units } doReturn unitChain
