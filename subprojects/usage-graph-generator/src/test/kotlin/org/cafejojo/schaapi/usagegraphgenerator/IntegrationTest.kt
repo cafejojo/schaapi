@@ -20,7 +20,7 @@ private val testClassesClassPath = IntegrationTest::class.java.getResource("../.
 internal class IntegrationTest : Spek({
     describe("the integration of different components of the library usage graph generation") {
         it("converts a simple class to a filtered cfg") {
-            val cfg = generateProjectLibraryUsageGraphs(
+            val cfg = SootProjectLibraryUsageGraphGenerator.generate(
                 libraryProject,
                 TestProject(testClassesClassPath, listOf("$TEST_CLASSES_PACKAGE.users.SimpleTest"))
             )[0][1]
@@ -40,7 +40,7 @@ internal class IntegrationTest : Spek({
         }
 
         it("converts a class containing an if with a library usage in the false-branch to a filtered cfg") {
-            val cfg = generateProjectLibraryUsageGraphs(
+            val cfg = SootProjectLibraryUsageGraphGenerator.generate(
                 libraryProject,
                 TestProject(testClassesClassPath, listOf("$TEST_CLASSES_PACKAGE.users.IfFalseUseTest"))
             )[0][1]
@@ -65,7 +65,7 @@ internal class IntegrationTest : Spek({
         }
 
         it("converts a class containing an if with a library usage in the true-branch to a filtered cfg") {
-            val cfg = generateProjectLibraryUsageGraphs(
+            val cfg = SootProjectLibraryUsageGraphGenerator.generate(
                 libraryProject,
                 TestProject(testClassesClassPath, listOf("$TEST_CLASSES_PACKAGE.users.IfTrueUseTest"))
             )[0][1]
@@ -90,7 +90,7 @@ internal class IntegrationTest : Spek({
         }
 
         it("converts a class containing an if with a library usage in both branches to a filtered cfg") {
-            val cfg = generateProjectLibraryUsageGraphs(
+            val cfg = SootProjectLibraryUsageGraphGenerator.generate(
                 libraryProject,
                 TestProject(testClassesClassPath, listOf("$TEST_CLASSES_PACKAGE.users.IfBothUseTest"))
             )[0][1]
@@ -117,7 +117,7 @@ internal class IntegrationTest : Spek({
         }
 
         it("converts a class containing an if with a library usage in both branches to a filtered cfg") {
-            val cfg = generateProjectLibraryUsageGraphs(
+            val cfg = SootProjectLibraryUsageGraphGenerator.generate(
                 libraryProject,
                 TestProject(testClassesClassPath, listOf("$TEST_CLASSES_PACKAGE.users.IfNoUseTest"))
             )[0][1]
