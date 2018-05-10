@@ -54,6 +54,7 @@ class EvoSuiteRunner(
             line = bufferedReader.readLine()
         }
 
+        process.waitFor()
         if (process.exitValue() != 0) {
             val errorOutput = String(process.errorStream.readBytes(), Charset.defaultCharset())
             throw EvoSuiteRuntimeException("EvoSuite exited with non-zero exit code: " +
