@@ -22,7 +22,6 @@ internal class EvoSuiteRunnerTest : Spek({
 
     afterEachTest {
         deleteTestOutput()
-
     }
 
     describe("execution of the EvoSuite test generator") {
