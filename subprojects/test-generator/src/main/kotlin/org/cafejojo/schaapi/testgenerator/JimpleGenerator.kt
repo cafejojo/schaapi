@@ -54,7 +54,7 @@ internal class JimpleGenerator(private val sootClass: SootClass) {
             jimpleBody.locals.addAll(statement.defBoxes
                 .map { it.value }
                 .filter { !methodParams.contains(it) }
-                .map { it as? Local ?: throw BoxValueIsNotLocal(it) }
+                .map { it as? Local ?: throw ValueIsNotLocal(it) }
             )
         }
 
@@ -68,7 +68,7 @@ internal class JimpleGenerator(private val sootClass: SootClass) {
     }
 
     private fun addParamToLocals(jimpleBody: Body, paramIndex: Int, param: Value) {
-        if (param !is Local) throw BoxValueIsNotLocal(param)
+        if (param !is Local) throw ValueIsNotLocal(param)
 
         val identityReference = Jimple.v().newParameterRef(param.type, paramIndex)
         val identityStatement = Jimple.v().newIdentityStmt(param, identityReference)
@@ -100,4 +100,4 @@ internal class JimpleGenerator(private val sootClass: SootClass) {
 /**
  * Exception to denote that a value cannot be stored as a local.
  */
-class BoxValueIsNotLocal(value: Value) : RuntimeException("$value cannot be stored as a local.")
+class ValueIsNotLocal(value: Value) : RuntimeException("$value cannot be stored as a local.")
