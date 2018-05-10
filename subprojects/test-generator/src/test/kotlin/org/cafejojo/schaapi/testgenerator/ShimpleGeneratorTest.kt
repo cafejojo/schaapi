@@ -1,6 +1,7 @@
 package org.cafejojo.schaapi.testgenerator
 
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.catchThrowable
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
@@ -50,6 +51,21 @@ internal class ShimpleGeneratorTest : Spek({
 
                 assertThat(jimpleMethod.parameterTypes).containsExactly(IntType.v(), IntType.v())
                 assertThat(jimpleMethod.activeBody.parameterLocals.map { it.name }).containsExactly(a.name, b.name)
+            }
+
+            it("should generate a valid body") {
+                val a = Jimple.v().newLocal("a", IntType.v())
+                val b = Jimple.v().newLocal("b", IntType.v())
+                val c = Jimple.v().newLocal("c", IntType.v())
+
+                val assignC = Jimple.v().newAssignStmt(c, Jimple.v().newAddExpr(a, b))
+
+                val sClass = SootClass("class", Modifier.PUBLIC)
+                val jimpleMethod = JimpleGenerator(sClass)
+                    .generateJimpleMethod("method", listOf(assignC))
+
+                val throwable = catchThrowable { jimpleMethod.activeBody.validate() }
+                assertThat(throwable).isNull()
             }
 
             it("should generate parameters for variables only bound after their use") {

@@ -1,5 +1,6 @@
 package org.cafejojo.schaapi.testgenerator
 
+import soot.Local
 import soot.SootClass
 import soot.SootMethod
 import soot.Value
@@ -25,6 +26,10 @@ internal class JimpleGenerator(private val sootClass: SootClass) {
      * of the method. If the last statement is a return statement, then its value is the return value of the method.
      * Else the method returns nothing.
      *
+     * The method itself does not verification of the body of the method, which can be accessed by using
+     * [SootMethod.activeBody]. Verification can be done by calling [soot.Body.validate] to validate that the body is
+     * well formed.
+     *
      * @param methodName the name the method should have.
      * @param statements a list of [Stmt]s which should be converted into a method.
      * @return [SootMethod] with a body of Jimple IR, and unbound variables as method parameters.
@@ -36,7 +41,7 @@ internal class JimpleGenerator(private val sootClass: SootClass) {
         val jimpleBody = Jimple.v().newBody(method)
 
         methodParams.forEachIndexed { paramIndex, param ->
-            val argument = Jimple.v().newLocal(param.toString(), param.type)
+            val argument = param as Local
             val identityReference = Jimple.v().newParameterRef(param.type, paramIndex)
             val identityStatement = Jimple.v().newIdentityStmt(argument, identityReference)
 
@@ -47,13 +52,15 @@ internal class JimpleGenerator(private val sootClass: SootClass) {
         statements.forEach { statement ->
             jimpleBody.units.add(statement)
             jimpleBody.locals.addAll(statement.defBoxes
-                .filter { !methodParams.contains(it.value) }
-                .map { Jimple.v().newLocal(it.value.toString(), it.value.type) }
+                .map { it.value }
+                .filter { !methodParams.contains(it) && it is Local }
+                .map { it as Local }
             )
         }
 
         val lastStatement = statements.last()
         if (lastStatement is JReturnStmt) method.returnType = lastStatement.op.type
+        else jimpleBody.units.add(Jimple.v().newReturnVoidStmt())
 
         sootClass.addMethod(method)
         method.activeBody = jimpleBody
