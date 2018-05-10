@@ -32,12 +32,14 @@ class EvoSuiteRunner(
 
     private fun buildProcess(): Process {
         val processBuilder = ProcessBuilder(
-                "java", "-cp", System.getProperty("java.class.path"), "org.evosuite.EvoSuite",
+                "java",
+                "-cp", System.getProperty("java.class.path"),
+                "org.evosuite.EvoSuite",
                 "-class", fullyQualifiedClassName,
                 "-base_dir", outputDirectory,
                 "-projectCP", classPath,
                 "-Dsearch_budget=$generationTimeoutSeconds",
-                "-Dstopping_condition=MaxTime"
+                "-Dstatistics_backend=NONE"
         )
 
         return processBuilder.start()
