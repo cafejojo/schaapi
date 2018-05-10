@@ -1,10 +1,8 @@
 package org.cafejojo.schaapi.testgenerator
 
 import java.io.BufferedReader
-import java.io.File
 import java.io.InputStreamReader
-import java.net.URLClassLoader
-
+import java.nio.charset.Charset
 
 /**
  * EvoSuite launcher.
@@ -24,14 +22,6 @@ class EvoSuiteRunner(
         private val generationTimeoutSeconds: Int = 60,
         private val logEvoSuiteOutput: Boolean = false
 ) {
-    private val currentClassPath: String
-
-    init {
-        val classLoader = ClassLoader.getSystemClassLoader()
-        val urls = (classLoader as URLClassLoader).urLs
-        currentClassPath = urls.joinToString(separator = File.pathSeparator) { it.file }
-    }
-
     /**
      * Runs the EvoSuite test generator in a new process.
      */
@@ -42,7 +32,7 @@ class EvoSuiteRunner(
 
     private fun buildProcess(): Process {
         val processBuilder = ProcessBuilder(
-                "java", "-cp", currentClassPath, "org.evosuite.EvoSuite",
+                "java", "-cp", System.getProperty("java.class.path"), "org.evosuite.EvoSuite",
                 "-class", fullyQualifiedClassName,
                 "-base_dir", outputDirectory,
                 "-projectCP", classPath,
@@ -63,10 +53,14 @@ class EvoSuiteRunner(
         }
 
         if (process.exitValue() != 0) {
+            val errorOutput = String(process.errorStream.readBytes(), Charset.defaultCharset())
             throw EvoSuiteRuntimeException("EvoSuite exited with non-zero exit code: " +
-                    "${process.exitValue()} - ${process.errorStream}")
+                    "${process.exitValue()} - $errorOutput")
         }
     }
 }
 
+/**
+ * A [RuntimeException] occurring during the execution of the EvoSuite test generation tool.
+ */
 class EvoSuiteRuntimeException(message: String? = null) : RuntimeException(message)
