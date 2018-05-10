@@ -72,6 +72,7 @@ class JavaMavenProject(override val projectDir: File) : JavaProject, MavenProjec
         val invoker = DefaultInvoker().apply {
             setOutputHandler(null)
             mavenHome = MavenInstaller.DEFAULT_MAVEN_HOME
+            workingDirectory = projectDir
         }
 
         val result = invoker.execute(request)
