@@ -27,9 +27,9 @@ internal class EvoSuiteRunnerTest : Spek({
     describe("execution of the EvoSuite test generator") {
         it("generates tests for a test class") {
             EvoSuiteRunner(
-                "org.cafejojo.schaapi.test.EvoSuiteTestClass",
-                classPath,
-                classPath,
+                    "org.cafejojo.schaapi.test.EvoSuiteTestClass",
+                    classPath,
+                    classPath,
                     generationTimeoutSeconds = 5
             ).run()
 

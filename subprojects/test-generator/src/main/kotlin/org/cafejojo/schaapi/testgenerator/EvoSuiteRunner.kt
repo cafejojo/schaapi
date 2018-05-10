@@ -2,6 +2,7 @@ package org.cafejojo.schaapi.testgenerator
 
 import java.io.BufferedReader
 import java.io.InputStreamReader
+import java.io.OutputStream
 import java.nio.charset.Charset
 
 /**
@@ -20,36 +21,29 @@ class EvoSuiteRunner(
         private val classPath: String,
         private val outputDirectory: String,
         private val generationTimeoutSeconds: Int = 60,
-        private val logEvoSuiteOutput: Boolean = false
+        private val evoSuiteOutputStream: OutputStream? = null
 ) {
     /**
      * Runs the EvoSuite test generator in a new process.
      */
-    fun run() {
-        val process = buildProcess()
-        receiveProcessOutput(process)
-    }
+    fun run() = receiveProcessOutput(buildProcess())
 
-    private fun buildProcess(): Process {
-        val processBuilder = ProcessBuilder(
-                "java",
-                "-cp", System.getProperty("java.class.path"),
-                "org.evosuite.EvoSuite",
-                "-class", fullyQualifiedClassName,
-                "-base_dir", outputDirectory,
-                "-projectCP", classPath,
-                "-Dsearch_budget=$generationTimeoutSeconds",
-                "-Dstatistics_backend=NONE"
-        )
-
-        return processBuilder.start()
-    }
+    private fun buildProcess() = ProcessBuilder(
+            "java",
+            "-cp", System.getProperty("java.class.path"),
+            "org.evosuite.EvoSuite",
+            "-class", fullyQualifiedClassName,
+            "-base_dir", outputDirectory,
+            "-projectCP", classPath,
+            "-Dsearch_budget=$generationTimeoutSeconds",
+            "-Dstatistics_backend=NONE"
+    ).start()
 
     private fun receiveProcessOutput(process: Process) {
         val bufferedReader = BufferedReader(InputStreamReader(process.inputStream))
         var line = bufferedReader.readLine()
         while (line != null) {
-            if (logEvoSuiteOutput) println(line)
+            evoSuiteOutputStream?.write(line.toByteArray())
 
             line = bufferedReader.readLine()
         }
