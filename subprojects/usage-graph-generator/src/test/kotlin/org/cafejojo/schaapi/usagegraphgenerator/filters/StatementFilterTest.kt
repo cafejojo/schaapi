@@ -6,19 +6,14 @@ import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
-import soot.SootClass
-import soot.SootMethod
+import soot.Body
 import soot.Unit
 import soot.jimple.DefinitionStmt
 import soot.jimple.GotoStmt
-import soot.jimple.InvokeExpr
 import soot.jimple.InvokeStmt
 import soot.jimple.ReturnStmt
 import soot.jimple.ReturnVoidStmt
 import soot.jimple.ThrowStmt
-
-private const val NON_LIBRARY_CLASS = "java.lang.String"
-private const val LIBRARY_CLASS = "org.cafejojo.schaapi.usagegraphgenerator.testclasses.library"
 
 internal class StatementFilterTest : Spek({
     describe("filters statements based on library usage") {
@@ -61,12 +56,7 @@ internal class StatementFilterTest : Spek({
         }
 
         it("filters return statements") {
-            assertThatItRetains(mock<ReturnStmt> {
-                on { op } doReturn libraryValue
-            })
-            assertThatItDoesNotRetain(mock<ReturnStmt> {
-                on { op } doReturn nonLibraryValue
-            })
+            assertThatItRetains(mock<ReturnStmt>())
         }
 
         it("filters goto statements") {
@@ -83,17 +73,8 @@ internal class StatementFilterTest : Spek({
     }
 })
 
-private fun constructInvokeExprMock(declaringClassName: String): InvokeExpr {
-    val clazz = mock<SootClass> {
-        on { name } doReturn declaringClassName
-    }
-    val method = mock<SootMethod> {
-        on { declaringClass } doReturn clazz
-    }
-    return mock {
-        on { getMethod() } doReturn method
-    }
-}
+private fun assertThatItRetains(unit: Unit, body: Body = mock()) =
+    assertThat(StatementFilter(body).retain(unit)).isTrue()
 
-private fun assertThatItRetains(unit: Unit) = assertThat(StatementFilter.retain(unit)).isTrue()
-private fun assertThatItDoesNotRetain(unit: Unit) = assertThat(StatementFilter.retain(unit)).isFalse()
+private fun assertThatItDoesNotRetain(unit: Unit, body: Body = mock()) =
+    assertThat(StatementFilter(body).retain(unit)).isFalse()
