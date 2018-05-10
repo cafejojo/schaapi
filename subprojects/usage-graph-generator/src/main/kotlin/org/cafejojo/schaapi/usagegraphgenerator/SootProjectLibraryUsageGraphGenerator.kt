@@ -66,8 +66,8 @@ object SootProjectLibraryUsageGraphGenerator : ProjectLibraryUsageGraphGenerator
      */
     private fun generateMethodGraph(libraryProject: JavaProject, method: SootMethod): Node {
         val methodBody = method.retrieveActiveBody()
-        val filters = listOf(StatementFilter(libraryProject, methodBody), IfStatementFilter(libraryProject, methodBody))
-        filters.forEach { it.apply() }
+        val filters = listOf(StatementFilter(libraryProject), IfStatementFilter(libraryProject))
+        filters.forEach { it.apply(methodBody) }
 
         return ControlFlowGraphCreator.create(methodBody)
             ?: throw IllegalStateException("Control flow graph could not be generated")
