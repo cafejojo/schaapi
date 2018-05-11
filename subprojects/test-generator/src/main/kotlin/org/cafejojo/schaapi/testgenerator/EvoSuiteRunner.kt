@@ -14,7 +14,7 @@ import java.nio.charset.Charset
  * @property classPath the class path on which to find the class that should be tested
  * @property outputDirectory the output directory path for the generated EvoSuite tests
  * @property generationTimeoutSeconds how long to let the EvoSuite test generator run (in seconds)
- * @property evoSuitePrintStream whether to output EvoSuite logs to [System.out]
+ * @property evoSuitePrintStream a stream to output EvoSuite's logs to (the caller has the responsibility to close this)
  */
 class EvoSuiteRunner(
         private val fullyQualifiedClassName: String,
