@@ -1,0 +1,7 @@
+apply plugin: "application"
+
+mainClassName = "org.cafejojo.schaapi.testgenerator.TestGeneratorKt"
+
+dependencies {
+    compile group: "org.evosuite", name: "evosuite-master", version: evosuiteMasterVersion
+}
