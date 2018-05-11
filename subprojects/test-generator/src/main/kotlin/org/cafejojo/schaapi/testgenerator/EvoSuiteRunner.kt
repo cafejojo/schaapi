@@ -51,7 +51,8 @@ class EvoSuiteRunner(
         process.waitFor()
 
         if (!lastLine.toLowerCase().contains("computation finished")) {
-            throw EvoSuiteRuntimeException("EvoSuite did not terminate successfully.")
+            throw EvoSuiteRuntimeException("EvoSuite did not terminate successfully. " +
+                    "The last line of its output reads: $lastLine")
         }
 
         if (process.exitValue() != 0) {
