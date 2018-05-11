@@ -77,6 +77,8 @@ class JavaMavenProject(override val projectDir: File) : JavaProject, MavenProjec
             baseDirectory = projectDir
             pomFile = pomFile
             goals = listOf("clean", "install", "dependency:copy-dependencies")
+            isBatchMode = true
+            javaHome = File(System.getProperty("java.home"))
         }
 
         val invoker = DefaultInvoker().apply {
