@@ -18,7 +18,7 @@ import soot.jimple.IntConstant
 import soot.jimple.Jimple
 import soot.jimple.StringConstant
 
-internal class ShimpleGeneratorTest : Spek({
+internal class JimpleGeneratorTest : Spek({
     given("a list of nodes") {
         on("generating a method") {
             it("should not create parameters if all variables are bound") {
