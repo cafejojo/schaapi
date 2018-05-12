@@ -77,10 +77,11 @@ private class BranchingStatement(body: Body, val statement: Unit) {
         }
     }
 
-    @SuppressWarnings("OptionalUnit") // Return type soot.Unit is not optional
-    private fun findBranchStatementEnd(): Unit {
+    private fun findBranchStatementEnd(): soot.Unit {
+        // Return type is fully classified because of false positives by static analysis tools
+
         val bodiesTillMethodEnd = cfg.getSuccsOf(statement).map { collectSuccessors(cfg, it) }
-        val intersectedBodies: MutableList<Unit> =
+        val intersectedBodies =
             bodiesTillMethodEnd.fold(bodiesTillMethodEnd[0], { acc, list -> acc.intersect(list).toMutableList() })
 
         if (intersectedBodies.isEmpty()) throw IllegalStateException("No common end found")
