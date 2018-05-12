@@ -102,16 +102,16 @@ internal class ShimpleGeneratorTest : Spek({
                 assertThat(jimpleMethod.activeBody.locals.map { it.name }).contains(a.name, b.name, c.name)
             }
 
-            it("should generate a method with return type void if last statement is not return") {
+            it("should generate a method with return type void if no return is present") {
                 val c = Jimple.v().newLocal("c", BooleanType.v())
 
                 val assignC = Jimple.v().newAssignStmt(c, IntConstant.v(10))
 
                 val sClass = SootClass("class", Modifier.PUBLIC)
-                val shimpleMethod = JimpleGenerator(sClass)
+                val jimpleMethod = JimpleGenerator(sClass)
                     .generateJimpleMethod("method", listOf(assignC))
 
-                assertThat(shimpleMethod.returnType).isEqualTo(VoidType.v())
+                assertThat(jimpleMethod.returnType).isEqualTo(VoidType.v())
             }
 
             it("should generate a method with return type boolean of last statement is return boolean") {
@@ -138,6 +138,20 @@ internal class ShimpleGeneratorTest : Spek({
                     .generateJimpleMethod("method", listOf(assignC, returnC))
 
                 assertThat(jimpleMethod.returnType).isEqualTo(c.type)
+            }
+
+            it("should generate a method with only statements before return") {
+                val c = Jimple.v().newLocal("c", RefType.v("myClass"))
+
+                val assignC = Jimple.v().newAssignStmt(c, IntConstant.v(10))
+                val returnC = Jimple.v().newReturnStmt(c)
+                val assignCAgain = Jimple.v().newAssignStmt(c, IntConstant.v(20))
+
+                val sClass = SootClass("class", Modifier.PUBLIC)
+                val jimpleMethod = JimpleGenerator(sClass)
+                    .generateJimpleMethod("method", listOf(assignC, returnC, assignCAgain))
+
+                assertThat(jimpleMethod.activeBody.units).hasSize(3)
             }
         }
     }
