@@ -26,10 +26,9 @@ object SootClassWriter {
         val outputFile = Paths.get(targetDirectory, generateClassFilePath(sootClass.name)).toFile()
         outputFile.parentFile.mkdirs()
         val outputStream = FileOutputStream(outputFile)
-
-        writeToOutputStream(sootClass, outputStream)
-
-        outputStream.close()
+        outputStream.use {
+            writeToOutputStream(sootClass, outputStream)
+        }
     }
 
     /**

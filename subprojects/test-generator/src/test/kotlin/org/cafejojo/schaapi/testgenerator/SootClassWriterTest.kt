@@ -7,7 +7,6 @@ import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 import soot.Scene
 import java.nio.file.Paths
-import java.util.Collections
 import javax.xml.bind.DatatypeConverter
 
 internal class SootClassWriterTest : Spek({
@@ -63,9 +62,7 @@ internal class SootClassWriterTest : Spek({
             SootClassWriter.writeToOutputStream(Scene.v().makeSootClass(testClassName), byteOutputStream)
 
             assertThat(DatatypeConverter.printBase64Binary(byteOutputStream.bytes))
-                .isEqualTo("yv66vgAAAC4AAwcAAgEAC015VGVzdENsYXNzACAAAQ"
-                    + Collections.nCopies(1324, "A").joinToString(separator = "") { it }
-                    + "==")
+                .isEqualTo("yv66vgAAAC4AAwcAAgEAC015VGVzdENsYXNzACAAAQ${"A".repeat(1324)}==")
         }
     }
 })
