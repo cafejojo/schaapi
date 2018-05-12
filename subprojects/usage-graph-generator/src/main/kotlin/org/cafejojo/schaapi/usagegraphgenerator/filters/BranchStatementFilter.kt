@@ -34,8 +34,6 @@ class BranchStatementFilter(project: JavaProject) : Filter {
                     body.units.removeAll(it.redundantGoToStatements)
                 }
         }
-
-        println(body)
     }
 
     private fun retain(branch: BranchingStatement) =
