@@ -3,7 +3,7 @@ package org.cafejojo.schaapi.usagegraphgenerator
 import org.cafejojo.schaapi.common.JavaProject
 import org.cafejojo.schaapi.common.Node
 import org.cafejojo.schaapi.common.ProjectLibraryUsageGraphGenerator
-import org.cafejojo.schaapi.usagegraphgenerator.filters.IfStatementFilter
+import org.cafejojo.schaapi.usagegraphgenerator.filters.BranchStatementFilter
 import org.cafejojo.schaapi.usagegraphgenerator.filters.StatementFilter
 import soot.Scene
 import soot.SootClass
@@ -66,7 +66,7 @@ object SootProjectLibraryUsageGraphGenerator : ProjectLibraryUsageGraphGenerator
      */
     private fun generateMethodGraph(libraryProject: JavaProject, method: SootMethod): Node {
         val methodBody = method.retrieveActiveBody()
-        val filters = listOf(StatementFilter(libraryProject), IfStatementFilter(libraryProject))
+        val filters = listOf(StatementFilter(libraryProject), BranchStatementFilter(libraryProject))
         filters.forEach { it.apply(methodBody) }
 
         return ControlFlowGraphCreator.create(methodBody)

@@ -32,7 +32,7 @@ class StatementFilter(project: JavaProject) : Filter {
         is ThrowStmt -> valueFilter.retain(unit.op)
         is DefinitionStmt -> valueFilter.retain(unit.rightOp)
         is IfStmt -> true // defer to IfStatementFilter
-        is SwitchStmt -> throw UnsupportedOperationException("Switch statements are not supported at this time") // todo
+        is SwitchStmt -> true // defer to BranchStatementFilter
         is InvokeStmt -> valueFilter.retain(unit.invokeExpr)
         is ReturnStmt -> true
         is GotoStmt -> true
