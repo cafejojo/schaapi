@@ -13,6 +13,7 @@ import soot.jimple.internal.JIfStmt
 import soot.jimple.internal.JInvokeStmt
 import soot.jimple.internal.JLookupSwitchStmt
 import soot.jimple.internal.JReturnStmt
+import soot.jimple.internal.JReturnVoidStmt
 import soot.jimple.internal.JTableSwitchStmt
 
 private const val TEST_CLASSES_PACKAGE = "org.cafejojo.schaapi.usagegraphgenerator.testclasses"
@@ -151,14 +152,14 @@ internal class IntegrationTest : Spek({
                         node<JAssignStmt>(
                             node<JTableSwitchStmt>(
                                 node<JGotoStmt>(
-                                    node<JReturnStmt>()
+                                    node<JReturnVoidStmt>()
                                 ),
                                 node<JInvokeStmt>(
                                     node<JGotoStmt>(
-                                        node<JReturnStmt>()
+                                        node<JReturnVoidStmt>()
                                     )
                                 ),
-                                node<JReturnStmt>()
+                                node<JReturnVoidStmt>()
                             )
                         )
                     )

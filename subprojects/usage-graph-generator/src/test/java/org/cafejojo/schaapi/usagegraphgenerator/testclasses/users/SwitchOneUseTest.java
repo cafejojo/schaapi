@@ -3,7 +3,7 @@ package org.cafejojo.schaapi.usagegraphgenerator.testclasses.users;
 import org.cafejojo.schaapi.usagegraphgenerator.testclasses.library.Object1;
 
 public class SwitchOneUseTest {
-    public Object1 test() {
+    public void test() {
         Object1 o1 = new Object1();
 
         switch (o1.hashCode()) {
@@ -18,7 +18,5 @@ public class SwitchOneUseTest {
                 int c = 3;
                 break;
         }
-
-        return o1;
     }
 }

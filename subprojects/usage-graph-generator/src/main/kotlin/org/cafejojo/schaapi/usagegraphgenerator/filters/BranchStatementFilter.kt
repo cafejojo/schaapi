@@ -82,8 +82,7 @@ private class BranchingStatement(body: Body, val statement: Unit) {
         val intersectedBodies =
             bodiesTillMethodEnd.fold(bodiesTillMethodEnd[0], { acc, list -> acc.intersect(list).toMutableList() })
 
-        if (intersectedBodies.isEmpty()) throw IllegalStateException("No common end found")
-        // todo What happens if branch statement is last statement of method?
+        if (intersectedBodies.isEmpty()) throw IllegalStateException("No common end statement found")
 
         return intersectedBodies[0]
     }
