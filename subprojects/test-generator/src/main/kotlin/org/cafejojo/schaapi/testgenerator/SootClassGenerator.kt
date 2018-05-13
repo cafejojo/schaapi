@@ -19,9 +19,11 @@ import soot.jimple.internal.VariableBox
  *
  * This IR code can then be converted to Java Bytecode.
  *
- * @property SootClass the class to generate tests for
+ * @param className name of [SootClass] to be generated
  */
-internal class SootClassGenerator(private val sootClass: SootClass) {
+internal class SootClassGenerator(className: String) {
+    val sootClass = SootClass(className)
+
     /**
      * Generates a non-static soot method for the given [SootClass] with a body written in Jimple IR, and add it to the
      * class.

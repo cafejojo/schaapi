@@ -9,7 +9,6 @@ import soot.BooleanType
 import soot.CharType
 import soot.IntType
 import soot.RefType
-import soot.SootClass
 import soot.VoidType
 import soot.jimple.IntConstant
 import soot.jimple.Jimple
@@ -26,8 +25,7 @@ internal class SootClassGeneratorTest : Spek({
             val assignB = Jimple.v().newAssignStmt(b, StringConstant.v("world"))
             val assignC = Jimple.v().newAssignStmt(c, Jimple.v().newAddExpr(a, b))
 
-            val sClass = SootClass("asdf")
-            val jimpleMethod = SootClassGenerator(sClass)
+            val jimpleMethod = SootClassGenerator("asdf")
                 .generateMethod("method", listOf(assignA, assignB, assignC))
 
             assertThat(jimpleMethod.parameterCount).isZero()
@@ -40,12 +38,16 @@ internal class SootClassGeneratorTest : Spek({
 
             val assignC = Jimple.v().newAssignStmt(c, Jimple.v().newAddExpr(a, b))
 
-            val sClass = SootClass("class")
-            val jimpleMethod = SootClassGenerator(sClass)
+            val jimpleMethod = SootClassGenerator("class")
                 .generateMethod("method", listOf(assignC))
 
             assertThat(jimpleMethod.parameterTypes).containsExactly(IntType.v(), IntType.v())
             assertThat(jimpleMethod.activeBody.parameterLocals.map { it.name }).containsExactly(a.name, b.name)
+        }
+
+        it ("generates a class with the correct name") {
+            val generator = SootClassGenerator("ghjk")
+            assertThat(generator.sootClass.name).isEqualTo("ghjk")
         }
 
         it("can generate multiple methods") {
@@ -57,15 +59,14 @@ internal class SootClassGeneratorTest : Spek({
             val assignC = Jimple.v().newAssignStmt(c, Jimple.v().newAddExpr(a, b))
             val assignD = Jimple.v().newAssignStmt(d, IntConstant.v(23))
 
-            val sClass = SootClass("class")
-            val generator = SootClassGenerator(sClass)
+            val generator = SootClassGenerator("ghjk")
 
             val method1 = generator.generateMethod("method1", listOf(assignC))
             val method2 = generator.generateMethod("method2", listOf(assignD))
 
             assertThat(method1.parameterCount).isEqualTo(2)
             assertThat(method2.parameterCount).isZero()
-            assertThat(sClass.methodCount).isEqualTo(2)
+            assertThat(generator.sootClass.methodCount).isEqualTo(2)
         }
 
         it("should generate a valid body") {
@@ -75,8 +76,7 @@ internal class SootClassGeneratorTest : Spek({
 
             val assignC = Jimple.v().newAssignStmt(c, Jimple.v().newAddExpr(a, b))
 
-            val sClass = SootClass("class")
-            val jimpleMethod = SootClassGenerator(sClass)
+            val jimpleMethod = SootClassGenerator("myClass")
                 .generateMethod("method", listOf(assignC))
 
             val throwable = catchThrowable { jimpleMethod.activeBody.validate() }
@@ -92,8 +92,7 @@ internal class SootClassGeneratorTest : Spek({
             val assignC = Jimple.v().newAssignStmt(c, Jimple.v().newAddExpr(a, b))
             val assignB = Jimple.v().newAssignStmt(b, IntConstant.v(20))
 
-            val sClass = SootClass("class")
-            val jimpleMethod = SootClassGenerator(sClass)
+            val jimpleMethod = SootClassGenerator("classy")
                 .generateMethod("method", listOf(assignA, assignC, assignB))
 
             assertThat(jimpleMethod.parameterTypes).containsExactly(IntType.v())
@@ -109,8 +108,7 @@ internal class SootClassGeneratorTest : Spek({
 
             val assignC = Jimple.v().newAssignStmt(c, Jimple.v().newAndExpr(a, b))
 
-            val sClass = SootClass("class")
-            val jimpleMethod = SootClassGenerator(sClass)
+            val jimpleMethod = SootClassGenerator("clazz")
                 .generateMethod("method", listOf(assignC))
 
             assertThat(jimpleMethod.activeBody.locals.map { it.name }).contains(a.name, b.name, c.name)
@@ -121,8 +119,7 @@ internal class SootClassGeneratorTest : Spek({
 
             val assignC = Jimple.v().newAssignStmt(c, IntConstant.v(10))
 
-            val sClass = SootClass("class")
-            val jimpleMethod = SootClassGenerator(sClass)
+            val jimpleMethod = SootClassGenerator("testClass")
                 .generateMethod("method", listOf(assignC))
 
             assertThat(jimpleMethod.returnType).isEqualTo(VoidType.v())
@@ -134,8 +131,7 @@ internal class SootClassGeneratorTest : Spek({
             val assignC = Jimple.v().newAssignStmt(c, IntConstant.v(10))
             val returnC = Jimple.v().newReturnStmt(c)
 
-            val sClass = SootClass("class")
-            val jimpleMethod = SootClassGenerator(sClass)
+            val jimpleMethod = SootClassGenerator("klazz")
                 .generateMethod("method", listOf(assignC, returnC))
 
             assertThat(jimpleMethod.returnType).isEqualTo(c.type)
@@ -147,8 +143,7 @@ internal class SootClassGeneratorTest : Spek({
             val assignC = Jimple.v().newAssignStmt(c, IntConstant.v(10))
             val returnC = Jimple.v().newReturnStmt(c)
 
-            val sClass = SootClass("class")
-            val jimpleMethod = SootClassGenerator(sClass)
+            val jimpleMethod = SootClassGenerator("clasz")
                 .generateMethod("method", listOf(assignC, returnC))
 
             assertThat(jimpleMethod.returnType).isEqualTo(c.type)
@@ -161,8 +156,7 @@ internal class SootClassGeneratorTest : Spek({
             val returnC = Jimple.v().newReturnStmt(c)
             val assignCAgain = Jimple.v().newAssignStmt(c, IntConstant.v(20))
 
-            val sClass = SootClass("class")
-            val jimpleMethod = SootClassGenerator(sClass)
+            val jimpleMethod = SootClassGenerator("testTestTest")
                 .generateMethod("method", listOf(assignC, returnC, assignCAgain))
 
             assertThat(jimpleMethod.activeBody.units).hasSize(3)
