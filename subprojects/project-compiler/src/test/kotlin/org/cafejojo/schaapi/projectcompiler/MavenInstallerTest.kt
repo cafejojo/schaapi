@@ -14,6 +14,10 @@ internal class MavenInstallerTest : Spek({
         target = Files.createTempDirectory("schaapi-test").toFile()
     }
 
+    afterEachTest {
+        target.deleteRecursively()
+    }
+
     describe("Maven installer") {
         it("installs Maven") {
             MavenInstaller().installMaven(target)

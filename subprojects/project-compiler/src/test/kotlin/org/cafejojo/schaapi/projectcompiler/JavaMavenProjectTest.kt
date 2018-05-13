@@ -18,8 +18,16 @@ internal class JavaMavenProjectTest : Spek({
         MavenInstaller().installMaven(mavenHome)
     }
 
+    afterGroup {
+        mavenHome.deleteRecursively()
+    }
+
     beforeEachTest {
         target = Files.createTempDirectory("schaapi-test").toFile()
+    }
+
+    afterEachTest {
+        target.deleteRecursively()
     }
 
     describe("Java Maven project validation") {
