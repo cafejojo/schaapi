@@ -19,7 +19,7 @@ internal class ShimpleGenerator(private val c: SootClass, private val statements
     /**
      * Generates a soot method with a body written in shimple code.
      *
-     * Unbounded variables in the list of [SootNode]s are used as method parameters.
+     * Unbound variables in the list of [SootNode]s are used as method parameters.
      */
     fun generateShimple(): SootMethod {
         val methodParams = generateMethodParams()
