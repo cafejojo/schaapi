@@ -5,19 +5,16 @@ import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 import java.io.File
+import java.nio.file.Files
 
 internal class MavenInstallerTest : Spek({
+    lateinit var target: File
+
+    beforeEachTest {
+        target = Files.createTempDirectory("schaapi-test").toFile()
+    }
+
     describe("Maven installer") {
-        val target = File("./test/")
-
-        beforeGroup {
-            target.deleteRecursively()
-        }
-
-        afterEachTest {
-            target.deleteRecursively()
-        }
-
         it("installs Maven") {
             MavenInstaller().installMaven(target)
 

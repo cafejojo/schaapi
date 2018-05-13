@@ -7,15 +7,21 @@ import org.jetbrains.spek.api.dsl.it
 import org.junit.jupiter.api.assertThrows
 import java.io.File
 import java.io.FileNotFoundException
+import java.nio.file.Files
 
 internal class JavaMavenProjectTest : Spek({
+    lateinit var target: File
+
+    beforeGroup {
+        val mavenTarget = Files.createTempDirectory("schaapi-maven").toFile()
+        MavenInstaller().installMaven(mavenTarget)
+    }
+
+    beforeEachTest {
+        target = Files.createTempDirectory("schaapi-test").toFile()
+    }
+
     describe("Java Maven project validation") {
-        val target = File("test/")
-
-        afterEachTest {
-            target.deleteRecursively()
-        }
-
         it("detects non-existing directories") {
             assertThrows<IllegalArgumentException> {
                 JavaMavenProject(File("./invalid-path"))
@@ -30,16 +36,6 @@ internal class JavaMavenProjectTest : Spek({
     }
 
     describe("Java Maven project compilation") {
-        val target = File("./test")
-
-        beforeGroup {
-            MavenInstaller().installMaven(MavenInstaller.DEFAULT_MAVEN_HOME)
-        }
-
-        afterEachTest {
-            target.deleteRecursively()
-        }
-
         it("compiles codeless projects") {
             setUpTestFiles("/ProjectCompiler/no-sources", target)
 
