@@ -12,7 +12,7 @@ import soot.shimple.Shimple
 /**
  * Shimple IR generator.
  *
- * @property statements A list of statements used to generate java bytecode. The generated java bytecode
+ * @property statements a list of statements used to generate java bytecode. The generated java bytecode
  * should represent a method where the unbound variables are method parameters.
  */
 internal class ShimpleGenerator(private val c: SootClass, private val statements: List<SootNode>) {
