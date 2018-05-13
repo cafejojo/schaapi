@@ -25,7 +25,7 @@ internal class JimpleGenerator(private val sootClass: SootClass) {
     /**
      * Generates a non-static soot method for the given [SootClass] with a body written in Jimple IR.
      *
-     * Unbounded variables in the list of [Stmt]s are used as method parameters. All variables are stored as locals
+     * Unbound variables in the list of [Stmt]s are used as method parameters. All variables are stored as locals
      * of the method. If a return statement is found in the sequence, this statement is the last statement, even if it
      * is not the last statement in the [statements] sequence. If no return statement is found the method returns void.
      *
