@@ -30,7 +30,10 @@ fun main(args: Array<String>) {
  * A Java project using Maven.
  */
 @SuppressWarnings("LateinitUsage") // Refer to PR #23
-class JavaMavenProject(override val projectDir: File) : JavaProject, MavenProject {
+class JavaMavenProject(
+    override val projectDir: File,
+    override val mavenDir: File = MavenInstaller.DEFAULT_MAVEN_HOME
+) : JavaProject, MavenProject {
     override val pomFile = File(projectDir, "pom.xml")
     override val classDir = File(projectDir, "target/classes")
     override val dependencyDir = File(projectDir, "target/dependency")
@@ -75,15 +78,16 @@ class JavaMavenProject(override val projectDir: File) : JavaProject, MavenProjec
     private fun runMaven() {
         val request = DefaultInvocationRequest().apply {
             baseDirectory = projectDir
-            pomFile = pomFile
             goals = listOf("clean", "install", "dependency:copy-dependencies")
             isBatchMode = true
             javaHome = File(System.getProperty("java.home"))
+            pomFile = pomFile
         }
 
         val invoker = DefaultInvoker().apply {
             setOutputHandler(null)
-            mavenHome = MavenInstaller.DEFAULT_MAVEN_HOME
+            mavenHome = mavenDir
+            workingDirectory = projectDir
         }
 
         val result = invoker.execute(request)

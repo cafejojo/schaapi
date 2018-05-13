@@ -10,11 +10,12 @@ import java.io.FileNotFoundException
 import java.nio.file.Files
 
 internal class JavaMavenProjectTest : Spek({
+    lateinit var mavenHome: File
     lateinit var target: File
 
     beforeGroup {
-        val mavenTarget = Files.createTempDirectory("schaapi-maven").toFile()
-        MavenInstaller().installMaven(mavenTarget)
+        mavenHome = Files.createTempDirectory("schaapi-maven").toFile()
+        MavenInstaller().installMaven(mavenHome)
     }
 
     beforeEachTest {
@@ -24,13 +25,13 @@ internal class JavaMavenProjectTest : Spek({
     describe("Java Maven project validation") {
         it("detects non-existing directories") {
             assertThrows<IllegalArgumentException> {
-                JavaMavenProject(File("./invalid-path"))
+                JavaMavenProject(File("./invalid-path"), mavenHome)
             }
         }
 
         it("detects non-maven directories") {
             assertThrows<IllegalArgumentException> {
-                JavaMavenProject(target)
+                JavaMavenProject(target, mavenHome)
             }
         }
     }
@@ -39,7 +40,7 @@ internal class JavaMavenProjectTest : Spek({
         it("compiles codeless projects") {
             setUpTestFiles("/ProjectCompiler/no-sources", target)
 
-            val project = JavaMavenProject(target)
+            val project = JavaMavenProject(target, mavenHome)
             project.compile()
 
             assertThat(project.projectDir).isEqualTo(target)
@@ -54,7 +55,7 @@ internal class JavaMavenProjectTest : Spek({
         it("compiles simple projects") {
             setUpTestFiles("/ProjectCompiler/simple", target)
 
-            val project = JavaMavenProject(target)
+            val project = JavaMavenProject(target, mavenHome)
             project.compile()
 
             assertThat(project.projectDir).isEqualTo(target)
@@ -73,7 +74,7 @@ internal class JavaMavenProjectTest : Spek({
         it("compiles projects with dependencies") {
             setUpTestFiles("/ProjectCompiler/dependencies", target)
 
-            val project = JavaMavenProject(target)
+            val project = JavaMavenProject(target, mavenHome)
             project.compile()
 
             assertThat(project.projectDir).isEqualTo(target)

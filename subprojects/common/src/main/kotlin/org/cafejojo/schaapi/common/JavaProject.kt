@@ -65,6 +65,11 @@ interface JavaProject : Project {
  */
 interface MavenProject : Project {
     /**
+     * The directory where Maven is installed.
+     */
+    val mavenDir: File
+
+    /**
      * The Maven configuration file.
      */
     val pomFile: File
