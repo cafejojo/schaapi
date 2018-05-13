@@ -29,7 +29,7 @@ internal class JimpleGenerator(private val sootClass: SootClass) {
      * of the method. If a return statement is found in the sequence, this statement is the last statement, even if it
      * is not the last statement in the [statements] sequence. If no return statement is found the method returns void.
      *
-     * The method itself does not verification of the body of the method. Verification can be done by calling
+     * The method itself does no verification of the body of the method. Verification can be done by calling
      * [soot.Body.validate] on [soot.SootMethod.activeBody] to validate that the body is well formed.
      *
      * @param methodName the name the method should have
