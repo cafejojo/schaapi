@@ -15,7 +15,7 @@ import soot.jimple.IntConstant
 import soot.jimple.Jimple
 import soot.jimple.StringConstant
 
-internal class JimpleGeneratorTest : Spek({
+internal class SootClassGeneratorTest : Spek({
     describe("generation of a method based on a list of nodes") {
         it("should not create parameters if all variables are bound") {
             val a = Jimple.v().newLocal("a", CharType.v())
