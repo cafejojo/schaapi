@@ -15,13 +15,14 @@ import soot.jimple.internal.JReturnStmt
 import soot.jimple.internal.VariableBox
 
 /**
- * Jimple IR code generator.
+ * Generates a [SootClass], and allows methods to be generated for said class based on lists of [Stmt]s.
  *
- * This IR code can then be converted to Java Bytecode.
+ * The body of methods is represented using [Jimple] IR. This IR can then be converted to java bytecode, or other IR
+ * representations.
  *
  * @param className name of [SootClass] to be generated
  */
-internal class SootClassGenerator(className: String) {
+class SootClassGenerator(className: String) {
     val sootClass = SootClass(className)
 
     /**
@@ -34,6 +35,8 @@ internal class SootClassGenerator(className: String) {
      *
      * The method itself does no verification of the body of the method. Verification can be done by calling
      * [soot.Body.validate] on [soot.SootMethod.activeBody] to validate that the body is well formed.
+     *
+     * The body of the method can after be converted to other IR representations or java bytecode.
      *
      * @param methodName the name the method should have
      * @param statements a list of [Stmt]s which should be converted into a method
