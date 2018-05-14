@@ -37,7 +37,7 @@ class BranchStatementFilter(project: JavaProject) : Filter {
     }
 
     private fun retain(branch: BranchingStatement) =
-        branch.nonEmptyBranches || valueFilter.retain(BranchingStatement.getConditionValue(branch.statement))
+        branch.hasNonEmptyBranches || valueFilter.retain(BranchingStatement.getConditionValue(branch.statement))
 }
 
 private class BranchingStatement(private val body: Body, val statement: Unit) {
@@ -59,7 +59,7 @@ private class BranchingStatement(private val body: Body, val statement: Unit) {
 
     val redundantGoToStatements: List<GotoStmt>
 
-    val nonEmptyBranches: Boolean
+    val hasNonEmptyBranches: Boolean
 
     init {
         val end = findBranchStatementEnd()
@@ -68,10 +68,10 @@ private class BranchingStatement(private val body: Body, val statement: Unit) {
 
         if (targets.all { it === end || it is GotoStmt && it.target === end }) {
             redundantGoToStatements = targets.filterIsInstance<GotoStmt>()
-            nonEmptyBranches = false
+            hasNonEmptyBranches = false
         } else {
             redundantGoToStatements = emptyList()
-            nonEmptyBranches = true
+            hasNonEmptyBranches = true
         }
     }
 
