@@ -9,4 +9,7 @@ repositories {
 dependencies {
     compile group: "org.evosuite", name: "evosuite-master", version: evosuiteMasterVersion
     compile group: "ca.mcgill.sable", name: "soot", version: sootVersion
+
+    compile project(":common")
+    compile project(":usage-graph-generator")
 }
