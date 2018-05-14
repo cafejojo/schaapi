@@ -36,8 +36,7 @@ class GeneralizedStmtComparator {
      * must be compared to the template. This method will fail if arbitrary instances are compared to each other. The
      * selection of the template before any comparison occurs can be arbitrary, however.
      *
-     * An instance is said to satisfy the <i>structures</i> of the template if both are of the same class and the
-     * [soot.Type]s of their fields are the same.
+     * An instance is said to satisfy the <i>structures</i> of the template of [structuresAreEqual] returns true.
      *
      * An instance is said to satisfy the <i>generalized values</i> of the template if both [template] and [instance]
      * use [Value]s that either this comparator has not seen before or has seen before in two [Stmt]s such that those
@@ -55,7 +54,20 @@ class GeneralizedStmtComparator {
     fun satisfies(template: Stmt, instance: Stmt) =
         structuresAreEqual(template, instance) && generalizedValuesAreEqual(template, instance)
 
-    private fun structuresAreEqual(template: Stmt, instance: Stmt): Boolean {
+    /**
+     * Returns true iff [template] and [instance] have the same structure.
+     *
+     * The structures are said to be the same if both statements are of the same class and the [soot.Type]s of their
+     * fields are the same.
+     *
+     * Unlike with [satisfies], this method has no side effects and does not use state. Furthermore, this method is
+     * commutative: [template] and [instance] can be switched around without changing the outcome.
+     *
+     * @param template the template [Stmt]
+     * @param instance the instance [Stmt]
+     * @return true iff [template] and [instance] have the same structure
+     */
+    fun structuresAreEqual(template: Stmt, instance: Stmt): Boolean {
         if (template::class != instance::class) {
             return false
         }
