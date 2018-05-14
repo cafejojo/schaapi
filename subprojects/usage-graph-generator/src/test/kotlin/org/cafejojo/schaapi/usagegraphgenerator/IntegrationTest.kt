@@ -7,18 +7,20 @@ import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 import soot.Unit
-import soot.jimple.ReturnStmt
 import soot.jimple.internal.JAssignStmt
 import soot.jimple.internal.JGotoStmt
 import soot.jimple.internal.JIfStmt
 import soot.jimple.internal.JInvokeStmt
+import soot.jimple.internal.JLookupSwitchStmt
 import soot.jimple.internal.JReturnStmt
+import soot.jimple.internal.JReturnVoidStmt
+import soot.jimple.internal.JTableSwitchStmt
 
 private const val TEST_CLASSES_PACKAGE = "org.cafejojo.schaapi.usagegraphgenerator.testclasses"
 private val testClassesClassPath = IntegrationTest::class.java.getResource("../../../../").toURI().path
 
 internal class IntegrationTest : Spek({
-    describe("the integration of different components of the library usage graph generation") {
+    describe("the integration of different components of the package for simple classes") {
         it("converts a simple class to a filtered cfg") {
             val cfg = SootProjectLibraryUsageGraphGenerator.generate(
                 libraryProject,
@@ -30,7 +32,7 @@ internal class IntegrationTest : Spek({
                     node<JInvokeStmt>(
                         node<JAssignStmt>(
                             node<JInvokeStmt>(
-                                node<ReturnStmt>()
+                                node<JReturnStmt>()
                             )
                         )
                     )
@@ -38,7 +40,9 @@ internal class IntegrationTest : Spek({
                 cfg
             )
         }
+    }
 
+    describe("the integration of different components of the package for classes containing if statements") {
         it("converts a class containing an if with a library usage in the false-branch to a filtered cfg") {
             val cfg = SootProjectLibraryUsageGraphGenerator.generate(
                 libraryProject,
@@ -134,13 +138,94 @@ internal class IntegrationTest : Spek({
             )
         }
     }
+
+    describe("the integration of different components of the package for classes containing switch statements") {
+        it("converts a class containing a switch with a library usage in a branch to a filtered cfg") {
+            val cfg = SootProjectLibraryUsageGraphGenerator.generate(
+                libraryProject,
+                TestProject(testClassesClassPath, listOf("$TEST_CLASSES_PACKAGE.users.SwitchOneUseTest"))
+            )[0][1]
+
+            assertThatStructureMatches(
+                node<JAssignStmt>(
+                    node<JInvokeStmt>(
+                        node<JAssignStmt>(
+                            node<JTableSwitchStmt>(
+                                node<JGotoStmt>(
+                                    node<JReturnVoidStmt>()
+                                ),
+                                node<JInvokeStmt>(
+                                    node<JGotoStmt>(
+                                        node<JReturnVoidStmt>()
+                                    )
+                                ),
+                                node<JReturnVoidStmt>()
+                            )
+                        )
+                    )
+                ),
+                cfg
+            )
+        }
+
+        it("converts a class containing a switch with a library usage in the default branch to a filtered cfg") {
+            val cfg = SootProjectLibraryUsageGraphGenerator.generate(
+                libraryProject,
+                TestProject(testClassesClassPath, listOf("$TEST_CLASSES_PACKAGE.users.SwitchDefaultUseTest"))
+            )[0][1]
+
+            assertThatStructureMatches(
+                node<JAssignStmt>(
+                    node<JInvokeStmt>(
+                        node<JAssignStmt>(
+                            node<JLookupSwitchStmt>(
+                                node<JGotoStmt>(
+                                    node<JReturnStmt>()
+                                ),
+                                node<JGotoStmt>(
+                                    node<JReturnStmt>()
+                                ),
+                                node<JInvokeStmt>(
+                                    node<JReturnStmt>()
+                                )
+                            )
+                        )
+                    )
+                ),
+                cfg
+            )
+        }
+
+        it("converts a class containing a switch with no library usage in its branches to a filtered cfg") {
+            val cfg = SootProjectLibraryUsageGraphGenerator.generate(
+                libraryProject,
+                TestProject(testClassesClassPath, listOf("$TEST_CLASSES_PACKAGE.users.SwitchNoUseTest"))
+            )[0][1]
+
+            assertThatStructureMatches(
+                node<JAssignStmt>(
+                    node<JInvokeStmt>(
+                        node<JAssignStmt>(
+                            node<JReturnStmt>(
+                            )
+                        )
+                    )
+                ),
+                cfg
+            )
+        }
+    }
 })
 
 private fun assertThatStructureMatches(structure: Node, cfg: Node) {
     assertThat(cfg::class).isEqualTo(structure::class)
     assertThat(cfg.successors).hasSameSizeAs(structure.successors)
+
+    if (cfg is SootNode && structure is SootNode) {
+        assertThat(structure.unit).isInstanceOf(cfg.unit::class.java)
+    }
+
     structure.successors.forEachIndexed { index, structureSuccessor ->
-        if (cfg is SootNode && structure is SootNode) assertThat(structure.unit).isInstanceOf(cfg.unit::class.java)
         if (structureSuccessor !is PreviousBranchNode)
             assertThatStructureMatches(structureSuccessor, cfg.successors[index])
     }
