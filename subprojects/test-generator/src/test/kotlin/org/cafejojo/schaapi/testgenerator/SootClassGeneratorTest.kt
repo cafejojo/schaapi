@@ -159,7 +159,7 @@ internal class SootClassGeneratorTest : Spek({
             val jimpleMethod = SootClassGenerator("testTestTest")
                 .generateMethod("method", listOf(assignC, returnC, assignCAgain))
 
-            assertThat(jimpleMethod.activeBody.units).hasSize(3)
+            assertThat(jimpleMethod.activeBody.units).hasSize(2)
         }
     }
 })
