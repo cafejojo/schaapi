@@ -87,18 +87,15 @@ class GeneralizedSootComparator : GeneralizedNodeComparator {
             throw IllegalArgumentException("GeneralizedSootComparator cannot handle non-SootNodes.")
         }
 
-        val templateUnit = template.unit
-        val instanceUnit = instance.unit
-
-        val templateValues = getValues(templateUnit)
-        val instanceValues = getValues(instanceUnit)
+        val templateValues = getValues(template.unit)
+        val instanceValues = getValues(instance.unit)
 
         templateValues.forEachIndexed { index, templateValue ->
             val instanceValue = instanceValues[index]
 
             val templateHasTag = hasTag(templateValue)
             val instanceHasTag = hasTag(instanceValue)
-            val templateIsFinalized = isDefinedIn(templateValue, templateUnit)
+            val templateIsFinalized = isDefinedIn(templateValue, template.unit)
 
             val templateTag = valueTags[templateValue]
             val instanceTag = valueTags[instanceValue]
@@ -108,7 +105,7 @@ class GeneralizedSootComparator : GeneralizedNodeComparator {
                     val newTag = createNewTag()
                     valueTags[templateValue] = newTag
                     valueTags[instanceValue] = newTag
-                    tagOrigins[newTag] = templateUnit
+                    tagOrigins[newTag] = template.unit
                 }
                 !templateHasTag && instanceHasTag -> return false
 
