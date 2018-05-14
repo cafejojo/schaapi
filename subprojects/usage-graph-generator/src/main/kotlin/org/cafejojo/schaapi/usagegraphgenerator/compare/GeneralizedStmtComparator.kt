@@ -1,7 +1,10 @@
 package org.cafejojo.schaapi.usagegraphgenerator.compare
 
+import org.cafejojo.schaapi.common.Node
+import org.cafejojo.schaapi.usagegraphgenerator.SootNode
 import soot.Scene
 import soot.Type
+import soot.Unit
 import soot.Value
 import soot.jimple.DefinitionStmt
 import soot.jimple.GotoStmt
@@ -19,7 +22,7 @@ import soot.jimple.ThrowStmt
  * This comparator is stateful and is sensitive to the order in which methods are called. Refer to the documentation of
  * [satisfies].
  */
-class GeneralizedStmtComparator {
+class GeneralizedStmtComparator : GeneralizedNodeComparator {
     /**
      * Maps [Value]s to tags.
      */
@@ -27,31 +30,9 @@ class GeneralizedStmtComparator {
     /**
      * Denotes the [Stmt] to which a tag was first assigned.
      */
-    private val tagOrigins = HashMap<Int, Stmt>()
+    private val tagOrigins = HashMap<Int, Unit>()
 
-    /**
-     * Returns true iff [instance] satisfies the structure and generalized values of [template].
-     *
-     * The [template] is special in that all [Stmt]s that are suspected to be equal to each other (called "instances")
-     * must be compared to the template. This method will fail if arbitrary instances are compared to each other. The
-     * selection of the template before any comparison occurs can be arbitrary, however.
-     *
-     * An instance is said to satisfy the <i>structures</i> of the template of [structuresAreEqual] returns true.
-     *
-     * An instance is said to satisfy the <i>generalized values</i> of the template if both [template] and [instance]
-     * use [Value]s that either this comparator has not seen before or has seen before in two [Stmt]s such that those
-     * were equal according to this method. If the [Stmt]s to be compared have more than one [Value], the above
-     * procedure is applied to the respective [Value]s.
-     *
-     * While the order in which instances are checked against the template is not important, care should be taken that
-     * sequential [Stmt]s should be processed in the order they appear in the original code. Not doing so may result in
-     * false positives.
-     *
-     * @param template the template [Stmt]
-     * @param instance the instance [Stmt]
-     * @return true iff [instance] satisfies the structure and generalized values of [template]
-     */
-    fun satisfies(template: Stmt, instance: Stmt) =
+    override fun satisfies(template: Node, instance: Node) =
         structuresAreEqual(template, instance) && generalizedValuesAreEqual(template, instance)
 
     /**
@@ -63,17 +44,20 @@ class GeneralizedStmtComparator {
      * Unlike with [satisfies], this method has no side effects and does not use state. Furthermore, this method is
      * commutative: [template] and [instance] can be switched around without changing the outcome.
      *
-     * @param template the template [Stmt]
-     * @param instance the instance [Stmt]
+     * @param template the template [Node]
+     * @param instance the instance [Node]
      * @return true iff [template] and [instance] have the same structure
      */
-    fun structuresAreEqual(template: Stmt, instance: Stmt): Boolean {
-        if (template::class != instance::class) {
+    override fun structuresAreEqual(template: Node, instance: Node): Boolean {
+        if (template !is SootNode || instance !is SootNode) {
+            return false
+        }
+        if (template.unit::class != instance.unit::class) {
             return false
         }
 
-        val templateTypes = getValues(template).map { it.type }
-        val instanceTypes = getValues(instance).map { it.type }
+        val templateTypes = getValues(template.unit).map { it.type }
+        val instanceTypes = getValues(instance.unit).map { it.type }
 
         templateTypes.forEachIndexed { index, templateType ->
             val instanceType = instanceTypes[index]
@@ -86,17 +70,36 @@ class GeneralizedStmtComparator {
         return true
     }
 
+    /**
+     * Returns true iff [template] and [instance] have the same generalized values.
+     *
+     * An instance is said to satisfy the generalized values of the template if both [template] and [instance]
+     * use [Value]s that either this comparator has not seen before or has seen before in two [Stmt]s such that those
+     * were equal according to this method. If the [Stmt]s to be compared have more than one [Value], the above
+     * procedure is applied to the respective [Value]s.
+     *
+     * @param template the template [Node]
+     * @param instance the instance [Node]
+     * @return true iff [template] and [instance] have the same generalized values
+     */
     @SuppressWarnings("UnsafeCallOnNullableType") // The !! is implicitly avoided by checking `templateHasTag`
-    private fun generalizedValuesAreEqual(templateStmt: Stmt, instanceStmt: Stmt): Boolean {
-        val templateValues = getValues(templateStmt)
-        val instanceValues = getValues(instanceStmt)
+    override fun generalizedValuesAreEqual(template: Node, instance: Node): Boolean {
+        if (template !is SootNode || instance !is SootNode) {
+            return false
+        }
+
+        val templateUnit = template.unit
+        val instanceUnit = instance.unit
+
+        val templateValues = getValues(templateUnit)
+        val instanceValues = getValues(instanceUnit)
 
         templateValues.forEachIndexed { index, templateValue ->
             val instanceValue = instanceValues[index]
 
             val templateHasTag = hasTag(templateValue)
             val instanceHasTag = hasTag(instanceValue)
-            val templateIsFinalized = isDefinedIn(templateValue, templateStmt)
+            val templateIsFinalized = isDefinedIn(templateValue, templateUnit)
 
             val templateTag = valueTags[templateValue]
             val instanceTag = valueTags[instanceValue]
@@ -106,7 +109,7 @@ class GeneralizedStmtComparator {
                     val newTag = createNewTag()
                     valueTags[templateValue] = newTag
                     valueTags[instanceValue] = newTag
-                    tagOrigins[newTag] = templateStmt
+                    tagOrigins[newTag] = templateUnit
                 }
                 !templateHasTag && instanceHasTag -> return false
 
@@ -126,7 +129,7 @@ class GeneralizedStmtComparator {
      * @param stmt a [Stmt]
      * @return a list of the [Value]s contained in [stmt] as fields
      */
-    private fun getValues(stmt: Stmt) =
+    private fun getValues(stmt: Unit) =
         when (stmt) {
             is ThrowStmt -> listOf(stmt.op)
             is DefinitionStmt -> listOf(stmt.leftOp, stmt.rightOp)
@@ -143,7 +146,7 @@ class GeneralizedStmtComparator {
 
     private fun hasTag(value: Value) = valueTags.contains(value)
 
-    private fun isDefinedIn(value: Value, stmt: Stmt) = tagOrigins[valueTags[value]] === stmt
+    private fun isDefinedIn(value: Value, stmt: Unit) = tagOrigins[valueTags[value]] === stmt
 }
 
 /**

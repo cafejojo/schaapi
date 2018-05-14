@@ -3,6 +3,7 @@ package org.cafejojo.schaapi.usagegraphgenerator.compare
 import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.mock
 import org.assertj.core.api.Assertions.assertThat
+import org.cafejojo.schaapi.usagegraphgenerator.SootNode
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.context
 import org.jetbrains.spek.api.dsl.describe
@@ -33,16 +34,16 @@ internal class GeneralizedStmtComparatorStructureTest : Spek({
             val templateValue = mock<Value> {
                 on { it.type } doReturn RefType.v("MyClass")
             }
-            val template = mock<IfStmt> {
+            val template = SootNode(mock<IfStmt> {
                 on { it.condition } doReturn templateValue
-            }
+            })
 
             val instanceValue = mock<Value> {
                 on { it.type } doReturn RefType.v("MyClass")
             }
-            val instance = mock<IfStmt> {
+            val instance = SootNode(mock<IfStmt> {
                 on { it.condition } doReturn instanceValue
-            }
+            })
 
             assertThat(comparator.satisfies(template, instance)).isTrue()
         }
@@ -51,16 +52,16 @@ internal class GeneralizedStmtComparatorStructureTest : Spek({
             val templateValue = mock<Value> {
                 on { it.type } doReturn RefType.v("java.lang.Object")
             }
-            val template = mock<IfStmt> {
+            val template = SootNode(mock<IfStmt> {
                 on { it.condition } doReturn templateValue
-            }
+            })
 
             val instanceValue = mock<Value> {
                 on { it.type } doReturn RefType.v("java.lang.String")
             }
-            val instance = mock<IfStmt> {
+            val instance = SootNode(mock<IfStmt> {
                 on { it.condition } doReturn instanceValue
-            }
+            })
 
             assertThat(comparator.satisfies(template, instance)).isTrue()
         }
@@ -69,16 +70,16 @@ internal class GeneralizedStmtComparatorStructureTest : Spek({
             val templateValue = mock<Value> {
                 on { it.type } doReturn RefType.v("java.lang.String")
             }
-            val template = mock<IfStmt> {
+            val template = SootNode(mock<IfStmt> {
                 on { it.condition } doReturn templateValue
-            }
+            })
 
             val instanceValue = mock<Value> {
                 on { it.type } doReturn RefType.v("java.lang.Object")
             }
-            val instance = mock<IfStmt> {
+            val instance = SootNode(mock<IfStmt> {
                 on { it.condition } doReturn instanceValue
-            }
+            })
 
             assertThat(comparator.satisfies(template, instance)).isTrue()
         }
@@ -87,16 +88,16 @@ internal class GeneralizedStmtComparatorStructureTest : Spek({
             val templateValue = mock<Value> {
                 on { it.type } doReturn RefType.v("MyClass")
             }
-            val template = mock<IfStmt> {
+            val template = SootNode(mock<IfStmt> {
                 on { it.condition } doReturn templateValue
-            }
+            })
 
             val instanceValue = mock<Value> {
                 on { it.type } doReturn RefType.v("NotMyClass")
             }
-            val instance = mock<IfStmt> {
+            val instance = SootNode(mock<IfStmt> {
                 on { it.condition } doReturn instanceValue
-            }
+            })
 
             assertThat(comparator.satisfies(template, instance)).isFalse()
         }
@@ -113,16 +114,16 @@ internal class GeneralizedStmtComparatorStructureTest : Spek({
             val templateValue = mock<Value> {
                 on { it.type } doReturn NullType()
             }
-            val template = mock<IfStmt> {
+            val template = SootNode(mock<IfStmt> {
                 on { it.condition } doReturn templateValue
-            }
+            })
 
             val instanceValue = mock<Value> {
                 on { it.type } doReturn NullType()
             }
-            val instance = mock<IfStmt> {
+            val instance = SootNode(mock<IfStmt> {
                 on { it.condition } doReturn instanceValue
-            }
+            })
 
             assertThat(comparator.satisfies(template, instance)).isFalse()
         }
@@ -131,9 +132,9 @@ internal class GeneralizedStmtComparatorStructureTest : Spek({
     describe("structural comparison of statements") {
         context("throw statements") {
             fun mockThrowStmt(value: Value) =
-                mock<ThrowStmt> {
+                SootNode(mock<ThrowStmt> {
                     on { it.op } doReturn value
-                }
+                })
 
             it("equals itself") {
                 val value = mockValue()
@@ -174,7 +175,7 @@ internal class GeneralizedStmtComparatorStructureTest : Spek({
                 val value = mockValue()
                 val template = mockThrowStmt(value)
 
-                val instance = mock<Stmt> {}
+                val instance = SootNode(mock<Stmt> {})
 
                 assertThat(comparator.satisfies(template, instance)).isFalse()
             }
@@ -182,10 +183,10 @@ internal class GeneralizedStmtComparatorStructureTest : Spek({
 
         context("definition statements") {
             fun mockDefinitionStmt(leftValue: Value, rightValue: Value) =
-                mock<DefinitionStmt> {
+                SootNode(mock<DefinitionStmt> {
                     on { it.leftOp } doReturn leftValue
                     on { it.rightOp } doReturn rightValue
-                }
+                })
 
             it("equals itself") {
                 val leftValue = mockValue()
@@ -233,7 +234,7 @@ internal class GeneralizedStmtComparatorStructureTest : Spek({
                 val rightValue = mockValue()
                 val template = mockDefinitionStmt(leftValue, rightValue)
 
-                val instance = mock<Stmt> {}
+                val instance = SootNode(mock<Stmt> {})
 
                 assertThat(comparator.satisfies(template, instance)).isFalse()
             }
@@ -241,9 +242,9 @@ internal class GeneralizedStmtComparatorStructureTest : Spek({
 
         context("if statements") {
             fun mockIfStmt(value: Value) =
-                mock<IfStmt> {
+                SootNode(mock<IfStmt> {
                     on { it.condition } doReturn value
-                }
+                })
 
             it("equals itself") {
                 val value = mockValue()
@@ -284,7 +285,7 @@ internal class GeneralizedStmtComparatorStructureTest : Spek({
                 val value = mockValue()
                 val template = mockIfStmt(value)
 
-                val instance = mock<Stmt> {}
+                val instance = SootNode(mock<Stmt> {})
 
                 assertThat(comparator.satisfies(template, instance)).isFalse()
             }
@@ -292,9 +293,9 @@ internal class GeneralizedStmtComparatorStructureTest : Spek({
 
         context("switch statements") {
             fun mockSwitchStmt(value: Value) =
-                mock<SwitchStmt> {
+                SootNode(mock<SwitchStmt> {
                     on { it.key } doReturn value
-                }
+                })
 
             it("equals itself") {
                 val value = mockValue()
@@ -335,7 +336,7 @@ internal class GeneralizedStmtComparatorStructureTest : Spek({
                 val value = mockValue()
                 val template = mockSwitchStmt(value)
 
-                val instance = mock<Stmt> {}
+                val instance = SootNode(mock<Stmt> {})
 
                 assertThat(comparator.satisfies(template, instance)).isFalse()
             }
@@ -353,9 +354,9 @@ internal class GeneralizedStmtComparatorStructureTest : Spek({
                 }
 
             fun mockInvokeStmt(invokeExpr: InvokeExpr) =
-                mock<InvokeStmt> {
+                SootNode(mock<InvokeStmt> {
                     on { it.invokeExpr } doReturn invokeExpr
-                }
+                })
 
             it("equals itself") {
                 val value = mockInvokeExpr()
@@ -396,7 +397,7 @@ internal class GeneralizedStmtComparatorStructureTest : Spek({
                 val value = mockInvokeExpr()
                 val template = mockInvokeStmt(value)
 
-                val instance = mock<Stmt> {}
+                val instance = SootNode(mock<Stmt> {})
 
                 assertThat(comparator.satisfies(template, instance)).isFalse()
             }
@@ -404,9 +405,9 @@ internal class GeneralizedStmtComparatorStructureTest : Spek({
 
         context("return statements") {
             fun mockReturnStmt(value: Value) =
-                mock<ReturnStmt> {
+                SootNode(mock<ReturnStmt> {
                     on { it.op } doReturn value
-                }
+                })
 
             it("equals itself") {
                 val value = mockValue()
@@ -447,7 +448,7 @@ internal class GeneralizedStmtComparatorStructureTest : Spek({
                 val value = mockValue()
                 val template = mockReturnStmt(value)
 
-                val instance = mock<Stmt> {}
+                val instance = SootNode(mock<Stmt> {})
 
                 assertThat(comparator.satisfies(template, instance)).isFalse()
             }
@@ -455,7 +456,7 @@ internal class GeneralizedStmtComparatorStructureTest : Spek({
 
         context("goto statements") {
             fun mockGotoStmt() =
-                mock<GotoStmt> {}
+                SootNode(mock<GotoStmt> {})
 
             it("equals itself") {
                 val stmt = mockGotoStmt()
@@ -474,7 +475,7 @@ internal class GeneralizedStmtComparatorStructureTest : Spek({
             it("does not equal statements of a different class") {
                 val template = mockGotoStmt()
 
-                val instance = mock<Stmt> {}
+                val instance = SootNode(mock<Stmt> {})
 
                 assertThat(comparator.satisfies(template, instance)).isFalse()
             }
@@ -482,7 +483,7 @@ internal class GeneralizedStmtComparatorStructureTest : Spek({
 
         context("return-void statements") {
             fun mockReturnVoidStmt() =
-                mock<ReturnVoidStmt> {}
+                SootNode(mock<ReturnVoidStmt> {})
 
             it("equals itself") {
                 val stmt = mockReturnVoidStmt()
@@ -501,7 +502,7 @@ internal class GeneralizedStmtComparatorStructureTest : Spek({
             it("does not equal statements of a different class") {
                 val template = mockReturnVoidStmt()
 
-                val instance = mock<Stmt> {}
+                val instance = SootNode(mock<Stmt> {})
 
                 assertThat(comparator.satisfies(template, instance)).isFalse()
             }
