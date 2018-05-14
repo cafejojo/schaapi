@@ -64,10 +64,10 @@ private class BranchStatement(private val body: Body, val statement: Unit) {
     init {
         val end = findBranchStatementEnd()
 
-        val targets = cfg.getSuccsOf(statement)
+        val branchTargets = cfg.getSuccsOf(statement)
 
-        if (targets.all { it === end || it is GotoStmt && it.target === end }) {
-            redundantGoToStatements = targets.filterIsInstance<GotoStmt>()
+        if (branchTargets.all { it === end || it is GotoStmt && it.target === end }) {
+            redundantGoToStatements = branchTargets.filterIsInstance<GotoStmt>()
             hasNonEmptyBranches = false
         } else {
             redundantGoToStatements = emptyList()
