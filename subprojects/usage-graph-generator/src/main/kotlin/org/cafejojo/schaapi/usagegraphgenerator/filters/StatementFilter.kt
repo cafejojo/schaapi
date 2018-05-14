@@ -31,7 +31,7 @@ class StatementFilter(project: JavaProject) : Filter {
     fun retain(unit: Unit) = when (unit) {
         is ThrowStmt -> valueFilter.retain(unit.op)
         is DefinitionStmt -> valueFilter.retain(unit.rightOp)
-        is IfStmt -> true // defer to IfStatementFilter
+        is IfStmt -> true // defer to BranchStatementFilter
         is SwitchStmt -> true // defer to BranchStatementFilter
         is InvokeStmt -> valueFilter.retain(unit.invokeExpr)
         is ReturnStmt -> true
