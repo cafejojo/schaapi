@@ -1,6 +1,7 @@
 package org.cafejojo.schaapi.patterndetector
 
 import org.cafejojo.schaapi.common.Node
+import org.cafejojo.schaapi.usagegraphgenerator.compare.GeneralizedNodeComparator
 
 /**
  * Finds all the frequent sequences of [Node]s in the given collection of paths.
@@ -8,30 +9,14 @@ import org.cafejojo.schaapi.common.Node
  * @property allPaths all paths in which patterns should be detected. Each path is a list of [Node]s.
  * @property minimumCount the minimum amount of times a node must appear in [allPaths] for it to be considered a
  * frequent node. This node will then be used by the Prefix Space algorithm to find frequent sequences of [Node]s.
+ *
  */
-class PatternDetector(private val allPaths: Collection<List<Node>>, private val minimumCount: Int) {
+class PatternDetector(
+    private val allPaths: Collection<List<Node>>,
+    private val minimumCount: Int,
+    private val comparator: GeneralizedNodeComparator
+) {
     companion object {
-        /**
-         * Checks whether a given sequence can be found within a given path.
-         *
-         * @param path the path which may contain the given sequence.
-         * @param sequence the sequence which may be contained in path.
-         * @return true if path contains the given sequence.
-         */
-        internal fun pathContainsSequence(path: List<Node>, sequence: List<Node>): Boolean {
-            for (pathPos in 0 until path.size) {
-                for (sequencePos in 0 until sequence.size) {
-                    val endOfPathOrNodeUnequal =
-                        pathPos + sequencePos > path.size - 1 || path[pathPos + sequencePos] != sequence[sequencePos]
-
-                    if (endOfPathOrNodeUnequal) break
-                    if (sequencePos == sequence.size - 1) return true
-                }
-            }
-
-            return false
-        }
-
         private fun extractSuffixes(prefix: List<Node>, paths: Collection<List<Node>>): List<List<Node>> {
             val suffixes: MutableList<List<Node>> = mutableListOf()
 
@@ -128,6 +113,28 @@ class PatternDetector(private val allPaths: Collection<List<Node>>, private val 
                 runPrefixSpaceAlgorithm(newPrefix, newProjectedSequences)
             }
         }
+    }
+
+    /**
+     * Checks whether a given sequence can be found within a given path.
+     *
+     * @param path the path which may contain the given sequence.
+     * @param sequence the sequence which may be contained in path.
+     * @return true if path contains the given sequence.
+     */
+    internal fun pathContainsSequence(path: List<Node>, sequence: List<Node>): Boolean {
+        for (pathPos in 0 until path.size) {
+            for (sequencePos in 0 until sequence.size) {
+                val endOfPathOrNodeUnequal =
+                    pathPos + sequencePos > path.size - 1 ||
+                        comparator.satisfies(path[pathPos + sequencePos], sequence[sequencePos])
+
+                if (endOfPathOrNodeUnequal) break
+                if (sequencePos == sequence.size - 1) return true
+            }
+        }
+
+        return false
     }
 
     private fun generateFrequentItems(minimumCount: Int) {
