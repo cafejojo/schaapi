@@ -7,43 +7,48 @@ import org.jetbrains.spek.api.dsl.it
 import org.junit.jupiter.api.assertThrows
 import java.io.File
 import java.io.FileNotFoundException
+import java.nio.file.Files
 
 internal class JavaMavenProjectTest : Spek({
+    lateinit var mavenHome: File
+    lateinit var target: File
+
+    beforeGroup {
+        mavenHome = Files.createTempDirectory("schaapi-maven").toFile()
+        MavenInstaller().installMaven(mavenHome)
+    }
+
+    afterGroup {
+        mavenHome.deleteRecursively()
+    }
+
+    beforeEachTest {
+        target = Files.createTempDirectory("schaapi-test").toFile()
+    }
+
+    afterEachTest {
+        target.deleteRecursively()
+    }
+
     describe("Java Maven project validation") {
-        val target = File("test/")
-
-        afterEachTest {
-            target.deleteRecursively()
-        }
-
         it("detects non-existing directories") {
             assertThrows<IllegalArgumentException> {
-                JavaMavenProject(File("./invalid-path"))
+                JavaMavenProject(File("./invalid-path"), mavenHome)
             }
         }
 
         it("detects non-maven directories") {
             assertThrows<IllegalArgumentException> {
-                JavaMavenProject(target)
+                JavaMavenProject(target, mavenHome)
             }
         }
     }
 
     describe("Java Maven project compilation") {
-        val target = File("./test")
-
-        beforeGroup {
-            MavenInstaller().installMaven(MavenInstaller.DEFAULT_MAVEN_HOME)
-        }
-
-        afterEachTest {
-            target.deleteRecursively()
-        }
-
         it("compiles codeless projects") {
             setUpTestFiles("/ProjectCompiler/no-sources", target)
 
-            val project = JavaMavenProject(target)
+            val project = JavaMavenProject(target, mavenHome)
             project.compile()
 
             assertThat(project.projectDir).isEqualTo(target)
@@ -58,7 +63,7 @@ internal class JavaMavenProjectTest : Spek({
         it("compiles simple projects") {
             setUpTestFiles("/ProjectCompiler/simple", target)
 
-            val project = JavaMavenProject(target)
+            val project = JavaMavenProject(target, mavenHome)
             project.compile()
 
             assertThat(project.projectDir).isEqualTo(target)
@@ -77,7 +82,7 @@ internal class JavaMavenProjectTest : Spek({
         it("compiles projects with dependencies") {
             setUpTestFiles("/ProjectCompiler/dependencies", target)
 
-            val project = JavaMavenProject(target)
+            val project = JavaMavenProject(target, mavenHome)
             project.compile()
 
             assertThat(project.projectDir).isEqualTo(target)
