@@ -30,8 +30,7 @@ class BranchStatementFilter(project: JavaProject) : Filter {
                 .filter { !retain(it) }
                 .forEach {
                     changed = true
-                    body.units.remove(it.statement)
-                    body.units.removeAll(it.redundantGoToStatements)
+                    it.remove()
                 }
         }
     }
@@ -54,7 +53,7 @@ private object BranchStatements {
     }
 }
 
-private class BranchingStatement(body: Body, val statement: Unit) {
+private class BranchingStatement(private val body: Body, val statement: Unit) {
     val cfg = BriefUnitGraph(body)
 
     val redundantGoToStatements: List<GotoStmt>
@@ -73,6 +72,11 @@ private class BranchingStatement(body: Body, val statement: Unit) {
             redundantGoToStatements = emptyList()
             nonEmptyBranches = true
         }
+    }
+
+    internal fun remove() {
+        body.units.remove(statement)
+        body.units.removeAll(redundantGoToStatements)
     }
 
     private fun findBranchStatementEnd(): soot.Unit {
