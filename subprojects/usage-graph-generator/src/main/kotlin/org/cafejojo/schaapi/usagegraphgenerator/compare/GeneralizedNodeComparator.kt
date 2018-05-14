@@ -1,10 +1,9 @@
 package org.cafejojo.schaapi.usagegraphgenerator.compare
 
 import org.cafejojo.schaapi.common.Node
-import soot.jimple.Stmt
 
 /**
- * Comparator of [Stmt]s by structure and generalized values.
+ * Comparator of [Node]s by structure and generalized values.
  *
  * Given a set of [Node]s that are expected to be equal to each other (called the "instances"), the "template" is the
  * instance such that the structure and generalized values of the other instances should match. The [satisfies] method
