@@ -40,6 +40,7 @@ internal class GeneralizedSootComparatorStructureTest : Spek({
                 .isExactlyInstanceOf(IllegalArgumentException::class.java)
                 .hasMessage("GeneralizedSootComparator cannot handle non-SootNodes.")
         }
+
         it("throws an exception if a non-SootNode instance is given") {
             val template = SootNode(mock<Stmt> {})
             val instance = mock<Node> {}
