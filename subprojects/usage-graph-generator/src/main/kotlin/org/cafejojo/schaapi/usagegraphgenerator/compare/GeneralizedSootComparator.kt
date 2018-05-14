@@ -12,12 +12,11 @@ import soot.jimple.IfStmt
 import soot.jimple.InvokeStmt
 import soot.jimple.ReturnStmt
 import soot.jimple.ReturnVoidStmt
-import soot.jimple.Stmt
 import soot.jimple.SwitchStmt
 import soot.jimple.ThrowStmt
 
 /**
- * Comparator of [Stmt]s by structure and generalized values.
+ * Comparator of [Unit]s by structure and generalized values.
  *
  * This comparator is stateful and is sensitive to the order in which methods are called. Refer to the documentation of
  * [satisfies].
@@ -28,7 +27,7 @@ class GeneralizedSootComparator : GeneralizedNodeComparator {
      */
     private val valueTags = HashMap<Value, Int>()
     /**
-     * Denotes the [Stmt] to which a tag was first assigned.
+     * Denotes the [Unit] to which a tag was first assigned.
      */
     private val tagOrigins = HashMap<Int, Unit>()
 
@@ -74,8 +73,8 @@ class GeneralizedSootComparator : GeneralizedNodeComparator {
      * Returns true iff [template] and [instance] have the same generalized values.
      *
      * An instance is said to satisfy the generalized values of the template if both [template] and [instance]
-     * use [Value]s that either this comparator has not seen before or has seen before in two [Stmt]s such that those
-     * were equal according to this method. If the [Stmt]s to be compared have more than one [Value], the above
+     * use [Value]s that either this comparator has not seen before or has seen before in two [Unit]s such that those
+     * were equal according to this method. If the [Unit]s to be compared have more than one [Value], the above
      * procedure is applied to the respective [Value]s.
      *
      * @param template the template [Node]
@@ -124,19 +123,19 @@ class GeneralizedSootComparator : GeneralizedNodeComparator {
     }
 
     /**
-     * Returns a list of the [Value]s contained in [stmt] as fields.
+     * Returns a list of the [Value]s contained in [Unit] as fields.
      *
-     * @param stmt a [Stmt]
-     * @return a list of the [Value]s contained in [stmt] as fields
+     * @param unit a [Unit]
+     * @return a list of the [Value]s contained in [Unit] as fields
      */
-    private fun getValues(stmt: Unit) =
-        when (stmt) {
-            is ThrowStmt -> listOf(stmt.op)
-            is DefinitionStmt -> listOf(stmt.leftOp, stmt.rightOp)
-            is IfStmt -> listOf(stmt.condition)
-            is SwitchStmt -> listOf(stmt.key)
-            is InvokeStmt -> listOf(stmt.invokeExpr)
-            is ReturnStmt -> listOf(stmt.op)
+    private fun getValues(unit: Unit) =
+        when (unit) {
+            is ThrowStmt -> listOf(unit.op)
+            is DefinitionStmt -> listOf(unit.leftOp, unit.rightOp)
+            is IfStmt -> listOf(unit.condition)
+            is SwitchStmt -> listOf(unit.key)
+            is InvokeStmt -> listOf(unit.invokeExpr)
+            is ReturnStmt -> listOf(unit.op)
             is GotoStmt -> emptyList()
             is ReturnVoidStmt -> emptyList()
             else -> emptyList()
@@ -146,7 +145,7 @@ class GeneralizedSootComparator : GeneralizedNodeComparator {
 
     private fun hasTag(value: Value) = valueTags.contains(value)
 
-    private fun isDefinedIn(value: Value, stmt: Unit) = tagOrigins[valueTags[value]] === stmt
+    private fun isDefinedIn(value: Value, unit: Unit) = tagOrigins[valueTags[value]] === unit
 }
 
 /**
