@@ -15,11 +15,11 @@ import soot.jimple.Stmt
 import soot.jimple.SwitchStmt
 import soot.jimple.ThrowStmt
 
-internal class GeneralizedStmtComparatorValueTest : Spek({
-    lateinit var comparator: GeneralizedStmtComparator
+internal class GeneralizedSootComparatorValueTest : Spek({
+    lateinit var comparator: GeneralizedSootComparator
 
     beforeEachTest {
-        comparator = GeneralizedStmtComparator()
+        comparator = GeneralizedSootComparator()
     }
 
     describe("generalized value comparison of statements") {

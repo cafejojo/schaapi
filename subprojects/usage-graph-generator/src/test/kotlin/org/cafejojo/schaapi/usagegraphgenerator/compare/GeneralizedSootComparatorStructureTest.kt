@@ -22,11 +22,11 @@ import soot.jimple.Stmt
 import soot.jimple.SwitchStmt
 import soot.jimple.ThrowStmt
 
-internal class GeneralizedStmtComparatorStructureTest : Spek({
-    lateinit var comparator: GeneralizedStmtComparator
+internal class GeneralizedSootComparatorStructureTest : Spek({
+    lateinit var comparator: GeneralizedSootComparator
 
     beforeEachTest {
-        comparator = GeneralizedStmtComparator()
+        comparator = GeneralizedSootComparator()
     }
 
     describe("type comparison of statements") {
