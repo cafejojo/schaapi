@@ -13,6 +13,7 @@ import soot.jimple.Stmt
 import soot.jimple.internal.ImmediateBox
 import soot.jimple.internal.JReturnStmt
 import soot.jimple.internal.JReturnVoidStmt
+import soot.jimple.internal.JimpleLocalBox
 import soot.jimple.internal.VariableBox
 
 /**
@@ -103,7 +104,7 @@ class SootClassGenerator(className: String) {
 
         statements.forEach { statement ->
             statement.useAndDefBoxes
-                .filter { it is VariableBox || it is ImmediateBox }
+                .filter { it is VariableBox || it is ImmediateBox || it is JimpleLocalBox }
                 .forEach { box ->
                     val identifier = box.value.toString()
                     when {
