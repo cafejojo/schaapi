@@ -1,6 +1,7 @@
 package org.cafejojo.schaapi.usagegraphgenerator.filters
 
 import org.cafejojo.schaapi.common.JavaProject
+import org.cafejojo.schaapi.usagegraphgenerator.filters.BranchingStatement.Companion.isBranchStatement
 import soot.Body
 import soot.Unit
 import soot.Value
@@ -25,7 +26,7 @@ class BranchStatementFilter(project: JavaProject) : Filter {
             changed = false
 
             body.units.snapshotIterator().asSequence()
-                .filter(BranchStatements::isBranchStatement)
+                .filter(::isBranchStatement)
                 .map { BranchingStatement(body, it) }
                 .filter { !retain(it) }
                 .forEach {
@@ -36,24 +37,24 @@ class BranchStatementFilter(project: JavaProject) : Filter {
     }
 
     private fun retain(branch: BranchingStatement) =
-        branch.nonEmptyBranches || valueFilter.retain(BranchStatements.getConditionValue(branch.statement))
-}
-
-private object BranchStatements {
-    internal fun isBranchStatement(statement: Unit) = when (statement) {
-        is IfStmt -> true
-        is SwitchStmt -> true
-        else -> false
-    }
-
-    internal fun getConditionValue(statement: Unit): Value = when (statement) {
-        is IfStmt -> statement.condition
-        is SwitchStmt -> statement.key
-        else -> throw IllegalStateException("Cannot get value of unsupported statement.")
-    }
+        branch.nonEmptyBranches || valueFilter.retain(BranchingStatement.getConditionValue(branch.statement))
 }
 
 private class BranchingStatement(private val body: Body, val statement: Unit) {
+    companion object {
+        internal fun isBranchStatement(statement: Unit) = when (statement) {
+            is IfStmt -> true
+            is SwitchStmt -> true
+            else -> false
+        }
+
+        internal fun getConditionValue(statement: Unit): Value = when (statement) {
+            is IfStmt -> statement.condition
+            is SwitchStmt -> statement.key
+            else -> throw IllegalArgumentException("Cannot get value of unsupported statement.")
+        }
+    }
+
     val cfg = BriefUnitGraph(body)
 
     val redundantGoToStatements: List<GotoStmt>
