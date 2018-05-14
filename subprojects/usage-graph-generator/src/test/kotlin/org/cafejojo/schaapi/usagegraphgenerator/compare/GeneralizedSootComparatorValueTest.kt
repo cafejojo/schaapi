@@ -3,6 +3,8 @@ package org.cafejojo.schaapi.usagegraphgenerator.compare
 import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.mock
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
+import org.cafejojo.schaapi.common.Node
 import org.cafejojo.schaapi.usagegraphgenerator.SootNode
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.context
@@ -23,6 +25,25 @@ internal class GeneralizedSootComparatorValueTest : Spek({
     }
 
     describe("generalized value comparison of statements") {
+        context("bad weather cases") {
+            it("throws an exception if a non-SootNode template is given") {
+                val template = mock<Node> {}
+                val instance = SootNode(mock<Stmt> {})
+
+                assertThatThrownBy { comparator.generalizedValuesAreEqual(template, instance) }
+                    .isExactlyInstanceOf(IllegalArgumentException::class.java)
+                    .hasMessage("GeneralizedSootComparator cannot handle non-SootNodes.")
+            }
+            it("throws an exception if a non-SootNode instance is given") {
+                val template = SootNode(mock<Stmt> {})
+                val instance = mock<Node> {}
+
+                assertThatThrownBy { comparator.generalizedValuesAreEqual(template, instance) }
+                    .isExactlyInstanceOf(IllegalArgumentException::class.java)
+                    .hasMessage("GeneralizedSootComparator cannot handle non-SootNodes.")
+            }
+        }
+
         context("(in)equality does not change for the same check") {
             it("finds equality when comparing reflexively") {
                 val value = mockValue()

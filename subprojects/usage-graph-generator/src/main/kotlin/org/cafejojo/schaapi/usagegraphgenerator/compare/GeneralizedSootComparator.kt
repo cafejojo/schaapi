@@ -50,7 +50,7 @@ class GeneralizedSootComparator : GeneralizedNodeComparator {
      */
     override fun structuresAreEqual(template: Node, instance: Node): Boolean {
         if (template !is SootNode || instance !is SootNode) {
-            return false
+            throw IllegalArgumentException("GeneralizedSootComparator cannot handle non-SootNodes.")
         }
         if (template.unit::class != instance.unit::class) {
             return false
@@ -85,7 +85,7 @@ class GeneralizedSootComparator : GeneralizedNodeComparator {
     @SuppressWarnings("UnsafeCallOnNullableType") // The !! is implicitly avoided by checking `templateHasTag`
     override fun generalizedValuesAreEqual(template: Node, instance: Node): Boolean {
         if (template !is SootNode || instance !is SootNode) {
-            return false
+            throw IllegalArgumentException("GeneralizedSootComparator cannot handle non-SootNodes.")
         }
 
         val templateUnit = template.unit

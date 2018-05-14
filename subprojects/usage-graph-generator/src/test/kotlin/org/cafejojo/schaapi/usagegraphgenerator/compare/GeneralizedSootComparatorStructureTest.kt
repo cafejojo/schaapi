@@ -2,7 +2,9 @@ package org.cafejojo.schaapi.usagegraphgenerator.compare
 
 import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.mock
+import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
+import org.cafejojo.schaapi.common.Node
 import org.cafejojo.schaapi.usagegraphgenerator.SootNode
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.context
@@ -27,6 +29,25 @@ internal class GeneralizedSootComparatorStructureTest : Spek({
 
     beforeEachTest {
         comparator = GeneralizedSootComparator()
+    }
+
+    describe("bad weather cases") {
+        it("throws an exception if a non-SootNode template is given") {
+            val template = mock<Node> {}
+            val instance = SootNode(mock<Stmt> {})
+
+            Assertions.assertThatThrownBy { comparator.structuresAreEqual(template, instance) }
+                .isExactlyInstanceOf(IllegalArgumentException::class.java)
+                .hasMessage("GeneralizedSootComparator cannot handle non-SootNodes.")
+        }
+        it("throws an exception if a non-SootNode instance is given") {
+            val template = SootNode(mock<Stmt> {})
+            val instance = mock<Node> {}
+
+            Assertions.assertThatThrownBy { comparator.structuresAreEqual(template, instance) }
+                .isExactlyInstanceOf(IllegalArgumentException::class.java)
+                .hasMessage("GeneralizedSootComparator cannot handle non-SootNodes.")
+        }
     }
 
     describe("type comparison of statements") {
