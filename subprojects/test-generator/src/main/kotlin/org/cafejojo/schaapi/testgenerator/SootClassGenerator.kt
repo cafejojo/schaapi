@@ -2,16 +2,18 @@ package org.cafejojo.schaapi.testgenerator
 
 import soot.Body
 import soot.Local
+import soot.Modifier
 import soot.SootClass
 import soot.SootMethod
 import soot.Type
 import soot.Value
 import soot.VoidType
 import soot.jimple.Jimple
-import soot.jimple.JimpleBody
 import soot.jimple.Stmt
 import soot.jimple.internal.ImmediateBox
 import soot.jimple.internal.JReturnStmt
+import soot.jimple.internal.JReturnVoidStmt
+import soot.jimple.internal.JimpleLocalBox
 import soot.jimple.internal.VariableBox
 
 /**
@@ -23,7 +25,7 @@ import soot.jimple.internal.VariableBox
  * @param className name of [SootClass] to be generated
  */
 class SootClassGenerator(className: String) {
-    val sootClass = SootClass(className)
+    val sootClass = SootClass(className, Modifier.PUBLIC)
 
     /**
      * Generates a non-static soot method for the given [SootClass] with a body written in Jimple IR, and add it to the
@@ -45,25 +47,17 @@ class SootClassGenerator(className: String) {
     fun generateMethod(methodName: String, statements: List<Stmt>): SootMethod {
         val methodParams = findUnboundVariables(statements)
         val sootMethod = SootMethod(methodName, methodParams.map { it.type }, VoidType.v())
+        sootMethod.modifiers = Modifier.PUBLIC.or(Modifier.STATIC)
         sootClass.addMethod(sootMethod)
 
         val jimpleBody = Jimple.v().newBody(sootMethod)
         sootMethod.activeBody = jimpleBody
 
-        addReferenceToThisToBody(jimpleBody)
         addParameterAssignmentsToBody(jimpleBody, methodParams)
         addStatementsToBody(jimpleBody, statements, methodParams)
         sootMethod.returnType = addReturnStatement(jimpleBody)
 
         return sootMethod
-    }
-
-    private fun addReferenceToThisToBody(jimpleBody: JimpleBody) {
-        val thisRef = Jimple.v().newThisRef(sootClass.type)
-        val thisLocalVar = Jimple.v().newLocal("this", thisRef.type)
-
-        jimpleBody.locals.add(thisLocalVar)
-        jimpleBody.units.add(Jimple.v().newIdentityStmt(thisLocalVar, thisRef))
     }
 
     private fun addParameterAssignmentsToBody(jimpleBody: Body, methodParams: Set<Value>) {
@@ -96,6 +90,7 @@ class SootClassGenerator(className: String) {
 
         return when (lastStatement) {
             is JReturnStmt -> lastStatement.op.type
+            is JReturnVoidStmt -> VoidType.v()
             else -> {
                 jimpleBody.units.add(Jimple.v().newReturnVoidStmt())
                 VoidType.v()
@@ -109,7 +104,7 @@ class SootClassGenerator(className: String) {
 
         statements.forEach { statement ->
             statement.useAndDefBoxes
-                .filter { it is VariableBox || it is ImmediateBox }
+                .filter { it is VariableBox || it is ImmediateBox || it is JimpleLocalBox }
                 .forEach { box ->
                     val identifier = box.value.toString()
                     when {
