@@ -1,4 +1,4 @@
-import org.cafejojo.schaapi.common.Node
+package org.cafejojo.schaapi.common
 
 /**
  * Represents a filter for generated patterns.

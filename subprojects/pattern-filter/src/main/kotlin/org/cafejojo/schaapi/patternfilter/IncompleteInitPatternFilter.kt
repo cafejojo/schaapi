@@ -1,4 +1,7 @@
+package org.cafejojo.schaapi.patternfilter
+
 import org.cafejojo.schaapi.common.Node
+import org.cafejojo.schaapi.common.PatternFilter
 import org.cafejojo.schaapi.usagegraphgenerator.SootNode
 import soot.jimple.InvokeStmt
 import soot.jimple.internal.JSpecialInvokeExpr
