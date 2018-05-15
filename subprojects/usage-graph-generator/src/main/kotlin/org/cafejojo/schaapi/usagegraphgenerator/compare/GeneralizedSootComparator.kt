@@ -43,22 +43,8 @@ class GeneralizedSootComparator : GeneralizedNodeComparator {
         if (template !is SootNode || instance !is SootNode) {
             throw IllegalArgumentException("GeneralizedSootComparator cannot handle non-SootNodes.")
         }
-        if (template.unit::class != instance.unit::class) {
-            return false
-        }
 
-        val templateTypes = template.getValues().map { it.type }
-        val instanceTypes = instance.getValues().map { it.type }
-
-        templateTypes.forEachIndexed { index, templateType ->
-            val instanceType = instanceTypes[index]
-
-            if (!templateType.isSubclassOf(instanceType) && !instanceType.isSubclassOf(templateType)) {
-                return false
-            }
-        }
-
-        return true
+        return template == instance
     }
 
     /**

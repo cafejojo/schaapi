@@ -124,13 +124,13 @@ internal class GeneralizedSootComparatorStructureTest : Spek({
             assertThat(comparator.satisfies(template, instance)).isFalse()
         }
 
-        it("finds inequality on dinges") {
+        it("finds inequality on statements with types that are not subclasses of each other") {
             @SuppressWarnings("EqualsWithHashCodeExist")
             class NullType : Type() {
                 override fun toString() = "null"
 
                 @SuppressWarnings("EqualsAlwaysReturnsTrueOrFalse")
-                override fun equals(other: Any?) = true
+                override fun equals(other: Any?) = false
             }
 
             val templateValue = mock<Value> {

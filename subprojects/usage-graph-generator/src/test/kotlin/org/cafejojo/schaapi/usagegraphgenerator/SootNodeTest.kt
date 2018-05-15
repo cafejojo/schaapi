@@ -11,7 +11,7 @@ import soot.Value
 import soot.jimple.DefinitionStmt
 
 internal class SootNodeTest : Spek({
-    describe("when checking whether two sootnodes are equal") {
+    describe("when checking whether two Soot nodes are equal") {
         fun mockDefinitionStmt(leftType: Type, rightType: Type): SootNode {
             val leftOp = mock<Value> { on { it.type } doReturn leftType }
             val rightOp = mock<Value> { on { it.type } doReturn rightType }
