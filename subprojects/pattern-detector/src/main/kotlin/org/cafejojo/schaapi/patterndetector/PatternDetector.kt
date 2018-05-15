@@ -127,7 +127,7 @@ class PatternDetector(
             for (sequencePos in 0 until sequence.size) {
                 val endOfPathOrNodeUnequal =
                     pathPos + sequencePos > path.size - 1 ||
-                        comparator.satisfies(path[pathPos + sequencePos], sequence[sequencePos])
+                        !comparator.satisfies(path[pathPos + sequencePos], sequence[sequencePos])
 
                 if (endOfPathOrNodeUnequal) break
                 if (sequencePos == sequence.size - 1) return true

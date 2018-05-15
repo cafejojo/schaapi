@@ -12,21 +12,23 @@ internal class PatternDetectorTest : Spek({
             val path = listOf(node1)
 
             val detector = PatternDetector(listOf(path), 1, TestNodeComparator())
+            detector.findFrequentSequences()
 
             assertThat(detector.pathContainsSequence(path, listOf(node1))).isTrue()
         }
 
-        it("it should not find a sequence that isn't in the path") {
+        it("should not find a sequence that isn't in the path") {
             val node1 = TestNode()
             val node2 = TestNode()
             val path = listOf(node1)
 
             val detector = PatternDetector(listOf(path), 1, TestNodeComparator())
+            detector.findFrequentSequences()
 
             assertThat(detector.pathContainsSequence(path, listOf(node2))).isFalse()
         }
 
-        it("it should find a sequence at the start of a path") {
+        it("should find a sequence at the start of a path") {
             val node1 = TestNode()
             val node2 = TestNode()
             val node3 = TestNode()
@@ -36,11 +38,12 @@ internal class PatternDetectorTest : Spek({
             val path = listOf(node1, node2, node3, node4, node5, node6)
 
             val detector = PatternDetector(listOf(path), 1, TestNodeComparator())
+            detector.findFrequentSequences()
 
             assertThat(detector.pathContainsSequence(path, listOf(node1, node2))).isTrue()
         }
 
-        it("it should find a sequence in the middle of a path") {
+        it("should find a sequence in the middle of a path") {
             val node1 = TestNode()
             val node2 = TestNode()
             val node3 = TestNode()
@@ -50,11 +53,12 @@ internal class PatternDetectorTest : Spek({
             val path = listOf(node1, node2, node3, node4, node5, node6)
 
             val detector = PatternDetector(listOf(path), 1, TestNodeComparator())
+            detector.findFrequentSequences()
 
             assertThat(detector.pathContainsSequence(path, listOf(node3, node4, node5))).isTrue()
         }
 
-        it("it should find a sequence at the end of a path") {
+        it("should find a sequence at the end of a path") {
             val node1 = TestNode()
             val node2 = TestNode()
             val node3 = TestNode()
@@ -64,11 +68,12 @@ internal class PatternDetectorTest : Spek({
             val path = listOf(node1, node2, node3, node4, node5, node6)
 
             val detector = PatternDetector(listOf(path), 1, TestNodeComparator())
+            detector.findFrequentSequences()
 
             assertThat(detector.pathContainsSequence(path, listOf(node5, node6))).isTrue()
         }
 
-        it("it should not find a out of order sequence that is not in a path") {
+        it("should not find a out of order sequence that is not in a path") {
             val node1 = TestNode()
             val node2 = TestNode()
             val node3 = TestNode()
@@ -78,11 +83,12 @@ internal class PatternDetectorTest : Spek({
             val path = listOf(node1, node2, node3, node4, node5, node6)
 
             val detector = PatternDetector(listOf(path), 1, TestNodeComparator())
+            detector.findFrequentSequences()
 
             assertThat(detector.pathContainsSequence(path, listOf(node5, node4))).isFalse()
         }
 
-        it("it should not find a non-consecutive sequence that is not in a path") {
+        it("should not find a non-consecutive sequence that is not in a path") {
             val node2 = TestNode()
             val node3 = TestNode()
             val node4 = TestNode()
@@ -90,6 +96,7 @@ internal class PatternDetectorTest : Spek({
             val path = listOf(node2, node3, node4, node5)
 
             val detector = PatternDetector(listOf(path), 1, TestNodeComparator())
+            detector.findFrequentSequences()
 
             assertThat(detector.pathContainsSequence(path, listOf(node2, node4, node5))).isFalse()
         }
