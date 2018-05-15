@@ -14,7 +14,6 @@ import soot.Unit
 import soot.Value
 import soot.VoidType
 import soot.jimple.Jimple
-import soot.jimple.Stmt
 import soot.jimple.internal.ImmediateBox
 import soot.jimple.internal.JReturnStmt
 import soot.jimple.internal.JReturnVoidStmt
@@ -22,7 +21,7 @@ import soot.jimple.internal.JimpleLocalBox
 import soot.jimple.internal.VariableBox
 
 /**
- * Generates a [SootClass], and allows methods to be generated for said class based on lists of [Stmt]s.
+ * Generates a [SootClass], and allows methods to be generated for said class based on lists of [Unit]s.
  *
  * The body of methods is represented using [Jimple] IR. This IR can then be converted to java bytecode, or other IR
  * representations.
@@ -42,7 +41,7 @@ class SootClassGenerator(className: String) : ClassGenerator {
      * Generates a non-static soot method for the given [SootClass] with a body written in Jimple IR, and add it to the
      * class.
      *
-     * Unbound variables in the list of [Stmt]s are used as method parameters. All variables are stored as locals
+     * Unbound variables in the list of [Unit]s are used as method parameters. All variables are stored as locals
      * of the method. If a return statement is found in the sequence, this statement is the last statement, even if it
      * is not the last statement in the [statements] sequence. If no return statement is found the method returns void.
      *
