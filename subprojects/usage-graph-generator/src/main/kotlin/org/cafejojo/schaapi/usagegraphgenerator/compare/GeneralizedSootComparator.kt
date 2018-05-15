@@ -6,14 +6,6 @@ import soot.Scene
 import soot.Type
 import soot.Unit
 import soot.Value
-import soot.jimple.DefinitionStmt
-import soot.jimple.GotoStmt
-import soot.jimple.IfStmt
-import soot.jimple.InvokeStmt
-import soot.jimple.ReturnStmt
-import soot.jimple.ReturnVoidStmt
-import soot.jimple.SwitchStmt
-import soot.jimple.ThrowStmt
 
 /**
  * Comparator of [Unit]s by structure and generalized values.
@@ -51,22 +43,8 @@ class GeneralizedSootComparator : GeneralizedNodeComparator {
         if (template !is SootNode || instance !is SootNode) {
             throw IllegalArgumentException("GeneralizedSootComparator cannot handle non-SootNodes.")
         }
-        if (template.unit::class != instance.unit::class) {
-            return false
-        }
 
-        val templateTypes = getValues(template.unit).map { it.type }
-        val instanceTypes = getValues(instance.unit).map { it.type }
-
-        templateTypes.forEachIndexed { index, templateType ->
-            val instanceType = instanceTypes[index]
-
-            if (!templateType.isSubclassOf(instanceType) && !instanceType.isSubclassOf(templateType)) {
-                return false
-            }
-        }
-
-        return true
+        return template == instance
     }
 
     /**
@@ -87,8 +65,8 @@ class GeneralizedSootComparator : GeneralizedNodeComparator {
             throw IllegalArgumentException("GeneralizedSootComparator cannot handle non-SootNodes.")
         }
 
-        val templateValues = getValues(template.unit)
-        val instanceValues = getValues(instance.unit)
+        val templateValues = template.getValues()
+        val instanceValues = instance.getValues()
 
         templateValues.forEachIndexed { index, templateValue ->
             val instanceValue = instanceValues[index]
@@ -118,25 +96,6 @@ class GeneralizedSootComparator : GeneralizedNodeComparator {
 
         return true
     }
-
-    /**
-     * Returns a list of the [Value]s contained in [Unit] as fields.
-     *
-     * @param unit a [Unit]
-     * @return a list of the [Value]s contained in [Unit] as fields
-     */
-    private fun getValues(unit: Unit) =
-        when (unit) {
-            is ThrowStmt -> listOf(unit.op)
-            is DefinitionStmt -> listOf(unit.leftOp, unit.rightOp)
-            is IfStmt -> listOf(unit.condition)
-            is SwitchStmt -> listOf(unit.key)
-            is InvokeStmt -> listOf(unit.invokeExpr)
-            is ReturnStmt -> listOf(unit.op)
-            is GotoStmt -> emptyList()
-            is ReturnVoidStmt -> emptyList()
-            else -> emptyList()
-        }
 
     private fun createNewTag() = tagOrigins.size
 
