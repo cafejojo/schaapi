@@ -1,7 +1,5 @@
 package org.cafejojo.schaapi.common
 
-import org.cafejojo.schaapi.common.Node
-
 /**
  * Represents a filter for generated patterns.
  */
