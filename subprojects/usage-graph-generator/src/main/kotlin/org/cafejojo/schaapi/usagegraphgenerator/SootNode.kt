@@ -20,6 +20,12 @@ import soot.jimple.ThrowStmt
 class SootNode(val unit: Unit, override val successors: MutableList<Node> = arrayListOf()) : Node {
     override fun toString() = unit.toString()
 
+    /**
+     * A [SootNode] equals another [SootNode] if the [Unit] is of the same type, and they have the same amount of
+     * values, and each value at their respective positions having the same type.
+     *
+     * @return true iff [Unit] of same type and values in the same order and of the same type
+     */
     override fun equals(other: Any?): Boolean {
         if (other !is SootNode || this.unit::class != other.unit::class) return false
 
@@ -28,15 +34,30 @@ class SootNode(val unit: Unit, override val successors: MutableList<Node> = arra
 
         otherTypes.forEachIndexed { index, templateType ->
             val instanceType = thisTypes[index]
-            if (!templateType.isSubclassOf(instanceType) && !instanceType.isSubclassOf(templateType)) return false
+            if (instanceType != templateType &&
+                !templateType.isSubclassOf(instanceType) &&
+                !instanceType.isSubclassOf(templateType)
+            ) {
+                return false
+            }
         }
 
         return true
     }
 
-    override fun hashCode(): Int = getValues().sumBy { it.hashCode() }
+    /**
+     * Generates a hashcode based on the values of the contained [Unit].
+     *
+     * @return hashcode based on hashcode of the values contained in the contained [Unit]
+     */
+    override fun hashCode(): Int = getValues().sumBy { it.type.hashCode() }
 
-    private fun getValues() =
+    /**
+     * Extract the values from the contained [Unit] based on its type.
+     *
+     * @return all values of the contained [Unit] based on the type of the [Unit]
+     */
+    fun getValues() =
         when (unit) {
             is ThrowStmt -> listOf(unit.op)
             is DefinitionStmt -> listOf(unit.leftOp, unit.rightOp)
