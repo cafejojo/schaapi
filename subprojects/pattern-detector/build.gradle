@@ -3,5 +3,7 @@ repositories {
 }
 
 dependencies {
+    testCompile group: "com.nhaarman", name: "mockito-kotlin", version: mockitoKotlinVersion
+
     compile project(":usage-graph-generator")
 }
