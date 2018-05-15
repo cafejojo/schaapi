@@ -6,6 +6,9 @@ import org.jetbrains.spek.api.dsl.it
 import java.io.File
 import java.nio.file.Files
 
+/**
+ * E2E-test for Schaapi.
+ */
 internal class SchaapiTest : Spek({
     lateinit var target: File
 
@@ -17,7 +20,7 @@ internal class SchaapiTest : Spek({
         target.deleteRecursively()
     }
 
-    it("just works") {
+    it("generates a test class from the patterns in a project using a library") {
         main(arrayOf(
             "-o", target.absolutePath,
             "-l", getResourcePath("/library/"),

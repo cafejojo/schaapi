@@ -1,6 +1,5 @@
 package org.cafejojo.schaapi
 
-import IncompleteInitPatternFilter
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
@@ -9,13 +8,12 @@ import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.cafejojo.schaapi.patterndetector.PathEnumerator
 import org.cafejojo.schaapi.patterndetector.PatternDetector
+import org.cafejojo.schaapi.patternfilter.IncompleteInitPatternFilter
 import org.cafejojo.schaapi.projectcompiler.JavaMavenProject
 import org.cafejojo.schaapi.testgenerator.EvoSuiteRunner
 import org.cafejojo.schaapi.testgenerator.SootClassGenerator
 import org.cafejojo.schaapi.testgenerator.SootClassWriter
-import org.cafejojo.schaapi.usagegraphgenerator.SootNode
 import org.cafejojo.schaapi.usagegraphgenerator.SootProjectLibraryUsageGraphGenerator
-import soot.jimple.Stmt
 import java.io.File
 
 private const val DEFAULT_PATTERN_CLASS_NAME = "RegressionTest"
@@ -52,7 +50,7 @@ fun main(args: Array<String>) {
 
     val classGenerator = SootClassGenerator(DEFAULT_PATTERN_CLASS_NAME)
     patterns.forEachIndexed { index, pattern ->
-        classGenerator.generateMethod("pattern$index", pattern.map { unit -> (unit as SootNode).unit as Stmt })
+        classGenerator.generateMethod("pattern$index", pattern)
     }
 
     SootClassWriter.writeToFile(classGenerator.sootClass, outputPatterns.absolutePath)
