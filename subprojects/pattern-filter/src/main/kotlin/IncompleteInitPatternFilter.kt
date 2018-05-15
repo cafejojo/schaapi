@@ -13,6 +13,6 @@ object IncompleteInitPatternFilter : PatternFilter {
         val firstStatement = pattern[0] as? SootNode ?: return true
         val firstUnit = firstStatement.unit as? InvokeStmt ?: return true
 
-        return firstUnit.invokeExpr !is JSpecialInvokeExpr || firstUnit.invokeExpr.method.name !== "<init>"
+        return firstUnit.invokeExpr !is JSpecialInvokeExpr || firstUnit.invokeExpr.method.name != "<init>"
     }
 }
