@@ -49,25 +49,26 @@ class EvoSuiteRunner(
         process.waitFor()
 
         if (!lastLine.toLowerCase().contains("computation finished")) {
-            throw EvoSuiteRuntimeException("EvoSuite did not terminate successfully. " +
-                "The last line of its output reads: $lastLine")
+            throw EvoSuiteRuntimeException(
+                "EvoSuite did not terminate successfully. The last line of its output reads: \"$lastLine\""
+            )
         }
 
         if (process.exitValue() != 0) {
             val errorOutput = String(process.errorStream.readBytes(), Charset.defaultCharset())
-            throw EvoSuiteRuntimeException("EvoSuite exited with non-zero exit code: " +
-                "${process.exitValue()} - $errorOutput")
+            throw EvoSuiteRuntimeException(
+                "EvoSuite exited with non-zero exit code: ${process.exitValue()}\n$errorOutput"
+            )
         }
     }
 
     private fun pipeAllLines(input: InputStream, output: PrintStream?): String {
         var lastLine = ""
 
-        BufferedReader(InputStreamReader(input)).lines()
-            .forEach {
-                output?.println(it)
-                lastLine = it
-            }
+        BufferedReader(InputStreamReader(input)).forEachLine {
+            output?.println(it)
+            lastLine = it
+        }
 
         return lastLine
     }
