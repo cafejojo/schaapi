@@ -38,9 +38,9 @@ fun main(args: Array<String>) {
         return
     }
 
-    val output = File(cmd.getOptionValue('o'))
-    val outputPatterns = output.resolve("patterns/")
-    val outputTests = output.resolve("tests/")
+    val output = File(cmd.getOptionValue('o')).apply { mkdirs() }
+    val outputPatterns = output.resolve("patterns/").apply { mkdirs() }
+    val outputTests = output.resolve("tests/").apply { mkdirs() }
     val library = JavaMavenProject(File(cmd.getOptionValue('l')))
     val users = cmd.getOptionValues('u').map { JavaMavenProject(File(it)) }
 
