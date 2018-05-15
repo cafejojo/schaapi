@@ -21,6 +21,24 @@ class SootNode(val unit: Unit, override val successors: MutableList<Node> = arra
     override fun toString() = unit.toString()
 
     /**
+     * Extract the values from the contained [Unit] based on its type.
+     *
+     * @return all values of the contained [Unit] based on the type of the [Unit]
+     */
+    fun getValues() =
+        when (unit) {
+            is ThrowStmt -> listOf(unit.op)
+            is DefinitionStmt -> listOf(unit.leftOp, unit.rightOp)
+            is IfStmt -> listOf(unit.condition)
+            is SwitchStmt -> listOf(unit.key)
+            is InvokeStmt -> listOf(unit.invokeExpr)
+            is ReturnStmt -> listOf(unit.op)
+            is GotoStmt -> emptyList()
+            is ReturnVoidStmt -> emptyList()
+            else -> emptyList()
+        }
+
+    /**
      * A [SootNode] equals another [SootNode] if the [unit] is of the same type, they have the same amount of
      * values, and each value at their respective positions has the same type.
      *
@@ -55,22 +73,4 @@ class SootNode(val unit: Unit, override val successors: MutableList<Node> = arra
         getValues().forEachIndexed { index, value -> hash += (index + 1) * value.type.hashCode() }
         return hash
     }
-
-    /**
-     * Extract the values from the contained [Unit] based on its type.
-     *
-     * @return all values of the contained [Unit] based on the type of the [Unit]
-     */
-    fun getValues() =
-        when (unit) {
-            is ThrowStmt -> listOf(unit.op)
-            is DefinitionStmt -> listOf(unit.leftOp, unit.rightOp)
-            is IfStmt -> listOf(unit.condition)
-            is SwitchStmt -> listOf(unit.key)
-            is InvokeStmt -> listOf(unit.invokeExpr)
-            is ReturnStmt -> listOf(unit.op)
-            is GotoStmt -> emptyList()
-            is ReturnVoidStmt -> emptyList()
-            else -> emptyList()
-        }
 }
