@@ -16,9 +16,8 @@ import org.cafejojo.schaapi.usagegraphgenerator.SootNode
 import org.cafejojo.schaapi.usagegraphgenerator.SootProjectLibraryUsageGraphGenerator
 import soot.jimple.Stmt
 import java.io.File
-import java.nio.file.Files
-import java.nio.file.Paths
 
+private const val DEFAULT_PATTERN_CLASS_NAME = "RegressionTest"
 private const val DEFAULT_TEST_GENERATOR_TIMEOUT = "60"
 private const val DEFAULT_PATTERN_DETECTOR_MINIMUM_COUNT = "3"
 
@@ -32,12 +31,6 @@ fun main(args: Array<String>) {
     val options = buildOptions()
     val cmd = parseArgs(options, args) ?: return
 
-    if (Files.isRegularFile(Paths.get(args[0]))) {
-        println("Output directory is actually a file.")
-        printHelpMessage(options)
-        return
-    }
-
     val output = File(cmd.getOptionValue('o')).apply { mkdirs() }
     val outputPatterns = output.resolve("patterns/").apply { mkdirs() }
     val outputTests = output.resolve("tests/").apply { mkdirs() }
@@ -47,8 +40,7 @@ fun main(args: Array<String>) {
     library.compile()
     users.forEach { it.compile() }
 
-    val graphGenerator = SootProjectLibraryUsageGraphGenerator
-    val userGraphs = users.map { graphGenerator.generate(library, it) }
+    val userGraphs = users.map { SootProjectLibraryUsageGraphGenerator.generate(library, it) }
     val userPaths = userGraphs.flatMap { it.flatMap { it.flatMap { PathEnumerator(it).enumerate() } } }
 
     val patterns = PatternDetector(
@@ -56,18 +48,19 @@ fun main(args: Array<String>) {
         cmd.getOptionOrDefault("pattern_detector_minimum_count", DEFAULT_PATTERN_DETECTOR_MINIMUM_COUNT).toInt()
     ).findFrequentSequences()
 
-    val classGenerator = SootClassGenerator("RegressionTest")
+    val classGenerator = SootClassGenerator(DEFAULT_PATTERN_CLASS_NAME)
     patterns.forEachIndexed { index, pattern ->
         classGenerator.generateMethod("pattern$index", pattern.map { unit -> (unit as SootNode).unit as Stmt })
     }
 
     SootClassWriter.writeToFile(classGenerator.sootClass, outputPatterns.absolutePath)
 
+    val testGeneratorTimeout = cmd.getOptionOrDefault("test_generator_timeout", DEFAULT_TEST_GENERATOR_TIMEOUT).toInt()
     EvoSuiteRunner(
-        "RegressionTest",
-        outputPatterns.absolutePath + ";" + library.classpath,
-        outputTests.absolutePath,
-        cmd.getOptionOrDefault("test_generator_timeout", DEFAULT_TEST_GENERATOR_TIMEOUT).toInt()
+        fullyQualifiedClassName = DEFAULT_PATTERN_CLASS_NAME,
+        classPath = outputPatterns.absolutePath + ";" + library.classpath,
+        outputDirectory = outputTests.absolutePath,
+        generationTimeoutSeconds = testGeneratorTimeout
     ).run()
 }
 
