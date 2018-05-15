@@ -32,7 +32,7 @@ internal class IncompleteInitPatternFilterTest : Spek({
             assertThat(IncompleteInitPatternFilter.retain(pattern)).isFalse()
         }
 
-        it("retains patterns that do start with a special invoke, but not an init call") {
+        it("retains patterns that start with a special invoke, but not an init call") {
             val initMethod = mock<SootMethod> {
                 on { name } doReturn "not-init"
             }
@@ -50,7 +50,7 @@ internal class IncompleteInitPatternFilterTest : Spek({
             assertThat(IncompleteInitPatternFilter.retain(pattern)).isTrue()
         }
 
-        it("retains patterns that do start with a regular invoke") {
+        it("retains patterns that start with a regular invoke") {
             val invokeExpression = mock<InvokeExpr>()
 
             val pattern = listOf(
@@ -77,7 +77,7 @@ internal class IncompleteInitPatternFilterTest : Spek({
             assertThat(IncompleteInitPatternFilter.retain(pattern)).isTrue()
         }
 
-        it("retains lists of non soot nodes") {
+        it("retains lists of non-Soot nodes") {
             val pattern = listOf(TestNode())
 
             assertThat(IncompleteInitPatternFilter.retain(pattern)).isTrue()

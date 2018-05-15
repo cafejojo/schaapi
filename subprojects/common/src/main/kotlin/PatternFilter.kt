@@ -5,10 +5,10 @@ import org.cafejojo.schaapi.common.Node
  */
 interface PatternFilter {
     /**
-     * Determines if a generated [pattern] should be retained.
+     * Determines if [pattern] should be retained.
      *
      * @param pattern a generated pattern
-     * @return whether the pattern should be retained
+     * @return true if the pattern should be retained
      */
     fun retain(pattern: List<Node>): Boolean
 }
