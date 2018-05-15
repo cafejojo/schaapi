@@ -14,7 +14,7 @@ internal class SchaapiTest : Spek({
     }
 
     afterEachTest {
-//        target.deleteRecursively()
+        target.deleteRecursively()
     }
 
     it("just works") {

@@ -58,13 +58,14 @@ fun main(args: Array<String>) {
     SootClassWriter.writeToFile(classGenerator.sootClass, outputPatterns.absolutePath)
 
     val testGeneratorTimeout = cmd.getOptionOrDefault("test_generator_timeout", DEFAULT_TEST_GENERATOR_TIMEOUT).toInt()
+    val testGeneratorEnableOutput = cmd.hasOption("test_generator_enable_output")
     EvoSuiteRunner(
         fullyQualifiedClassName = DEFAULT_PATTERN_CLASS_NAME,
         classpath = outputPatterns.absolutePath + ";" + library.classpath,
         outputDirectory = outputTests.absolutePath,
         generationTimeoutSeconds = testGeneratorTimeout,
-        processStandardStream = System.out,
-        processErrorStream = System.out
+        processStandardStream = if (testGeneratorEnableOutput) System.out else null,
+        processErrorStream = if (testGeneratorEnableOutput) System.out else null
     ).run()
 }
 
@@ -100,6 +101,12 @@ private fun buildOptions(): Options {
             .desc("The minimum number of occurrences for a statement to be considered frequent.")
             .type(Int::class.java)
             .hasArg(true)
+            .build())
+        .addOption(Option
+            .builder()
+            .longOpt("test_generator_enable_output")
+            .desc("True if test generator output should be shown.")
+            .hasArg(false)
             .build())
         .addOption(Option
             .builder()
