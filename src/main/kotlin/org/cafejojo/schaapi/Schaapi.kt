@@ -1,5 +1,11 @@
 package org.cafejojo.schaapi
 
+import org.apache.commons.cli.CommandLine
+import org.apache.commons.cli.DefaultParser
+import org.apache.commons.cli.HelpFormatter
+import org.apache.commons.cli.Option
+import org.apache.commons.cli.Options
+import org.apache.commons.cli.ParseException
 import org.cafejojo.schaapi.patterndetector.PathEnumerator
 import org.cafejojo.schaapi.patterndetector.PatternDetector
 import org.cafejojo.schaapi.projectcompiler.JavaMavenProject
@@ -13,8 +19,8 @@ import java.io.File
 import java.nio.file.Files
 import java.nio.file.Paths
 
-private const val MIN_ARG_COUNT = 3
-private const val PATTERN_DETECTOR_MINIMUM = 3
+private const val DEFAULT_TEST_GENERATOR_TIMEOUT = "60"
+private const val DEFAULT_PATTERN_DETECTOR_MINIMUM_COUNT = "3"
 
 /**
  * Runs the complete first phase of the Schaapi pipeline.
@@ -23,20 +29,20 @@ private const val PATTERN_DETECTOR_MINIMUM = 3
  */
 @SuppressWarnings("UnsafeCast")
 fun main(args: Array<String>) {
-    if (args.size < MIN_ARG_COUNT) {
-        println("Expected at least 3 arguments but received ${args.size}.")
-        return
-    }
+    val options = buildOptions()
+    val cmd = parseArgs(options, args) ?: return
+
     if (Files.isRegularFile(Paths.get(args[0]))) {
         println("Output directory is actually a file.")
+        printHelpMessage(options)
         return
     }
 
-    val output = File(args[0])
+    val output = File(cmd.getOptionValue('o'))
     val outputPatterns = output.resolve("patterns/")
     val outputTests = output.resolve("tests/")
-    val library = JavaMavenProject(File(args[1]))
-    val users = args.drop(2).map { JavaMavenProject(File(it)) }
+    val library = JavaMavenProject(File(cmd.getOptionValue('l')))
+    val users = cmd.getOptionValues('u').map { JavaMavenProject(File(it)) }
 
     library.compile()
     users.forEach { it.compile() }
@@ -45,7 +51,10 @@ fun main(args: Array<String>) {
     val userGraphs = users.map { graphGenerator.generate(library, it) }
     val userPaths = userGraphs.flatMap { it.flatMap { it.flatMap { PathEnumerator(it).enumerate() } } }
 
-    val patterns = PatternDetector(userPaths, PATTERN_DETECTOR_MINIMUM).findFrequentSequences()
+    val patterns = PatternDetector(
+        userPaths,
+        cmd.getOptionOrDefault("test_generator_timeout", DEFAULT_TEST_GENERATOR_TIMEOUT).toInt()
+    ).findFrequentSequences()
 
     val classGenerator = SootClassGenerator("RegressionTest")
     patterns.forEachIndexed { index, pattern ->
@@ -54,5 +63,79 @@ fun main(args: Array<String>) {
 
     SootClassWriter.writeToFile(classGenerator.sootClass, outputPatterns.absolutePath)
 
-    EvoSuiteRunner("RegressionTest", outputPatterns.absolutePath, outputTests.absolutePath).run()
+    EvoSuiteRunner(
+        "RegressionTest",
+        outputPatterns.absolutePath,
+        outputTests.absolutePath,
+        cmd.getOptionOrDefault("pattern_detector_minimum_count", DEFAULT_PATTERN_DETECTOR_MINIMUM_COUNT).toInt()
+    ).run()
 }
+
+private fun buildOptions(): Options {
+    val options = Options()
+
+    options
+        .addOption(Option
+            .builder("o")
+            .longOpt("output_dir")
+            .desc("The output directory.")
+            .hasArg(true)
+            .required()
+            .build())
+        .addOption(Option
+            .builder("l")
+            .longOpt("library_dir")
+            .desc("The library directory.")
+            .hasArg(true)
+            .required()
+            .build())
+        .addOption(Option
+            .builder("u")
+            .longOpt("user_dirs")
+            .desc("The user directories, separated by semi-colons.")
+            .hasArg(true)
+            .valueSeparator(';')
+            .required()
+            .build())
+        .addOption(Option
+            .builder()
+            .longOpt("test_generator_timeout")
+            .desc("The time limit for the test generator.")
+            .hasArg(true)
+            .optionalArg(true)
+            .build())
+        .addOption(Option
+            .builder()
+            .longOpt("pattern_detector_minimum_count")
+            .desc("The minimum number of occurrences for a statement to be considered frequent.")
+            .type(Int::class.java)
+            .optionalArg(true)
+            .build())
+
+    return options
+}
+
+private fun parseArgs(options: Options, args: Array<String>): CommandLine? {
+    val parser = DefaultParser()
+
+    return try {
+        parser.parse(options, args)
+    } catch (e: ParseException) {
+        printHelpMessage(options)
+        null
+    }
+}
+
+private fun printHelpMessage(options: Options) {
+    HelpFormatter().printHelp("schaapi", options, true)
+}
+
+/**
+ * Returns [CommandLine::getOptionValue], unless this is null, in which case [default] is returned.
+ *
+ * @param option the name of the option
+ * @param default the value to return if the option's value is null
+ * @return [CommandLine::getOptionValue], unless this is null, in which case [default] is returned
+ */
+fun CommandLine.getOptionOrDefault(option: String, default: String) =
+    getOptionValue(option) ?: default

@@ -102,6 +102,8 @@ dependencies {
     compile project(":project-compiler")
     compile project(":test-generator")
     compile project(":usage-graph-generator")
+
+    compile group: "commons-cli", name: "commons-cli", version: commonsCliVersion
 }
 
 // Jacoco report combining all reports
