@@ -1,0 +1,11 @@
+repositories {
+    maven { url "https://soot-build.cs.uni-paderborn.de/nexus/repository/soot-release/" }
+}
+
+dependencies {
+    compile group: "ca.mcgill.sable", name: "soot", version: sootVersion
+    testCompile group: "com.nhaarman", name: "mockito-kotlin", version: mockitoKotlinVersion
+
+    compile project(":common")
+    compile project(":usage-graph-generator")
+}
