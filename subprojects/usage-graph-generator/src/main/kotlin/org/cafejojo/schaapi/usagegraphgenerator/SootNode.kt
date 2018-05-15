@@ -22,9 +22,9 @@ class SootNode(val unit: Unit, override val successors: MutableList<Node> = arra
 
     /**
      * A [SootNode] equals another [SootNode] if the [Unit] is of the same type, they have the same amount of
-     * values, and each value at their respective positions having the same type.
+     * values, and each value at their respective positions has the same type.
      *
-     * @return true iff [Unit] of same type and values in the same order and of the same type
+     * @return true iff the [Unit] is of same type and the values are in the same order and of the same type
      */
     override fun equals(other: Any?): Boolean {
         if (other !is SootNode || this.unit::class != other.unit::class) return false
@@ -48,7 +48,7 @@ class SootNode(val unit: Unit, override val successors: MutableList<Node> = arra
     /**
      * Generates a hashcode based on the values of the contained [Unit], and their order.
      *
-     * @return hashcode based on hashcode of the values contained in the contained [Unit]
+     * @return hashcode based on the hashcodes of the values contained in the contained [Unit]
      */
     override fun hashCode(): Int {
         var hash = 0
