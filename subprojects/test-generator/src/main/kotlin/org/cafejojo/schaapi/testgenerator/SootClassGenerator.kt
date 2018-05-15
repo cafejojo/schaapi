@@ -3,6 +3,7 @@ package org.cafejojo.schaapi.testgenerator
 import soot.Body
 import soot.Local
 import soot.Modifier
+import soot.Scene
 import soot.SootClass
 import soot.SootMethod
 import soot.Type
@@ -25,7 +26,13 @@ import soot.jimple.internal.VariableBox
  * @param className name of [SootClass] to be generated
  */
 class SootClassGenerator(className: String) {
-    val sootClass = SootClass(className, Modifier.PUBLIC)
+    init {
+        Scene.v().loadClassAndSupport("java.lang.Object")
+    }
+
+    val sootClass = SootClass(className, Modifier.PUBLIC).apply {
+        superclass = Scene.v().getSootClass("java.lang.Object")
+    }
 
     /**
      * Generates a non-static soot method for the given [SootClass] with a body written in Jimple IR, and add it to the
