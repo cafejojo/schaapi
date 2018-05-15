@@ -21,7 +21,7 @@ class SootNode(val unit: Unit, override val successors: MutableList<Node> = arra
     override fun toString() = unit.toString()
 
     /**
-     * A [SootNode] equals another [SootNode] if the [Unit] is of the same type, and they have the same amount of
+     * A [SootNode] equals another [SootNode] if the [Unit] is of the same type, they have the same amount of
      * values, and each value at their respective positions having the same type.
      *
      * @return true iff [Unit] of same type and values in the same order and of the same type
@@ -46,11 +46,15 @@ class SootNode(val unit: Unit, override val successors: MutableList<Node> = arra
     }
 
     /**
-     * Generates a hashcode based on the values of the contained [Unit].
+     * Generates a hashcode based on the values of the contained [Unit], and their order.
      *
      * @return hashcode based on hashcode of the values contained in the contained [Unit]
      */
-    override fun hashCode(): Int = getValues().sumBy { it.type.hashCode() }
+    override fun hashCode(): Int {
+        var hash = 0
+        getValues().forEachIndexed { index, value -> hash += (index + 1) * value.type.hashCode() }
+        return hash
+    }
 
     /**
      * Extract the values from the contained [Unit] based on its type.
