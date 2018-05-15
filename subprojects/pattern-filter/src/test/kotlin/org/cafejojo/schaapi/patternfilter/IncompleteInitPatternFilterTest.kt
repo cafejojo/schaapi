@@ -1,3 +1,5 @@
+package org.cafejojo.schaapi.patternfilter
+
 import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.mock
 import org.assertj.core.api.Assertions.assertThat
