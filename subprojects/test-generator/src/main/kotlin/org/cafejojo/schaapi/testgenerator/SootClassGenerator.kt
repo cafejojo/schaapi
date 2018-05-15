@@ -56,8 +56,9 @@ class SootClassGenerator(className: String) : ClassGenerator {
      */
     override fun generateMethod(methodName: String, nodes: List<Node>) {
         val statements = nodes.map {
-            it as? SootNode ?: throw IllegalArgumentException("Non Soot-nodes cannot be converted to methods.")
+            it as? SootNode ?: throw IllegalArgumentException("Cannot convert non-Soot nodes to methods.")
         }.map { it.unit }
+
         val methodParams = findUnboundVariables(statements)
         val sootMethod = SootMethod(methodName, methodParams.map { it.type }, VoidType.v())
         sootMethod.modifiers = Modifier.PUBLIC.or(Modifier.STATIC)
