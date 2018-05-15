@@ -53,7 +53,7 @@ fun main(args: Array<String>) {
 
     val patterns = PatternDetector(
         userPaths,
-        cmd.getOptionOrDefault("test_generator_timeout", DEFAULT_TEST_GENERATOR_TIMEOUT).toInt()
+        cmd.getOptionOrDefault("pattern_detector_minimum_count", DEFAULT_PATTERN_DETECTOR_MINIMUM_COUNT).toInt()
     ).findFrequentSequences()
 
     val classGenerator = SootClassGenerator("RegressionTest")
@@ -65,9 +65,9 @@ fun main(args: Array<String>) {
 
     EvoSuiteRunner(
         "RegressionTest",
-        outputPatterns.absolutePath,
+        outputPatterns.absolutePath + ";" + library.classpath,
         outputTests.absolutePath,
-        cmd.getOptionOrDefault("pattern_detector_minimum_count", DEFAULT_PATTERN_DETECTOR_MINIMUM_COUNT).toInt()
+        cmd.getOptionOrDefault("test_generator_timeout", DEFAULT_TEST_GENERATOR_TIMEOUT).toInt()
     ).run()
 }
 
@@ -99,17 +99,17 @@ private fun buildOptions(): Options {
             .build())
         .addOption(Option
             .builder()
-            .longOpt("test_generator_timeout")
-            .desc("The time limit for the test generator.")
-            .hasArg(true)
-            .optionalArg(true)
-            .build())
-        .addOption(Option
-            .builder()
             .longOpt("pattern_detector_minimum_count")
             .desc("The minimum number of occurrences for a statement to be considered frequent.")
             .type(Int::class.java)
-            .optionalArg(true)
+            .hasArg(true)
+            .build())
+        .addOption(Option
+            .builder()
+            .longOpt("test_generator_timeout")
+            .desc("The time limit for the test generator.")
+            .type(Int::class.java)
+            .hasArg(true)
             .build())
 
     return options
@@ -127,7 +127,9 @@ private fun parseArgs(options: Options, args: Array<String>): CommandLine? {
 }
 
 private fun printHelpMessage(options: Options) {
-    HelpFormatter().printHelp("schaapi", options, true)
+    val helpFormatter = HelpFormatter()
+    helpFormatter.optionComparator = null
+    helpFormatter.printHelp("schaapi", options, true)
 }
 
 /**
