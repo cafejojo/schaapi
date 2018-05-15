@@ -12,13 +12,6 @@ import soot.options.Options
 import java.io.File
 
 /**
- * Placeholder main method.
- */
-fun main(args: Array<String>) {
-    println("I am the usage graph generator!")
-}
-
-/**
  * Library usage graph generator based on Soot.
  */
 object SootProjectLibraryUsageGraphGenerator : ProjectLibraryUsageGraphGenerator {
