@@ -60,7 +60,9 @@ fun main(args: Array<String>) {
         fullyQualifiedClassName = DEFAULT_PATTERN_CLASS_NAME,
         classPath = outputPatterns.absolutePath + ";" + library.classpath,
         outputDirectory = outputTests.absolutePath,
-        generationTimeoutSeconds = testGeneratorTimeout
+        generationTimeoutSeconds = testGeneratorTimeout,
+        processStandardStream = System.out,
+        processErrorStream = System.out
     ).run()
 }
 
