@@ -1,5 +1,6 @@
 package org.cafejojo.schaapi
 
+import IncompleteInitPatternFilter
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
@@ -47,6 +48,7 @@ fun main(args: Array<String>) {
         userPaths,
         cmd.getOptionOrDefault("pattern_detector_minimum_count", DEFAULT_PATTERN_DETECTOR_MINIMUM_COUNT).toInt()
     ).findFrequentSequences()
+        .filter { IncompleteInitPatternFilter.retain(it) }
 
     val classGenerator = SootClassGenerator(DEFAULT_PATTERN_CLASS_NAME)
     patterns.forEachIndexed { index, pattern ->
@@ -58,7 +60,7 @@ fun main(args: Array<String>) {
     val testGeneratorTimeout = cmd.getOptionOrDefault("test_generator_timeout", DEFAULT_TEST_GENERATOR_TIMEOUT).toInt()
     EvoSuiteRunner(
         fullyQualifiedClassName = DEFAULT_PATTERN_CLASS_NAME,
-        classPath = outputPatterns.absolutePath + ";" + library.classpath,
+        classpath = outputPatterns.absolutePath + ";" + library.classpath,
         outputDirectory = outputTests.absolutePath,
         generationTimeoutSeconds = testGeneratorTimeout,
         processStandardStream = System.out,

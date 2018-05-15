@@ -99,6 +99,7 @@ repositories {
 
 dependencies {
     compile project(":pattern-detector")
+    compile project(":pattern-filter")
     compile project(":project-compiler")
     compile project(":test-generator")
     compile project(":usage-graph-generator")
