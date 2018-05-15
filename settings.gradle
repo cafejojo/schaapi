@@ -14,6 +14,7 @@ rootProject.name = "schaapi"
 
 includeModule "common"
 includeModule "pattern-detector"
+includeModule "pattern-filter"
 includeModule "project-compiler"
 includeModule "test-generator"
 includeModule "usage-graph-generator"
