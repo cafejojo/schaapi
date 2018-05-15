@@ -21,10 +21,10 @@ class SootNode(val unit: Unit, override val successors: MutableList<Node> = arra
     override fun toString() = unit.toString()
 
     /**
-     * A [SootNode] equals another [SootNode] if the [Unit] is of the same type, they have the same amount of
+     * A [SootNode] equals another [SootNode] if the [unit] is of the same type, they have the same amount of
      * values, and each value at their respective positions has the same type.
      *
-     * @return true iff the [Unit] is of same type and the values are in the same order and of the same type
+     * @return true iff the [unit] is of same type and the values are in the same order and of the same type
      */
     override fun equals(other: Any?): Boolean {
         if (other !is SootNode || this.unit::class != other.unit::class) return false
