@@ -63,7 +63,7 @@ fun main(args: Array<String>) {
     val testGeneratorEnableOutput = cmd.hasOption("test_generator_enable_output")
     EvoSuiteRunner(
         fullyQualifiedClassName = DEFAULT_PATTERN_CLASS_NAME,
-        classpath = outputPatterns.absolutePath + ";" + library.classpath,
+        classpath = outputPatterns.absolutePath + File.pathSeparator + library.classpath,
         outputDirectory = outputTests.absolutePath,
         generationTimeoutSeconds = testGeneratorTimeout,
         processStandardStream = if (testGeneratorEnableOutput) System.out else null,
