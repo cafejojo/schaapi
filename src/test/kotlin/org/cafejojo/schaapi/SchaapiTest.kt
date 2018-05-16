@@ -11,13 +11,16 @@ import java.nio.file.Files
  */
 internal class SchaapiTest : Spek({
     lateinit var target: File
+    lateinit var mavenDir: File
 
     beforeEachTest {
         target = Files.createTempDirectory("schaapi-smoke").toFile()
+        mavenDir = Files.createTempDirectory("schaapi-maven").toFile()
     }
 
     afterEachTest {
         target.deleteRecursively()
+        mavenDir.deleteRecursively()
     }
 
     it("generates a test class from the patterns in a project using a library") {
@@ -25,6 +28,7 @@ internal class SchaapiTest : Spek({
             "-o", target.absolutePath,
             "-l", getResourcePath("/library/"),
             "-u", getResourcePath("/user/a/"),
+            "--maven_dir", mavenDir.absolutePath,
             "--pattern_detector_minimum_count", "1",
             "--test_generator_timeout", "3"
         ))

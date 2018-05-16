@@ -10,6 +10,7 @@ import org.cafejojo.schaapi.patterndetector.PathEnumerator
 import org.cafejojo.schaapi.patterndetector.PatternDetector
 import org.cafejojo.schaapi.patternfilter.IncompleteInitPatternFilter
 import org.cafejojo.schaapi.projectcompiler.JavaMavenProject
+import org.cafejojo.schaapi.projectcompiler.MavenInstaller
 import org.cafejojo.schaapi.testgenerator.EvoSuiteRunner
 import org.cafejojo.schaapi.testgenerator.SootClassGenerator
 import org.cafejojo.schaapi.testgenerator.SootClassWriter
@@ -25,7 +26,7 @@ private const val DEFAULT_PATTERN_DETECTOR_MINIMUM_COUNT = "3"
  *
  * @param args the path to the output directory, the path to the library project, and the paths to the user projects
  */
-@SuppressWarnings("UnsafeCast")
+@SuppressWarnings("LongMethod", "UnsafeCast")
 fun main(args: Array<String>) {
     val options = buildOptions()
     val cmd = parseArgs(options, args) ?: return
@@ -35,6 +36,9 @@ fun main(args: Array<String>) {
     val outputTests = output.resolve("tests/").apply { mkdirs() }
     val library = JavaMavenProject(File(cmd.getOptionValue('l')))
     val users = cmd.getOptionValues('u').map { JavaMavenProject(File(it)) }
+
+    val mavenDir = cmd.getOptionValue("maven_dir") ?: MavenInstaller.DEFAULT_MAVEN_HOME.absolutePath
+    MavenInstaller().installMaven(File(mavenDir))
 
     library.compile()
     users.forEach { it.compile() }
@@ -92,6 +96,12 @@ private fun buildOptions(): Options {
             .hasArg(true)
             .valueSeparator(';')
             .required()
+            .build())
+        .addOption(Option
+            .builder()
+            .longOpt("maven_dir")
+            .desc("The directory to install Maven in.")
+            .hasArg(true)
             .build())
         .addOption(Option
             .builder()

@@ -12,7 +12,7 @@ class MavenInstaller {
      *
      * @param path the directory to install Maven in
      */
-    fun installMaven(path: File) {
+    fun installMaven(path: File = DEFAULT_MAVEN_HOME) {
         val zipStream = javaClass.getResource("/maven/apache-maven-3.5.3-bin.zip")
         ZipFile(zipStream.path).extractAll(path.absolutePath)
         path.resolve("bin/mvn").setExecutable(true)
