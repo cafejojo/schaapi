@@ -9,7 +9,7 @@ import java.nio.file.Files
 /**
  * E2E-test for Schaapi.
  */
-internal class SchaapiTest : Spek({
+internal class SchaapiSmokeTest : Spek({
     lateinit var target: File
     lateinit var mavenDir: File
 
