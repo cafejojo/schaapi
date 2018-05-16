@@ -7,7 +7,7 @@ import java.io.File
 import java.nio.file.Files
 
 /**
- * E2E-test for Schaapi.
+ * Smoke tests for Schaapi.
  */
 internal class SchaapiSmokeTest : Spek({
     lateinit var target: File
