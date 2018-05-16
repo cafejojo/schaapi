@@ -14,11 +14,8 @@ import soot.Unit
 import soot.Value
 import soot.VoidType
 import soot.jimple.Jimple
-import soot.jimple.internal.ImmediateBox
 import soot.jimple.internal.JReturnStmt
 import soot.jimple.internal.JReturnVoidStmt
-import soot.jimple.internal.JimpleLocalBox
-import soot.jimple.internal.VariableBox
 
 /**
  * Generates a [SootClass], and allows methods to be generated for said class based on lists of [Unit]s.
@@ -122,9 +119,10 @@ class SootClassGenerator(className: String) : ClassGenerator {
 
         statements.forEach { statement ->
             statement.useAndDefBoxes
-                .filter { it is VariableBox || it is ImmediateBox || it is JimpleLocalBox }
+                .filter { it.value is Local }
                 .forEach { box ->
-                    val identifier = box.value.toString()
+                    val identifier =
+                        (box.value as? Local)?.name ?: throw IllegalStateException("Value is no longer a local.")
                     when {
                         statement.defBoxes.contains(box) -> definitions.add(identifier)
                         !definitions.contains(identifier) -> methodParams.add(box.value)
