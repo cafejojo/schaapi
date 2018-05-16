@@ -71,10 +71,8 @@ fun main(args: Array<String>) {
     ).run()
 }
 
-private fun buildOptions(): Options {
-    val options = Options()
-
-    options
+private fun buildOptions(): Options =
+    Options()
         .addOption(Option
             .builder("o")
             .longOpt("output_dir")
@@ -123,9 +121,6 @@ private fun buildOptions(): Options {
             .type(Int::class.java)
             .hasArg()
             .build())
-
-    return options
-}
 
 private fun parseArgs(options: Options, args: Array<String>): CommandLine? {
     val parser = DefaultParser()

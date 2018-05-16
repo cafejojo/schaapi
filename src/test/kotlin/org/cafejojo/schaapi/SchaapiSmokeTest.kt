@@ -38,5 +38,4 @@ internal class SchaapiSmokeTest : Spek({
     }
 })
 
-private fun getResourcePath(path: String) =
-    SchaapiTest::class.java.getResource(path).path
+private fun getResourcePath(path: String) = SchaapiSmokeTest::class.java.getResource(path).path
