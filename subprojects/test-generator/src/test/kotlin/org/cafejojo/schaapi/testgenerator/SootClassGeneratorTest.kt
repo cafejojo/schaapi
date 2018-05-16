@@ -10,12 +10,26 @@ import soot.BooleanType
 import soot.CharType
 import soot.IntType
 import soot.RefType
+import soot.Scene
 import soot.VoidType
 import soot.jimple.IntConstant
 import soot.jimple.Jimple
 import soot.jimple.StringConstant
+import soot.options.Options
+import java.io.File
 
 internal class SootClassGeneratorTest : Spek({
+    beforeGroup {
+        Options.v().set_soot_classpath(
+            arrayOf(
+                System.getProperty("java.home") + "${File.separator}lib${File.separator}rt.jar",
+                System.getProperty("java.home") + "${File.separator}lib${File.separator}jce.jar"
+            ).joinToString(File.pathSeparator)
+        )
+
+        Scene.v().loadNecessaryClasses()
+    }
+
     describe("generation of a method based on a list of nodes") {
         it("should not create parameters if all variables are bound") {
             val a = Jimple.v().newLocal("a", CharType.v())

@@ -30,7 +30,7 @@ import soot.jimple.internal.VariableBox
  */
 class SootClassGenerator(className: String) : ClassGenerator {
     init {
-        Scene.v().loadClassAndSupport("java.lang.Object")
+        Scene.v().addBasicClass("java.lang.Object")
     }
 
     val sootClass = SootClass(className, Modifier.PUBLIC).apply {

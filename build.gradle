@@ -93,6 +93,20 @@ apply plugin: "application"
 // Root project config
 mainClassName = "org.cafejojo.schaapi.SchaapiKt"
 
+repositories {
+    maven { url "https://soot-build.cs.uni-paderborn.de/nexus/repository/soot-release/" }
+}
+
+dependencies {
+    compile project(":pattern-detector")
+    compile project(":pattern-filter")
+    compile project(":project-compiler")
+    compile project(":test-generator")
+    compile project(":usage-graph-generator")
+
+    compile group: "commons-cli", name: "commons-cli", version: commonsCliVersion
+}
+
 // Jacoco report combining all reports
 task jacocoRootReport(type: JacocoReport) {
     dependsOn = allprojects.test
