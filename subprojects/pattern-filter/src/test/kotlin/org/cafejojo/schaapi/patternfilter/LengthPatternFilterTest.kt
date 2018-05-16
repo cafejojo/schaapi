@@ -26,7 +26,7 @@ class LengthPatternFilterTest : Spek({
 
         it("should give an exception if the given pattern length is 0") {
             assertThatThrownBy { LengthPatternFilter(0) }
-                .isInstanceOf(TooSmallMinimumPatternLengthException::class.java)
+                .isInstanceOf(IllegalArgumentException::class.java)
         }
     }
 })
