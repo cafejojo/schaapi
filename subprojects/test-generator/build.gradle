@@ -1,15 +1,10 @@
-apply plugin: "application"
-
-mainClassName = "org.cafejojo.schaapi.testgenerator.TestGeneratorKt"
-
 repositories {
     maven { url "https://soot-build.cs.uni-paderborn.de/nexus/repository/soot-release/" }
 }
 
 dependencies {
-    compile group: "org.evosuite", name: "evosuite-master", version: evosuiteMasterVersion
-    compile group: "ca.mcgill.sable", name: "soot", version: sootVersion
-
     compile project(":common")
     compile project(":usage-graph-generator")
+    compile group: "org.evosuite", name: "evosuite-master", version: evosuiteMasterVersion
+    compile group: "ca.mcgill.sable", name: "soot", version: sootVersion
 }

@@ -8,25 +8,6 @@ import org.cafejojo.schaapi.common.ProjectCompilationException
 import java.io.File
 
 /**
- * Takes the path to a Maven project, compiles it with Maven, and prints the paths to the class files that were created.
- *
- * @param args the path to a Maven project
- */
-fun main(args: Array<String>) {
-    if (args.size != 1) {
-        print("Invalid number of arguments")
-        return
-    }
-
-    MavenInstaller().installMaven(MavenInstaller.DEFAULT_MAVEN_HOME)
-
-    val projectDir = File(args[0])
-    val project = JavaMavenProject(projectDir).compile()
-
-    println(project)
-}
-
-/**
  * A Java project using Maven.
  */
 @SuppressWarnings("LateinitUsage") // Refer to PR #23
