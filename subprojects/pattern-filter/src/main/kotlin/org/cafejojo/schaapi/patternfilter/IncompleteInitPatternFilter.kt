@@ -9,7 +9,7 @@ import soot.jimple.internal.JSpecialInvokeExpr
 /**
  * Filters out patterns that start with `<init>` invokes but do not have a new statement.
  */
-object IncompleteInitPatternFilter : PatternFilter {
+class IncompleteInitPatternFilter : PatternFilter {
     override fun retain(pattern: List<Node>): Boolean {
         if (pattern.isEmpty()) return true
 
