@@ -9,7 +9,6 @@ import org.cafejojo.schaapi.usagegraphgenerator.compare.GeneralizedNodeComparato
  * @property allPaths all paths in which patterns should be detected. Each path is a list of [Node]s.
  * @property minimumCount the minimum amount of times a node must appear in [allPaths] for it to be considered a
  * frequent node. This node will then be used by the Prefix Space algorithm to find frequent sequences of [Node]s.
- *
  */
 class PatternDetector(
     private val allPaths: Collection<List<Node>>,
@@ -17,18 +16,10 @@ class PatternDetector(
     private val comparator: GeneralizedNodeComparator
 ) {
     companion object {
-        private fun extractSuffixes(prefix: List<Node>, paths: Collection<List<Node>>): List<List<Node>> {
-            val suffixes: MutableList<List<Node>> = mutableListOf()
-
-            paths.forEach { path ->
-                val extractedPrefix = path.subList(0, prefix.size)
-                if (extractedPrefix == prefix) {
-                    suffixes += path.subList(prefix.size, path.size)
-                }
-            }
-
-            return suffixes
-        }
+        private fun extractSuffixes(prefix: List<Node>, paths: Collection<List<Node>>): List<List<Node>> = listOf(paths
+            .filter { it.subList(0, prefix.size) == prefix }
+            .flatMap { it.subList(prefix.size, it.size) }
+        )
     }
 
     private val frequentSequences = mutableListOf<List<Node>>()
@@ -38,6 +29,9 @@ class PatternDetector(
      * Finds frequent (sub)sequences of [Node]s using the PrefixSpan algorithm by Pei et al. (2004). The algorithm uses
      * the 'divide and conquer' principle, and is partially inspired by the FP-tree structure used to mine sets of
      * unordered items.
+     *
+     * First, a set of frequent items, or [Node]s, is generated. For this to function, [Node]s which are considered
+     * equal, which may depend on the desired level of abstraction, should have the same hash value.
      *
      * During each iteration, a new prefix is generated based on the current prefix and nodes observed to be frequent in
      * the set of paths. If this prefix is observed in the set of paths it is added to the set of frequent sequences.
@@ -74,7 +68,7 @@ class PatternDetector(
      * SubEndProcedure
      * ```
      *
-     * @return the list of sequences, each a list of nodes, that are common within [allPaths].
+     * @return the list of sequences, each a list of nodes, that are common within [allPaths]
      */
     fun findFrequentSequences(): List<List<Node>> {
         generateFrequentItems(minimumCount)
@@ -88,7 +82,7 @@ class PatternDetector(
      *
      * If [findFrequentSequences] has not been run before, the resulting map will not contain any keys.
      *
-     * @return a mapping from the frequent patterns to sequences which contain said sequence.
+     * @return a mapping from the frequent patterns to sequences which contain said sequence
      */
     fun mapFrequentSequencesToPaths(): Map<List<Node>, List<List<Node>>> =
         frequentSequences.map { sequence ->
@@ -118,18 +112,16 @@ class PatternDetector(
     /**
      * Checks whether a given sequence can be found within a given path.
      *
-     * @param path the path which may contain the given sequence.
-     * @param sequence the sequence which may be contained in path.
-     * @return true if path contains the given sequence.
+     * @param path the path which may contain the given sequence
+     * @param sequence the sequence which may be contained in path
+     * @return true if path contains the given sequence
      */
     internal fun pathContainsSequence(path: List<Node>, sequence: List<Node>): Boolean {
         for (pathPos in 0 until path.size) {
             for (sequencePos in 0 until sequence.size) {
-                val endOfPathOrNodeUnequal =
-                    pathPos + sequencePos > path.size - 1 ||
-                        !comparator.satisfies(path[pathPos + sequencePos], sequence[sequencePos])
-
-                if (endOfPathOrNodeUnequal) break
+                if (pathPos + sequencePos > path.size - 1 ||
+                    !comparator.satisfies(path[pathPos + sequencePos], sequence[sequencePos])
+                ) break
                 if (sequencePos == sequence.size - 1) return true
             }
         }

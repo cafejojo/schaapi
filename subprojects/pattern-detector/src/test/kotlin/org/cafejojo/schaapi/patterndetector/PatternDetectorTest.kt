@@ -6,7 +6,6 @@ import org.cafejojo.schaapi.usagegraphgenerator.compare.GeneralizedSootComparato
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
-import org.jetbrains.spek.api.dsl.xit
 import soot.Type
 
 internal class PatternDetectorTest : Spek({
@@ -180,7 +179,7 @@ internal class PatternDetectorTest : Spek({
     }
 
     describe("when looking for common sequences in patterns of statements using the generalized soot comparator") {
-        xit("should find a sequence of path length 1") {
+        it("should find a sequence of path length 1") {
             val node = mockSootNode()
             val path = listOf(node)
 
@@ -190,7 +189,7 @@ internal class PatternDetectorTest : Spek({
             assertThat(detector.pathContainsSequence(path, listOf(node))).isTrue()
         }
 
-        xit("should find a pattern with multiple nodes which have different values with the same type") {
+        it("should find a pattern with multiple nodes which have different values with the same type") {
             val type1 = mock<Type> {}
             val type2 = mock<Type> {}
             val type3 = mock<Type> {}
