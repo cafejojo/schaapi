@@ -1,6 +1,6 @@
 package org.cafejojo.schaapi.projectcompiler
 
-import net.lingala.zip4j.core.ZipFile
+import org.zeroturnaround.zip.ZipUtil
 import java.io.File
 
 /**
@@ -13,8 +13,8 @@ class MavenInstaller {
      * @param path the directory to install Maven in
      */
     fun installMaven(path: File = DEFAULT_MAVEN_HOME) {
-        val zipStream = javaClass.getResource("/maven/apache-maven-3.5.3-bin.zip")
-        ZipFile(zipStream.path).extractAll(path.absolutePath)
+        val zipStream = javaClass.getResourceAsStream("/maven/apache-maven-3.5.3-bin.zip")
+        ZipUtil.unpack(zipStream, path.absoluteFile)
         path.resolve("bin/mvn").setExecutable(true)
     }
 
