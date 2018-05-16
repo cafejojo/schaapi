@@ -13,7 +13,6 @@ import org.cafejojo.schaapi.projectcompiler.JavaMavenProject
 import org.cafejojo.schaapi.projectcompiler.MavenInstaller
 import org.cafejojo.schaapi.testgenerator.EvoSuiteRunner
 import org.cafejojo.schaapi.testgenerator.SootClassGenerator
-import org.cafejojo.schaapi.testgenerator.SootClassWriter
 import org.cafejojo.schaapi.usagegraphgenerator.SootProjectLibraryUsageGraphGenerator
 import java.io.File
 
@@ -57,7 +56,7 @@ fun main(args: Array<String>) {
         classGenerator.generateMethod("pattern$index", pattern)
     }
 
-    SootClassWriter.writeToFile(classGenerator.sootClass, outputPatterns.absolutePath)
+    classGenerator.writeToFile(outputPatterns.absolutePath)
 
     val testGeneratorTimeout = cmd.getOptionOrDefault("test_generator_timeout", DEFAULT_TEST_GENERATOR_TIMEOUT).toInt()
     val testGeneratorEnableOutput = cmd.hasOption("test_generator_enable_output")
