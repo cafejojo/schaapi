@@ -119,9 +119,10 @@ class PatternDetector(
     internal fun pathContainsSequence(path: List<Node>, sequence: List<Node>): Boolean {
         for (pathPos in 0 until path.size) {
             for (sequencePos in 0 until sequence.size) {
-                if (pathPos + sequencePos > path.size - 1 ||
+                val endOfPathOrNodeUnequal = pathPos + sequencePos > path.size - 1 ||
                     !comparator.satisfies(path[pathPos + sequencePos], sequence[sequencePos])
-                ) break
+
+                if (endOfPathOrNodeUnequal) break
                 if (sequencePos == sequence.size - 1) return true
             }
         }
