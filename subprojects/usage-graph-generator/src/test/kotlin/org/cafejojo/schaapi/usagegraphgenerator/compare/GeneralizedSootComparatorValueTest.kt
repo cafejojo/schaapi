@@ -18,10 +18,10 @@ import soot.jimple.SwitchStmt
 import soot.jimple.ThrowStmt
 
 internal class GeneralizedSootComparatorValueTest : Spek({
-    lateinit var comparator: GeneralizedSootComparator
+    lateinit var comparator: GeneralizedSootNodeComparator
 
     beforeEachTest {
-        comparator = GeneralizedSootComparator()
+        comparator = GeneralizedSootNodeComparator()
     }
 
     describe("generalized value comparison of statements") {
@@ -32,7 +32,7 @@ internal class GeneralizedSootComparatorValueTest : Spek({
 
                 assertThatThrownBy { comparator.generalizedValuesAreEqual(template, instance) }
                     .isExactlyInstanceOf(IllegalArgumentException::class.java)
-                    .hasMessage("GeneralizedSootComparator cannot handle non-SootNodes.")
+                    .hasMessage("GeneralizedSootNodeComparator cannot handle non-SootNodes.")
             }
 
             it("throws an exception if a non-SootNode instance is given") {
@@ -41,7 +41,7 @@ internal class GeneralizedSootComparatorValueTest : Spek({
 
                 assertThatThrownBy { comparator.generalizedValuesAreEqual(template, instance) }
                     .isExactlyInstanceOf(IllegalArgumentException::class.java)
-                    .hasMessage("GeneralizedSootComparator cannot handle non-SootNodes.")
+                    .hasMessage("GeneralizedSootNodeComparator cannot handle non-SootNodes.")
             }
         }
 

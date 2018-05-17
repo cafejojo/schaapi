@@ -13,7 +13,7 @@ import soot.Value
  * This comparator is stateful and is sensitive to the order in which methods are called. Refer to the documentation of
  * [satisfies].
  */
-class GeneralizedSootComparator : GeneralizedNodeComparator {
+class GeneralizedSootNodeComparator : GeneralizedNodeComparator {
     /**
      * Maps [Value]s to tags.
      */
@@ -41,7 +41,7 @@ class GeneralizedSootComparator : GeneralizedNodeComparator {
      */
     override fun structuresAreEqual(template: Node, instance: Node): Boolean {
         if (template !is SootNode || instance !is SootNode) {
-            throw IllegalArgumentException("GeneralizedSootComparator cannot handle non-SootNodes.")
+            throw IllegalArgumentException("GeneralizedSootNodeComparator cannot handle non-SootNodes.")
         }
 
         return template == instance
@@ -62,7 +62,7 @@ class GeneralizedSootComparator : GeneralizedNodeComparator {
     @SuppressWarnings("UnsafeCallOnNullableType") // The !! is implicitly avoided by checking `templateHasTag`
     override fun generalizedValuesAreEqual(template: Node, instance: Node): Boolean {
         if (template !is SootNode || instance !is SootNode) {
-            throw IllegalArgumentException("GeneralizedSootComparator cannot handle non-SootNodes.")
+            throw IllegalArgumentException("GeneralizedSootNodeComparator cannot handle non-SootNodes.")
         }
 
         val templateValues = template.getValues()
