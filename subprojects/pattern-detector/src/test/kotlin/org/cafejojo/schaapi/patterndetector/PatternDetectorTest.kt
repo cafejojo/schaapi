@@ -76,7 +76,7 @@ internal class PatternDetectorTest : Spek({
             assertThat(detector.pathContainsSequence(path, listOf(node5, node6))).isTrue()
         }
 
-        it("should not find a out of order sequence that is not in a path") {
+        it("should not find an out-of-order sequence that is not in a path") {
             val node1 = TestNode()
             val node2 = TestNode()
             val node3 = TestNode()
@@ -139,7 +139,7 @@ internal class PatternDetectorTest : Spek({
             val paths = listOf(path1, path2, path3)
             val frequent = PatternDetector(paths, 2, TestNodeComparator()).findFrequentSequences()
 
-            assertThat(frequent).hasSize(0)
+            assertThat(frequent).isEmpty()
         }
 
         it("should find a pattern that occurs twice in the same path") {
@@ -155,7 +155,7 @@ internal class PatternDetectorTest : Spek({
             assertThat(frequent).contains(listOf(node1, node2, node3))
         }
 
-        it("should find a pattern that occurs twice in two different paths") {
+        it("should find a pattern that occurs in two different paths") {
             val node1 = TestNode()
             val node2 = TestNode()
             val node3 = TestNode()
@@ -233,9 +233,9 @@ internal class PatternDetectorTest : Spek({
             val node10 = mockSootNode()
 
             val path1 = listOf(node1, node2, node3)
-            val path3 = listOf(node7, node8, node9, node10, node4, node5, node6)
+            val path2 = listOf(node7, node8, node9, node10, node4, node5, node6)
 
-            val paths = listOf(path1, path3)
+            val paths = listOf(path1, path2)
             val frequent = PatternDetector(paths, 2, GeneralizedSootComparator()).findFrequentSequences()
 
             assertThat(frequent).isEmpty()
