@@ -37,7 +37,9 @@ fun main(args: Array<String>) {
     val library = JavaMavenProject(File(cmd.getOptionValue('l')), mavenDir)
     val users = cmd.getOptionValues('u').map { JavaMavenProject(File(it), mavenDir) }
 
-    MavenInstaller().installMaven(mavenDir)
+    if (!mavenDir.resolve("bin/mvn").exists() || cmd.hasOption("repair_maven")) {
+        MavenInstaller().installMaven(mavenDir)
+    }
 
     library.compile()
     users.forEach { it.compile() }
@@ -97,8 +99,13 @@ private fun buildOptions(): Options =
         .addOption(Option
             .builder()
             .longOpt("maven_dir")
-            .desc("The directory to install Maven in.")
+            .desc("The directory to run Maven from.")
             .hasArg()
+            .build())
+        .addOption(Option
+            .builder()
+            .longOpt("repair_maven")
+            .desc("Repairs the Maven installation.")
             .build())
         .addOption(Option
             .builder()
