@@ -14,6 +14,7 @@ import org.cafejojo.schaapi.projectcompiler.MavenInstaller
 import org.cafejojo.schaapi.testgenerator.EvoSuiteRunner
 import org.cafejojo.schaapi.testgenerator.SootClassGenerator
 import org.cafejojo.schaapi.usagegraphgenerator.SootProjectLibraryUsageGraphGenerator
+import org.cafejojo.schaapi.usagegraphgenerator.compare.GeneralizedSootComparator
 import java.io.File
 
 private const val DEFAULT_PATTERN_CLASS_NAME = "RegressionTest"
@@ -49,7 +50,8 @@ fun main(args: Array<String>) {
 
     val patterns = PatternDetector(
         userPaths,
-        cmd.getOptionOrDefault("pattern_detector_minimum_count", DEFAULT_PATTERN_DETECTOR_MINIMUM_COUNT).toInt()
+        cmd.getOptionOrDefault("pattern_detector_minimum_count", DEFAULT_PATTERN_DETECTOR_MINIMUM_COUNT).toInt(),
+        GeneralizedSootComparator()
     ).findFrequentSequences()
         .filter { IncompleteInitPatternFilter.retain(it) }
 
