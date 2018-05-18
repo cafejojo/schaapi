@@ -63,5 +63,6 @@ private class TestNode(override val successors: MutableList<Node> = mutableListO
         id != other.id -> false
         else -> true
     }
+
     override fun toString() = "node-number-$id"
 }

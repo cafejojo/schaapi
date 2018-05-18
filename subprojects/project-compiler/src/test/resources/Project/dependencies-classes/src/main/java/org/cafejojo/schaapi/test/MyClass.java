@@ -13,7 +13,7 @@ public class MyClass {
         String myString = "asdfasdfasdf";
         String yourString = myString.substring(constant);
         String ourString = myString.substring(1).substring(3)
-                + yourString;
+            + yourString;
         return ourString;
     }
 }
