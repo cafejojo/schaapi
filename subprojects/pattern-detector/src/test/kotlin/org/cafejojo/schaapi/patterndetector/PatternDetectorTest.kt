@@ -1,6 +1,7 @@
 package org.cafejojo.schaapi.patterndetector
 
 import org.assertj.core.api.Assertions.assertThat
+import org.cafejojo.schaapi.patterndetector.PatternDetector.Companion.extractSuffixes
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
@@ -99,6 +100,27 @@ internal class PatternDetectorTest : Spek({
             detector.findFrequentSequences()
 
             assertThat(detector.pathContainsSequence(path, listOf(node2, node4, node5))).isFalse()
+        }
+    }
+
+    describe("when extracting suffixes from sequences") {
+        it("should not return any suffixes if no path has prefix") {
+            val prefix = listOf(TestNode(), TestNode())
+            val path1 = listOf(TestNode(), TestNode())
+            val path2 = listOf(TestNode())
+
+            assertThat(extractSuffixes(prefix, listOf(path1, path2))).isEmpty()
+        }
+
+        it("should extract the suffix from paths with the given prefix") {
+            val node1 = TestNode()
+            val node2 = TestNode()
+
+            val prefix = listOf(node1)
+            val path1 = listOf(node1, node2)
+            val path2 = listOf(TestNode())
+
+            assertThat(extractSuffixes(prefix, listOf(path1, path2))).containsExactly(listOf(node2))
         }
     }
 

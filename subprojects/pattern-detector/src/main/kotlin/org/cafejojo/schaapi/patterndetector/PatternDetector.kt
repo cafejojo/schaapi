@@ -16,11 +16,9 @@ class PatternDetector(
     private val comparator: GeneralizedNodeComparator
 ) {
     companion object {
-        private fun extractSuffixes(prefix: List<Node>, paths: Collection<List<Node>>): List<List<Node>> =
-            listOf(paths
-                .filter { it.subList(0, prefix.size) == prefix }
-                .flatMap { it.subList(prefix.size, it.size) }
-            )
+        internal fun extractSuffixes(prefix: List<Node>, paths: Collection<List<Node>>): List<List<Node>> =
+            paths.filter { it.size >= prefix.size && it.subList(0, prefix.size) == prefix }
+                .map { it.subList(prefix.size, it.size) }
     }
 
     private val frequentSequences = mutableListOf<List<Node>>()
@@ -120,10 +118,12 @@ class PatternDetector(
     internal fun pathContainsSequence(path: List<Node>, sequence: List<Node>): Boolean {
         for (pathPos in 0 until path.size) {
             for (sequencePos in 0 until sequence.size) {
-                val endOfPath = pathPos + sequencePos > path.size - 1
-                val nodeUnequal = !comparator.satisfies(path[pathPos + sequencePos], sequence[sequencePos])
+                if (pathPos + sequencePos > path.size - 1 ||
+                    !comparator.satisfies(path[pathPos + sequencePos], sequence[sequencePos])
+                ) {
+                    break
+                }
 
-                if (endOfPath || nodeUnequal) break
                 if (sequencePos == sequence.size - 1) return true
             }
         }
