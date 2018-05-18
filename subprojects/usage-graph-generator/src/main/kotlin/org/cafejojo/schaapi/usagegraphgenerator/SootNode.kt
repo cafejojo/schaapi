@@ -50,11 +50,11 @@ class SootNode(val unit: Unit, override val successors: MutableList<Node> = arra
         val thisTypes = this.getValues().map { it.type }
         val otherTypes = other.getValues().map { it.type }
 
-        otherTypes.forEachIndexed { index, templateType ->
-            val instanceType = thisTypes[index]
-            if (instanceType != templateType &&
-                !templateType.isSubclassOf(instanceType) &&
-                !instanceType.isSubclassOf(templateType)
+        thisTypes.forEachIndexed { index, thisType ->
+            val otherType = otherTypes[index]
+            if (thisType != otherType &&
+                !thisType.isSubclassOf(otherType) &&
+                !otherType.isSubclassOf(thisType)
             ) {
                 return false
             }
