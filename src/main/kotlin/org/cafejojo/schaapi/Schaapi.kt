@@ -9,6 +9,7 @@ import org.apache.commons.cli.ParseException
 import org.cafejojo.schaapi.patterndetector.PathEnumerator
 import org.cafejojo.schaapi.patterndetector.PatternDetector
 import org.cafejojo.schaapi.patternfilter.IncompleteInitPatternFilter
+import org.cafejojo.schaapi.patternfilter.LengthPatternFilter
 import org.cafejojo.schaapi.projectcompiler.JavaMavenProject
 import org.cafejojo.schaapi.projectcompiler.MavenInstaller
 import org.cafejojo.schaapi.testgenerator.EvoSuiteRunner
@@ -51,7 +52,8 @@ fun main(args: Array<String>) {
         userPaths,
         cmd.getOptionOrDefault("pattern_detector_minimum_count", DEFAULT_PATTERN_DETECTOR_MINIMUM_COUNT).toInt()
     ).findFrequentSequences()
-        .filter { IncompleteInitPatternFilter.retain(it) }
+        .filter { IncompleteInitPatternFilter().retain(it) }
+        .filter { LengthPatternFilter().retain(it) }
 
     val classGenerator = SootClassGenerator(DEFAULT_PATTERN_CLASS_NAME)
     patterns.forEachIndexed { index, pattern ->
