@@ -6,9 +6,10 @@ import org.cafejojo.schaapi.common.GeneralizedNodeComparator
 /**
  * Finds all the frequent sequences of [Node]s in the given collection of paths.
  *
- * @property allPaths all paths in which patterns should be detected. Each path is a list of [Node]s.
+ * @property allPaths all paths in which patterns should be detected. Each path is a list of [Node]s
  * @property minimumCount the minimum amount of times a node must appear in [allPaths] for it to be considered a
- * frequent node. This node will then be used by the Prefix Space algorithm to find frequent sequences of [Node]s.
+ * frequent node. This node will then be used by the Prefix Space algorithm to find frequent sequences of [Node]s
+ * @property comparator the comparator used to determine whether two [Node]s are equal
  */
 class PatternDetector(
     private val allPaths: Collection<List<Node>>,
@@ -71,7 +72,7 @@ class PatternDetector(
      */
     fun findFrequentSequences(): List<List<Node>> {
         generateFrequentItems(minimumCount)
-        runPrefixSpaceAlgorithm()
+        runAlgorithm()
 
         return frequentSequences
     }
@@ -79,34 +80,28 @@ class PatternDetector(
     /**
      * Creates a mapping from the found frequent patterns to [allPaths] which contain said sequence.
      *
-     * If [findFrequentSequences] has not been run before, the resulting map will not contain any keys.
+     * If [findFrequentSequences] has not been runAlgorithm before, the resulting map will not contain any keys.
      *
      * @return a mapping from the frequent patterns to sequences which contain said sequence
      */
     fun mapFrequentSequencesToPaths(): Map<List<Node>, List<List<Node>>> =
-        frequentSequences.map { sequence ->
-            Pair(sequence, allPaths.filter { pathContainsSequence(it, sequence) })
-        }.toMap()
+        frequentSequences
+            .map { sequence -> Pair(sequence, allPaths.filter { pathContainsSequence(it, sequence) }) }
+            .toMap()
 
-    private fun runPrefixSpaceAlgorithm(
-        prefix: List<Node> = emptyList(),
-        projectedPaths: Collection<List<Node>> = allPaths
-    ) {
+    private fun runAlgorithm(prefix: List<Node> = emptyList(), projectedPaths: Collection<List<Node>> = allPaths) {
         frequentItems.forEach { frequentItem ->
-            val aPathContainsPrefixPlusFrequentItem = projectedPaths.any { path ->
-                pathContainsSequence(path, prefix + frequentItem) ||
-                    prefix.isNotEmpty() && pathContainsSequence(path, listOf(prefix.last(), frequentItem))
-            }
+            val newPrefix = prefix + frequentItem
 
-            if (aPathContainsPrefixPlusFrequentItem) {
-                val newPrefix = prefix + frequentItem
+            if (projectedPaths.any { pathContainsNewPrefix(it, newPrefix) }) {
                 frequentSequences += newPrefix
-
-                val newProjectedSequences: List<List<Node>> = extractSuffixes(prefix, projectedPaths)
-                runPrefixSpaceAlgorithm(newPrefix, newProjectedSequences)
+                runAlgorithm(newPrefix, extractSuffixes(prefix, allPaths))
             }
         }
     }
+
+    private fun pathContainsNewPrefix(path: List<Node>, newPrefix: List<Node>) =
+        pathContainsSequence(path, newPrefix) || pathContainsSequence(path, newPrefix.takeLast(2))
 
     /**
      * Checks whether a given sequence can be found within a given path.
@@ -116,15 +111,15 @@ class PatternDetector(
      * @return true if path contains the given sequence
      */
     internal fun pathContainsSequence(path: List<Node>, sequence: List<Node>): Boolean {
-        for (pathPos in 0 until path.size) {
-            for (sequencePos in 0 until sequence.size) {
-                if (pathPos + sequencePos > path.size - 1 ||
-                    !comparator.satisfies(path[pathPos + sequencePos], sequence[sequencePos])
+        for (pathIndex in path.indices) {
+            for (sequenceIndex in sequence.indices) {
+                if (pathIndex + sequenceIndex >= path.size ||
+                    !comparator.satisfies(path[pathIndex + sequenceIndex], sequence[sequenceIndex])
                 ) {
                     break
                 }
 
-                if (sequencePos == sequence.size - 1) return true
+                if (sequenceIndex == sequence.size - 1) return true
             }
         }
 
@@ -133,9 +128,7 @@ class PatternDetector(
 
     private fun generateFrequentItems(minimumCount: Int) {
         val nodeCounts: MutableMap<Node, Int> = HashMap()
-        allPaths.forEach { path ->
-            path.forEach { node -> nodeCounts[node] = nodeCounts[node]?.inc() ?: 1 }
-        }
+        allPaths.forEach { it.forEach { node -> nodeCounts[node] = nodeCounts[node]?.inc() ?: 1 } }
 
         frequentItems.addAll(nodeCounts.filter { (_, amount) -> amount >= minimumCount }.keys)
     }
