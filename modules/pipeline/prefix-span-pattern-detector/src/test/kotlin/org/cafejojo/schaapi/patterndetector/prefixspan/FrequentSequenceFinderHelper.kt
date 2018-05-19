@@ -28,6 +28,6 @@ fun mockJimpleNode(valueTypeLeft: Type? = null, valueTypeRight: Type? = null): J
 fun mockTypedValue(valueType: Type? = null): Value = mock { on { it.type } doReturn (valueType ?: mock {}) }
 
 /**
- * Calculate how many sub sequences a given sequence may have.
+ * Calculates how many sub sequences a given sequence may have.
  */
-fun amountOfPossibleSubSequences(sequenceLength: Int) = (0 .. sequenceLength).sum()
+fun amountOfPossibleSubSequences(sequenceLength: Int): Int = (0..sequenceLength).sum()
