@@ -7,15 +7,15 @@ import org.apache.commons.cli.Option
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.cafejojo.schaapi.models.libraryusagegraph.jimple.compare.GeneralizedSootComparator
-import org.cafejojo.schaapi.patterndetector.PathEnumerator
-import org.cafejojo.schaapi.patterndetector.PatternDetector
-import org.cafejojo.schaapi.patternfilter.IncompleteInitPatternFilter
-import org.cafejojo.schaapi.patternfilter.LengthPatternFilter
-import org.cafejojo.schaapi.projectcompiler.JavaMavenProject
-import org.cafejojo.schaapi.projectcompiler.MavenInstaller
-import org.cafejojo.schaapi.testgenerator.EvoSuiteRunner
-import org.cafejojo.schaapi.testgenerator.SootClassGenerator
-import org.cafejojo.schaapi.usagegraphgenerator.SootProjectLibraryUsageGraphGenerator
+import org.cafejojo.schaapi.patterndetector.prefixspan.PathEnumerator
+import org.cafejojo.schaapi.patterndetector.prefixspan.PatternDetector
+import org.cafejojo.schaapi.patternfilter.jimple.IncompleteInitPatternFilter
+import org.cafejojo.schaapi.patternfilter.jimple.LengthPatternFilter
+import org.cafejojo.schaapi.projectcompiler.javamaven.JavaMavenProject
+import org.cafejojo.schaapi.projectcompiler.javamaven.MavenInstaller
+import org.cafejojo.schaapi.testgenerator.jimpleevosuite.EvoSuiteRunner
+import org.cafejojo.schaapi.testgenerator.jimpleevosuite.SootClassGenerator
+import org.cafejojo.schaapi.usagegraphgenerator.jimple.SootProjectLibraryUsageGraphGenerator
 import java.io.File
 
 private const val DEFAULT_PATTERN_CLASS_NAME = "RegressionTest"
