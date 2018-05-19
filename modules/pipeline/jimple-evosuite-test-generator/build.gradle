@@ -4,7 +4,7 @@ repositories {
 
 dependencies {
     compile project(":common")
-    compile project(":usage-graph-generator")
+    compile project(":jimple-library-usage-graph-generator")
     compile group: "org.evosuite", name: "evosuite-master", version: evosuiteMasterVersion
     compile group: "ca.mcgill.sable", name: "soot", version: sootVersion
 }

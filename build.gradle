@@ -97,11 +97,11 @@ repositories {
 }
 
 dependencies {
-    compile project(":pattern-detector")
-    compile project(":pattern-filter")
-    compile project(":project-compiler")
-    compile project(":test-generator")
-    compile project(":usage-graph-generator")
+    compile project(":java-maven-project-compiler")
+    compile project(":jimple-evosuite-test-generator")
+    compile project(":jimple-library-usage-graph-generator")
+    compile project(":jimple-pattern-filter")
+    compile project(":prefix-span-pattern-detector")
 
     compile group: "commons-cli", name: "commons-cli", version: commonsCliVersion
 }
