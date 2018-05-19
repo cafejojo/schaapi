@@ -6,7 +6,6 @@ import org.cafejojo.schaapi.common.GeneralizedNodeComparator
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
-import org.jetbrains.spek.api.dsl.xit
 import soot.Type
 
 class FrequentSequenceFinderAndSootComparatorTest : Spek({
@@ -47,7 +46,7 @@ class FrequentSequenceFinderAndSootComparatorTest : Spek({
             assertThat(frequent).contains(listOf(node1, node2, node3))
         }
 
-        xit("should not store duplicate patterns") {
+        it("should not store duplicate patterns") {
             val type1 = mock<Type> {}
             val type2 = mock<Type> {}
             val type3 = mock<Type> {}
@@ -55,23 +54,26 @@ class FrequentSequenceFinderAndSootComparatorTest : Spek({
             val node1 = mockJimpleNode(type1, type3)
             val node2 = mockJimpleNode(type2, type2)
             val node3 = mockJimpleNode(type3, type1)
-            val node7 = mockJimpleNode(type2, type1)
+            val node4 = mockJimpleNode(type2, type1)
+            val node5 = mockJimpleNode(type1, type2)
 
-            val node4 = mockJimpleNode(type1, type3)
-            val node5 = mockJimpleNode(type2, type2)
-            val node6 = mockJimpleNode(type3, type1)
-            val node8 = mockJimpleNode(type2, type1)
+            val node6 = mockJimpleNode(type1, type3)
+            val node7 = mockJimpleNode(type2, type2)
+            val node8 = mockJimpleNode(type3, type1)
+            val node9 = mockJimpleNode(type2, type1)
+            val node10 = mockJimpleNode(type1, type2)
 
-            val node9 = mockJimpleNode()
-            val node10 = mockJimpleNode()
+            val node11 = mockJimpleNode()
+            val node12 = mockJimpleNode()
 
-            val path1 = listOf(node1, node2, node3, node7)
-            val path2 = listOf(node9, node10, node4, node5, node6, node8)
+            val path1 = listOf(node1, node2, node3, node4, node5)
+            val path2 = listOf(node11, node12, node6, node7, node8, node9, node10)
 
             val paths = listOf(path1, path2)
             val frequent = PatternDetector(paths, 2, GeneralizedNodeComparator()).findFrequentSequences()
 
-            assertThat(frequent).hasSize(amountOfPossibleSubSequences(4))
+
+            assertThat(frequent).hasSize(amountOfPossibleSubSequences(5))
         }
 
         it("should find a pattern with multiple nodes which have the same value") {
