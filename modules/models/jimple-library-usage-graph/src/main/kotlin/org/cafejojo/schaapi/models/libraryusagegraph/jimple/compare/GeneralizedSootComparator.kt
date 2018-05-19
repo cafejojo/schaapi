@@ -74,7 +74,7 @@ class GeneralizedSootComparator : GeneralizedNodeComparator {
 
             val templateHasTag = hasTag(templateValue)
             val instanceHasTag = hasTag(instanceValue)
-            val templateIsFinalized = isDefinedIn(templateValue, template.unit)
+            val templateIsFinalized = isDefinedIn(templateValue, template.statement)
 
             val templateTag = valueTags[templateValue]
             val instanceTag = valueTags[instanceValue]
@@ -84,7 +84,7 @@ class GeneralizedSootComparator : GeneralizedNodeComparator {
                     val newTag = createNewTag()
                     valueTags[templateValue] = newTag
                     valueTags[instanceValue] = newTag
-                    tagOrigins[newTag] = template.unit
+                    tagOrigins[newTag] = template.statement
                 }
                 !templateHasTag && instanceHasTag -> return false
 

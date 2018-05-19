@@ -53,7 +53,7 @@ class TestableGenerator(className: String) : ClassGenerator {
     override fun generateMethod(methodName: String, nodes: List<Node>) {
         val statements = nodes.map {
             it as? JimpleNode ?: throw IllegalArgumentException("Cannot convert non-Jimple nodes to methods.")
-        }.map { it.unit }
+        }.map { it.statement }
 
         val methodParams = findUnboundVariables(statements)
         val sootMethod = SootMethod(methodName, methodParams.map { it.type }, VoidType.v())

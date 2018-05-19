@@ -4,6 +4,7 @@ import org.cafejojo.schaapi.common.Node
 import org.cafejojo.schaapi.models.libraryusagegraph.jimple.JimpleNode
 import soot.Body
 import soot.Unit
+import soot.jimple.Stmt
 import soot.toolkits.graph.BriefUnitGraph
 import soot.toolkits.graph.UnitGraph
 
@@ -38,6 +39,8 @@ object ControlFlowGraphGenerator {
             mappedUnits[unit]?.let { predecessor?.successors?.add(it) }
             return mappedUnits[unit]
         }
+
+        if (unit !is Stmt) throw IllegalArgumentException("Unit must be a statement.")
 
         val node = JimpleNode(unit)
 
