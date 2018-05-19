@@ -4,6 +4,8 @@ repositories {
 
 dependencies {
     compile project(":common")
+    compile project(":jimple-library-usage-graph")
+
     compile group: "ca.mcgill.sable", name: "soot", version: sootVersion
 
     testCompile group: "com.nhaarman", name: "mockito-kotlin", version: mockitoKotlinVersion

@@ -1,6 +1,4 @@
-package org.cafejojo.schaapi.usagegraphgenerator.compare
-
-import org.cafejojo.schaapi.common.Node
+package org.cafejojo.schaapi.common
 
 /**
  * Comparator of [Node]s by structure and generalized values.

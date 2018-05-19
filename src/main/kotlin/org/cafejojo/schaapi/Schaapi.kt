@@ -6,6 +6,7 @@ import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Option
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
+import org.cafejojo.schaapi.models.libraryusagegraph.jimple.compare.GeneralizedSootComparator
 import org.cafejojo.schaapi.patterndetector.PathEnumerator
 import org.cafejojo.schaapi.patterndetector.PatternDetector
 import org.cafejojo.schaapi.patternfilter.IncompleteInitPatternFilter
@@ -15,7 +16,6 @@ import org.cafejojo.schaapi.projectcompiler.MavenInstaller
 import org.cafejojo.schaapi.testgenerator.EvoSuiteRunner
 import org.cafejojo.schaapi.testgenerator.SootClassGenerator
 import org.cafejojo.schaapi.usagegraphgenerator.SootProjectLibraryUsageGraphGenerator
-import org.cafejojo.schaapi.usagegraphgenerator.compare.GeneralizedSootComparator
 import java.io.File
 
 private const val DEFAULT_PATTERN_CLASS_NAME = "RegressionTest"

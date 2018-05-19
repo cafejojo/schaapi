@@ -1,7 +1,7 @@
 package org.cafejojo.schaapi.patterndetector
 
 import org.cafejojo.schaapi.common.Node
-import org.cafejojo.schaapi.usagegraphgenerator.compare.GeneralizedNodeComparator
+import org.cafejojo.schaapi.common.GeneralizedNodeComparator
 
 /**
  * Finds all the frequent sequences of [Node]s in the given collection of paths.

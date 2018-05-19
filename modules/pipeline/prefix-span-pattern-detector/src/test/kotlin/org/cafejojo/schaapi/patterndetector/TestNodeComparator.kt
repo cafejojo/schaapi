@@ -1,7 +1,7 @@
 package org.cafejojo.schaapi.patterndetector
 
+import org.cafejojo.schaapi.common.GeneralizedNodeComparator
 import org.cafejojo.schaapi.common.Node
-import org.cafejojo.schaapi.usagegraphgenerator.compare.GeneralizedNodeComparator
 
 /**
  * A subclass of [GeneralizedNodeComparator] for testing purposes.

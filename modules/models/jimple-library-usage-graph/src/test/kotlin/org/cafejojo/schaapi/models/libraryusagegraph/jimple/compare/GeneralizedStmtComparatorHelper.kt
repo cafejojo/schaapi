@@ -1,4 +1,4 @@
-package org.cafejojo.schaapi.usagegraphgenerator.compare
+package org.cafejojo.schaapi.models.libraryusagegraph.jimple.compare
 
 import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.mock
