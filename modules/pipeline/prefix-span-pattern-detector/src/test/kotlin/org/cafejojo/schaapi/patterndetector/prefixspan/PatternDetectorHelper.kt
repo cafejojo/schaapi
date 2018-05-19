@@ -11,7 +11,7 @@ import soot.jimple.DefinitionStmt
  * Create a Jimple node that returns a mock of a [Value] such that by default no two values have the same type.
  */
 fun mockJimpleNode(valueLeft: Value, valueRight: Value): JimpleNode =
-    SootNode(mock<DefinitionStmt> {
+    JimpleNode(mock<DefinitionStmt> {
         on { it.leftOp } doReturn valueLeft
         on { it.rightOp } doReturn valueRight
     })
@@ -20,9 +20,14 @@ fun mockJimpleNode(valueLeft: Value, valueRight: Value): JimpleNode =
  * Create a Jimple node that returns a mock of a [Value] such that by default no two values have the same type.
  */
 fun mockJimpleNode(valueTypeLeft: Type? = null, valueTypeRight: Type? = null): JimpleNode =
-    mockDefinitionStmtSootNode(mockTypedValue(valueTypeLeft), mockTypedValue(valueTypeRight))
+    mockJimpleNode(mockTypedValue(valueTypeLeft), mockTypedValue(valueTypeRight))
 
 /**
  * Creates a mock of a [Value] such that no such two mocks equal each other.
  */
 fun mockTypedValue(valueType: Type? = null): Value = mock { on { it.type } doReturn (valueType ?: mock {}) }
+
+/**
+ * Calculate how many sub sequences a given sequence may have.
+ */
+fun amountOfPossibleSubSequences(sequenceLength: Int) = (0 .. sequenceLength).sum()

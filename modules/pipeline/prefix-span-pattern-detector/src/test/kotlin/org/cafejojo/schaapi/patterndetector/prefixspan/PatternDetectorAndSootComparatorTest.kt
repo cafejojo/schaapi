@@ -1,11 +1,12 @@
 package org.cafejojo.schaapi.patterndetector.prefixspan
 
 import com.nhaarman.mockito_kotlin.mock
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.cafejojo.schaapi.models.libraryusagegraph.jimple.compare.GeneralizedSootComparator
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
+import org.jetbrains.spek.api.dsl.xit
 import soot.Type
 
 class PatternDetectorAndSootComparatorTest : Spek({
@@ -17,7 +18,7 @@ class PatternDetectorAndSootComparatorTest : Spek({
             val detector = PatternDetector(listOf(path), 1, GeneralizedSootComparator())
             detector.findFrequentSequences()
 
-            Assertions.assertThat(detector.pathContainsSequence(path, listOf(node))).isTrue()
+            assertThat(detector.pathContainsSequence(path, listOf(node))).isTrue()
         }
 
         it("should find a pattern with multiple nodes which have different values with the same type") {
@@ -25,12 +26,12 @@ class PatternDetectorAndSootComparatorTest : Spek({
             val type2 = mock<Type> {}
             val type3 = mock<Type> {}
 
-            val node1 = mockJimpleNode(valueTypeLeft = type1, valueTypeRight = type3)
-            val node2 = mockJimpleNode(valueTypeLeft = type2, valueTypeRight = type2)
-            val node3 = mockJimpleNode(valueTypeLeft = type3, valueTypeRight = type1)
-            val node4 = mockJimpleNode(valueTypeLeft = type1, valueTypeRight = type3)
-            val node5 = mockJimpleNode(valueTypeLeft = type2, valueTypeRight = type2)
-            val node6 = mockJimpleNode(valueTypeLeft = type3, valueTypeRight = type1)
+            val node1 = mockJimpleNode(type1, type3)
+            val node2 = mockJimpleNode(type2, type2)
+            val node3 = mockJimpleNode(type3, type1)
+            val node4 = mockJimpleNode(type1, type3)
+            val node5 = mockJimpleNode(type2, type2)
+            val node6 = mockJimpleNode(type3, type1)
             val node7 = mockJimpleNode()
             val node8 = mockJimpleNode()
             val node9 = mockJimpleNode()
@@ -42,16 +43,82 @@ class PatternDetectorAndSootComparatorTest : Spek({
             val paths = listOf(path1, path2)
             val frequent = PatternDetector(paths, 2, GeneralizedSootComparator()).findFrequentSequences()
 
-            Assertions.assertThat(frequent).contains(
-                listOf(
-                    mockJimpleNode(valueTypeLeft = type1, valueTypeRight = type3),
-                    mockJimpleNode(valueTypeLeft = type2, valueTypeRight = type2),
-                    mockJimpleNode(valueTypeLeft = type3, valueTypeRight = type1)
-                )
-            )
+            assertThat(frequent).contains(listOf(node1, node2, node3))
         }
 
-        it("should not find a pattern with multiple nodes which have different values and different types") {
+        xit("should not store duplicate patterns") {
+            val type1 = mock<Type> {}
+            val type2 = mock<Type> {}
+            val type3 = mock<Type> {}
+
+            val node1 = mockJimpleNode(type1, type3)
+            val node2 = mockJimpleNode(type2, type2)
+            val node3 = mockJimpleNode(type3, type1)
+            val node7 = mockJimpleNode(type2, type1)
+
+            val node4 = mockJimpleNode(type1, type3)
+            val node5 = mockJimpleNode(type2, type2)
+            val node6 = mockJimpleNode(type3, type1)
+            val node8 = mockJimpleNode(type2, type1)
+
+            val node9 = mockJimpleNode()
+            val node10 = mockJimpleNode()
+
+            val path1 = listOf(node1, node2, node3, node7)
+            val path2 = listOf(node9, node10, node4, node5, node6, node8)
+
+            val paths = listOf(path1, path2)
+            val frequent = PatternDetector(paths, 2, GeneralizedSootComparator()).findFrequentSequences()
+
+            assertThat(frequent).hasSize(amountOfPossibleSubSequences(4))
+        }
+
+        it("should find a pattern with multiple nodes which have the same value") {
+            val value1 = mockTypedValue()
+            val value2 = mockTypedValue()
+            val value3 = mockTypedValue()
+
+            val node2 = mockJimpleNode(value2, value2)
+            val node3 = mockJimpleNode(value3, value1)
+            val node1 = mockJimpleNode(value1, value3)
+            val node7 = mockJimpleNode(value2, value1)
+
+            val node4 = mockJimpleNode(value1, value3)
+            val node5 = mockJimpleNode(value2, value2)
+            val node6 = mockJimpleNode(value3, value1)
+            val node8 = mockJimpleNode(value2, value1)
+
+            val node9 = mockJimpleNode()
+            val node10 = mockJimpleNode()
+
+            val path1 = listOf(node1, node2, node3, node7)
+            val path2 = listOf(node9, node10, node4, node5, node6, node8)
+
+            val paths = listOf(path1, path2)
+            val frequent = PatternDetector(paths, 2, GeneralizedSootComparator()).findFrequentSequences()
+
+            assertThat(frequent).contains(listOf(node1, node2, node3, node7))
+        }
+
+        it("should find a pattern when nodes don't have the same value but are the same node") {
+            val node1 = mockJimpleNode()
+            val node2 = mockJimpleNode()
+            val node3 = mockJimpleNode()
+            val node7 = mockJimpleNode()
+            val node8 = mockJimpleNode()
+            val node9 = mockJimpleNode()
+            val node10 = mockJimpleNode()
+
+            val path1 = listOf(node1, node2, node3)
+            val path2 = listOf(node7, node8, node9, node10, node1, node2, node3)
+
+            val paths = listOf(path1, path2)
+            val frequent = PatternDetector(paths, 2, GeneralizedSootComparator()).findFrequentSequences()
+
+            assertThat(frequent).contains(listOf(node1, node2, node3))
+        }
+
+        it("should not find a pattern when there are only unique nodes") {
             val node1 = mockJimpleNode()
             val node2 = mockJimpleNode()
             val node3 = mockJimpleNode()
@@ -69,7 +136,7 @@ class PatternDetectorAndSootComparatorTest : Spek({
             val paths = listOf(path1, path2)
             val frequent = PatternDetector(paths, 2, GeneralizedSootComparator()).findFrequentSequences()
 
-            Assertions.assertThat(frequent).isEmpty()
+            assertThat(frequent).isEmpty()
         }
     }
 })
