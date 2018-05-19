@@ -2,7 +2,7 @@ package org.cafejojo.schaapi.patterndetector
 
 import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.mock
-import org.cafejojo.schaapi.usagegraphgenerator.SootNode
+import org.cafejojo.schaapi.models.libraryusagegraph.jimple.SootNode
 import soot.Type
 import soot.Value
 import soot.jimple.DefinitionStmt

@@ -2,7 +2,7 @@ package org.cafejojo.schaapi.testgenerator
 
 import org.cafejojo.schaapi.common.ClassGenerator
 import org.cafejojo.schaapi.common.Node
-import org.cafejojo.schaapi.usagegraphgenerator.SootNode
+import org.cafejojo.schaapi.models.libraryusagegraph.jimple.SootNode
 import soot.Body
 import soot.Local
 import soot.Modifier

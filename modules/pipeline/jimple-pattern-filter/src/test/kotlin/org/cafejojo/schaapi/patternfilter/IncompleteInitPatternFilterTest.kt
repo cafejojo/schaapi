@@ -3,7 +3,7 @@ package org.cafejojo.schaapi.patternfilter
 import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.mock
 import org.assertj.core.api.Assertions.assertThat
-import org.cafejojo.schaapi.usagegraphgenerator.SootNode
+import org.cafejojo.schaapi.models.libraryusagegraph.jimple.SootNode
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it

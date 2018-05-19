@@ -2,7 +2,7 @@ package org.cafejojo.schaapi.patterndetector
 
 import com.nhaarman.mockito_kotlin.mock
 import org.assertj.core.api.Assertions
-import org.cafejojo.schaapi.usagegraphgenerator.compare.GeneralizedSootComparator
+import org.cafejojo.schaapi.models.libraryusagegraph.jimple.compare.GeneralizedSootComparator
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it

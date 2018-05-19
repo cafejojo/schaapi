@@ -9,13 +9,14 @@ def includeModule = { String projectName, String directory = ""  ->
     project(":${projectName}").projectDir = moduleDir
 }
 
-def includePipelineModule = { String projectName -> includeModule(projectName, "pipeline") }
 def includeModelModule = { String projectName -> includeModule(projectName, "models") }
+def includePipelineModule = { String projectName -> includeModule(projectName, "pipeline") }
 
 
 rootProject.name = "schaapi"
 
 includeModule "common"
+includeModelModule "jimple-library-usage-graph"
 includePipelineModule "java-maven-project-compiler"
 includePipelineModule "jimple-evosuite-test-generator"
 includePipelineModule "jimple-library-usage-graph-generator"

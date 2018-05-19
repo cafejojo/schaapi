@@ -4,8 +4,7 @@ repositories {
 
 dependencies {
     compile project(":common")
-    compile project(":jimple-library-usage-graph")
-
-    compile group: "org.evosuite", name: "evosuite-master", version: evosuiteMasterVersion
     compile group: "ca.mcgill.sable", name: "soot", version: sootVersion
+
+    testCompile group: "com.nhaarman", name: "mockito-kotlin", version: mockitoKotlinVersion
 }

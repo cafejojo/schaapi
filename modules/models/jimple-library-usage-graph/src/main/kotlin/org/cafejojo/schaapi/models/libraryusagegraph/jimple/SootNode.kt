@@ -1,7 +1,7 @@
-package org.cafejojo.schaapi.usagegraphgenerator
+package org.cafejojo.schaapi.models.libraryusagegraph.jimple
 
 import org.cafejojo.schaapi.common.Node
-import org.cafejojo.schaapi.usagegraphgenerator.compare.isSubclassOf
+import org.cafejojo.schaapi.models.libraryusagegraph.jimple.compare.isSubclassOf
 import soot.Unit
 import soot.jimple.DefinitionStmt
 import soot.jimple.GotoStmt
