@@ -13,8 +13,8 @@ import org.cafejojo.schaapi.patternfilter.jimple.IncompleteInitPatternFilter
 import org.cafejojo.schaapi.patternfilter.jimple.LengthPatternFilter
 import org.cafejojo.schaapi.projectcompiler.javamaven.JavaMavenProject
 import org.cafejojo.schaapi.projectcompiler.javamaven.MavenInstaller
-import org.cafejojo.schaapi.testgenerator.jimpleevosuite.EvoSuiteRunner
-import org.cafejojo.schaapi.testgenerator.jimpleevosuite.SootClassGenerator
+import org.cafejojo.schaapi.testgenerator.jimpleevosuite.TestGenerator
+import org.cafejojo.schaapi.testgenerator.jimpleevosuite.TestableGenerator
 import org.cafejojo.schaapi.usagegraphgenerator.jimple.LibraryUsageGraphGenerator
 import java.io.File
 
@@ -57,7 +57,7 @@ fun main(args: Array<String>) {
         .filter { IncompleteInitPatternFilter().retain(it) }
         .filter { LengthPatternFilter().retain(it) }
 
-    val classGenerator = SootClassGenerator(DEFAULT_PATTERN_CLASS_NAME)
+    val classGenerator = TestableGenerator(DEFAULT_PATTERN_CLASS_NAME)
     patterns.forEachIndexed { index, pattern ->
         classGenerator.generateMethod("pattern$index", pattern)
     }
@@ -66,7 +66,7 @@ fun main(args: Array<String>) {
 
     val testGeneratorTimeout = cmd.getOptionOrDefault("test_generator_timeout", DEFAULT_TEST_GENERATOR_TIMEOUT).toInt()
     val testGeneratorEnableOutput = cmd.hasOption("test_generator_enable_output")
-    EvoSuiteRunner(
+    TestGenerator(
         fullyQualifiedClassName = DEFAULT_PATTERN_CLASS_NAME,
         classpath = outputPatterns.absolutePath + File.pathSeparator + library.classpath,
         outputDirectory = outputTests.absolutePath,
