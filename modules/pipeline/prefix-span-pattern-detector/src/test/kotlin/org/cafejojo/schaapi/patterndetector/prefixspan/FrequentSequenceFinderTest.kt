@@ -210,9 +210,9 @@ internal class FrequentSequenceFinderTest : Spek({
             val node9 = TestNode()
             val node10 = TestNode()
 
-            val path1 = listOf(node1, node2, node3)
+            val path1 = listOf(node1, node2, node3, node4)
             val path2 = listOf(node4, node5, node6)
-            val path3 = listOf(node7, node8, node9, node10, node1, node2, node3)
+            val path3 = listOf(node7, node8, node9, node10, node1, node2, node3, node4)
 
             val paths = listOf(path1, path2, path3)
             val patternDetector = FrequentSequenceFinder(paths, 2, TestNodeComparator())
@@ -220,7 +220,7 @@ internal class FrequentSequenceFinderTest : Spek({
             patternDetector.findFrequentSequences()
             val patterns = patternDetector.mapFrequentSequencesToPaths()
 
-            assertThat(patterns[listOf(node1, node2, node3)]).isEqualTo(listOf(path1, path3))
+            assertThat(patterns[listOf(node1, node2, node3, node4)]).isEqualTo(listOf(path1, path3))
         }
     }
 })
