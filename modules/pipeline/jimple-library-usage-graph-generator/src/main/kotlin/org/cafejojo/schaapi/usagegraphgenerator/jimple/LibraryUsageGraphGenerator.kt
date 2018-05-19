@@ -23,7 +23,7 @@ object LibraryUsageGraphGenerator : LibraryUsageGraphGenerator {
      * @return list of list of graphs
      */
     override fun generate(libraryProject: JavaProject, userProject: JavaProject) =
-        userProject.classNames.map {
+        userProject.classNames.flatMap {
             val sootClass = createSootClass(userProject.classpath, it)
 
             sootClass.methods.map { generateMethodGraph(libraryProject, it) }
