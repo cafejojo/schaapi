@@ -15,7 +15,7 @@ import org.cafejojo.schaapi.projectcompiler.javamaven.JavaMavenProject
 import org.cafejojo.schaapi.projectcompiler.javamaven.MavenInstaller
 import org.cafejojo.schaapi.testgenerator.jimpleevosuite.EvoSuiteRunner
 import org.cafejojo.schaapi.testgenerator.jimpleevosuite.SootClassGenerator
-import org.cafejojo.schaapi.usagegraphgenerator.jimple.SootProjectLibraryUsageGraphGenerator
+import org.cafejojo.schaapi.usagegraphgenerator.jimple.LibraryUsageGraphGenerator
 import java.io.File
 
 private const val DEFAULT_PATTERN_CLASS_NAME = "RegressionTest"
@@ -46,7 +46,7 @@ fun main(args: Array<String>) {
     library.compile()
     users.forEach { it.compile() }
 
-    val userGraphs = users.map { SootProjectLibraryUsageGraphGenerator.generate(library, it) }
+    val userGraphs = users.map { LibraryUsageGraphGenerator.generate(library, it) }
     val userPaths = userGraphs.flatMap { it.flatMap { it.flatMap { PathEnumerator(it).enumerate() } } }
 
     val patterns = PatternDetector(

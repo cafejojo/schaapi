@@ -23,7 +23,7 @@ private val testClassesClassPath = IntegrationTest::class.java.getResource("../.
 internal class IntegrationTest : Spek({
     describe("the integration of different components of the package for simple classes") {
         it("converts a simple class to a filtered cfg") {
-            val cfg = SootProjectLibraryUsageGraphGenerator.generate(
+            val cfg = LibraryUsageGraphGenerator.generate(
                 libraryProject,
                 TestProject(testClassesClassPath, listOf("$TEST_CLASSES_PACKAGE.users.SimpleTest"))
             )[0][1]
@@ -45,7 +45,7 @@ internal class IntegrationTest : Spek({
 
     describe("the integration of different components of the package for classes containing if statements") {
         it("converts a class containing an if with a library usage in the false-branch to a filtered cfg") {
-            val cfg = SootProjectLibraryUsageGraphGenerator.generate(
+            val cfg = LibraryUsageGraphGenerator.generate(
                 libraryProject,
                 TestProject(testClassesClassPath, listOf("$TEST_CLASSES_PACKAGE.users.IfFalseUseTest"))
             )[0][1]
@@ -70,7 +70,7 @@ internal class IntegrationTest : Spek({
         }
 
         it("converts a class containing an if with a library usage in the true-branch to a filtered cfg") {
-            val cfg = SootProjectLibraryUsageGraphGenerator.generate(
+            val cfg = LibraryUsageGraphGenerator.generate(
                 libraryProject,
                 TestProject(testClassesClassPath, listOf("$TEST_CLASSES_PACKAGE.users.IfTrueUseTest"))
             )[0][1]
@@ -95,7 +95,7 @@ internal class IntegrationTest : Spek({
         }
 
         it("converts a class containing an if with a library usage in both branches to a filtered cfg") {
-            val cfg = SootProjectLibraryUsageGraphGenerator.generate(
+            val cfg = LibraryUsageGraphGenerator.generate(
                 libraryProject,
                 TestProject(testClassesClassPath, listOf("$TEST_CLASSES_PACKAGE.users.IfBothUseTest"))
             )[0][1]
@@ -122,7 +122,7 @@ internal class IntegrationTest : Spek({
         }
 
         it("converts a class containing an if with a library usage in both branches to a filtered cfg") {
-            val cfg = SootProjectLibraryUsageGraphGenerator.generate(
+            val cfg = LibraryUsageGraphGenerator.generate(
                 libraryProject,
                 TestProject(testClassesClassPath, listOf("$TEST_CLASSES_PACKAGE.users.IfNoUseTest"))
             )[0][1]
@@ -142,7 +142,7 @@ internal class IntegrationTest : Spek({
 
     describe("the integration of different components of the package for classes containing switch statements") {
         it("converts a class containing a switch with a library usage in a branch to a filtered cfg") {
-            val cfg = SootProjectLibraryUsageGraphGenerator.generate(
+            val cfg = LibraryUsageGraphGenerator.generate(
                 libraryProject,
                 TestProject(testClassesClassPath, listOf("$TEST_CLASSES_PACKAGE.users.SwitchOneUseTest"))
             )[0][1]
@@ -170,7 +170,7 @@ internal class IntegrationTest : Spek({
         }
 
         it("converts a class containing a switch with a library usage in the default branch to a filtered cfg") {
-            val cfg = SootProjectLibraryUsageGraphGenerator.generate(
+            val cfg = LibraryUsageGraphGenerator.generate(
                 libraryProject,
                 TestProject(testClassesClassPath, listOf("$TEST_CLASSES_PACKAGE.users.SwitchDefaultUseTest"))
             )[0][1]
@@ -198,7 +198,7 @@ internal class IntegrationTest : Spek({
         }
 
         it("converts a class containing a switch with no library usage in its branches to a filtered cfg") {
-            val cfg = SootProjectLibraryUsageGraphGenerator.generate(
+            val cfg = LibraryUsageGraphGenerator.generate(
                 libraryProject,
                 TestProject(testClassesClassPath, listOf("$TEST_CLASSES_PACKAGE.users.SwitchNoUseTest"))
             )[0][1]
