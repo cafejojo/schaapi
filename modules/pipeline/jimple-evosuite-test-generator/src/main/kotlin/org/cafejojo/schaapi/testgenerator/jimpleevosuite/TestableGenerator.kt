@@ -25,7 +25,7 @@ import soot.jimple.internal.JReturnVoidStmt
  *
  * @param className name of [SootClass] to be generated
  */
-class SootClassGenerator(className: String) : ClassGenerator {
+class TestableGenerator(className: String) : ClassGenerator {
     init {
         Scene.v().addBasicClass("java.lang.Object")
     }
@@ -73,7 +73,7 @@ class SootClassGenerator(className: String) : ClassGenerator {
      *
      * @param targetDirectory the path to the base directory in which to place the class file structure
      */
-    override fun writeToFile(targetDirectory: String) = SootClassWriter.writeToFile(sootClass, targetDirectory)
+    override fun writeToFile(targetDirectory: String) = TestableWriter.writeToFile(sootClass, targetDirectory)
 
     private fun addParameterAssignmentsToBody(jimpleBody: Body, methodParams: Set<Value>) {
         methodParams.forEachIndexed { paramIndex, param ->
