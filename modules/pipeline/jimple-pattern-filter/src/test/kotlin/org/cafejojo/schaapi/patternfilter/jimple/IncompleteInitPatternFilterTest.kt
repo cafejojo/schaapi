@@ -3,7 +3,7 @@ package org.cafejojo.schaapi.patternfilter.jimple
 import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.mock
 import org.assertj.core.api.Assertions.assertThat
-import org.cafejojo.schaapi.models.libraryusagegraph.jimple.SootNode
+import org.cafejojo.schaapi.models.libraryusagegraph.jimple.JimpleNode
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
@@ -28,7 +28,7 @@ internal class IncompleteInitPatternFilterTest : Spek({
                     on { invokeExpr } doReturn invokeExpression
                 },
                 mock<ReturnVoidStmt>()
-            ).map { SootNode(it) }
+            ).map { JimpleNode(it) }
 
             assertThat(IncompleteInitPatternFilter().retain(pattern)).isFalse()
         }
@@ -46,7 +46,7 @@ internal class IncompleteInitPatternFilterTest : Spek({
                     on { invokeExpr } doReturn invokeExpression
                 },
                 mock<ReturnVoidStmt>()
-            ).map { SootNode(it) }
+            ).map { JimpleNode(it) }
 
             assertThat(IncompleteInitPatternFilter().retain(pattern)).isTrue()
         }
@@ -59,7 +59,7 @@ internal class IncompleteInitPatternFilterTest : Spek({
                     on { invokeExpr } doReturn invokeExpression
                 },
                 mock<ReturnVoidStmt>()
-            ).map { SootNode(it) }
+            ).map { JimpleNode(it) }
 
             assertThat(IncompleteInitPatternFilter().retain(pattern)).isTrue()
         }
@@ -67,18 +67,18 @@ internal class IncompleteInitPatternFilterTest : Spek({
         it("retains patterns that do not start with an invoke") {
             val pattern = listOf(
                 mock<ReturnVoidStmt>()
-            ).map { SootNode(it) }
+            ).map { JimpleNode(it) }
 
             assertThat(IncompleteInitPatternFilter().retain(pattern)).isTrue()
         }
 
         it("retains empty patterns") {
-            val pattern = emptyList<SootNode>()
+            val pattern = emptyList<JimpleNode>()
 
             assertThat(IncompleteInitPatternFilter().retain(pattern)).isTrue()
         }
 
-        it("retains lists of non-Soot nodes") {
+        it("retains lists of non-Jimple nodes") {
             val pattern = listOf(TestNode())
 
             assertThat(IncompleteInitPatternFilter().retain(pattern)).isTrue()

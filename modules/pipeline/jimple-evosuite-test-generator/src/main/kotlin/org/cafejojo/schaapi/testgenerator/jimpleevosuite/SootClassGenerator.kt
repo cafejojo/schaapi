@@ -2,7 +2,7 @@ package org.cafejojo.schaapi.testgenerator.jimpleevosuite
 
 import org.cafejojo.schaapi.common.ClassGenerator
 import org.cafejojo.schaapi.common.Node
-import org.cafejojo.schaapi.models.libraryusagegraph.jimple.SootNode
+import org.cafejojo.schaapi.models.libraryusagegraph.jimple.JimpleNode
 import soot.Body
 import soot.Local
 import soot.Modifier
@@ -52,7 +52,7 @@ class SootClassGenerator(className: String) : ClassGenerator {
      */
     override fun generateMethod(methodName: String, nodes: List<Node>) {
         val statements = nodes.map {
-            it as? SootNode ?: throw IllegalArgumentException("Cannot convert non-Soot nodes to methods.")
+            it as? JimpleNode ?: throw IllegalArgumentException("Cannot convert non-Jimple nodes to methods.")
         }.map { it.unit }
 
         val methodParams = findUnboundVariables(statements)

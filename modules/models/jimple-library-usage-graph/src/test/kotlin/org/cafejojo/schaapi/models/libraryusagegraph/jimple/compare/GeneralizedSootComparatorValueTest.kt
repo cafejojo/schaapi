@@ -5,7 +5,7 @@ import com.nhaarman.mockito_kotlin.mock
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.cafejojo.schaapi.common.Node
-import org.cafejojo.schaapi.models.libraryusagegraph.jimple.SootNode
+import org.cafejojo.schaapi.models.libraryusagegraph.jimple.JimpleNode
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.context
 import org.jetbrains.spek.api.dsl.describe
@@ -26,29 +26,29 @@ internal class GeneralizedSootComparatorValueTest : Spek({
 
     describe("generalized value comparison of statements") {
         context("bad weather cases") {
-            it("throws an exception if a non-SootNode template is given") {
+            it("throws an exception if a non-JimpleNode template is given") {
                 val template = mock<Node> {}
-                val instance = SootNode(mock<Stmt> {})
+                val instance = JimpleNode(mock<Stmt> {})
 
                 assertThatThrownBy { comparator.generalizedValuesAreEqual(template, instance) }
                     .isExactlyInstanceOf(IllegalArgumentException::class.java)
-                    .hasMessage("GeneralizedSootComparator cannot handle non-SootNodes.")
+                    .hasMessage("GeneralizedSootComparator cannot handle non-JimpleNodes.")
             }
 
-            it("throws an exception if a non-SootNode instance is given") {
-                val template = SootNode(mock<Stmt> {})
+            it("throws an exception if a non-JimpleNode instance is given") {
+                val template = JimpleNode(mock<Stmt> {})
                 val instance = mock<Node> {}
 
                 assertThatThrownBy { comparator.generalizedValuesAreEqual(template, instance) }
                     .isExactlyInstanceOf(IllegalArgumentException::class.java)
-                    .hasMessage("GeneralizedSootComparator cannot handle non-SootNodes.")
+                    .hasMessage("GeneralizedSootComparator cannot handle non-JimpleNodes.")
             }
         }
 
         context("(in)equality does not change for the same check") {
             it("finds equality when comparing reflexively") {
                 val value = mockValue()
-                val node = SootNode(mock<ReturnStmt> {
+                val node = JimpleNode(mock<ReturnStmt> {
                     on { it.op } doReturn value
                 })
 
@@ -58,10 +58,10 @@ internal class GeneralizedSootComparatorValueTest : Spek({
 
             it("finds equality for the same structure and value") {
                 val value = mockValue()
-                val template = SootNode(mock<IfStmt> {
+                val template = JimpleNode(mock<IfStmt> {
                     on { it.condition } doReturn value
                 })
-                val instance = SootNode(mock<IfStmt> {
+                val instance = JimpleNode(mock<IfStmt> {
                     on { it.condition } doReturn value
                 })
 
@@ -71,12 +71,12 @@ internal class GeneralizedSootComparatorValueTest : Spek({
 
             it("finds equality for the same structure and *kind* of value") {
                 val templateValue = mockValue()
-                val template = SootNode(mock<SwitchStmt> {
+                val template = JimpleNode(mock<SwitchStmt> {
                     on { it.key } doReturn templateValue
                 })
 
                 val instanceValue = mockValue()
-                val instance = SootNode(mock<SwitchStmt> {
+                val instance = JimpleNode(mock<SwitchStmt> {
                     on { it.key } doReturn instanceValue
                 })
 
@@ -86,12 +86,12 @@ internal class GeneralizedSootComparatorValueTest : Spek({
 
             it("finds inequality for the same structure but a different kind of value") {
                 val templateValue = mockTypedValue()
-                val template = SootNode(mock<ThrowStmt> {
+                val template = JimpleNode(mock<ThrowStmt> {
                     on { it.op } doReturn templateValue
                 })
 
                 val instanceValue = mockTypedValue()
-                val instance = SootNode(mock<ThrowStmt> {
+                val instance = JimpleNode(mock<ThrowStmt> {
                     on { it.op } doReturn instanceValue
                 })
 
@@ -101,11 +101,11 @@ internal class GeneralizedSootComparatorValueTest : Spek({
 
             it("finds inequality for different structures") {
                 val value = mockValue()
-                val template = SootNode(mock<ReturnStmt> {
+                val template = JimpleNode(mock<ReturnStmt> {
                     on { it.op } doReturn value
                 })
 
-                val instance = SootNode(mock<Stmt> {})
+                val instance = JimpleNode(mock<Stmt> {})
 
                 comparator.satisfies(template, instance)
                 assertThat(comparator.satisfies(template, instance)).isFalse()
@@ -115,17 +115,17 @@ internal class GeneralizedSootComparatorValueTest : Spek({
         context("(in)equality depends on the template") {
             it("copies tags to two instances") {
                 val templateValue = mockValue()
-                val template = SootNode(mock<ThrowStmt> {
+                val template = JimpleNode(mock<ThrowStmt> {
                     on { it.op } doReturn templateValue
                 })
 
                 val instanceAValue = mockValue()
-                val instanceA = SootNode(mock<ThrowStmt> {
+                val instanceA = JimpleNode(mock<ThrowStmt> {
                     on { it.op } doReturn instanceAValue
                 })
 
                 val instanceBValue = mockValue()
-                val instanceB = SootNode(mock<ThrowStmt> {
+                val instanceB = JimpleNode(mock<ThrowStmt> {
                     on { it.op } doReturn instanceBValue
                 })
 
@@ -135,18 +135,18 @@ internal class GeneralizedSootComparatorValueTest : Spek({
 
             it("copies tags from non-finalised values") {
                 val templateValue = mockValue()
-                val templateA = SootNode(mock<ThrowStmt> {
+                val templateA = JimpleNode(mock<ThrowStmt> {
                     on { it.op } doReturn templateValue
                 })
-                val templateB = SootNode(mock<ThrowStmt> {
+                val templateB = JimpleNode(mock<ThrowStmt> {
                     on { it.op } doReturn templateValue
                 })
 
                 val instanceValue = mockValue()
-                val instanceA = SootNode(mock<ThrowStmt> {
+                val instanceA = JimpleNode(mock<ThrowStmt> {
                     on { it.op } doReturn instanceValue
                 })
-                val instanceB = SootNode(mock<ThrowStmt> {
+                val instanceB = JimpleNode(mock<ThrowStmt> {
                     on { it.op } doReturn instanceValue
                 })
 
@@ -156,19 +156,19 @@ internal class GeneralizedSootComparatorValueTest : Spek({
 
             it("does not copy tags from finalised values") {
                 val templateValue = mockValue()
-                val templateA = SootNode(mock<ThrowStmt> {
+                val templateA = JimpleNode(mock<ThrowStmt> {
                     on { it.op } doReturn templateValue
                 })
-                val templateB = SootNode(mock<ThrowStmt> {
+                val templateB = JimpleNode(mock<ThrowStmt> {
                     on { it.op } doReturn templateValue
                 })
 
                 val instanceAValue = mockValue()
                 val instanceBValue = mockValue()
-                val instanceA = SootNode(mock<ThrowStmt> {
+                val instanceA = JimpleNode(mock<ThrowStmt> {
                     on { it.op } doReturn instanceAValue
                 })
-                val instanceB = SootNode(mock<ThrowStmt> {
+                val instanceB = JimpleNode(mock<ThrowStmt> {
                     on { it.op } doReturn instanceBValue
                 })
 
@@ -178,16 +178,16 @@ internal class GeneralizedSootComparatorValueTest : Spek({
 
             it("is not transitive") {
                 val templateValue = mockValue()
-                val template = SootNode(mock<ThrowStmt> {
+                val template = JimpleNode(mock<ThrowStmt> {
                     on { it.op } doReturn templateValue
                 })
 
                 val instanceAValue = mockValue()
                 val instanceBValue = mockValue()
-                val instanceA = SootNode(mock<ThrowStmt> {
+                val instanceA = JimpleNode(mock<ThrowStmt> {
                     on { it.op } doReturn instanceAValue
                 })
-                val instanceB = SootNode(mock<ThrowStmt> {
+                val instanceB = JimpleNode(mock<ThrowStmt> {
                     on { it.op } doReturn instanceBValue
                 })
 
@@ -198,20 +198,20 @@ internal class GeneralizedSootComparatorValueTest : Spek({
             it("copies tags for one value even if the other is already assigned") {
                 val templateLeftValue = mockValue()
                 val templateRightValue = mockValue()
-                val templateA = SootNode(mock<IfStmt> {
+                val templateA = JimpleNode(mock<IfStmt> {
                     on { it.condition } doReturn templateLeftValue
                 })
-                val templateB = SootNode(mock<DefinitionStmt> {
+                val templateB = JimpleNode(mock<DefinitionStmt> {
                     on { it.leftOp } doReturn templateLeftValue
                     on { it.rightOp } doReturn templateRightValue
                 })
 
                 val instanceLeftValue = mockValue()
                 val instanceRightValue = mockValue()
-                val instanceA = SootNode(mock<IfStmt> {
+                val instanceA = JimpleNode(mock<IfStmt> {
                     on { it.condition } doReturn instanceLeftValue
                 })
-                val instanceB = SootNode(mock<DefinitionStmt> {
+                val instanceB = JimpleNode(mock<DefinitionStmt> {
                     on { it.leftOp } doReturn instanceLeftValue
                     on { it.rightOp } doReturn instanceRightValue
                 })
@@ -223,20 +223,20 @@ internal class GeneralizedSootComparatorValueTest : Spek({
             it("supports switching template side between statements") {
                 val templateLeftValue = mockValue()
                 val templateRightValue = mockValue()
-                val templateA = SootNode(mock<SwitchStmt> {
+                val templateA = JimpleNode(mock<SwitchStmt> {
                     on { it.key } doReturn templateLeftValue
                 })
-                val templateB = SootNode(mock<DefinitionStmt> {
+                val templateB = JimpleNode(mock<DefinitionStmt> {
                     on { it.leftOp } doReturn templateLeftValue
                     on { it.rightOp } doReturn templateRightValue
                 })
 
                 val instanceLeftValue = mockValue()
                 val instanceRightValue = mockValue()
-                val instanceA = SootNode(mock<IfStmt> {
+                val instanceA = JimpleNode(mock<IfStmt> {
                     on { it.condition } doReturn instanceLeftValue
                 })
-                val instanceB = SootNode(mock<DefinitionStmt> {
+                val instanceB = JimpleNode(mock<DefinitionStmt> {
                     on { it.leftOp } doReturn instanceLeftValue
                     on { it.rightOp } doReturn instanceRightValue
                 })
@@ -247,19 +247,19 @@ internal class GeneralizedSootComparatorValueTest : Spek({
 
             it("rejects instances with tags where the template has none") {
                 val fakeTemplateValue = mockValue()
-                val fakeTemplate = SootNode(mock<ReturnStmt> {
+                val fakeTemplate = JimpleNode(mock<ReturnStmt> {
                     on { it.op } doReturn fakeTemplateValue
                 })
                 val realTemplateValue = mockValue()
-                val realTemplate = SootNode(mock<ThrowStmt> {
+                val realTemplate = JimpleNode(mock<ThrowStmt> {
                     on { it.op } doReturn realTemplateValue
                 })
 
                 val instanceValue = mockValue()
-                val instanceA = SootNode(mock<ReturnStmt> {
+                val instanceA = JimpleNode(mock<ReturnStmt> {
                     on { it.op } doReturn instanceValue
                 })
-                val instanceB = SootNode(mock<ThrowStmt> {
+                val instanceB = JimpleNode(mock<ThrowStmt> {
                     on { it.op } doReturn instanceValue
                 })
 
@@ -269,27 +269,27 @@ internal class GeneralizedSootComparatorValueTest : Spek({
 
             it("rejects instances with incorrect tags if the template is finalised") {
                 val fakeTemplateValue = mockValue()
-                val fakeTemplate = SootNode(mock<ReturnStmt> {
+                val fakeTemplate = JimpleNode(mock<ReturnStmt> {
                     on { it.op } doReturn fakeTemplateValue
                 })
 
                 val fakeInstanceValue = mockValue()
-                val fakeInstance = SootNode(mock<ReturnStmt> {
+                val fakeInstance = JimpleNode(mock<ReturnStmt> {
                     on { it.op } doReturn fakeInstanceValue
                 })
 
                 comparator.satisfies(fakeTemplate, fakeInstance)
 
                 val realTemplateValue = mockValue()
-                val realUnfinalizedTemplate = SootNode(mock<ReturnStmt> {
+                val realUnfinalizedTemplate = JimpleNode(mock<ReturnStmt> {
                     on { it.op } doReturn realTemplateValue
                 })
-                val realFinalizedTemplate = SootNode(mock<ReturnStmt> {
+                val realFinalizedTemplate = JimpleNode(mock<ReturnStmt> {
                     on { it.op } doReturn realTemplateValue
                 })
 
                 val realInstanceValue = mockValue()
-                val realInstance = SootNode(mock<ReturnStmt> {
+                val realInstance = JimpleNode(mock<ReturnStmt> {
                     on { it.op } doReturn realInstanceValue
                 })
 
@@ -300,24 +300,24 @@ internal class GeneralizedSootComparatorValueTest : Spek({
 
             it("rejects instances with incorrect tags if the template is non-finalised") {
                 val fakeTemplateValue = mockValue()
-                val fakeTemplate = SootNode(mock<ReturnStmt> {
+                val fakeTemplate = JimpleNode(mock<ReturnStmt> {
                     on { it.op } doReturn fakeTemplateValue
                 })
 
                 val fakeInstanceValue = mockValue()
-                val fakeInstance = SootNode(mock<ReturnStmt> {
+                val fakeInstance = JimpleNode(mock<ReturnStmt> {
                     on { it.op } doReturn fakeInstanceValue
                 })
 
                 comparator.satisfies(fakeTemplate, fakeInstance)
 
                 val realTemplateValue = mockValue()
-                val realTemplate = SootNode(mock<ReturnStmt> {
+                val realTemplate = JimpleNode(mock<ReturnStmt> {
                     on { it.op } doReturn realTemplateValue
                 })
 
                 val realInstanceValue = mockValue()
-                val realInstance = SootNode(mock<ReturnStmt> {
+                val realInstance = JimpleNode(mock<ReturnStmt> {
                     on { it.op } doReturn realInstanceValue
                 })
 

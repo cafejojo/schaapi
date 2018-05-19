@@ -3,7 +3,7 @@ package org.cafejojo.schaapi.usagegraphgenerator.jimple
 import com.nhaarman.mockito_kotlin.mock
 import org.assertj.core.api.Assertions.assertThat
 import org.cafejojo.schaapi.common.Node
-import org.cafejojo.schaapi.models.libraryusagegraph.jimple.SootNode
+import org.cafejojo.schaapi.models.libraryusagegraph.jimple.JimpleNode
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
@@ -222,7 +222,7 @@ private fun assertThatStructureMatches(structure: Node, cfg: Node) {
     assertThat(cfg::class).isEqualTo(structure::class)
     assertThat(cfg.successors).hasSameSizeAs(structure.successors)
 
-    if (cfg is SootNode && structure is SootNode) {
+    if (cfg is JimpleNode && structure is JimpleNode) {
         assertThat(structure.unit).isInstanceOf(cfg.unit::class.java)
     }
 
@@ -234,4 +234,4 @@ private fun assertThatStructureMatches(structure: Node, cfg: Node) {
 
 private class PreviousBranchNode(override val successors: MutableList<Node> = arrayListOf()) : Node
 
-private inline fun <reified T : Unit> node(vararg successors: Node) = SootNode(mock<T>(), successors.toMutableList())
+private inline fun <reified T : Unit> node(vararg successors: Node) = JimpleNode(mock<T>(), successors.toMutableList())
