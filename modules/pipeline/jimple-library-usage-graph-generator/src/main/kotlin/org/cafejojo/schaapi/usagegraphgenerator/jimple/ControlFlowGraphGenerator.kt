@@ -10,7 +10,7 @@ import soot.toolkits.graph.UnitGraph
 /**
  * Creates the control flow graph of a method body.
  */
-object ControlFlowGraphCreator {
+object ControlFlowGraphGenerator {
     /**
      * Creates the control flow graph of a method body.
      *

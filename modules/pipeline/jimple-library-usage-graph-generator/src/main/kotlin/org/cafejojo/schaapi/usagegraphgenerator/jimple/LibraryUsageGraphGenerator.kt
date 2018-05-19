@@ -2,7 +2,7 @@ package org.cafejojo.schaapi.usagegraphgenerator.jimple
 
 import org.cafejojo.schaapi.common.JavaProject
 import org.cafejojo.schaapi.common.Node
-import org.cafejojo.schaapi.common.ProjectLibraryUsageGraphGenerator
+import org.cafejojo.schaapi.common.LibraryUsageGraphGenerator
 import org.cafejojo.schaapi.usagegraphgenerator.jimple.filters.BranchStatementFilter
 import org.cafejojo.schaapi.usagegraphgenerator.jimple.filters.StatementFilter
 import soot.Scene
@@ -14,7 +14,7 @@ import java.io.File
 /**
  * Library usage graph generator based on Soot.
  */
-object SootProjectLibraryUsageGraphGenerator : ProjectLibraryUsageGraphGenerator {
+object LibraryUsageGraphGenerator : LibraryUsageGraphGenerator {
     /**
      * Generates usage graphs for each method in each class of the user project.
      *
@@ -62,7 +62,7 @@ object SootProjectLibraryUsageGraphGenerator : ProjectLibraryUsageGraphGenerator
         val filters = listOf(StatementFilter(libraryProject), BranchStatementFilter(libraryProject))
         filters.forEach { it.apply(methodBody) }
 
-        return ControlFlowGraphCreator.create(methodBody)
+        return ControlFlowGraphGenerator.create(methodBody)
             ?: throw IllegalStateException("Control flow graph could not be generated")
     }
 }
