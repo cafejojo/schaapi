@@ -80,7 +80,7 @@ class PatternDetector(
     /**
      * Creates a mapping from the found frequent patterns to [allPaths] which contain said sequence.
      *
-     * If [findFrequentSequences] has not been runAlgorithm before, the resulting map will not contain any keys.
+     * If [findFrequentSequences] has not been run before, the resulting map will not contain any keys.
      *
      * @return a mapping from the frequent patterns to sequences which contain said sequence
      */
@@ -91,17 +91,17 @@ class PatternDetector(
 
     private fun runAlgorithm(prefix: List<Node> = emptyList(), projectedPaths: Collection<List<Node>> = allPaths) {
         frequentItems.forEach { frequentItem ->
-            val newPrefix = prefix + frequentItem
-
-            if (projectedPaths.any { pathContainsNewPrefix(it, newPrefix) }) {
+            if (projectedPaths.any { pathContainsPrefix(it, prefix, frequentItem) }) {
+                val newPrefix = prefix + frequentItem
                 frequentSequences += newPrefix
                 runAlgorithm(newPrefix, extractSuffixes(prefix, allPaths))
             }
         }
     }
 
-    private fun pathContainsNewPrefix(path: List<Node>, newPrefix: List<Node>) =
-        pathContainsSequence(path, newPrefix) || pathContainsSequence(path, newPrefix.takeLast(2))
+    private fun pathContainsPrefix(path: List<Node>, prefix: List<Node>, frequentItem: Node) =
+        pathContainsSequence(path, prefix + frequentItem) ||
+            prefix.isNotEmpty() && pathContainsSequence(path, listOf(prefix.last(), frequentItem))
 
     /**
      * Checks whether a given sequence can be found within a given path.
