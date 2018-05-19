@@ -2,7 +2,7 @@ package org.cafejojo.schaapi.models.libraryusagegraph.jimple.compare
 
 import org.cafejojo.schaapi.common.GeneralizedNodeComparator
 import org.cafejojo.schaapi.common.Node
-import org.cafejojo.schaapi.models.libraryusagegraph.jimple.SootNode
+import org.cafejojo.schaapi.models.libraryusagegraph.jimple.JimpleNode
 import soot.Scene
 import soot.Type
 import soot.Unit
@@ -41,8 +41,8 @@ class GeneralizedSootComparator : GeneralizedNodeComparator {
      * @return true iff [template] and [instance] have the same structure
      */
     override fun structuresAreEqual(template: Node, instance: Node): Boolean {
-        if (template !is SootNode || instance !is SootNode) {
-            throw IllegalArgumentException("GeneralizedSootComparator cannot handle non-SootNodes.")
+        if (template !is JimpleNode || instance !is JimpleNode) {
+            throw IllegalArgumentException("GeneralizedSootComparator cannot handle non-JimpleNodes.")
         }
 
         return template == instance
@@ -62,8 +62,8 @@ class GeneralizedSootComparator : GeneralizedNodeComparator {
      */
     @SuppressWarnings("UnsafeCallOnNullableType") // The !! is implicitly avoided by checking `templateHasTag`
     override fun generalizedValuesAreEqual(template: Node, instance: Node): Boolean {
-        if (template !is SootNode || instance !is SootNode) {
-            throw IllegalArgumentException("GeneralizedSootComparator cannot handle non-SootNodes.")
+        if (template !is JimpleNode || instance !is JimpleNode) {
+            throw IllegalArgumentException("GeneralizedSootComparator cannot handle non-JimpleNodes.")
         }
 
         val templateValues = template.getValues()

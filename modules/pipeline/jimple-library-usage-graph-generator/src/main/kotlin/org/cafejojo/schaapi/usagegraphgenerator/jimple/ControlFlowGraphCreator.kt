@@ -1,7 +1,7 @@
 package org.cafejojo.schaapi.usagegraphgenerator.jimple
 
 import org.cafejojo.schaapi.common.Node
-import org.cafejojo.schaapi.models.libraryusagegraph.jimple.SootNode
+import org.cafejojo.schaapi.models.libraryusagegraph.jimple.JimpleNode
 import soot.Body
 import soot.Unit
 import soot.toolkits.graph.BriefUnitGraph
@@ -39,7 +39,7 @@ object ControlFlowGraphCreator {
             return mappedUnits[unit]
         }
 
-        val node = SootNode(unit)
+        val node = JimpleNode(unit)
 
         predecessor?.successors?.add(node)
 

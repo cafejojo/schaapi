@@ -2,7 +2,7 @@ package org.cafejojo.schaapi.patternfilter.jimple
 
 import org.cafejojo.schaapi.common.Node
 import org.cafejojo.schaapi.common.PatternFilter
-import org.cafejojo.schaapi.models.libraryusagegraph.jimple.SootNode
+import org.cafejojo.schaapi.models.libraryusagegraph.jimple.JimpleNode
 import soot.jimple.InvokeStmt
 import soot.jimple.internal.JSpecialInvokeExpr
 
@@ -13,7 +13,7 @@ class IncompleteInitPatternFilter : PatternFilter {
     override fun retain(pattern: List<Node>): Boolean {
         if (pattern.isEmpty()) return true
 
-        val firstStatement = pattern[0] as? SootNode ?: return true
+        val firstStatement = pattern[0] as? JimpleNode ?: return true
         val firstUnit = firstStatement.unit as? InvokeStmt ?: return true
 
         return firstUnit.invokeExpr !is JSpecialInvokeExpr || firstUnit.invokeExpr.method.name != "<init>"
