@@ -1,6 +1,6 @@
 package org.cafejojo.schaapi.usagegraphgenerator.jimple.filters
 
-import org.cafejojo.schaapi.common.JavaProject
+import org.cafejojo.schaapi.project.javamaven.JavaProject
 import org.cafejojo.schaapi.usagegraphgenerator.jimple.filters.BranchStatement.Companion.isBranchStatement
 import soot.Body
 import soot.Unit

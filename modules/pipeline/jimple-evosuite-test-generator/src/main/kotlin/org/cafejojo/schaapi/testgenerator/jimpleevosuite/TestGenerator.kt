@@ -1,8 +1,8 @@
 package org.cafejojo.schaapi.testgenerator.jimpleevosuite
 
-import org.cafejojo.schaapi.common.JavaProject
 import org.cafejojo.schaapi.common.Pattern
 import org.cafejojo.schaapi.common.TestGenerator
+import org.cafejojo.schaapi.project.javamaven.JavaProject
 import java.io.File
 import java.io.OutputStream
 import java.io.PrintStream

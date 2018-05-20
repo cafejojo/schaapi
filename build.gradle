@@ -97,6 +97,7 @@ repositories {
 }
 
 dependencies {
+    compile project(":java-maven-project")
     compile project(":java-maven-project-compiler")
     compile project(":jimple-evosuite-test-generator")
     compile project(":jimple-library-usage-graph")

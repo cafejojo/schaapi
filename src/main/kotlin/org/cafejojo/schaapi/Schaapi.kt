@@ -11,14 +11,13 @@ import org.cafejojo.schaapi.models.libraryusagegraph.jimple.compare.GeneralizedS
 import org.cafejojo.schaapi.patterndetector.prefixspan.PatternDetector
 import org.cafejojo.schaapi.patternfilter.jimple.IncompleteInitPatternFilterRule
 import org.cafejojo.schaapi.patternfilter.jimple.LengthPatternFilterRule
-import org.cafejojo.schaapi.projectcompiler.javamaven.JavaMavenProject
+import org.cafejojo.schaapi.project.javamaven.JavaMavenProject
 import org.cafejojo.schaapi.projectcompiler.javamaven.MavenInstaller
+import org.cafejojo.schaapi.projectcompiler.javamaven.ProjectCompiler
 import org.cafejojo.schaapi.testgenerator.jimpleevosuite.TestGenerator
-import org.cafejojo.schaapi.testgenerator.jimpleevosuite.TestableGenerator
 import org.cafejojo.schaapi.usagegraphgenerator.jimple.LibraryUsageGraphGenerator
 import java.io.File
 
-private const val DEFAULT_PATTERN_CLASS_NAME = "RegressionTest"
 private const val DEFAULT_TEST_GENERATOR_TIMEOUT = "60"
 private const val DEFAULT_PATTERN_DETECTOR_MINIMUM_COUNT = "3"
 
@@ -32,9 +31,8 @@ fun main(args: Array<String>) {
     val options = buildOptions()
     val cmd = parseArgs(options, args) ?: return
 
-    val mavenDir = File(cmd.getOptionValue("maven_dir") ?: MavenInstaller.DEFAULT_MAVEN_HOME.absolutePath)
+    val mavenDir = File(cmd.getOptionValue("maven_dir") ?: JavaMavenProject.DEFAULT_MAVEN_HOME.absolutePath)
     val output = File(cmd.getOptionValue('o')).apply { mkdirs() }
-    val outputPatterns = output.resolve("patterns/").apply { mkdirs() }
     val library = JavaMavenProject(File(cmd.getOptionValue('l')), mavenDir)
     val users = cmd.getOptionValues('u').map { JavaMavenProject(File(it), mavenDir) }
 
@@ -42,8 +40,10 @@ fun main(args: Array<String>) {
         MavenInstaller().installMaven(mavenDir)
     }
 
-    library.compile()
-    users.forEach { it.compile() }
+    ProjectCompiler().let { compiler ->
+        compiler.compile(library)
+        users.forEach { compiler.compile(it) }
+    }
 
     val userGraphs = users.map { LibraryUsageGraphGenerator.generate(library, it) }.flatten().flatten()
 
@@ -57,13 +57,6 @@ fun main(args: Array<String>) {
         LengthPatternFilterRule()
     )
     val filteredPatterns = patternFilter.filter(patterns)
-
-    val classGenerator = TestableGenerator(DEFAULT_PATTERN_CLASS_NAME)
-    filteredPatterns.forEachIndexed { index, pattern ->
-        classGenerator.generateMethod("pattern$index", pattern)
-    }
-
-    classGenerator.writeToFile(outputPatterns.absolutePath)
 
     val testGeneratorTimeout = cmd.getOptionOrDefault("test_generator_timeout", DEFAULT_TEST_GENERATOR_TIMEOUT).toInt()
     val testGeneratorEnableOutput = cmd.hasOption("test_generator_enable_output")

@@ -1,6 +1,6 @@
 package org.cafejojo.schaapi.usagegraphgenerator.jimple
 
-import org.cafejojo.schaapi.common.JavaProject
+import org.cafejojo.schaapi.project.javamaven.JavaProject
 import java.io.File
 
 internal data class TestProject(
@@ -12,8 +12,6 @@ internal data class TestProject(
     override var dependencies: List<File> = emptyList()
     override val projectDir: File = File(".")
     override var classes: List<File> = emptyList()
-
-    override fun compile() = throw IllegalStateException("Test class cannot be compiled")
 }
 
 internal val libraryClasses = listOf(

@@ -12,13 +12,9 @@ class MavenInstaller {
      *
      * @param path the directory to install Maven in
      */
-    fun installMaven(path: File = DEFAULT_MAVEN_HOME) {
+    fun installMaven(path: File) {
         val zipStream = javaClass.getResourceAsStream("/maven/apache-maven-3.5.3-bin.zip")
         ZipUtil.unpack(zipStream, path.absoluteFile)
         path.resolve("bin/mvn").setExecutable(true)
-    }
-
-    companion object {
-        val DEFAULT_MAVEN_HOME = File(System.getProperty("user.home") + "/.schaapi/maven")
     }
 }
