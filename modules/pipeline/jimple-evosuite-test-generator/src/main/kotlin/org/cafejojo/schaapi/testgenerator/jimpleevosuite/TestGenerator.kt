@@ -1,80 +1,44 @@
 package org.cafejojo.schaapi.testgenerator.jimpleevosuite
 
-import java.io.BufferedReader
-import java.io.InputStream
-import java.io.InputStreamReader
+import org.cafejojo.schaapi.common.JavaProject
+import org.cafejojo.schaapi.common.Pattern
+import org.cafejojo.schaapi.common.TestGenerator
+import java.io.File
+import java.io.OutputStream
 import java.io.PrintStream
-import java.nio.charset.Charset
+
+private const val DEFAULT_PATTERN_CLASS_NAME = "RegressionTest"
 
 /**
- * EvoSuite launcher.
- *
- * Executes the EvoSuite test generator on a new process and returns once that process finishes.
- *
- * @property fullyQualifiedClassName the class that EvoSuite should generate tests for
- * @property classpath the class path on which to find the class that should be tested
- * @property outputDirectory the output directory path for the generated EvoSuite tests
- * @property generationTimeoutSeconds how long to let the EvoSuite test generator run (in seconds)
- * @property processStandardStream a stream to output EvoSuite's standard messages to
- * @property processErrorStream a stream to output EvoSuite's error messages to
+ * Represents the test generator that generates tests based on patterns.
  */
 class TestGenerator(
-    private val fullyQualifiedClassName: String,
-    private val classpath: String,
-    private val outputDirectory: String,
-    private val generationTimeoutSeconds: Int = 60,
+    private val library: JavaProject,
+    private val outputDirectory: File,
+    private val timeout: Int,
     private val processStandardStream: PrintStream? = null,
     private val processErrorStream: PrintStream? = null
-) {
-    /**
-     * Runs the EvoSuite test generator in a new process.
-     */
-    fun run() = receiveProcessOutput(buildProcess())
+) : TestGenerator {
+    override fun generate(patterns: List<Pattern>): OutputStream {
+        val outputPatterns = outputDirectory.resolve("patterns/").apply { mkdirs() }
+        val outputTests = outputDirectory.resolve("tests/").apply { mkdirs() }
 
-    private fun buildProcess() = ProcessBuilder(
-        "java",
-        "-cp", System.getProperty("java.class.path"),
-        "org.evosuite.EvoSuite",
-        "-class", fullyQualifiedClassName,
-        "-base_dir", outputDirectory,
-        "-projectCP", classpath,
-        "-Dsearch_budget=$generationTimeoutSeconds",
-        "-Dstatistics_backend=NONE"
-    ).start()
-
-    private fun receiveProcessOutput(process: Process) {
-        val lastLine = pipeAllLines(process.inputStream, processStandardStream)
-        pipeAllLines(process.errorStream, processErrorStream)
-
-        process.waitFor()
-
-        if (!lastLine.toLowerCase().contains("computation finished")) {
-            throw EvoSuiteRuntimeException(
-                "EvoSuite did not terminate successfully. The last line of its output reads: \"$lastLine\""
-            )
+        TestableGenerator(DEFAULT_PATTERN_CLASS_NAME).apply {
+            patterns.forEachIndexed { index, pattern ->
+                generateMethod("pattern$index", pattern)
+            }
+            writeToFile(outputPatterns.absolutePath)
         }
 
-        if (process.exitValue() != 0) {
-            val errorOutput = String(process.errorStream.readBytes(), Charset.defaultCharset())
-            throw EvoSuiteRuntimeException(
-                "EvoSuite exited with non-zero exit code: ${process.exitValue()}\n$errorOutput"
-            )
-        }
-    }
+        EvoSuiteTestGenerator(
+            fullyQualifiedClassName = DEFAULT_PATTERN_CLASS_NAME,
+            classpath = outputPatterns.absolutePath + File.pathSeparator + library.classpath,
+            outputDirectory = outputTests.absolutePath,
+            generationTimeoutSeconds = timeout,
+            processStandardStream = processStandardStream,
+            processErrorStream = processErrorStream
+        ).run()
 
-    private fun pipeAllLines(input: InputStream, output: PrintStream?): String {
-        var lastLine = ""
-
-        BufferedReader(InputStreamReader(input)).forEachLine {
-            output?.println(it)
-            lastLine = it
-        }
-
-        return lastLine
+        return File(outputDirectory, "RegressionTest_ESTest.java").outputStream()
     }
 }
-
-/**
- * A [RuntimeException] occurring during the execution of the EvoSuite test generation tool.
- */
-class EvoSuiteRuntimeException(message: String? = null) : RuntimeException(message)

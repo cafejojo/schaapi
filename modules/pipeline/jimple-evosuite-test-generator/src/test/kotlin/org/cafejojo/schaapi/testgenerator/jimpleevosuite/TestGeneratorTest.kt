@@ -27,7 +27,7 @@ internal class TestGeneratorTest : Spek({
 
     describe("execution of the EvoSuite test generator") {
         it("generates tests for a test class") {
-            val evoSuiteRunner = TestGenerator(
+            val evoSuiteRunner = EvoSuiteTestGenerator(
                 "org.cafejojo.schaapi.test.EvoSuiteTestClass",
                 classPath,
                 classPath,
@@ -41,7 +41,7 @@ internal class TestGeneratorTest : Spek({
         }
 
         it("throws an exception when the class can't be found on the given class path") {
-            val evoSuiteRunner = TestGenerator(
+            val evoSuiteRunner = EvoSuiteTestGenerator(
                 "org.cafejojo.schaapi.test.EvoSuiteTestClass",
                 ".",
                 classPath,
@@ -54,7 +54,7 @@ internal class TestGeneratorTest : Spek({
         }
 
         it("throws an exception when the class doesn't exist") {
-            val evoSuiteRunner = TestGenerator(
+            val evoSuiteRunner = EvoSuiteTestGenerator(
                 "no.way.this.exists.SampleClass",
                 classPath,
                 classPath,
