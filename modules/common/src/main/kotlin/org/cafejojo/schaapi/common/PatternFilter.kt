@@ -1,14 +1,16 @@
 package org.cafejojo.schaapi.common
 
 /**
- * Represents a filter for generated patterns.
+ * Represents a pattern filter.
+ *
+ * @property rules rules that indicated whether a pattern should be retained or not
  */
-interface PatternFilter {
+class PatternFilter(private vararg val rules: PatternFilterRule ) {
     /**
-     * Determines if [pattern] should be retained.
+     * Performs filtering of patterns based on the gives list of filtering rules.
      *
-     * @param pattern a generated pattern
-     * @return true if the pattern should be retained
+     * @param patterns list of patterns to be filtered
+     * @return list of filtered patterns
      */
-    fun retain(pattern: List<Node>): Boolean
+    fun filter(patterns: List<Pattern>) = patterns.filter { pattern -> rules.map { it.retain(pattern) }.all { it } }
 }
