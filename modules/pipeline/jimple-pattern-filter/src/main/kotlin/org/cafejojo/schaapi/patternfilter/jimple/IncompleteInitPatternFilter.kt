@@ -14,7 +14,7 @@ class IncompleteInitPatternFilter : PatternFilter {
         if (pattern.isEmpty()) return true
 
         val firstStatement = pattern[0] as? JimpleNode ?: return true
-        val firstUnit = firstStatement.unit as? InvokeStmt ?: return true
+        val firstUnit = firstStatement.statement as? InvokeStmt ?: return true
 
         return firstUnit.invokeExpr !is JSpecialInvokeExpr || firstUnit.invokeExpr.method.name != "<init>"
     }

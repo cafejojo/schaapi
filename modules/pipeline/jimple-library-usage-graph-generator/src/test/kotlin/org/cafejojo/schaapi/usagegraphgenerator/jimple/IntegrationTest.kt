@@ -7,7 +7,7 @@ import org.cafejojo.schaapi.models.libraryusagegraph.jimple.JimpleNode
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
-import soot.Unit
+import soot.jimple.Stmt
 import soot.jimple.internal.JAssignStmt
 import soot.jimple.internal.JGotoStmt
 import soot.jimple.internal.JIfStmt
@@ -223,7 +223,7 @@ private fun assertThatStructureMatches(structure: Node, cfg: Node) {
     assertThat(cfg.successors).hasSameSizeAs(structure.successors)
 
     if (cfg is JimpleNode && structure is JimpleNode) {
-        assertThat(structure.unit).isInstanceOf(cfg.unit::class.java)
+        assertThat(structure.statement).isInstanceOf(cfg.statement::class.java)
     }
 
     structure.successors.forEachIndexed { index, structureSuccessor ->
@@ -234,4 +234,4 @@ private fun assertThatStructureMatches(structure: Node, cfg: Node) {
 
 private class PreviousBranchNode(override val successors: MutableList<Node> = arrayListOf()) : Node
 
-private inline fun <reified T : Unit> node(vararg successors: Node) = JimpleNode(mock<T>(), successors.toMutableList())
+private inline fun <reified T : Stmt> node(vararg successors: Node) = JimpleNode(mock<T>(), successors.toMutableList())
