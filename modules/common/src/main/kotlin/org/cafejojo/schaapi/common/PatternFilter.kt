@@ -3,7 +3,7 @@ package org.cafejojo.schaapi.common
 /**
  * Represents a pattern filter.
  *
- * @property rules rules that indicated whether a pattern should be retained or not
+ * @property rules rules that indicate whether a pattern should be retained or not
  */
 class PatternFilter(private vararg val rules: PatternFilterRule) {
     /**
