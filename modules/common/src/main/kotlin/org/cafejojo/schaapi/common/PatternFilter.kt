@@ -7,7 +7,7 @@ package org.cafejojo.schaapi.common
  */
 class PatternFilter(private vararg val rules: PatternFilterRule) {
     /**
-     * Performs filtering of patterns based on the gives list of filtering rules.
+     * Performs filtering of patterns based on the given list of filtering rules.
      *
      * @param patterns list of patterns to be filtered
      * @return list of filtered patterns
