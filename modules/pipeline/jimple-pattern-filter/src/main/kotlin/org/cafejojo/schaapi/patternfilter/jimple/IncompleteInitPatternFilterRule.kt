@@ -1,7 +1,7 @@
 package org.cafejojo.schaapi.patternfilter.jimple
 
 import org.cafejojo.schaapi.common.Node
-import org.cafejojo.schaapi.common.PatternFilter
+import org.cafejojo.schaapi.common.PatternFilterRule
 import org.cafejojo.schaapi.models.libraryusagegraph.jimple.JimpleNode
 import soot.jimple.InvokeStmt
 import soot.jimple.internal.JSpecialInvokeExpr
@@ -9,7 +9,7 @@ import soot.jimple.internal.JSpecialInvokeExpr
 /**
  * Filters out patterns that start with `<init>` invokes but do not have a new statement.
  */
-class IncompleteInitPatternFilter : PatternFilter {
+class IncompleteInitPatternFilterRule : PatternFilterRule {
     override fun retain(pattern: List<Node>): Boolean {
         if (pattern.isEmpty()) return true
 
