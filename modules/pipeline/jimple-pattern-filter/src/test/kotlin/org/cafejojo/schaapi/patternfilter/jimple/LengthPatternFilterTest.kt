@@ -1,7 +1,6 @@
 package org.cafejojo.schaapi.patternfilter.jimple
 
 import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
@@ -24,9 +23,8 @@ class LengthPatternFilterTest : Spek({
             assertThat(LengthPatternFilter(1).retain(listOf(TestNode(), TestNode()))).isTrue()
         }
 
-        it("should give an exception if the given pattern length is 0") {
-            assertThatThrownBy { LengthPatternFilter(0) }
-                .isInstanceOf(IllegalArgumentException::class.java)
+        it("should retain list if minimum length is negative") {
+            assertThat(LengthPatternFilter(-1).retain(listOf(TestNode()))).isTrue()
         }
     }
 })

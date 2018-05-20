@@ -12,9 +12,5 @@ private const val DEFAULT_MINIMUM_PATTERN_LENGTH = 2
  * least be 1. [DEFAULT_MINIMUM_PATTERN_LENGTH] by default
  */
 class LengthPatternFilter(private val minimumLength: Int = DEFAULT_MINIMUM_PATTERN_LENGTH) : PatternFilter {
-    init {
-        require(minimumLength > 0) { "The minimum pattern length must be 1 or greater, was $minimumLength." }
-    }
-
     override fun retain(pattern: List<Node>): Boolean = pattern.size >= minimumLength
 }
