@@ -3,7 +3,7 @@ repositories {
 }
 
 dependencies {
-    testCompile group: "com.nhaarman", name: "mockito-kotlin", version: mockitoKotlinVersion
+    compile project(":common")
 
-    compile project(":jimple-library-usage-graph-generator")
+    testCompile group: "com.nhaarman", name: "mockito-kotlin", version: mockitoKotlinVersion
 }

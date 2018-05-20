@@ -6,6 +6,7 @@ import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Option
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
+import org.cafejojo.schaapi.models.libraryusagegraph.jimple.compare.GeneralizedSootComparator
 import org.cafejojo.schaapi.patterndetector.prefixspan.PatternDetector
 import org.cafejojo.schaapi.patternfilter.jimple.IncompleteInitPatternFilter
 import org.cafejojo.schaapi.patternfilter.jimple.LengthPatternFilter
@@ -43,7 +44,8 @@ fun main(args: Array<String>) {
     val userGraphs = users.map { LibraryUsageGraphGenerator.generate(library, it) }.flatten().flatten()
 
     val patterns = PatternDetector(
-        cmd.getOptionOrDefault("pattern_detector_minimum_count", DEFAULT_PATTERN_DETECTOR_MINIMUM_COUNT).toInt()
+        cmd.getOptionOrDefault("pattern_detector_minimum_count", DEFAULT_PATTERN_DETECTOR_MINIMUM_COUNT).toInt(),
+        GeneralizedSootComparator()
     ).findPatterns(userGraphs)
 
     val filteredPatterns = patterns
