@@ -1,8 +1,9 @@
 package org.cafejojo.schaapi.usagegraphgenerator.jimple
 
-import org.cafejojo.schaapi.common.JavaProject
 import org.cafejojo.schaapi.common.Node
 import org.cafejojo.schaapi.common.LibraryUsageGraphGenerator
+import org.cafejojo.schaapi.common.Project
+import org.cafejojo.schaapi.project.javamaven.JavaProject
 import org.cafejojo.schaapi.usagegraphgenerator.jimple.filters.BranchStatementFilter
 import org.cafejojo.schaapi.usagegraphgenerator.jimple.filters.StatementFilter
 import soot.Scene
@@ -22,12 +23,16 @@ object LibraryUsageGraphGenerator : LibraryUsageGraphGenerator {
      * @param userProject library user project
      * @return list of list of graphs
      */
-    override fun generate(libraryProject: JavaProject, userProject: JavaProject) =
-        userProject.classNames.flatMap {
+    override fun generate(libraryProject: Project, userProject: Project): List<Node> {
+        if (libraryProject !is JavaProject) throw IllegalArgumentException("Library project must be JavaProject.")
+        if (userProject !is JavaProject) throw IllegalArgumentException("User project must be JavaProject.")
+
+        return userProject.classNames.flatMap {
             val sootClass = createSootClass(userProject.classpath, it)
 
             sootClass.methods.map { generateMethodGraph(libraryProject, it) }
         }
+    }
 
     /**
      * Creates instance of a Soot class.

@@ -1,21 +1,7 @@
-package org.cafejojo.schaapi.common
+package org.cafejojo.schaapi.project.javamaven
 
+import org.cafejojo.schaapi.common.Project
 import java.io.File
-
-/**
- * A project.
- */
-interface Project {
-    /**
-     * The directory containing the project.
-     */
-    val projectDir: File
-
-    /**
-     * Compiles the project.
-     */
-    fun compile()
-}
 
 /**
  * A Java project.
@@ -59,23 +45,3 @@ interface JavaProject : Project {
      */
     var classpath: String
 }
-
-/**
- * A Maven project.
- */
-interface MavenProject : Project {
-    /**
-     * The directory where Maven is installed.
-     */
-    val mavenDir: File
-
-    /**
-     * The Maven configuration file.
-     */
-    val pomFile: File
-}
-
-/**
- * Indicates that the compilation of a project was unsuccessful.
- */
-class ProjectCompilationException(message: String? = null) : Exception(message)

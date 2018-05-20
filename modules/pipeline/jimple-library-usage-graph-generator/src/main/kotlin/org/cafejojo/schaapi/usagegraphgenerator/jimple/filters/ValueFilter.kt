@@ -1,6 +1,6 @@
 package org.cafejojo.schaapi.usagegraphgenerator.jimple.filters
 
-import org.cafejojo.schaapi.common.JavaProject
+import org.cafejojo.schaapi.project.javamaven.JavaProject
 import soot.EquivalentValue
 import soot.Immediate
 import soot.Local

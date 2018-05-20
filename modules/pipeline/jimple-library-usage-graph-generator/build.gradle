@@ -4,6 +4,7 @@ repositories {
 
 dependencies {
     compile project(":common")
+    compile project(":java-maven-project")
     compile project(":jimple-library-usage-graph")
 
     compile group: "ca.mcgill.sable", name: "soot", version: sootVersion
