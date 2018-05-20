@@ -5,7 +5,6 @@ import org.cafejojo.schaapi.common.Node
 import org.cafejojo.schaapi.common.Pattern
 import org.cafejojo.schaapi.common.PatternDetector
 
-
 /**
  * Represents a pattern detector.
  */
