@@ -40,34 +40,28 @@ fun main(args: Array<String>) {
         MavenInstaller().installMaven(mavenDir)
     }
 
-    ProjectCompiler().let { compiler ->
-        compiler.compile(library)
-        users.forEach { compiler.compile(it) }
-    }
-
-    val userGraphs = users.map { LibraryUsageGraphGenerator.generate(library, it) }.flatten().flatten()
-
-    val patterns = PatternDetector(
-        cmd.getOptionOrDefault("pattern_detector_minimum_count", DEFAULT_PATTERN_DETECTOR_MINIMUM_COUNT).toInt(),
-        GeneralizedSootComparator()
-    ).findPatterns(userGraphs)
-
-    val patternFilter = PatternFilter(
-        IncompleteInitPatternFilterRule(),
-        LengthPatternFilterRule()
-    )
-    val filteredPatterns = patternFilter.filter(patterns)
-
     val testGeneratorTimeout = cmd.getOptionOrDefault("test_generator_timeout", DEFAULT_TEST_GENERATOR_TIMEOUT).toInt()
     val testGeneratorEnableOutput = cmd.hasOption("test_generator_enable_output")
 
-    TestGenerator(
-        library = library,
-        outputDirectory = output,
-        timeout = testGeneratorTimeout,
-        processStandardStream = if (testGeneratorEnableOutput) System.out else null,
-        processErrorStream = if (testGeneratorEnableOutput) System.out else null
-    ).generate(filteredPatterns)
+    Pipeline(
+        projectCompiler = ProjectCompiler(),
+        libraryUsageGraphGenerator = LibraryUsageGraphGenerator,
+        patternDetector = PatternDetector(
+            cmd.getOptionOrDefault("pattern_detector_minimum_count", DEFAULT_PATTERN_DETECTOR_MINIMUM_COUNT).toInt(),
+            GeneralizedSootComparator()
+        ),
+        patternFilter = PatternFilter(
+            IncompleteInitPatternFilterRule(),
+            LengthPatternFilterRule()
+        ),
+        testGenerator = TestGenerator(
+            library = library,
+            outputDirectory = output,
+            timeout = testGeneratorTimeout,
+            processStandardStream = if (testGeneratorEnableOutput) System.out else null,
+            processErrorStream = if (testGeneratorEnableOutput) System.out else null
+        )
+    ).run(users[0], library)
 }
 
 private fun buildOptions(): Options =
