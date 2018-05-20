@@ -15,7 +15,6 @@ import org.cafejojo.schaapi.project.javamaven.JavaMavenProject
 import org.cafejojo.schaapi.projectcompiler.javamaven.MavenInstaller
 import org.cafejojo.schaapi.projectcompiler.javamaven.ProjectCompiler
 import org.cafejojo.schaapi.testgenerator.jimpleevosuite.TestGenerator
-import org.cafejojo.schaapi.testgenerator.jimpleevosuite.TestableGenerator
 import org.cafejojo.schaapi.usagegraphgenerator.jimple.LibraryUsageGraphGenerator
 import java.io.File
 
