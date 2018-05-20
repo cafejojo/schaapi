@@ -8,13 +8,13 @@ import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 import soot.Type
 
-class PatternDetectorAndSootComparatorTest : Spek({
+class FrequentSequenceFinderAndSootComparatorTest : Spek({
     describe("when looking for common sequences in patterns of statements using the generalized soot comparator") {
         it("should find a sequence of path length 1") {
             val node = mockJimpleNode()
             val path = listOf(node)
 
-            val detector = PatternDetector(listOf(path), 1, GeneralizedSootComparator())
+            val detector = FrequentSequenceFinder(listOf(path), 1, GeneralizedSootComparator())
             detector.findFrequentSequences()
 
             Assertions.assertThat(detector.pathContainsSequence(path, listOf(node))).isTrue()
@@ -40,7 +40,7 @@ class PatternDetectorAndSootComparatorTest : Spek({
             val path2 = listOf(node7, node8, node9, node10, node4, node5, node6)
 
             val paths = listOf(path1, path2)
-            val frequent = PatternDetector(paths, 2, GeneralizedSootComparator()).findFrequentSequences()
+            val frequent = FrequentSequenceFinder(paths, 2, GeneralizedSootComparator()).findFrequentSequences()
 
             Assertions.assertThat(frequent).contains(
                 listOf(
@@ -67,7 +67,7 @@ class PatternDetectorAndSootComparatorTest : Spek({
             val path2 = listOf(node7, node8, node9, node10, node4, node5, node6)
 
             val paths = listOf(path1, path2)
-            val frequent = PatternDetector(paths, 2, GeneralizedSootComparator()).findFrequentSequences()
+            val frequent = FrequentSequenceFinder(paths, 2, GeneralizedSootComparator()).findFrequentSequences()
 
             Assertions.assertThat(frequent).isEmpty()
         }

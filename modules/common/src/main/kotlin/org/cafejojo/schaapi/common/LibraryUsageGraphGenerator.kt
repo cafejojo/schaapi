@@ -9,7 +9,7 @@ interface LibraryUsageGraphGenerator {
      *
      * @param libraryProject library project
      * @param userProject library user project
-     * @return list of list of graphs
+     * @return list of graphs
      */
-    fun generate(libraryProject: JavaProject, userProject: JavaProject): List<List<Node>>
+    fun generate(libraryProject: JavaProject, userProject: JavaProject): List<Node>
 }

@@ -7,7 +7,6 @@ import org.apache.commons.cli.Option
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.cafejojo.schaapi.models.libraryusagegraph.jimple.compare.GeneralizedSootComparator
-import org.cafejojo.schaapi.patterndetector.prefixspan.PathEnumerator
 import org.cafejojo.schaapi.patterndetector.prefixspan.PatternDetector
 import org.cafejojo.schaapi.patternfilter.jimple.IncompleteInitPatternFilter
 import org.cafejojo.schaapi.patternfilter.jimple.LengthPatternFilter
@@ -42,14 +41,14 @@ fun main(args: Array<String>) {
     library.compile()
     users.forEach { it.compile() }
 
-    val userGraphs = users.map { LibraryUsageGraphGenerator.generate(library, it) }
-    val userPaths = userGraphs.flatMap { it.flatMap { it.flatMap { PathEnumerator(it).enumerate() } } }
+    val userGraphs = users.map { LibraryUsageGraphGenerator.generate(library, it) }.flatten().flatten()
 
     val patterns = PatternDetector(
-        userPaths,
         cmd.getOptionOrDefault("pattern_detector_minimum_count", DEFAULT_PATTERN_DETECTOR_MINIMUM_COUNT).toInt(),
         GeneralizedSootComparator()
-    ).findFrequentSequences()
+    ).findPatterns(userGraphs)
+
+    val filteredPatterns = patterns
         .filter { IncompleteInitPatternFilter().retain(it) }
         .filter { LengthPatternFilter().retain(it) }
 
@@ -62,7 +61,7 @@ fun main(args: Array<String>) {
         timeout = testGeneratorTimeout,
         processStandardStream = if (testGeneratorEnableOutput) System.out else null,
         processErrorStream = if (testGeneratorEnableOutput) System.out else null
-    ).generate(patterns)
+    ).generate(filteredPatterns)
 }
 
 private fun buildOptions(): Options =

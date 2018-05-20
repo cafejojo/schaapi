@@ -26,7 +26,7 @@ internal class IntegrationTest : Spek({
             val cfg = LibraryUsageGraphGenerator.generate(
                 libraryProject,
                 TestProject(testClassesClassPath, listOf("$TEST_CLASSES_PACKAGE.users.SimpleTest"))
-            )[0][1]
+            )[1]
 
             assertThatStructureMatches(
                 node<JAssignStmt>(
@@ -48,7 +48,7 @@ internal class IntegrationTest : Spek({
             val cfg = LibraryUsageGraphGenerator.generate(
                 libraryProject,
                 TestProject(testClassesClassPath, listOf("$TEST_CLASSES_PACKAGE.users.IfFalseUseTest"))
-            )[0][1]
+            )[1]
 
             assertThatStructureMatches(
                 node<JAssignStmt>(
@@ -73,7 +73,7 @@ internal class IntegrationTest : Spek({
             val cfg = LibraryUsageGraphGenerator.generate(
                 libraryProject,
                 TestProject(testClassesClassPath, listOf("$TEST_CLASSES_PACKAGE.users.IfTrueUseTest"))
-            )[0][1]
+            )[1]
 
             assertThatStructureMatches(
                 node<JAssignStmt>(
@@ -98,7 +98,7 @@ internal class IntegrationTest : Spek({
             val cfg = LibraryUsageGraphGenerator.generate(
                 libraryProject,
                 TestProject(testClassesClassPath, listOf("$TEST_CLASSES_PACKAGE.users.IfBothUseTest"))
-            )[0][1]
+            )[1]
 
             assertThatStructureMatches(
                 node<JAssignStmt>(
@@ -125,7 +125,7 @@ internal class IntegrationTest : Spek({
             val cfg = LibraryUsageGraphGenerator.generate(
                 libraryProject,
                 TestProject(testClassesClassPath, listOf("$TEST_CLASSES_PACKAGE.users.IfNoUseTest"))
-            )[0][1]
+            )[1]
 
             assertThatStructureMatches(
                 node<JAssignStmt>(
@@ -145,7 +145,7 @@ internal class IntegrationTest : Spek({
             val cfg = LibraryUsageGraphGenerator.generate(
                 libraryProject,
                 TestProject(testClassesClassPath, listOf("$TEST_CLASSES_PACKAGE.users.SwitchOneUseTest"))
-            )[0][1]
+            )[1]
 
             assertThatStructureMatches(
                 node<JAssignStmt>(
@@ -173,7 +173,7 @@ internal class IntegrationTest : Spek({
             val cfg = LibraryUsageGraphGenerator.generate(
                 libraryProject,
                 TestProject(testClassesClassPath, listOf("$TEST_CLASSES_PACKAGE.users.SwitchDefaultUseTest"))
-            )[0][1]
+            )[1]
 
             assertThatStructureMatches(
                 node<JAssignStmt>(
@@ -201,7 +201,7 @@ internal class IntegrationTest : Spek({
             val cfg = LibraryUsageGraphGenerator.generate(
                 libraryProject,
                 TestProject(testClassesClassPath, listOf("$TEST_CLASSES_PACKAGE.users.SwitchNoUseTest"))
-            )[0][1]
+            )[1]
 
             assertThatStructureMatches(
                 node<JAssignStmt>(
