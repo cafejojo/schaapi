@@ -48,10 +48,9 @@ fun main(args: Array<String>) {
     val userGraphs = users.map { LibraryUsageGraphGenerator.generate(library, it) }.flatten().flatten()
 
     val patterns = PatternDetector(
-        userPaths,
         cmd.getOptionOrDefault("pattern_detector_minimum_count", DEFAULT_PATTERN_DETECTOR_MINIMUM_COUNT).toInt(),
         GeneralizedSootComparator()
-    ).findFrequentSequences()
+    ).findPatterns(userGraphs)
 
     val patternFilter = PatternFilter(
         IncompleteInitPatternFilterRule(),
