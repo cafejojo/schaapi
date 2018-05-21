@@ -1,6 +1,6 @@
 apply plugin: "application"
 
-mainClassName = "org.cafejojo.schaapi.SchaapiKt"
+mainClassName = "org.cafejojo.schaapi.CommandLineInterfaceKt"
 
 repositories {
     maven { url "https://soot-build.cs.uni-paderborn.de/nexus/repository/soot-release/" }
