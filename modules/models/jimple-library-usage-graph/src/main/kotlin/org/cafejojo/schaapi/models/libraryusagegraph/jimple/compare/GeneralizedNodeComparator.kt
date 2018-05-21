@@ -5,24 +5,24 @@ import org.cafejojo.schaapi.common.Node
 import org.cafejojo.schaapi.models.libraryusagegraph.jimple.JimpleNode
 import soot.Scene
 import soot.Type
-import soot.Unit
 import soot.Value
+import soot.jimple.Stmt
 
 /**
- * Comparator of [Unit]s by structure and generalized values.
+ * Comparator of [Stmt]s by structure and generalized values.
  *
  * This comparator is stateful and is sensitive to the order in which methods are called. Refer to the documentation of
  * [satisfies].
  */
-class GeneralizedSootComparator : GeneralizedNodeComparator {
+class GeneralizedNodeComparator : GeneralizedNodeComparator {
     /**
      * Maps [Value]s to tags.
      */
     private val valueTags = HashMap<Value, Int>()
     /**
-     * Denotes the [Unit] to which a tag was first assigned.
+     * Denotes the [Stmt] to which a tag was first assigned.
      */
-    private val tagOrigins = HashMap<Int, Unit>()
+    private val tagOrigins = HashMap<Int, Stmt>()
 
     override fun satisfies(template: Node, instance: Node) =
         structuresAreEqual(template, instance) && generalizedValuesAreEqual(template, instance)
@@ -42,7 +42,7 @@ class GeneralizedSootComparator : GeneralizedNodeComparator {
      */
     override fun structuresAreEqual(template: Node, instance: Node): Boolean {
         if (template !is JimpleNode || instance !is JimpleNode) {
-            throw IllegalArgumentException("GeneralizedSootComparator cannot handle non-JimpleNodes.")
+            throw IllegalArgumentException("Jimple GeneralizedNodeComparator cannot handle non-Jimple nodes.")
         }
 
         return template == instance
@@ -52,8 +52,8 @@ class GeneralizedSootComparator : GeneralizedNodeComparator {
      * Returns true iff [template] and [instance] have the same generalized values.
      *
      * An instance is said to satisfy the generalized values of the template if both [template] and [instance]
-     * use [Value]s that either this comparator has not seen before or has seen before in two [Unit]s such that those
-     * were equal according to this method. If the [Unit]s to be compared have more than one [Value], the above
+     * use [Value]s that either this comparator has not seen before or has seen before in two [Stmt]s such that those
+     * were equal according to this method. If the [Stmt]s to be compared have more than one [Value], the above
      * procedure is applied to the respective [Value]s.
      *
      * @param template the template [Node]
@@ -63,7 +63,7 @@ class GeneralizedSootComparator : GeneralizedNodeComparator {
     @SuppressWarnings("UnsafeCallOnNullableType") // The !! is implicitly avoided by checking `templateHasTag`
     override fun generalizedValuesAreEqual(template: Node, instance: Node): Boolean {
         if (template !is JimpleNode || instance !is JimpleNode) {
-            throw IllegalArgumentException("GeneralizedSootComparator cannot handle non-JimpleNodes.")
+            throw IllegalArgumentException("Jimple GeneralizedNodeComparator cannot handle non-Jimple nodes.")
         }
 
         val templateValues = template.getValues()
@@ -102,7 +102,7 @@ class GeneralizedSootComparator : GeneralizedNodeComparator {
 
     private fun hasTag(value: Value) = valueTags.contains(value)
 
-    private fun isDefinedIn(value: Value, unit: Unit) = tagOrigins[valueTags[value]] === unit
+    private fun isDefinedIn(value: Value, statement: Stmt) = tagOrigins[valueTags[value]] === statement
 }
 
 /**

@@ -7,7 +7,7 @@ import org.apache.commons.cli.Option
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.cafejojo.schaapi.common.PatternFilter
-import org.cafejojo.schaapi.models.libraryusagegraph.jimple.compare.GeneralizedSootComparator
+import org.cafejojo.schaapi.models.libraryusagegraph.jimple.compare.GeneralizedNodeComparator
 import org.cafejojo.schaapi.patterndetector.prefixspan.PatternDetector
 import org.cafejojo.schaapi.patternfilter.jimple.IncompleteInitPatternFilterRule
 import org.cafejojo.schaapi.patternfilter.jimple.LengthPatternFilterRule
@@ -48,7 +48,7 @@ fun main(args: Array<String>) {
         libraryUsageGraphGenerator = LibraryUsageGraphGenerator,
         patternDetector = PatternDetector(
             cmd.getOptionOrDefault("pattern_detector_minimum_count", DEFAULT_PATTERN_DETECTOR_MINIMUM_COUNT).toInt(),
-            GeneralizedSootComparator()
+            GeneralizedNodeComparator()
         ),
         patternFilter = PatternFilter(
             IncompleteInitPatternFilterRule(),

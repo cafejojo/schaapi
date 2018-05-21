@@ -24,11 +24,11 @@ import soot.jimple.Stmt
 import soot.jimple.SwitchStmt
 import soot.jimple.ThrowStmt
 
-internal class GeneralizedSootComparatorStructureTest : Spek({
-    lateinit var comparator: GeneralizedSootComparator
+internal class GeneralizedNodeComparatorStructureTest : Spek({
+    lateinit var comparator: GeneralizedNodeComparator
 
     beforeEachTest {
-        comparator = GeneralizedSootComparator()
+        comparator = GeneralizedNodeComparator()
     }
 
     describe("bad weather cases") {
@@ -38,7 +38,7 @@ internal class GeneralizedSootComparatorStructureTest : Spek({
 
             assertThatThrownBy { comparator.structuresAreEqual(template, instance) }
                 .isExactlyInstanceOf(IllegalArgumentException::class.java)
-                .hasMessage("GeneralizedSootComparator cannot handle non-JimpleNodes.")
+                .hasMessage("Jimple GeneralizedNodeComparator cannot handle non-Jimple nodes.")
         }
 
         it("throws an exception if a non-JimpleNode instance is given") {
@@ -47,7 +47,7 @@ internal class GeneralizedSootComparatorStructureTest : Spek({
 
             assertThatThrownBy { comparator.structuresAreEqual(template, instance) }
                 .isExactlyInstanceOf(IllegalArgumentException::class.java)
-                .hasMessage("GeneralizedSootComparator cannot handle non-JimpleNodes.")
+                .hasMessage("Jimple GeneralizedNodeComparator cannot handle non-Jimple nodes.")
         }
     }
 
