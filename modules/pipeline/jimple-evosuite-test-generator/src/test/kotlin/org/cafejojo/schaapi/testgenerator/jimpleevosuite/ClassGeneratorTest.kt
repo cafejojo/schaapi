@@ -18,7 +18,7 @@ import soot.jimple.StringConstant
 import soot.options.Options
 import java.io.File
 
-internal class TestableGeneratorTest : Spek({
+internal class ClassGeneratorTest : Spek({
     beforeGroup {
         Options.v().set_soot_classpath(
             arrayOf(
@@ -40,7 +40,7 @@ internal class TestableGeneratorTest : Spek({
             val assignB = Jimple.v().newAssignStmt(b, StringConstant.v("world"))
             val assignC = Jimple.v().newAssignStmt(c, Jimple.v().newAddExpr(a, b))
 
-            val jimpleMethod = TestableGenerator("asdf").apply {
+            val jimpleMethod = ClassGenerator("asdf").apply {
                 generateMethod("method", listOf(assignA, assignB, assignC).map { JimpleNode(it) })
             }.sootClass.methods.last()
 
@@ -54,7 +54,7 @@ internal class TestableGeneratorTest : Spek({
 
             val assignC = Jimple.v().newAssignStmt(c, Jimple.v().newAddExpr(a, b))
 
-            val jimpleMethod = TestableGenerator("class").apply {
+            val jimpleMethod = ClassGenerator("class").apply {
                 generateMethod("method", listOf(assignC).map { JimpleNode(it) })
             }.sootClass.methods.last()
 
@@ -63,7 +63,7 @@ internal class TestableGeneratorTest : Spek({
         }
 
         it("generates a class with the correct name") {
-            val generator = TestableGenerator("ghjk")
+            val generator = ClassGenerator("ghjk")
             assertThat(generator.sootClass.name).isEqualTo("ghjk")
         }
 
@@ -76,7 +76,7 @@ internal class TestableGeneratorTest : Spek({
             val assignC = Jimple.v().newAssignStmt(c, Jimple.v().newAddExpr(a, b))
             val assignD = Jimple.v().newAssignStmt(d, IntConstant.v(23))
 
-            val generator = TestableGenerator("ghjk")
+            val generator = ClassGenerator("ghjk")
 
             val method1 = generator.apply {
                 generateMethod("method1", listOf(assignC).map { JimpleNode(it) })
@@ -98,7 +98,7 @@ internal class TestableGeneratorTest : Spek({
 
         val assignC = Jimple.v().newAssignStmt(c, Jimple.v().newAddExpr(a, b))
 
-        val jimpleMethod = TestableGenerator("myClass").apply {
+        val jimpleMethod = ClassGenerator("myClass").apply {
             generateMethod("method", listOf(assignC).map { JimpleNode(it) })
         }.sootClass.methods.last()
 
@@ -115,7 +115,7 @@ internal class TestableGeneratorTest : Spek({
         val assignC = Jimple.v().newAssignStmt(c, Jimple.v().newAddExpr(a, b))
         val assignB = Jimple.v().newAssignStmt(b, IntConstant.v(20))
 
-        val jimpleMethod = TestableGenerator("classy").apply {
+        val jimpleMethod = ClassGenerator("classy").apply {
             generateMethod("method", listOf(assignA, assignC, assignB).map { JimpleNode(it) })
         }.sootClass.methods.last()
 
@@ -132,7 +132,7 @@ internal class TestableGeneratorTest : Spek({
 
         val assignC = Jimple.v().newAssignStmt(c, Jimple.v().newAndExpr(a, b))
 
-        val jimpleMethod = TestableGenerator("clazz").apply {
+        val jimpleMethod = ClassGenerator("clazz").apply {
             generateMethod("method", listOf(assignC).map { JimpleNode(it) })
         }.sootClass.methods.last()
 
@@ -144,7 +144,7 @@ internal class TestableGeneratorTest : Spek({
 
         val assignC = Jimple.v().newAssignStmt(c, IntConstant.v(10))
 
-        val jimpleMethod = TestableGenerator("testClass").apply {
+        val jimpleMethod = ClassGenerator("testClass").apply {
             generateMethod("method", listOf(assignC).map { JimpleNode(it) })
         }.sootClass.methods.last()
 
@@ -157,7 +157,7 @@ internal class TestableGeneratorTest : Spek({
         val assignC = Jimple.v().newAssignStmt(c, IntConstant.v(10))
         val returnC = Jimple.v().newReturnStmt(c)
 
-        val jimpleMethod = TestableGenerator("klazz").apply {
+        val jimpleMethod = ClassGenerator("klazz").apply {
             generateMethod("method", listOf(assignC, returnC).map { JimpleNode(it) })
         }.sootClass.methods.last()
 
@@ -170,7 +170,7 @@ internal class TestableGeneratorTest : Spek({
         val assignC = Jimple.v().newAssignStmt(c, IntConstant.v(10))
         val returnC = Jimple.v().newReturnStmt(c)
 
-        val jimpleMethod = TestableGenerator("clasz").apply {
+        val jimpleMethod = ClassGenerator("clasz").apply {
             generateMethod("method", listOf(assignC, returnC).map { JimpleNode(it) })
         }.sootClass.methods.last()
 
@@ -184,7 +184,7 @@ internal class TestableGeneratorTest : Spek({
         val returnC = Jimple.v().newReturnStmt(c)
         val assignCAgain = Jimple.v().newAssignStmt(c, IntConstant.v(20))
 
-        val jimpleMethod = TestableGenerator("testTestTest").apply {
+        val jimpleMethod = ClassGenerator("testTestTest").apply {
             generateMethod("method", listOf(assignC, returnC, assignCAgain).map { JimpleNode(it) })
         }.sootClass.methods.last()
 

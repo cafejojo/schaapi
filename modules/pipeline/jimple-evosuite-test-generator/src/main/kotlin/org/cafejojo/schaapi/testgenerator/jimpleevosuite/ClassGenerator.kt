@@ -1,6 +1,5 @@
 package org.cafejojo.schaapi.testgenerator.jimpleevosuite
 
-import org.cafejojo.schaapi.common.ClassGenerator
 import org.cafejojo.schaapi.common.Node
 import org.cafejojo.schaapi.models.libraryusagegraph.jimple.JimpleNode
 import soot.Body
@@ -25,7 +24,7 @@ import soot.jimple.internal.JReturnVoidStmt
  *
  * @param className name of [SootClass] to be generated
  */
-class TestableGenerator(className: String) : ClassGenerator {
+class ClassGenerator(className: String) {
     init {
         Scene.v().addBasicClass("java.lang.Object")
     }
@@ -50,7 +49,7 @@ class TestableGenerator(className: String) : ClassGenerator {
      * @param methodName the name the method should have
      * @param nodes a list of [Node]s which should be converted into a method
      */
-    override fun generateMethod(methodName: String, nodes: List<Node>) {
+    fun generateMethod(methodName: String, nodes: List<Node>) {
         val statements = nodes.map {
             it as? JimpleNode ?: throw IllegalArgumentException("Cannot convert non-Jimple nodes to methods.")
         }.map { it.statement }
@@ -73,7 +72,7 @@ class TestableGenerator(className: String) : ClassGenerator {
      *
      * @param targetDirectory the path to the base directory in which to place the class file structure
      */
-    override fun writeToFile(targetDirectory: String) = TestableWriter.writeToFile(sootClass, targetDirectory)
+    fun writeToFile(targetDirectory: String) = ClassWriter.writeToFile(sootClass, targetDirectory)
 
     private fun addParameterAssignmentsToBody(jimpleBody: Body, methodParams: Set<Value>) {
         methodParams.forEachIndexed { paramIndex, param ->

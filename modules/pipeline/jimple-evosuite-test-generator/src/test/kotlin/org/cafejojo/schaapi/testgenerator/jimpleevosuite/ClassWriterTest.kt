@@ -9,8 +9,8 @@ import soot.Scene
 import java.nio.file.Paths
 import javax.xml.bind.DatatypeConverter
 
-internal class TestableWriterTest : Spek({
-    val classPath = Paths.get(TestableWriterTest::class.java.getResource("../../../../").toURI()).toString()
+internal class ClassWriterTest : Spek({
+    val classPath = Paths.get(ClassWriterTest::class.java.getResource("../../../../").toURI()).toString()
     val classOutputDirectory = Paths.get(classPath, "class-writer-test/").toFile()
 
     fun deleteClassFileOutput() {
@@ -31,7 +31,7 @@ internal class TestableWriterTest : Spek({
         it("outputs a class file in the root directory") {
             val testClassName = "MyTestClass"
 
-            TestableWriter.writeToFile(Scene.v().makeSootClass(testClassName), classOutputDirectory.path)
+            ClassWriter.writeToFile(Scene.v().makeSootClass(testClassName), classOutputDirectory.path)
 
             assertThat(Paths.get(classOutputDirectory.absolutePath, "$testClassName.class")).exists()
         }
@@ -40,8 +40,8 @@ internal class TestableWriterTest : Spek({
             val testClassName1 = "MyFirstTestClass"
             val testClassName2 = "MySecondTestClass"
 
-            TestableWriter.writeToFile(Scene.v().makeSootClass(testClassName1), classOutputDirectory.path)
-            TestableWriter.writeToFile(Scene.v().makeSootClass(testClassName2), classOutputDirectory.path)
+            ClassWriter.writeToFile(Scene.v().makeSootClass(testClassName1), classOutputDirectory.path)
+            ClassWriter.writeToFile(Scene.v().makeSootClass(testClassName2), classOutputDirectory.path)
 
             assertThat(Paths.get(classOutputDirectory.absolutePath, "$testClassName1.class")).exists()
             assertThat(Paths.get(classOutputDirectory.absolutePath, "$testClassName2.class")).exists()
@@ -50,7 +50,7 @@ internal class TestableWriterTest : Spek({
         it("outputs a class file in a directory structure") {
             val testClassName = "org.test.MyTestClass"
 
-            TestableWriter.writeToFile(Scene.v().makeSootClass(testClassName), classOutputDirectory.path)
+            ClassWriter.writeToFile(Scene.v().makeSootClass(testClassName), classOutputDirectory.path)
 
             assertThat(Paths.get(classOutputDirectory.absolutePath, "org", "test", "MyTestClass.class")).exists()
         }
@@ -59,7 +59,7 @@ internal class TestableWriterTest : Spek({
             val testClassName = "MyTestClass"
 
             val byteOutputStream = ByteOutputStream()
-            TestableWriter.writeToOutputStream(Scene.v().makeSootClass(testClassName), byteOutputStream)
+            ClassWriter.writeToOutputStream(Scene.v().makeSootClass(testClassName), byteOutputStream)
 
             assertThat(DatatypeConverter.printBase64Binary(byteOutputStream.bytes))
                 .isEqualTo("yv66vgAAAC4AAwcAAgEAC015VGVzdENsYXNzACAAAQ${"A".repeat(1324)}==")
