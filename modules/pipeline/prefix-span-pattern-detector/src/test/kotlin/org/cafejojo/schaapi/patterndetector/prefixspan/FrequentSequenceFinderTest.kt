@@ -224,6 +224,7 @@ internal class FrequentSequenceFinderTest : Spek({
             assertThat(patterns[listOf(node1, node2, node3, node4)]).isEqualTo(listOf(path1, path3))
         }
 
+        // TODO make test pass
         xit("should not store duplicate patterns") {
             val node1 = TestNode()
             val node2 = TestNode()

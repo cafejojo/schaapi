@@ -46,6 +46,7 @@ class FrequentSequenceFinderAndSootComparatorTest : Spek({
             assertThat(frequent).contains(listOf(node1, node2, node3))
         }
 
+        // TODO make test pass
         xit("should not store duplicate patterns") {
             val type1 = mock<Type> {}
             val type2 = mock<Type> {}
@@ -141,6 +142,7 @@ class FrequentSequenceFinderAndSootComparatorTest : Spek({
             assertThat(frequent).isEmpty()
         }
 
+        // TODO make test pass
         xit("should not find a pattern when multiple patterns use the same values") {
             val value1 = mockTypedValue()
             val value2 = mockTypedValue()
