@@ -1,7 +1,7 @@
 package org.cafejojo.schaapi.testgenerator.jimpleevosuite
 
 import org.cafejojo.schaapi.common.Node
-import org.cafejojo.schaapi.models.libraryusagegraph.jimple.JimpleNode
+import org.cafejojo.schaapi.libraryusagegraph.jimple.JimpleNode
 import soot.Body
 import soot.Local
 import soot.Modifier

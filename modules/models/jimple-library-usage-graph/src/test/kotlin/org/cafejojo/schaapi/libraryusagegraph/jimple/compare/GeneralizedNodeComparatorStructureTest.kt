@@ -1,11 +1,11 @@
-package org.cafejojo.schaapi.models.libraryusagegraph.jimple.compare
+package org.cafejojo.schaapi.libraryusagegraph.jimple.compare
 
 import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.mock
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.cafejojo.schaapi.common.Node
-import org.cafejojo.schaapi.models.libraryusagegraph.jimple.JimpleNode
+import org.cafejojo.schaapi.libraryusagegraph.jimple.JimpleNode
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.context
 import org.jetbrains.spek.api.dsl.describe

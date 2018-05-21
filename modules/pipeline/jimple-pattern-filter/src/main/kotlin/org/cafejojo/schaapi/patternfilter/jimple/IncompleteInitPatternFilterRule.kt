@@ -2,7 +2,7 @@ package org.cafejojo.schaapi.patternfilter.jimple
 
 import org.cafejojo.schaapi.common.Node
 import org.cafejojo.schaapi.common.PatternFilterRule
-import org.cafejojo.schaapi.models.libraryusagegraph.jimple.JimpleNode
+import org.cafejojo.schaapi.libraryusagegraph.jimple.JimpleNode
 import soot.jimple.InvokeStmt
 import soot.jimple.internal.JSpecialInvokeExpr
 

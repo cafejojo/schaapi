@@ -3,7 +3,7 @@ package org.cafejojo.schaapi.patternfilter.jimple
 import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.mock
 import org.assertj.core.api.Assertions.assertThat
-import org.cafejojo.schaapi.models.libraryusagegraph.jimple.JimpleNode
+import org.cafejojo.schaapi.libraryusagegraph.jimple.JimpleNode
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
