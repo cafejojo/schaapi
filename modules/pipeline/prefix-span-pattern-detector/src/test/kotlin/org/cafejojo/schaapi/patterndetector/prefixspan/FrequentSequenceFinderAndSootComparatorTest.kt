@@ -2,7 +2,7 @@ package org.cafejojo.schaapi.patterndetector.prefixspan
 
 import com.nhaarman.mockito_kotlin.mock
 import org.assertj.core.api.Assertions.assertThat
-import org.cafejojo.schaapi.common.GeneralizedNodeComparator
+import org.cafejojo.schaapi.models.libraryusagegraph.jimple.compare.GeneralizedNodeComparator
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
@@ -14,7 +14,6 @@ class FrequentSequenceFinderAndSootComparatorTest : Spek({
         it("should find a sequence of path length 1") {
             val node = mockJimpleNode()
             val path = listOf(node)
-
 
             val detector = FrequentSequenceFinder(listOf(path), 1, GeneralizedNodeComparator())
             detector.findFrequentSequences()
@@ -71,8 +70,7 @@ class FrequentSequenceFinderAndSootComparatorTest : Spek({
             val path2 = listOf(node11, node12, node6, node7, node8, node9, node10)
 
             val paths = listOf(path1, path2)
-            val frequent = PatternDetector(paths, 2, GeneralizedNodeComparator()).findFrequentSequences()
-
+            val frequent = FrequentSequenceFinder(paths, 2, GeneralizedNodeComparator()).findFrequentSequences()
 
             assertThat(frequent).hasSize(amountOfPossibleSubSequences(5))
         }
@@ -82,26 +80,26 @@ class FrequentSequenceFinderAndSootComparatorTest : Spek({
             val value2 = mockTypedValue()
             val value3 = mockTypedValue()
 
-            val node2 = mockJimpleNode(value2, value2)
-            val node3 = mockJimpleNode(value3, value1)
-            val node1 = mockJimpleNode(value1, value3)
-            val node7 = mockJimpleNode(value2, value1)
+            val node1 = mockJimpleNode(value2, value2)
+            val node2 = mockJimpleNode(value3, value1)
+            val node3 = mockJimpleNode(value1, value3)
+            val node4 = mockJimpleNode(value2, value1)
 
-            val node4 = mockJimpleNode(value1, value3)
             val node5 = mockJimpleNode(value2, value2)
             val node6 = mockJimpleNode(value3, value1)
+            val node7 = mockJimpleNode(value1, value3)
             val node8 = mockJimpleNode(value2, value1)
 
             val node9 = mockJimpleNode()
             val node10 = mockJimpleNode()
 
-            val path1 = listOf(node1, node2, node3, node7)
-            val path2 = listOf(node9, node10, node4, node5, node6, node8)
+            val path1 = listOf(node1, node2, node3, node4)
+            val path2 = listOf(node9, node10, node5, node6, node7, node8)
 
             val paths = listOf(path1, path2)
-            val frequent = PatternDetector(paths, 2, GeneralizedNodeComparator()).findFrequentSequences()
+            val frequent = FrequentSequenceFinder(paths, 2, GeneralizedNodeComparator()).findFrequentSequences()
 
-            assertThat(frequent).contains(listOf(node1, node2, node3, node7))
+            assertThat(frequent).contains(listOf(node1, node2, node3, node4))
         }
 
         it("should find a pattern when nodes don't have the same value but are the same node") {
@@ -117,7 +115,7 @@ class FrequentSequenceFinderAndSootComparatorTest : Spek({
             val path2 = listOf(node7, node8, node9, node10, node1, node2, node3)
 
             val paths = listOf(path1, path2)
-            val frequent = PatternDetector(paths, 2, GeneralizedNodeComparator()).findFrequentSequences()
+            val frequent = FrequentSequenceFinder(paths, 2, GeneralizedNodeComparator()).findFrequentSequences()
 
             assertThat(frequent).contains(listOf(node1, node2, node3))
         }
@@ -141,6 +139,33 @@ class FrequentSequenceFinderAndSootComparatorTest : Spek({
             val frequent = FrequentSequenceFinder(paths, 2, GeneralizedNodeComparator()).findFrequentSequences()
 
             assertThat(frequent).isEmpty()
+        }
+
+        xit("should not find a pattern when multiple patterns use the same values") {
+            val value1 = mockTypedValue()
+            val value2 = mockTypedValue()
+            val value3 = mockTypedValue()
+
+            val node1 = mockJimpleNode(value2, value2)
+            val node2 = mockJimpleNode(value3, value1)
+            val node3 = mockJimpleNode(value1, value3)
+            val node4 = mockJimpleNode(value2, value1)
+
+            val node5 = mockJimpleNode(value1, value3)
+            val node6 = mockJimpleNode(value2, value2)
+            val node7 = mockJimpleNode(value3, value1)
+            val node8 = mockJimpleNode(value2, value1)
+
+            val node9 = mockJimpleNode()
+            val node10 = mockJimpleNode()
+
+            val path1 = listOf(node4, node2, node3, node1)
+            val path2 = listOf(node9, node10, node5, node6, node7, node8)
+
+            val paths = listOf(path1, path2)
+            val frequent = FrequentSequenceFinder(paths, 2, GeneralizedNodeComparator()).findFrequentSequences()
+
+            assertThat(frequent).hasSize(4)
         }
     }
 })

@@ -5,6 +5,7 @@ import org.cafejojo.schaapi.patterndetector.prefixspan.FrequentSequenceFinder.Co
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
+import org.jetbrains.spek.api.dsl.xit
 
 internal class FrequentSequenceFinderTest : Spek({
     describe("when looking for common sequences of simple nodes in a path") {
@@ -221,6 +222,25 @@ internal class FrequentSequenceFinderTest : Spek({
             val patterns = patternDetector.mapFrequentSequencesToPaths()
 
             assertThat(patterns[listOf(node1, node2, node3, node4)]).isEqualTo(listOf(path1, path3))
+        }
+
+        xit("should not store duplicate patterns") {
+            val node1 = TestNode()
+            val node2 = TestNode()
+            val node3 = TestNode()
+            val node4 = TestNode()
+            val node5 = TestNode()
+
+            val node11 = TestNode()
+            val node12 = TestNode()
+
+            val path1 = listOf(node1, node2, node3, node4, node5)
+            val path2 = listOf(node11, node12, node1, node2, node3, node4, node5)
+
+            val paths = listOf(path1, path2)
+            val frequent = FrequentSequenceFinder(paths, 2, TestNodeComparator()).findFrequentSequences()
+
+            assertThat(frequent).hasSize(amountOfPossibleSubSequences(5))
         }
     }
 })
