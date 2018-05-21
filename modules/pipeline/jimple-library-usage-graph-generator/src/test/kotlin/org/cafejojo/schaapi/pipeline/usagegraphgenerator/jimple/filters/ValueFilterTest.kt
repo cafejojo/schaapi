@@ -35,10 +35,8 @@ import soot.shimple.PhiExpr
 import soot.shimple.ShimpleExpr
 
 internal class ValueFilterTest : Spek({
-    val libraryInvokeExpr =
-        constructInvokeExprMock(LIBRARY_CLASS)
-    val nonLibraryInvokeExpr =
-        constructInvokeExprMock(NON_LIBRARY_CLASS)
+    val libraryInvokeExpr = constructInvokeExprMock(LIBRARY_CLASS)
+    val nonLibraryInvokeExpr = constructInvokeExprMock(NON_LIBRARY_CLASS)
 
     val libraryType = mock<Type> {
         on { toString() } doReturn LIBRARY_CLASS
@@ -50,8 +48,7 @@ internal class ValueFilterTest : Spek({
     describe("filtering of expression values based on library usage") {
         it("filters invoke expressions") {
             assertThatItRetains(libraryInvokeExpr)
-            assertThatItDoesNotRetain(
-                nonLibraryInvokeExpr)
+            assertThatItDoesNotRetain(nonLibraryInvokeExpr)
         }
 
         it("filters unary operation expression") {
@@ -59,7 +56,6 @@ internal class ValueFilterTest : Spek({
                 on { op } doReturn libraryInvokeExpr
             })
             assertThatItDoesNotRetain(mock<UnopExpr> {
-
                 on { op } doReturn nonLibraryInvokeExpr
             })
         }
@@ -151,10 +147,8 @@ internal class ValueFilterTest : Spek({
     }
 
     describe("filtering of ref values based on library usage") {
-        val libraryClass =
-            constructDeclaringClass(LIBRARY_CLASS)
-        val nonLibraryClass =
-            constructDeclaringClass(NON_LIBRARY_CLASS)
+        val libraryClass = constructDeclaringClass(LIBRARY_CLASS)
+        val nonLibraryClass = constructDeclaringClass(NON_LIBRARY_CLASS)
 
         val libraryField = mock<SootField> {
             on { declaringClass } doReturn libraryClass
@@ -238,8 +232,7 @@ private fun constructDeclaringClass(declaringClassName: String) = mock<SootClass
 }
 
 private fun assertThatItDoesNotRecognize(value: Value) =
-    assertThrows<UnsupportedValueException> { ValueFilter(
-        libraryProject).retain(value) }
+    assertThrows<UnsupportedValueException> { ValueFilter(libraryProject).retain(value) }
 
 private fun assertThatItRetains(value: Value) =
     assertThat(ValueFilter(libraryProject).retain(value)).isTrue()

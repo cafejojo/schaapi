@@ -13,9 +13,7 @@ internal class FrequentSequenceFinderTest : Spek({
             val node1 = TestNode()
             val path = listOf(node1)
 
-            val detector = FrequentSequenceFinder(listOf(path),
-                1,
-                TestNodeComparator())
+            val detector = FrequentSequenceFinder(listOf(path), 1, TestNodeComparator())
             detector.findFrequentSequences()
 
             assertThat(detector.pathContainsSequence(path, listOf(node1))).isTrue()
@@ -26,9 +24,7 @@ internal class FrequentSequenceFinderTest : Spek({
             val node2 = TestNode()
             val path = listOf(node1)
 
-            val detector = FrequentSequenceFinder(listOf(path),
-                1,
-                TestNodeComparator())
+            val detector = FrequentSequenceFinder(listOf(path), 1, TestNodeComparator())
             detector.findFrequentSequences()
 
             assertThat(detector.pathContainsSequence(path, listOf(node2))).isFalse()
@@ -43,9 +39,7 @@ internal class FrequentSequenceFinderTest : Spek({
             val node6 = TestNode()
             val path = listOf(node1, node2, node3, node4, node5, node6)
 
-            val detector = FrequentSequenceFinder(listOf(path),
-                1,
-                TestNodeComparator())
+            val detector = FrequentSequenceFinder(listOf(path), 1, TestNodeComparator())
             detector.findFrequentSequences()
 
             assertThat(detector.pathContainsSequence(path, listOf(node1, node2))).isTrue()
@@ -60,9 +54,7 @@ internal class FrequentSequenceFinderTest : Spek({
             val node6 = TestNode()
             val path = listOf(node1, node2, node3, node4, node5, node6)
 
-            val detector = FrequentSequenceFinder(listOf(path),
-                1,
-                TestNodeComparator())
+            val detector = FrequentSequenceFinder(listOf(path), 1, TestNodeComparator())
             detector.findFrequentSequences()
 
             assertThat(detector.pathContainsSequence(path, listOf(node3, node4, node5))).isTrue()
@@ -77,9 +69,7 @@ internal class FrequentSequenceFinderTest : Spek({
             val node6 = TestNode()
             val path = listOf(node1, node2, node3, node4, node5, node6)
 
-            val detector = FrequentSequenceFinder(listOf(path),
-                1,
-                TestNodeComparator())
+            val detector = FrequentSequenceFinder(listOf(path), 1, TestNodeComparator())
             detector.findFrequentSequences()
 
             assertThat(detector.pathContainsSequence(path, listOf(node5, node6))).isTrue()
@@ -94,9 +84,7 @@ internal class FrequentSequenceFinderTest : Spek({
             val node6 = TestNode()
             val path = listOf(node1, node2, node3, node4, node5, node6)
 
-            val detector = FrequentSequenceFinder(listOf(path),
-                1,
-                TestNodeComparator())
+            val detector = FrequentSequenceFinder(listOf(path), 1, TestNodeComparator())
             detector.findFrequentSequences()
 
             assertThat(detector.pathContainsSequence(path, listOf(node5, node4))).isFalse()
@@ -109,9 +97,7 @@ internal class FrequentSequenceFinderTest : Spek({
             val node5 = TestNode()
             val path = listOf(node2, node3, node4, node5)
 
-            val detector = FrequentSequenceFinder(listOf(path),
-                1,
-                TestNodeComparator())
+            val detector = FrequentSequenceFinder(listOf(path), 1, TestNodeComparator())
             detector.findFrequentSequences()
 
             assertThat(detector.pathContainsSequence(path, listOf(node2, node4, node5))).isFalse()
@@ -120,10 +106,8 @@ internal class FrequentSequenceFinderTest : Spek({
 
     describe("when extracting suffixes from sequences") {
         it("should not return any suffixes if no path has prefix") {
-            val prefix = listOf(TestNode(),
-                TestNode())
-            val path1 = listOf(TestNode(),
-                TestNode())
+            val prefix = listOf(TestNode(), TestNode())
+            val path1 = listOf(TestNode(), TestNode())
             val path2 = listOf(TestNode())
 
             assertThat(extractSuffixes(prefix, listOf(path1, path2))).isEmpty()
@@ -150,9 +134,7 @@ internal class FrequentSequenceFinderTest : Spek({
             val path = listOf(node1, node2, node3)
 
             val paths = listOf(path)
-            val frequent = FrequentSequenceFinder(paths,
-                1,
-                TestNodeComparator()).findFrequentSequences()
+            val frequent = FrequentSequenceFinder(paths, 1, TestNodeComparator()).findFrequentSequences()
 
             assertThat(frequent).hasSize(6)
             assertThat(frequent).contains(path)
@@ -175,9 +157,7 @@ internal class FrequentSequenceFinderTest : Spek({
             val path3 = listOf(node7, node8, node9, node10)
 
             val paths = listOf(path1, path2, path3)
-            val frequent = FrequentSequenceFinder(paths,
-                2,
-                TestNodeComparator()).findFrequentSequences()
+            val frequent = FrequentSequenceFinder(paths, 2, TestNodeComparator()).findFrequentSequences()
 
             assertThat(frequent).isEmpty()
         }
@@ -190,9 +170,7 @@ internal class FrequentSequenceFinderTest : Spek({
             val path = listOf(node1, node2, node3, node1, node2, node3)
 
             val paths = listOf(path)
-            val frequent = FrequentSequenceFinder(paths,
-                2,
-                TestNodeComparator()).findFrequentSequences()
+            val frequent = FrequentSequenceFinder(paths, 2, TestNodeComparator()).findFrequentSequences()
 
             assertThat(frequent).contains(listOf(node1, node2, node3))
         }
@@ -214,9 +192,7 @@ internal class FrequentSequenceFinderTest : Spek({
             val path3 = listOf(node7, node8, node9, node10, node1, node2, node3)
 
             val paths = listOf(path1, path2, path3)
-            val frequent = FrequentSequenceFinder(paths,
-                2,
-                TestNodeComparator()).findFrequentSequences()
+            val frequent = FrequentSequenceFinder(paths, 2, TestNodeComparator()).findFrequentSequences()
 
             assertThat(frequent).contains(path1)
         }
@@ -240,9 +216,7 @@ internal class FrequentSequenceFinderTest : Spek({
             val path3 = listOf(node7, node8, node9, node10, node1, node2, node3, node4)
 
             val paths = listOf(path1, path2, path3)
-            val patternDetector = FrequentSequenceFinder(paths,
-                2,
-                TestNodeComparator())
+            val patternDetector = FrequentSequenceFinder(paths, 2, TestNodeComparator())
 
             patternDetector.findFrequentSequences()
             val patterns = patternDetector.mapFrequentSequencesToPaths()
@@ -265,12 +239,9 @@ internal class FrequentSequenceFinderTest : Spek({
             val path2 = listOf(node11, node12, node1, node2, node3, node4, node5)
 
             val paths = listOf(path1, path2)
-            val frequent = FrequentSequenceFinder(paths,
-                2,
-                TestNodeComparator()).findFrequentSequences()
+            val frequent = FrequentSequenceFinder(paths, 2, TestNodeComparator()).findFrequentSequences()
 
-            assertThat(frequent).hasSize(amountOfPossibleSubSequences(
-                5))
+            assertThat(frequent).hasSize(amountOfPossibleSubSequences(5))
         }
     }
 })

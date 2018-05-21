@@ -22,13 +22,12 @@ class TestGenerator(
         val outputPatterns = outputDirectory.resolve("patterns/").apply { mkdirs() }
         val outputTests = outputDirectory.resolve("tests/").apply { mkdirs() }
 
-        ClassGenerator(DEFAULT_PATTERN_CLASS_NAME)
-            .apply {
-                patterns.forEachIndexed { index, pattern ->
-                    generateMethod("pattern$index", pattern)
-                }
-                writeToFile(outputPatterns.absolutePath)
+        ClassGenerator(DEFAULT_PATTERN_CLASS_NAME).apply {
+            patterns.forEachIndexed { index, pattern ->
+                generateMethod("pattern$index", pattern)
             }
+            writeToFile(outputPatterns.absolutePath)
+        }
 
         EvoSuiteRunner(
             fullyQualifiedClassName = DEFAULT_PATTERN_CLASS_NAME,

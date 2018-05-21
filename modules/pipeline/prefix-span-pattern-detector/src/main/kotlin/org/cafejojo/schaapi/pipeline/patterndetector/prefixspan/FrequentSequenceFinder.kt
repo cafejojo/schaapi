@@ -95,10 +95,7 @@ class FrequentSequenceFinder(
                 val newPrefix = prefix + frequentItem
                 frequentSequences += newPrefix
 
-                runAlgorithm(newPrefix,
-                    extractSuffixes(
-                        prefix,
-                        allPaths))
+                runAlgorithm(newPrefix, extractSuffixes(prefix, allPaths))
             }
         }
     }

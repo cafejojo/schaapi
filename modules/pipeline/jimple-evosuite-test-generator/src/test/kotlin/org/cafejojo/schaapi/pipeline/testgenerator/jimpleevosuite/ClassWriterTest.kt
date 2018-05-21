@@ -31,8 +31,7 @@ internal class ClassWriterTest : Spek({
         it("outputs a class file in the root directory") {
             val testClassName = "MyTestClass"
 
-            ClassWriter.writeToFile(Scene.v().makeSootClass(
-                testClassName), classOutputDirectory.path)
+            ClassWriter.writeToFile(Scene.v().makeSootClass(testClassName), classOutputDirectory.path)
 
             assertThat(Paths.get(classOutputDirectory.absolutePath, "$testClassName.class")).exists()
         }
@@ -41,10 +40,8 @@ internal class ClassWriterTest : Spek({
             val testClassName1 = "MyFirstTestClass"
             val testClassName2 = "MySecondTestClass"
 
-            ClassWriter.writeToFile(Scene.v().makeSootClass(
-                testClassName1), classOutputDirectory.path)
-            ClassWriter.writeToFile(Scene.v().makeSootClass(
-                testClassName2), classOutputDirectory.path)
+            ClassWriter.writeToFile(Scene.v().makeSootClass(testClassName1), classOutputDirectory.path)
+            ClassWriter.writeToFile(Scene.v().makeSootClass(testClassName2), classOutputDirectory.path)
 
             assertThat(Paths.get(classOutputDirectory.absolutePath, "$testClassName1.class")).exists()
             assertThat(Paths.get(classOutputDirectory.absolutePath, "$testClassName2.class")).exists()
@@ -53,8 +50,7 @@ internal class ClassWriterTest : Spek({
         it("outputs a class file in a directory structure") {
             val testClassName = "org.test.MyTestClass"
 
-            ClassWriter.writeToFile(Scene.v().makeSootClass(
-                testClassName), classOutputDirectory.path)
+            ClassWriter.writeToFile(Scene.v().makeSootClass(testClassName), classOutputDirectory.path)
 
             assertThat(Paths.get(classOutputDirectory.absolutePath, "org", "test", "MyTestClass.class")).exists()
         }
@@ -63,8 +59,7 @@ internal class ClassWriterTest : Spek({
             val testClassName = "MyTestClass"
 
             val byteOutputStream = ByteOutputStream()
-            ClassWriter.writeToOutputStream(Scene.v().makeSootClass(
-                testClassName), byteOutputStream)
+            ClassWriter.writeToOutputStream(Scene.v().makeSootClass(testClassName), byteOutputStream)
 
             assertThat(DatatypeConverter.printBase64Binary(byteOutputStream.bytes))
                 .isEqualTo("yv66vgAAAC4AAwcAAgEAC015VGVzdENsYXNzACAAAQ${"A".repeat(1324)}==")

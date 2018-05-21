@@ -18,11 +18,7 @@ object ControlFlowGraphGenerator {
      * @param body a Soot method [Body]
      * @return the [Body]'s root [Unit] wrapped in a [Node]
      */
-    fun create(body: Body): Node? = BriefUnitGraph(body).let {
-        transform(it,
-            HashMap(),
-            it.rootUnitIfExists())
-    }
+    fun create(body: Body): Node? = BriefUnitGraph(body).let { transform(it, HashMap(), it.rootUnitIfExists()) }
 
     /**
      * Wraps the control flow graph recursively within [Node] objects.
@@ -52,12 +48,7 @@ object ControlFlowGraphGenerator {
 
         mappedUnits[unit] = node
 
-        cfg.getSuccsOf(unit).forEach {
-            transform(cfg,
-                mappedUnits,
-                it,
-                node)
-        }
+        cfg.getSuccsOf(unit).forEach { transform(cfg, mappedUnits, it, node) }
 
         return node
     }

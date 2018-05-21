@@ -9,8 +9,7 @@ import java.io.File
 class JavaMavenProject(
     override val projectDir: File,
     override val mavenDir: File = DEFAULT_MAVEN_HOME
-) : JavaProject,
-    MavenProject {
+) : JavaProject, MavenProject {
     companion object {
         val DEFAULT_MAVEN_HOME = File(System.getProperty("user.home") + "/.schaapi/maven")
     }

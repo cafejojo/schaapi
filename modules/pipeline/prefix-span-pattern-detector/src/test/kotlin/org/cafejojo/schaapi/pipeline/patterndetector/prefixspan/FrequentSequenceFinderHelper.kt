@@ -20,8 +20,7 @@ fun mockJimpleNode(valueLeft: Value, valueRight: Value): JimpleNode =
  * Create a Jimple node that returns a mock of a [Value] such that by default no two values have the same type.
  */
 fun mockJimpleNode(valueTypeLeft: Type? = null, valueTypeRight: Type? = null): JimpleNode =
-    mockJimpleNode(mockTypedValue(
-        valueTypeLeft), mockTypedValue(valueTypeRight))
+    mockJimpleNode(mockTypedValue(valueTypeLeft), mockTypedValue(valueTypeRight))
 
 /**
  * Creates a mock of a [Value] such that no such two mocks equal each other.

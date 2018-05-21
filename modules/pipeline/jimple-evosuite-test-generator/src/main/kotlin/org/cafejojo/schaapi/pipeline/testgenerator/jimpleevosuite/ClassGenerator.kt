@@ -72,13 +72,11 @@ class ClassGenerator(className: String) {
      *
      * @param targetDirectory the path to the base directory in which to place the class file structure
      */
-    fun writeToFile(targetDirectory: String) =
-        ClassWriter.writeToFile(sootClass, targetDirectory)
+    fun writeToFile(targetDirectory: String) = ClassWriter.writeToFile(sootClass, targetDirectory)
 
     private fun addParameterAssignmentsToBody(jimpleBody: Body, methodParams: Set<Value>) {
         methodParams.forEachIndexed { paramIndex, param ->
-            if (param !is Local) throw ValueIsNotLocalException(
-                param)
+            if (param !is Local) throw ValueIsNotLocalException(param)
 
             val identityReference = Jimple.v().newParameterRef(param.type, paramIndex)
             val identityStatement = Jimple.v().newIdentityStmt(param, identityReference)
@@ -94,9 +92,7 @@ class ClassGenerator(className: String) {
             jimpleBody.locals.addAll(statement.defBoxes
                 .map { it.value }
                 .filter { !methodParams.contains(it) }
-                .map { it as? Local ?: throw ValueIsNotLocalException(
-                    it)
-                }
+                .map { it as? Local ?: throw ValueIsNotLocalException(it) }
             )
 
             if (statement is JReturnStmt) return

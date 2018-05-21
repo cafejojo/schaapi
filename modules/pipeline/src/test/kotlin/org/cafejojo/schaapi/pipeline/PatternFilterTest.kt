@@ -20,8 +20,7 @@ internal object PatternFilterTest : Spek({
         }
 
         it("retains all patterns that are in accordance with the given rules") {
-            val lengthTwoPattern = listOf(FakeNode(),
-                FakeNode())
+            val lengthTwoPattern = listOf(FakeNode(), FakeNode())
             val patterns = listOf(
                 listOf(FakeNode()),
                 lengthTwoPattern,

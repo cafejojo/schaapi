@@ -33,12 +33,8 @@ fun main(args: Array<String>) {
 
     val mavenDir = File(cmd.getOptionValue("maven_dir") ?: JavaMavenProject.DEFAULT_MAVEN_HOME.absolutePath)
     val output = File(cmd.getOptionValue('o')).apply { mkdirs() }
-    val library =
-        JavaMavenProject(File(cmd.getOptionValue('l')), mavenDir)
-    val users = cmd.getOptionValues('u').map {
-        JavaMavenProject(File(it),
-            mavenDir)
-    }
+    val library = JavaMavenProject(File(cmd.getOptionValue('l')), mavenDir)
+    val users = cmd.getOptionValues('u').map { JavaMavenProject(File(it), mavenDir) }
 
     if (!mavenDir.resolve("bin/mvn").exists() || cmd.hasOption("repair_maven")) {
         MavenInstaller().installMaven(mavenDir)

@@ -23,8 +23,7 @@ object ClassWriter {
      * @param targetDirectory the path to the base directory in which to place the class file structure
      */
     fun writeToFile(sootClass: SootClass, targetDirectory: String) {
-        val outputFile = Paths.get(targetDirectory,
-            generateClassFilePath(sootClass.name)).toFile()
+        val outputFile = Paths.get(targetDirectory, generateClassFilePath(sootClass.name)).toFile()
         outputFile.parentFile.mkdirs()
         FileOutputStream(outputFile).use {
             writeToOutputStream(sootClass, it)

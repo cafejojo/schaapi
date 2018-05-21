@@ -16,8 +16,7 @@ import soot.toolkits.graph.UnitGraph
  *
  * @param project library project
  */
-class BranchStatementFilter(project: JavaProject) :
-    Filter {
+class BranchStatementFilter(project: JavaProject) : Filter {
     private val valueFilter = ValueFilter(project)
 
     override fun apply(body: Body) {
@@ -38,8 +37,7 @@ class BranchStatementFilter(project: JavaProject) :
     }
 
     private fun retain(branch: BranchStatement) =
-        branch.hasNonEmptyBranches || valueFilter.retain(BranchStatement.getConditionValue(
-            branch.statement))
+        branch.hasNonEmptyBranches || valueFilter.retain(BranchStatement.getConditionValue(branch.statement))
 }
 
 private class BranchStatement(private val body: Body, val statement: Unit) {

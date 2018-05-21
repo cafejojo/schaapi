@@ -15,8 +15,6 @@ class PatternDetector(
     override fun findPatterns(graphs: List<Node>): List<Pattern> {
         val userPaths = graphs.flatMap { it.flatMap { PathEnumerator(it).enumerate() } }
 
-        return FrequentSequenceFinder(userPaths,
-            minimumCount,
-            comparator).findFrequentSequences()
+        return FrequentSequenceFinder(userPaths, minimumCount, comparator).findFrequentSequences()
     }
 }

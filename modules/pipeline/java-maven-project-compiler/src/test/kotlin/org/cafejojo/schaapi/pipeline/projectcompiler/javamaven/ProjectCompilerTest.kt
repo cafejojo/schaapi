@@ -47,8 +47,7 @@ internal class ProjectCompilerTest : Spek({
 
     describe("Java Maven project compilation") {
         it("compiles codeless projects") {
-            setUpTestFiles("/ProjectCompiler/no-sources",
-                target)
+            setUpTestFiles("/ProjectCompiler/no-sources", target)
 
             val project = JavaMavenProject(target, mavenHome)
             ProjectCompiler().compile(project)
@@ -82,8 +81,7 @@ internal class ProjectCompilerTest : Spek({
         }
 
         it("compiles projects with dependencies") {
-            setUpTestFiles("/ProjectCompiler/dependencies",
-                target)
+            setUpTestFiles("/ProjectCompiler/dependencies", target)
 
             val project = JavaMavenProject(target, mavenHome)
             ProjectCompiler().compile(project)
