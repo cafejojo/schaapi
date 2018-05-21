@@ -15,8 +15,7 @@ class FrequentSequenceFinderAndSootComparatorTest : Spek({
             val node = mockJimpleNode()
             val path = listOf(node)
 
-            val detector = FrequentSequenceFinder(listOf(path), 1,
-                GeneralizedNodeComparator())
+            val detector = FrequentSequenceFinder(listOf(path), 1, GeneralizedNodeComparator())
             detector.findFrequentSequences()
 
             assertThat(detector.pathContainsSequence(path, listOf(node))).isTrue()
@@ -42,8 +41,7 @@ class FrequentSequenceFinderAndSootComparatorTest : Spek({
             val path2 = listOf(node7, node8, node9, node10, node4, node5, node6)
 
             val paths = listOf(path1, path2)
-            val frequent = FrequentSequenceFinder(paths, 2,
-                GeneralizedNodeComparator()).findFrequentSequences()
+            val frequent = FrequentSequenceFinder(paths, 2, GeneralizedNodeComparator()).findFrequentSequences()
 
             assertThat(frequent).contains(listOf(node1, node2, node3))
         }
@@ -73,8 +71,7 @@ class FrequentSequenceFinderAndSootComparatorTest : Spek({
             val path2 = listOf(node11, node12, node6, node7, node8, node9, node10)
 
             val paths = listOf(path1, path2)
-            val frequent = FrequentSequenceFinder(paths, 2,
-                GeneralizedNodeComparator()).findFrequentSequences()
+            val frequent = FrequentSequenceFinder(paths, 2, GeneralizedNodeComparator()).findFrequentSequences()
 
             assertThat(frequent).hasSize(amountOfPossibleSubSequences(5))
         }
@@ -101,8 +98,7 @@ class FrequentSequenceFinderAndSootComparatorTest : Spek({
             val path2 = listOf(node9, node10, node5, node6, node7, node8)
 
             val paths = listOf(path1, path2)
-            val frequent = FrequentSequenceFinder(paths, 2,
-                GeneralizedNodeComparator()).findFrequentSequences()
+            val frequent = FrequentSequenceFinder(paths, 2, GeneralizedNodeComparator()).findFrequentSequences()
 
             assertThat(frequent).contains(listOf(node1, node2, node3, node4))
         }
@@ -120,8 +116,7 @@ class FrequentSequenceFinderAndSootComparatorTest : Spek({
             val path2 = listOf(node7, node8, node9, node10, node1, node2, node3)
 
             val paths = listOf(path1, path2)
-            val frequent = FrequentSequenceFinder(paths, 2,
-                GeneralizedNodeComparator()).findFrequentSequences()
+            val frequent = FrequentSequenceFinder(paths, 2, GeneralizedNodeComparator()).findFrequentSequences()
 
             assertThat(frequent).contains(listOf(node1, node2, node3))
         }
@@ -142,8 +137,7 @@ class FrequentSequenceFinderAndSootComparatorTest : Spek({
             val path2 = listOf(node7, node8, node9, node10, node4, node5, node6)
 
             val paths = listOf(path1, path2)
-            val frequent = FrequentSequenceFinder(paths, 2,
-                GeneralizedNodeComparator()).findFrequentSequences()
+            val frequent = FrequentSequenceFinder(paths, 2, GeneralizedNodeComparator()).findFrequentSequences()
 
             assertThat(frequent).isEmpty()
         }
@@ -171,8 +165,7 @@ class FrequentSequenceFinderAndSootComparatorTest : Spek({
             val path2 = listOf(node9, node10, node5, node6, node7, node8)
 
             val paths = listOf(path1, path2)
-            val frequent = FrequentSequenceFinder(paths, 2,
-                GeneralizedNodeComparator()).findFrequentSequences()
+            val frequent = FrequentSequenceFinder(paths, 2, GeneralizedNodeComparator()).findFrequentSequences()
 
             assertThat(frequent).hasSize(4)
         }

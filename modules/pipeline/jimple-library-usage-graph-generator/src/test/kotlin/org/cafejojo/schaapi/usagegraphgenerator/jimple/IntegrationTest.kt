@@ -234,5 +234,4 @@ private fun assertThatStructureMatches(structure: Node, cfg: Node) {
 
 private class PreviousBranchNode(override val successors: MutableList<Node> = arrayListOf()) : Node
 
-private inline fun <reified T : Stmt> node(vararg successors: Node) =
-    JimpleNode(mock<T>(), successors.toMutableList())
+private inline fun <reified T : Stmt> node(vararg successors: Node) = JimpleNode(mock<T>(), successors.toMutableList())

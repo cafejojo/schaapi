@@ -41,9 +41,7 @@ internal class ClassGeneratorTest : Spek({
             val assignC = Jimple.v().newAssignStmt(c, Jimple.v().newAddExpr(a, b))
 
             val jimpleMethod = ClassGenerator("asdf").apply {
-                generateMethod("method", listOf(assignA, assignB, assignC).map {
-                    JimpleNode(it)
-                })
+                generateMethod("method", listOf(assignA, assignB, assignC).map { JimpleNode(it) })
             }.sootClass.methods.last()
 
             assertThat(jimpleMethod.parameterCount).isZero()
@@ -57,9 +55,7 @@ internal class ClassGeneratorTest : Spek({
             val assignC = Jimple.v().newAssignStmt(c, Jimple.v().newAddExpr(a, b))
 
             val jimpleMethod = ClassGenerator("class").apply {
-                generateMethod("method", listOf(assignC).map {
-                    JimpleNode(it)
-                })
+                generateMethod("method", listOf(assignC).map { JimpleNode(it) })
             }.sootClass.methods.last()
 
             assertThat(jimpleMethod.parameterTypes).containsExactly(IntType.v(), IntType.v())
@@ -83,14 +79,10 @@ internal class ClassGeneratorTest : Spek({
             val generator = ClassGenerator("ghjk")
 
             val method1 = generator.apply {
-                generateMethod("method1", listOf(assignC).map {
-                    JimpleNode(it)
-                })
+                generateMethod("method1", listOf(assignC).map { JimpleNode(it) })
             }.sootClass.methods.last()
             val method2 = generator.apply {
-                generateMethod("method2", listOf(assignD).map {
-                    JimpleNode(it)
-                })
+                generateMethod("method2", listOf(assignD).map { JimpleNode(it) })
             }.sootClass.methods.last()
 
             assertThat(method1.parameterCount).isEqualTo(2)
@@ -124,9 +116,7 @@ internal class ClassGeneratorTest : Spek({
         val assignB = Jimple.v().newAssignStmt(b, IntConstant.v(20))
 
         val jimpleMethod = ClassGenerator("classy").apply {
-            generateMethod("method", listOf(assignA, assignC, assignB).map {
-                JimpleNode(it)
-            })
+            generateMethod("method", listOf(assignA, assignC, assignB).map { JimpleNode(it) })
         }.sootClass.methods.last()
 
         assertThat(jimpleMethod.parameterTypes).containsExactly(IntType.v())
@@ -168,9 +158,7 @@ internal class ClassGeneratorTest : Spek({
         val returnC = Jimple.v().newReturnStmt(c)
 
         val jimpleMethod = ClassGenerator("klazz").apply {
-            generateMethod("method", listOf(assignC, returnC).map {
-                JimpleNode(it)
-            })
+            generateMethod("method", listOf(assignC, returnC).map { JimpleNode(it) })
         }.sootClass.methods.last()
 
         assertThat(jimpleMethod.returnType).isEqualTo(c.type)
@@ -183,9 +171,7 @@ internal class ClassGeneratorTest : Spek({
         val returnC = Jimple.v().newReturnStmt(c)
 
         val jimpleMethod = ClassGenerator("clasz").apply {
-            generateMethod("method", listOf(assignC, returnC).map {
-                JimpleNode(it)
-            })
+            generateMethod("method", listOf(assignC, returnC).map { JimpleNode(it) })
         }.sootClass.methods.last()
 
         assertThat(jimpleMethod.returnType).isEqualTo(c.type)
@@ -199,9 +185,7 @@ internal class ClassGeneratorTest : Spek({
         val assignCAgain = Jimple.v().newAssignStmt(c, IntConstant.v(20))
 
         val jimpleMethod = ClassGenerator("testTestTest").apply {
-            generateMethod("method", listOf(assignC, returnC, assignCAgain).map {
-                JimpleNode(it)
-            })
+            generateMethod("method", listOf(assignC, returnC, assignCAgain).map { JimpleNode(it) })
         }.sootClass.methods.last()
 
         assertThat(jimpleMethod.activeBody.units).hasSize(2)

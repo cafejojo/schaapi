@@ -281,10 +281,9 @@ internal class GeneralizedNodeComparatorValueTest : Spek({
                 comparator.satisfies(fakeTemplate, fakeInstance)
 
                 val realTemplateValue = mockValue()
-                val realUnfinalizedTemplate =
-                    JimpleNode(mock<ReturnStmt> {
-                        on { it.op } doReturn realTemplateValue
-                    })
+                val realUnfinalizedTemplate = JimpleNode(mock<ReturnStmt> {
+                    on { it.op } doReturn realTemplateValue
+                })
                 val realFinalizedTemplate = JimpleNode(mock<ReturnStmt> {
                     on { it.op } doReturn realTemplateValue
                 })
