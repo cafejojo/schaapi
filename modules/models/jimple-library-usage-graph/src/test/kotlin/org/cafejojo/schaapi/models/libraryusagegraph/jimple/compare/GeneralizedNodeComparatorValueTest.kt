@@ -17,7 +17,7 @@ import soot.jimple.Stmt
 import soot.jimple.SwitchStmt
 import soot.jimple.ThrowStmt
 
-internal class GeneralizedSootComparatorValueTest : Spek({
+internal class GeneralizedNodeComparatorValueTest : Spek({
     lateinit var comparator: GeneralizedNodeComparator
 
     beforeEachTest {
