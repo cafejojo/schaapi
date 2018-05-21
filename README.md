@@ -129,4 +129,4 @@ If you discover any security related issues, please email cafejojo@casperboone.n
 - [All Contributors](../../contributors)
 
 ## License
-The MIT License (MIT). Please see the [license file](LICENSE.md) for more information.
+The MIT License (MIT). Please see the [license file](LICENSE) for more information.
