@@ -16,13 +16,6 @@ import java.io.File
  * Library usage graph generator based on Soot.
  */
 object LibraryUsageGraphGenerator : LibraryUsageGraphGenerator {
-    /**
-     * Generates usage graphs for each method in each class of the user project.
-     *
-     * @param libraryProject library project
-     * @param userProject library user project
-     * @return list of list of graphs
-     */
     override fun generate(libraryProject: Project, userProject: Project): List<Node> {
         if (libraryProject !is JavaProject) throw IllegalArgumentException("Library project must be JavaProject.")
         if (userProject !is JavaProject) throw IllegalArgumentException("User project must be JavaProject.")

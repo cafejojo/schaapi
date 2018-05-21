@@ -1,7 +1,7 @@
 package org.cafejojo.schaapi.common
 
 /**
- * Represents a filter for generated patterns.
+ * Decides whether a [Pattern] should be retained.
  */
 interface PatternFilterRule {
     /**

@@ -3,13 +3,13 @@ package org.cafejojo.schaapi.common
 import java.io.File
 
 /**
- * Represents the test generator that generates tests based on patterns.
+ * Generates test files based on [Pattern]s.
  */
 interface TestGenerator {
     /**
-     * Generates tests based on patterns.
+     * Generates a test file based on the given [patterns].
      *
-     * @param patterns a list of patterns
+     * @param patterns a list of [Pattern]s
      * @return a test file containing all generated tests
      */
     fun generate(patterns: List<Pattern>): File
