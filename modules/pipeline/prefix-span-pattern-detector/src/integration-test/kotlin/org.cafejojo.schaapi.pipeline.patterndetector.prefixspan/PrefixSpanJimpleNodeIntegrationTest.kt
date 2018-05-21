@@ -11,16 +11,6 @@ import soot.Type
 
 class PrefixSpanJimpleNodeIntegrationTest : Spek({
     describe("when looking for common sequences in patterns of statements using the generalized soot comparator") {
-//        it("should find a sequence of path length 1") {
-//            val node = mockJimpleNode()
-//            val path = listOf(node)
-//
-//            val detector = FrequentSequenceFinder(listOf(path), 1, GeneralizedNodeComparator())
-//            detector.findFrequentSequences()
-//
-//            assertThat(detector.pathContainsSequence(path, listOf(node))).isTrue()
-//        }
-
         it("should find a pattern with multiple nodes which have different values with the same type") {
             val type1 = mock<Type> {}
             val type2 = mock<Type> {}
@@ -43,7 +33,7 @@ class PrefixSpanJimpleNodeIntegrationTest : Spek({
             val paths = listOf(path1, path2)
             val frequent = FrequentSequenceFinder(paths, 2, GeneralizedNodeComparator()).findFrequentSequences()
 
-            assertThat(frequent).doesNotContain(listOf(node1, node2, node3))
+            assertThat(frequent).contains(listOf(node1, node2, node3))
         }
 
         // TODO make test pass

@@ -35,6 +35,10 @@ task integrationTest(type: Test, description: "Runs the integration tests.", gro
     jacoco {
         append = false
     }
+
+    useJUnitPlatform() {
+        includeEngines "spek"
+    }
 }
 
 jacocoTestReport {
