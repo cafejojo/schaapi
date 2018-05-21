@@ -1,0 +1,19 @@
+apply plugin: "application"
+
+mainClassName = "org.cafejojo.schaapi.SchaapiKt"
+
+repositories {
+    maven { url "https://soot-build.cs.uni-paderborn.de/nexus/repository/soot-release/" }
+}
+
+dependencies {
+    compile project(":java-maven-project")
+    compile project(":java-maven-project-compiler")
+    compile project(":jimple-evosuite-test-generator")
+    compile project(":jimple-library-usage-graph")
+    compile project(":jimple-library-usage-graph-generator")
+    compile project(":jimple-pattern-filter")
+    compile project(":prefix-span-pattern-detector")
+
+    compile group: "commons-cli", name: "commons-cli", version: commonsCliVersion
+}
