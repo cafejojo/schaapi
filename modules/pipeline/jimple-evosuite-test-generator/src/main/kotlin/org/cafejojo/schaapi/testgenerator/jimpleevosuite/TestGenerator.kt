@@ -29,7 +29,7 @@ class TestGenerator(
             writeToFile(outputPatterns.absolutePath)
         }
 
-        EvoSuiteTestGenerator(
+        EvoSuiteRunner(
             fullyQualifiedClassName = DEFAULT_PATTERN_CLASS_NAME,
             classpath = outputPatterns.absolutePath + File.pathSeparator + library.classpath,
             outputDirectory = outputTests.absolutePath,
