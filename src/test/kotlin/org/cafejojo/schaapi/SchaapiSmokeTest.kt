@@ -4,6 +4,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.it
 import java.io.File
+import java.net.URLDecoder
 import java.nio.file.Files
 
 /**
@@ -38,4 +39,5 @@ internal class SchaapiSmokeTest : Spek({
     }
 })
 
-private fun getResourcePath(path: String) = SchaapiSmokeTest::class.java.getResource(path).path
+private fun getResourcePath(path: String) =
+    URLDecoder.decode(SchaapiSmokeTest::class.java.getResource(path).path, "UTF-8")
