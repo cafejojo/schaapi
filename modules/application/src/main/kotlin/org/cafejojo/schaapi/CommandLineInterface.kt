@@ -7,7 +7,7 @@ import org.apache.commons.cli.Option
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.cafejojo.schaapi.common.PatternFilter
-import org.cafejojo.schaapi.models.libraryusagegraph.jimple.compare.GeneralizedNodeComparator
+import org.cafejojo.schaapi.libraryusagegraph.jimple.compare.GeneralizedNodeComparator
 import org.cafejojo.schaapi.patterndetector.prefixspan.PatternDetector
 import org.cafejojo.schaapi.patternfilter.jimple.IncompleteInitPatternFilterRule
 import org.cafejojo.schaapi.patternfilter.jimple.LengthPatternFilterRule

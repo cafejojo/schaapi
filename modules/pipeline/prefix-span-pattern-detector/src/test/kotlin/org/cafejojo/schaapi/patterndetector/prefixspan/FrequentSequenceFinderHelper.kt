@@ -2,7 +2,7 @@ package org.cafejojo.schaapi.patterndetector.prefixspan
 
 import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.mock
-import org.cafejojo.schaapi.models.libraryusagegraph.jimple.JimpleNode
+import org.cafejojo.schaapi.libraryusagegraph.jimple.JimpleNode
 import soot.Type
 import soot.Value
 import soot.jimple.DefinitionStmt

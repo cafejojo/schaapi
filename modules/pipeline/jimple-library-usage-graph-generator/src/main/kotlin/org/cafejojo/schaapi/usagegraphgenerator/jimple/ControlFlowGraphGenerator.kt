@@ -1,7 +1,7 @@
 package org.cafejojo.schaapi.usagegraphgenerator.jimple
 
 import org.cafejojo.schaapi.common.Node
-import org.cafejojo.schaapi.models.libraryusagegraph.jimple.JimpleNode
+import org.cafejojo.schaapi.libraryusagegraph.jimple.JimpleNode
 import soot.Body
 import soot.Unit
 import soot.jimple.Stmt

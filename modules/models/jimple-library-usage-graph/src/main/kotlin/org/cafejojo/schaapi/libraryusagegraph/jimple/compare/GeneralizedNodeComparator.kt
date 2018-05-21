@@ -1,8 +1,8 @@
-package org.cafejojo.schaapi.models.libraryusagegraph.jimple.compare
+package org.cafejojo.schaapi.libraryusagegraph.jimple.compare
 
 import org.cafejojo.schaapi.common.GeneralizedNodeComparator
 import org.cafejojo.schaapi.common.Node
-import org.cafejojo.schaapi.models.libraryusagegraph.jimple.JimpleNode
+import org.cafejojo.schaapi.libraryusagegraph.jimple.JimpleNode
 import soot.Scene
 import soot.Type
 import soot.Value
