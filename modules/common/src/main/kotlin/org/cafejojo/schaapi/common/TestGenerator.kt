@@ -7,7 +7,7 @@ import java.io.File
  */
 interface TestGenerator {
     /**
-     * Generates  a test file based on the given [patterns].
+     * Generates a test file based on the given [patterns].
      *
      * @param patterns a list of [Pattern]s
      * @return a test file containing all generated tests

@@ -5,7 +5,7 @@ package org.cafejojo.schaapi.common
  */
 interface LibraryUsageGraphGenerator {
     /**
-     * Generates all usage graphs for the user project with respect to the library graph.
+     * Generates all usage graphs for the user project with respect to the library project.
      *
      * @param libraryProject library project
      * @param userProject library user project
