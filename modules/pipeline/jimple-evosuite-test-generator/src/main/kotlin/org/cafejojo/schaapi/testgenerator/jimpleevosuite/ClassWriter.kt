@@ -12,7 +12,7 @@ import java.nio.file.Paths
 /**
  * Functionality for serializing a [SootClass] to JVM bytecode.
  */
-object TestableWriter {
+object ClassWriter {
     /**
      * Writes the given [sootClass] to a class file.
      *

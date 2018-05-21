@@ -1,7 +1,7 @@
 package org.cafejojo.schaapi.usagegraphgenerator.jimple
 
-import org.cafejojo.schaapi.common.Node
 import org.cafejojo.schaapi.common.LibraryUsageGraphGenerator
+import org.cafejojo.schaapi.common.Node
 import org.cafejojo.schaapi.common.Project
 import org.cafejojo.schaapi.project.javamaven.JavaProject
 import org.cafejojo.schaapi.usagegraphgenerator.jimple.filters.BranchStatementFilter
