@@ -86,7 +86,7 @@ allprojects {
 }
 
 
-// Root project config
+// Global config
 apply from: "gradle/detekt.gradle"
 
 // Jacoco report combining all reports
