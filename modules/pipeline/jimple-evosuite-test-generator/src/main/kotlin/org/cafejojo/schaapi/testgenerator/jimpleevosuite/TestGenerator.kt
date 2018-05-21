@@ -4,7 +4,6 @@ import org.cafejojo.schaapi.common.Pattern
 import org.cafejojo.schaapi.common.TestGenerator
 import org.cafejojo.schaapi.project.javamaven.JavaProject
 import java.io.File
-import java.io.OutputStream
 import java.io.PrintStream
 
 private const val DEFAULT_PATTERN_CLASS_NAME = "RegressionTest"
@@ -19,7 +18,7 @@ class TestGenerator(
     private val processStandardStream: PrintStream? = null,
     private val processErrorStream: PrintStream? = null
 ) : TestGenerator {
-    override fun generate(patterns: List<Pattern>): OutputStream {
+    override fun generate(patterns: List<Pattern>): File {
         val outputPatterns = outputDirectory.resolve("patterns/").apply { mkdirs() }
         val outputTests = outputDirectory.resolve("tests/").apply { mkdirs() }
 
@@ -39,6 +38,6 @@ class TestGenerator(
             processErrorStream = processErrorStream
         ).run()
 
-        return File(outputDirectory, "RegressionTest_ESTest.java").outputStream()
+        return File(outputDirectory, "RegressionTest_ESTest.java")
     }
 }

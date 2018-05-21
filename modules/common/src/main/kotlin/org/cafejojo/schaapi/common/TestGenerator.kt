@@ -1,6 +1,6 @@
 package org.cafejojo.schaapi.common
 
-import java.io.OutputStream
+import java.io.File
 
 /**
  * Represents the test generator that generates tests based on patterns.
@@ -12,5 +12,5 @@ interface TestGenerator {
      * @param patterns a list of patterns
      * @return a test file containing all generated tests
      */
-    fun generate(patterns: List<Pattern>): OutputStream
+    fun generate(patterns: List<Pattern>): File
 }
