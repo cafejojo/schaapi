@@ -1,9 +1,9 @@
 package org.cafejojo.schaapi.common
 
 /**
- * Represents a node.
+ * A node.
  *
- * Contains references to the successor nodes.
+ * @property successors the successor [Node]s
  */
 interface Node : Iterable<Node> {
     val successors: MutableList<Node>
