@@ -5,7 +5,7 @@
 [![Schaap](https://img.shields.io/badge/Contains-%F0%9F%90%91-FF69B4.svg?style=for-the-badge)](https://github.com/cafejojo/schaapi)
 [![Built with love](https://img.shields.io/badge/built%20with-%E2%9D%A4%EF%B8%8F-red.svg?style=for-the-badge)](https://github.com/cafejojo/)
 
-Schaapi ensures Safe Changes for APIs of libraries. It specifically focuses on semantic breaking changes, but provides a general purpose pipeline that is also applicable to detection of other types of breaking changes. The default implementation detects incompatibilities between Java libraries and Java projects using that library.
+Schaapi ensures Safe Changes for APIs of libraries. It specifically focuses on semantic breaking changes, but provides a general-purpose pipeline that is also applicable to detection of other types of breaking changes. The default implementation detects incompatibilities between Java libraries and Java projects using that library.
 
 ## Requirements and Installation
 Schaapi requires JRE 8 and has been tested on Windows and Unix systems.
@@ -119,7 +119,7 @@ $ ./gradlew check
 Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
 
 ## Security
-If you discover any security related issues, please email cafejojo@casperboone.nl instead of using the issue tracker.
+If you discover any security-related issues, please email cafejojo@fwdekker.com instead of using the issue tracker.
 
 ## Credits
 - [Joël Abrahams](https://github.com/jsabrahams)
