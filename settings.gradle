@@ -11,10 +11,13 @@ def includeModule = { String directory, String projectName  ->
 
 rootProject.name = "schaapi"
 
-includeModule "", "common"
 includeModule "", "application"
+
+includeModule "", "models"
 includeModule "models", "jimple-library-usage-graph"
 includeModule "models", "java-maven-project"
+
+includeModule "", "pipeline"
 includeModule "pipeline", "java-maven-project-compiler"
 includeModule "pipeline", "jimple-evosuite-test-generator"
 includeModule "pipeline", "jimple-library-usage-graph-generator"

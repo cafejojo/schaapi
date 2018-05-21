@@ -3,7 +3,7 @@ repositories {
 }
 
 dependencies {
-    compile project(":common")
+    compile project(":pipeline")
 
     testCompile project(":jimple-library-usage-graph")
 

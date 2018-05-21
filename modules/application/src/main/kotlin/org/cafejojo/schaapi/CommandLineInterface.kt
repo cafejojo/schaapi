@@ -6,16 +6,16 @@ import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Option
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
-import org.cafejojo.schaapi.common.PatternFilter
 import org.cafejojo.schaapi.models.libraryusagegraph.jimple.compare.GeneralizedNodeComparator
-import org.cafejojo.schaapi.patterndetector.prefixspan.PatternDetector
-import org.cafejojo.schaapi.patternfilter.jimple.IncompleteInitPatternFilterRule
-import org.cafejojo.schaapi.patternfilter.jimple.LengthPatternFilterRule
-import org.cafejojo.schaapi.project.javamaven.JavaMavenProject
-import org.cafejojo.schaapi.projectcompiler.javamaven.MavenInstaller
-import org.cafejojo.schaapi.projectcompiler.javamaven.ProjectCompiler
-import org.cafejojo.schaapi.testgenerator.jimpleevosuite.TestGenerator
-import org.cafejojo.schaapi.usagegraphgenerator.jimple.LibraryUsageGraphGenerator
+import org.cafejojo.schaapi.models.project.javamaven.JavaMavenProject
+import org.cafejojo.schaapi.pipeline.PatternFilter
+import org.cafejojo.schaapi.pipeline.patterndetector.prefixspan.PatternDetector
+import org.cafejojo.schaapi.pipeline.patternfilter.jimple.IncompleteInitPatternFilterRule
+import org.cafejojo.schaapi.pipeline.patternfilter.jimple.LengthPatternFilterRule
+import org.cafejojo.schaapi.pipeline.projectcompiler.javamaven.MavenInstaller
+import org.cafejojo.schaapi.pipeline.projectcompiler.javamaven.ProjectCompiler
+import org.cafejojo.schaapi.pipeline.testgenerator.jimpleevosuite.TestGenerator
+import org.cafejojo.schaapi.pipeline.usagegraphgenerator.jimple.LibraryUsageGraphGenerator
 import java.io.File
 
 private const val DEFAULT_TEST_GENERATOR_TIMEOUT = "60"

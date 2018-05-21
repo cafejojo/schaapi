@@ -3,7 +3,8 @@ repositories {
 }
 
 dependencies {
-    compile project(":common")
+    compile project(":pipeline")
+
     compile project(":jimple-library-usage-graph")
 
     compile group: "ca.mcgill.sable", name: "soot", version: sootVersion

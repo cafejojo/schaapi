@@ -3,7 +3,8 @@ repositories {
 }
 
 dependencies {
-    compile project(":common")
+    compile project(":pipeline")
+
     compile project(":java-maven-project")
     compile project(":jimple-library-usage-graph")
 

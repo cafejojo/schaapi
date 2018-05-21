@@ -3,7 +3,8 @@ repositories {
 }
 
 dependencies {
-    compile project(":common")
+    compile project(":models")
+
     compile group: "ca.mcgill.sable", name: "soot", version: sootVersion
 
     testCompile group: "com.nhaarman", name: "mockito-kotlin", version: mockitoKotlinVersion

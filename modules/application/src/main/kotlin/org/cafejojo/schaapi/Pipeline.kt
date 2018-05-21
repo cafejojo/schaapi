@@ -1,11 +1,11 @@
 package org.cafejojo.schaapi
 
-import org.cafejojo.schaapi.common.LibraryUsageGraphGenerator
-import org.cafejojo.schaapi.common.PatternDetector
-import org.cafejojo.schaapi.common.PatternFilter
-import org.cafejojo.schaapi.common.Project
-import org.cafejojo.schaapi.common.ProjectCompiler
-import org.cafejojo.schaapi.common.TestGenerator
+import org.cafejojo.schaapi.models.Project
+import org.cafejojo.schaapi.pipeline.LibraryUsageGraphGenerator
+import org.cafejojo.schaapi.pipeline.PatternDetector
+import org.cafejojo.schaapi.pipeline.PatternFilter
+import org.cafejojo.schaapi.pipeline.ProjectCompiler
+import org.cafejojo.schaapi.pipeline.TestGenerator
 
 /**
  * Represents the complete Schaapi pipeline.
