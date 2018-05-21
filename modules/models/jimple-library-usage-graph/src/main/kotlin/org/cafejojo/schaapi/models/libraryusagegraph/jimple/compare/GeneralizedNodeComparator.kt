@@ -66,8 +66,8 @@ class GeneralizedNodeComparator : GeneralizedNodeComparator {
             throw IllegalArgumentException("Jimple GeneralizedNodeComparator cannot handle non-Jimple nodes.")
         }
 
-        val templateValues = template.getValues()
-        val instanceValues = instance.getValues()
+        val templateValues = template.getTopLevelValues()
+        val instanceValues = instance.getTopLevelValues()
 
         templateValues.forEachIndexed { index, templateValue ->
             val instanceValue = instanceValues[index]

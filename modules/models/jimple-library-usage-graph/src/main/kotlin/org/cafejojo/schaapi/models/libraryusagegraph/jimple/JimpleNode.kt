@@ -25,7 +25,7 @@ class JimpleNode(val statement: Stmt, override val successors: MutableList<Node>
      *
      * @return all values of the contained [Stmt] based on the type of the [Stmt]
      */
-    fun getValues() =
+    fun getTopLevelValues() =
         when (statement) {
             is ThrowStmt -> listOf(statement.op)
             is DefinitionStmt -> listOf(statement.leftOp, statement.rightOp)
@@ -47,8 +47,8 @@ class JimpleNode(val statement: Stmt, override val successors: MutableList<Node>
     override fun equals(other: Any?): Boolean {
         if (other !is JimpleNode || this.statement::class != other.statement::class) return false
 
-        val thisTypes = this.getValues().map { it.type }
-        val otherTypes = other.getValues().map { it.type }
+        val thisTypes = this.getTopLevelValues().map { it.type }
+        val otherTypes = other.getTopLevelValues().map { it.type }
 
         thisTypes.forEachIndexed { index, thisType ->
             val otherType = otherTypes[index]
@@ -70,7 +70,7 @@ class JimpleNode(val statement: Stmt, override val successors: MutableList<Node>
      */
     override fun hashCode(): Int {
         var hash = 0
-        getValues().forEachIndexed { index, value -> hash += (index + 1) * value.type.hashCode() }
+        getTopLevelValues().forEachIndexed { index, value -> hash += (index + 1) * value.type.hashCode() }
         return hash
     }
 }
