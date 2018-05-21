@@ -1,8 +1,8 @@
 package org.cafejojo.schaapi.pipeline.patternfilter.jimple
 
-import org.cafejojo.schaapi.common.Node
-import org.cafejojo.schaapi.common.PatternFilterRule
+import org.cafejojo.schaapi.models.Node
 import org.cafejojo.schaapi.models.libraryusagegraph.jimple.JimpleNode
+import org.cafejojo.schaapi.pipeline.PatternFilterRule
 import soot.jimple.InvokeStmt
 import soot.jimple.internal.JSpecialInvokeExpr
 

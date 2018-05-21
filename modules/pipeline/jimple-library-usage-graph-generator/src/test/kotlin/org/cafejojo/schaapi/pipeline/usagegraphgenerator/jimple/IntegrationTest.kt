@@ -2,7 +2,7 @@ package org.cafejojo.schaapi.pipeline.usagegraphgenerator.jimple
 
 import com.nhaarman.mockito_kotlin.mock
 import org.assertj.core.api.Assertions.assertThat
-import org.cafejojo.schaapi.common.Node
+import org.cafejojo.schaapi.models.Node
 import org.cafejojo.schaapi.models.libraryusagegraph.jimple.JimpleNode
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
@@ -17,8 +17,8 @@ import soot.jimple.internal.JReturnStmt
 import soot.jimple.internal.JReturnVoidStmt
 import soot.jimple.internal.JTableSwitchStmt
 
-private const val TEST_CLASSES_PACKAGE = "org.cafejojo.schaapi.usagegraphgenerator.jimple.testclasses"
-private val testClassesClassPath = IntegrationTest::class.java.getResource("../../../../../").toURI().path
+private const val TEST_CLASSES_PACKAGE = "org.cafejojo.schaapi.pipeline.usagegraphgenerator.jimple.testclasses"
+private val testClassesClassPath = IntegrationTest::class.java.getResource("../../../../../../").toURI().path
 
 internal class IntegrationTest : Spek({
     describe("the integration of different components of the package for simple classes") {

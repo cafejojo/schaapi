@@ -15,8 +15,6 @@ internal data class TestProject(
 }
 
 internal val libraryClasses = listOf(
-    "Object1"
+    "org.cafejojo.schaapi.pipeline.usagegraphgenerator.jimple.testclasses.library.Object1"
 )
-
-internal val libraryProject =
-    TestProject(classNames = libraryClasses)
+internal val libraryProject = TestProject(classNames = libraryClasses)

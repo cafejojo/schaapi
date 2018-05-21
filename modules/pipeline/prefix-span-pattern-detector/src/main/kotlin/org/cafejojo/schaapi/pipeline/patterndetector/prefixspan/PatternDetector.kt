@@ -1,9 +1,9 @@
 package org.cafejojo.schaapi.pipeline.patterndetector.prefixspan
 
-import org.cafejojo.schaapi.common.GeneralizedNodeComparator
-import org.cafejojo.schaapi.common.Node
-import org.cafejojo.schaapi.common.Pattern
-import org.cafejojo.schaapi.common.PatternDetector
+import org.cafejojo.schaapi.models.GeneralizedNodeComparator
+import org.cafejojo.schaapi.models.Node
+import org.cafejojo.schaapi.pipeline.Pattern
+import org.cafejojo.schaapi.pipeline.PatternDetector
 
 /**
  * Represents a pattern detector.
@@ -13,8 +13,7 @@ class PatternDetector(
     private val comparator: GeneralizedNodeComparator
 ) : PatternDetector {
     override fun findPatterns(graphs: List<Node>): List<Pattern> {
-        val userPaths = graphs.flatMap { it.flatMap { PathEnumerator(
-            it).enumerate() } }
+        val userPaths = graphs.flatMap { it.flatMap { PathEnumerator(it).enumerate() } }
 
         return FrequentSequenceFinder(userPaths,
             minimumCount,

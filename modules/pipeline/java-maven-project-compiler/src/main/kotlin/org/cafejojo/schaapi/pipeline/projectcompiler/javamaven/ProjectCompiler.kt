@@ -2,9 +2,9 @@ package org.cafejojo.schaapi.pipeline.projectcompiler.javamaven
 
 import org.apache.maven.shared.invoker.DefaultInvocationRequest
 import org.apache.maven.shared.invoker.DefaultInvoker
-import org.cafejojo.schaapi.common.Project
-import org.cafejojo.schaapi.common.ProjectCompiler
+import org.cafejojo.schaapi.models.Project
 import org.cafejojo.schaapi.models.project.javamaven.JavaMavenProject
+import org.cafejojo.schaapi.pipeline.ProjectCompiler
 import java.io.File
 
 /**

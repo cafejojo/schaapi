@@ -1,6 +1,6 @@
 package org.cafejojo.schaapi.models.project.javamaven
 
-import org.cafejojo.schaapi.common.Project
+import org.cafejojo.schaapi.models.Project
 import java.io.File
 
 /**

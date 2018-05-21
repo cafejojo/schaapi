@@ -8,7 +8,7 @@ import org.jetbrains.spek.api.dsl.it
 import java.io.File
 
 internal class EvoSuiteRunnerTest : Spek({
-    val classPath = EvoSuiteRunnerTest::class.java.getResource("../../../../../").toURI().path
+    val classPath = EvoSuiteRunnerTest::class.java.getResource("../../../../../../").toURI().path
     val evoSuiteTestOutput = File("$classPath/evosuite-tests/")
 
     fun deleteTestOutput() {

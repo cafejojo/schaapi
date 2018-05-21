@@ -1,6 +1,6 @@
 package org.cafejojo.schaapi.pipeline.patternfilter.jimple
 
-import org.cafejojo.schaapi.common.Node
+import org.cafejojo.schaapi.models.Node
 
 /**
  * A subclass of [Node] for testing purposes.

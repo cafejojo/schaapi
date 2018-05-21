@@ -1,6 +1,6 @@
 package org.cafejojo.schaapi.pipeline.usagegraphgenerator.jimple
 
-import org.cafejojo.schaapi.common.Node
+import org.cafejojo.schaapi.models.Node
 
 /**
  * Creates a DOT graph of a control flow graph.

@@ -1,8 +1,7 @@
 package org.cafejojo.schaapi.pipeline.usagegraphgenerator.jimple
 
-import org.cafejojo.schaapi.common.LibraryUsageGraphGenerator
-import org.cafejojo.schaapi.common.Node
-import org.cafejojo.schaapi.common.Project
+import org.cafejojo.schaapi.models.Node
+import org.cafejojo.schaapi.models.Project
 import org.cafejojo.schaapi.models.project.javamaven.JavaProject
 import org.cafejojo.schaapi.pipeline.usagegraphgenerator.jimple.filters.BranchStatementFilter
 import org.cafejojo.schaapi.pipeline.usagegraphgenerator.jimple.filters.StatementFilter
@@ -15,7 +14,7 @@ import java.io.File
 /**
  * Library usage graph generator based on Soot.
  */
-object LibraryUsageGraphGenerator : LibraryUsageGraphGenerator {
+object LibraryUsageGraphGenerator : org.cafejojo.schaapi.pipeline.LibraryUsageGraphGenerator {
     override fun generate(libraryProject: Project, userProject: Project): List<Node> {
         if (libraryProject !is JavaProject) throw IllegalArgumentException("Library project must be JavaProject.")
         if (userProject !is JavaProject) throw IllegalArgumentException("User project must be JavaProject.")

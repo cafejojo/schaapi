@@ -19,10 +19,8 @@ import soot.jimple.ThrowStmt
 
 internal class StatementFilterTest : Spek({
     describe("filters statements based on library usage") {
-        val libraryValue =
-            constructInvokeExprMock(LIBRARY_CLASS)
-        val nonLibraryValue =
-            constructInvokeExprMock(NON_LIBRARY_CLASS)
+        val libraryValue = constructInvokeExprMock(LIBRARY_CLASS)
+        val nonLibraryValue = constructInvokeExprMock(NON_LIBRARY_CLASS)
 
         it("filters throw statements") {
             assertThatItRetains(mock<ThrowStmt> {

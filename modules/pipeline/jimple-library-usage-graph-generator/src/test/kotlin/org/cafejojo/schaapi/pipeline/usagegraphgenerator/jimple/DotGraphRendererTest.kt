@@ -1,7 +1,7 @@
 package org.cafejojo.schaapi.pipeline.usagegraphgenerator.jimple
 
 import org.assertj.core.api.Assertions.assertThat
-import org.cafejojo.schaapi.common.Node
+import org.cafejojo.schaapi.models.Node
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it

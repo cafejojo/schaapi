@@ -1,7 +1,7 @@
 package org.cafejojo.schaapi.pipeline.patterndetector.prefixspan
 
-import org.cafejojo.schaapi.common.GeneralizedNodeComparator
-import org.cafejojo.schaapi.common.Node
+import org.cafejojo.schaapi.models.GeneralizedNodeComparator
+import org.cafejojo.schaapi.models.Node
 
 /**
  * Finds all the frequent sequences of [Node]s in the given collection of paths.

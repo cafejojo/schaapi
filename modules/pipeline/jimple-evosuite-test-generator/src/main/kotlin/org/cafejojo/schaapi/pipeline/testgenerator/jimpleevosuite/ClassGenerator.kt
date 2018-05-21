@@ -1,6 +1,6 @@
 package org.cafejojo.schaapi.pipeline.testgenerator.jimpleevosuite
 
-import org.cafejojo.schaapi.common.Node
+import org.cafejojo.schaapi.models.Node
 import org.cafejojo.schaapi.models.libraryusagegraph.jimple.JimpleNode
 import soot.Body
 import soot.Local

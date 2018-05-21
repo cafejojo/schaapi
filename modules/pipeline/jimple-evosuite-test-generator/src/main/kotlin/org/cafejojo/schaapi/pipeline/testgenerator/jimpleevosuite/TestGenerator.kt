@@ -1,8 +1,8 @@
 package org.cafejojo.schaapi.pipeline.testgenerator.jimpleevosuite
 
-import org.cafejojo.schaapi.common.Pattern
-import org.cafejojo.schaapi.common.TestGenerator
 import org.cafejojo.schaapi.models.project.javamaven.JavaProject
+import org.cafejojo.schaapi.pipeline.Pattern
+import org.cafejojo.schaapi.pipeline.TestGenerator
 import java.io.File
 import java.io.PrintStream
 
@@ -24,11 +24,11 @@ class TestGenerator(
 
         ClassGenerator(DEFAULT_PATTERN_CLASS_NAME)
             .apply {
-            patterns.forEachIndexed { index, pattern ->
-                generateMethod("pattern$index", pattern)
+                patterns.forEachIndexed { index, pattern ->
+                    generateMethod("pattern$index", pattern)
+                }
+                writeToFile(outputPatterns.absolutePath)
             }
-            writeToFile(outputPatterns.absolutePath)
-        }
 
         EvoSuiteRunner(
             fullyQualifiedClassName = DEFAULT_PATTERN_CLASS_NAME,
