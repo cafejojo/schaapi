@@ -34,4 +34,4 @@ class Pipeline(
 /**
  * Calls the specified function [map] with `this` value as its argument and returns its result.
  */
-inline infix fun <T, R> T.next(map: (T) -> R): R = map(this)
+fun <T, R> T.next(map: (T) -> R): R = map(this)
