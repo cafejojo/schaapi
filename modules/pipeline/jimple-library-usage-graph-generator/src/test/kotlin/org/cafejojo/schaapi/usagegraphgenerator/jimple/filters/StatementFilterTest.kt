@@ -14,6 +14,7 @@ import soot.jimple.IfStmt
 import soot.jimple.InvokeStmt
 import soot.jimple.ReturnStmt
 import soot.jimple.ReturnVoidStmt
+import soot.jimple.SwitchStmt
 import soot.jimple.ThrowStmt
 
 internal class StatementFilterTest : Spek({
@@ -44,7 +45,7 @@ internal class StatementFilterTest : Spek({
         }
 
         it("filters switch statements") {
-            // todo
+            assertThatItRetains(mock<SwitchStmt>())
         }
 
         it("filters invoke statements") {
