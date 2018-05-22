@@ -10,13 +10,9 @@ import org.jetbrains.spek.api.dsl.context
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 import soot.Value
-import soot.jimple.DefinitionStmt
 import soot.jimple.GotoStmt
-import soot.jimple.IfStmt
 import soot.jimple.ReturnStmt
 import soot.jimple.ReturnVoidStmt
-import soot.jimple.SwitchStmt
-import soot.jimple.ThrowStmt
 
 /**
  * Unit tests for [GeneralizedNodeComparator.structuresAreEqual].
@@ -31,7 +27,7 @@ internal class GeneralizedNodeComparatorStructureTest : Spek({
     describe("bad weather cases") {
         it("throws an exception if a non-JimpleNode template is given") {
             val template = mock<Node> {}
-            val instance = JimpleNode(mock {})
+            val instance = JimpleNode(mockStmt())
 
             assertThatThrownBy { comparator.generalizedValuesAreEqual(template, instance) }
                 .isExactlyInstanceOf(IllegalArgumentException::class.java)
@@ -39,7 +35,7 @@ internal class GeneralizedNodeComparatorStructureTest : Spek({
         }
 
         it("throws an exception if a non-JimpleNode instance is given") {
-            val template = JimpleNode(mock {})
+            val template = JimpleNode(mockStmt())
             val instance = mock<Node> {}
 
             assertThatThrownBy { comparator.generalizedValuesAreEqual(template, instance) }
@@ -50,56 +46,45 @@ internal class GeneralizedNodeComparatorStructureTest : Spek({
 
     describe("structural comparison of statements") {
         context("throw statements") {
-            fun mockThrowStmt(value: Value) =
-                JimpleNode(mock<ThrowStmt> {
-                    on { it.op } doReturn value
-                })
-
             it("equals itself") {
-                val stmt = mockThrowStmt(SimpleValue("value"))
+                val stmt = JimpleNode(mockThrowStmt(SimpleValue("value")))
 
                 assertThat(comparator.satisfies(stmt, stmt)).isTrue()
             }
 
             it("equals statements with the same values") {
                 val value = SimpleValue("value")
-                val template = mockThrowStmt(value)
-                val instance = mockThrowStmt(value)
+                val template = JimpleNode(mockThrowStmt(value))
+                val instance = JimpleNode(mockThrowStmt(value))
 
                 assertThat(comparator.satisfies(template, instance)).isTrue()
             }
 
             it("equals statements with the same structure") {
-                val template = mockThrowStmt(SimpleValue("value"))
-                val instance = mockThrowStmt(SimpleValue("value"))
+                val template = JimpleNode(mockThrowStmt(SimpleValue("value")))
+                val instance = JimpleNode(mockThrowStmt(SimpleValue("value")))
 
                 assertThat(comparator.satisfies(template, instance)).isTrue()
             }
 
             it("does not equal statements with a different value type") {
-                val template = mockThrowStmt(SimpleValue("template"))
-                val instance = mockThrowStmt(SimpleValue("instance"))
+                val template = JimpleNode(mockThrowStmt(SimpleValue("template")))
+                val instance = JimpleNode(mockThrowStmt(SimpleValue("instance")))
 
                 assertThat(comparator.satisfies(template, instance)).isFalse()
             }
 
             it("does not equal statements of a different class") {
-                val template = mockThrowStmt(SimpleValue("value"))
-                val instance = JimpleNode(mock {})
+                val template = JimpleNode(mockThrowStmt(SimpleValue("value")))
+                val instance = JimpleNode(mockStmt())
 
                 assertThat(comparator.satisfies(template, instance)).isFalse()
             }
         }
 
         context("definition statements") {
-            fun mockDefinitionStmt(leftValue: Value, rightValue: Value) =
-                JimpleNode(mock<DefinitionStmt> {
-                    on { it.leftOp } doReturn leftValue
-                    on { it.rightOp } doReturn rightValue
-                })
-
             it("equals itself") {
-                val stmt = mockDefinitionStmt(SimpleValue("left"), SimpleValue("right"))
+                val stmt = JimpleNode(mockDefinitionStmt(SimpleValue("left"), SimpleValue("right")))
 
                 assertThat(comparator.satisfies(stmt, stmt)).isTrue()
             }
@@ -107,113 +92,105 @@ internal class GeneralizedNodeComparatorStructureTest : Spek({
             it("equals statements with the same values") {
                 val leftValue = SimpleValue("left-shared")
                 val rightValue = SimpleValue("right-shared")
-                val template = mockDefinitionStmt(leftValue, rightValue)
-                val instance = mockDefinitionStmt(leftValue, rightValue)
+                val template = JimpleNode(mockDefinitionStmt(leftValue, rightValue))
+                val instance = JimpleNode(mockDefinitionStmt(leftValue, rightValue))
 
                 assertThat(comparator.satisfies(template, instance)).isTrue()
             }
 
             it("equals statements with the same structure") {
-                val template = mockDefinitionStmt(SimpleValue("shared-left"), SimpleValue("shared-right"))
-                val instance = mockDefinitionStmt(SimpleValue("shared-left"), SimpleValue("shared-right"))
+                val template = JimpleNode(mockDefinitionStmt(SimpleValue("shared-left"), SimpleValue("shared-right")))
+                val instance = JimpleNode(mockDefinitionStmt(SimpleValue("shared-left"), SimpleValue("shared-right")))
 
                 assertThat(comparator.satisfies(template, instance)).isTrue()
             }
 
             it("does not equal statements with a different value type") {
-                val template = mockDefinitionStmt(SimpleValue("template-left"), SimpleValue("template-right"))
-                val instance = mockDefinitionStmt(SimpleValue("instance-left"), SimpleValue("instance-right"))
+                val template =
+                    JimpleNode(mockDefinitionStmt(SimpleValue("template-left"), SimpleValue("template-right")))
+                val instance =
+                    JimpleNode(mockDefinitionStmt(SimpleValue("instance-left"), SimpleValue("instance-right")))
 
                 assertThat(comparator.satisfies(template, instance)).isFalse()
             }
 
             it("does not equal statements of a different class") {
-                val template = mockDefinitionStmt(SimpleValue("left"), SimpleValue("right"))
-                val instance = JimpleNode(mock {})
+                val template = JimpleNode(mockDefinitionStmt(SimpleValue("left"), SimpleValue("right")))
+                val instance = JimpleNode(mockStmt())
 
                 assertThat(comparator.satisfies(template, instance)).isFalse()
             }
         }
 
         context("if statements") {
-            fun mockIfStmt(value: Value) =
-                JimpleNode(mock<IfStmt> {
-                    on { it.condition } doReturn value
-                })
-
             it("equals itself") {
-                val stmt = mockIfStmt(SimpleValue("value"))
+                val stmt = JimpleNode(mockIfStmt(SimpleValue("value")))
 
                 assertThat(comparator.satisfies(stmt, stmt)).isTrue()
             }
 
             it("equals statements with the same values") {
                 val value = SimpleValue("shared")
-                val template = mockIfStmt(value)
-                val instance = mockIfStmt(value)
+                val template = JimpleNode(mockIfStmt(value))
+                val instance = JimpleNode(mockIfStmt(value))
 
                 assertThat(comparator.satisfies(template, instance)).isTrue()
             }
 
             it("equals statements with the same structure") {
-                val template = mockIfStmt(SimpleValue("shared"))
-                val instance = mockIfStmt(SimpleValue("shared"))
+                val template = JimpleNode(mockIfStmt(SimpleValue("shared")))
+                val instance = JimpleNode(mockIfStmt(SimpleValue("shared")))
 
                 assertThat(comparator.satisfies(template, instance)).isTrue()
             }
 
             it("does not equal statements with a different value type") {
-                val template = mockIfStmt(SimpleValue("template"))
-                val instance = mockIfStmt(SimpleValue("instance"))
+                val template = JimpleNode(mockIfStmt(SimpleValue("template")))
+                val instance = JimpleNode(mockIfStmt(SimpleValue("instance")))
 
                 assertThat(comparator.satisfies(template, instance)).isFalse()
             }
 
             it("does not equal statements of a different class") {
-                val template = mockIfStmt(SimpleValue("value"))
-                val instance = JimpleNode(mock {})
+                val template = JimpleNode(mockIfStmt(SimpleValue("value")))
+                val instance = JimpleNode(mockStmt())
 
                 assertThat(comparator.satisfies(template, instance)).isFalse()
             }
         }
 
         context("switch statements") {
-            fun mockSwitchStmt(value: Value) =
-                JimpleNode(mock<SwitchStmt> {
-                    on { it.key } doReturn value
-                })
-
             it("equals itself") {
-                val stmt = mockSwitchStmt(SimpleValue("value"))
+                val stmt = JimpleNode(mockSwitchStmt(SimpleValue("value")))
 
                 assertThat(comparator.satisfies(stmt, stmt)).isTrue()
             }
 
             it("equals statements with the same values") {
                 val value = SimpleValue("shared")
-                val template = mockSwitchStmt(value)
-                val instance = mockSwitchStmt(value)
+                val template = JimpleNode(mockSwitchStmt(value))
+                val instance = JimpleNode(mockSwitchStmt(value))
 
                 assertThat(comparator.satisfies(template, instance)).isTrue()
             }
 
             it("equals statements with the same structure") {
-                val template = mockSwitchStmt(SimpleValue("shared"))
-                val instance = mockSwitchStmt(SimpleValue("shared"))
+                val template = JimpleNode(mockSwitchStmt(SimpleValue("shared")))
+                val instance = JimpleNode(mockSwitchStmt(SimpleValue("shared")))
 
                 assertThat(comparator.satisfies(template, instance)).isTrue()
             }
 
             it("does not equal statements with a different value type") {
-                val template = mockSwitchStmt(SimpleValue("template"))
-                val instance = mockSwitchStmt(SimpleValue("instance"))
+                val template = JimpleNode(mockSwitchStmt(SimpleValue("template")))
+                val instance = JimpleNode(mockSwitchStmt(SimpleValue("instance")))
 
                 assertThat(comparator.satisfies(template, instance)).isFalse()
             }
 
             it("does not equal statements of a different class") {
-                val template = mockSwitchStmt(SimpleValue("value"))
-                val instance = JimpleNode(mock {})
+                val template = JimpleNode(mockSwitchStmt(SimpleValue("value")))
+                val instance = JimpleNode(mockStmt())
 
                 assertThat(comparator.satisfies(template, instance)).isFalse()
             }
@@ -317,7 +294,7 @@ internal class GeneralizedNodeComparatorStructureTest : Spek({
 
             it("does not equal statements of a different class") {
                 val template = mockReturnStmt(SimpleValue("value"))
-                val instance = JimpleNode(mock {})
+                val instance = JimpleNode(mockStmt())
 
                 assertThat(comparator.satisfies(template, instance)).isFalse()
             }
@@ -341,7 +318,7 @@ internal class GeneralizedNodeComparatorStructureTest : Spek({
 
             it("does not equal statements of a different class") {
                 val template = mockGotoStmt()
-                val instance = JimpleNode(mock {})
+                val instance = JimpleNode(mockStmt())
 
                 assertThat(comparator.satisfies(template, instance)).isFalse()
             }
@@ -365,7 +342,7 @@ internal class GeneralizedNodeComparatorStructureTest : Spek({
 
             it("does not equal statements of a different class") {
                 val template = mockReturnVoidStmt()
-                val instance = JimpleNode(mock {})
+                val instance = JimpleNode(mockStmt())
 
                 assertThat(comparator.satisfies(template, instance)).isFalse()
             }
