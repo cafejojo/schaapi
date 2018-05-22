@@ -46,20 +46,8 @@ class JimpleNode(val statement: Stmt, override val successors: MutableList<Node>
     override fun equals(other: Any?): Boolean {
         if (other !is JimpleNode || this.statement::class != other.statement::class) return false
 
-        val thisTypes = this.getTopLevelValues().map { it.type }
-        val otherTypes = other.getTopLevelValues().map { it.type }
-
-        thisTypes.forEachIndexed { index, thisType ->
-            val otherType = otherTypes[index]
-            if (thisType != otherType &&
-                !thisType.isSubclassOf(otherType) &&
-                !otherType.isSubclassOf(thisType)
-            ) {
-                return false
-            }
-        }
-
-        return true
+        return this.getTopLevelValues().zip(other.getTopLevelValues())
+            .all { it.first.equivTo(it.second) }
     }
 
     /**

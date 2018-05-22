@@ -12,7 +12,6 @@ import org.jetbrains.spek.api.dsl.it
 import soot.jimple.DefinitionStmt
 import soot.jimple.IfStmt
 import soot.jimple.ReturnStmt
-import soot.jimple.Stmt
 import soot.jimple.SwitchStmt
 import soot.jimple.ThrowStmt
 
@@ -27,7 +26,7 @@ internal class GeneralizedNodeComparatorValueTest : Spek({
         context("bad weather cases") {
             it("throws an exception if a non-JimpleNode template is given") {
                 val template = mock<Node> {}
-                val instance = JimpleNode(mock<Stmt> {})
+                val instance = JimpleNode(mock {})
 
                 assertThatThrownBy { comparator.generalizedValuesAreEqual(template, instance) }
                     .isExactlyInstanceOf(IllegalArgumentException::class.java)
@@ -35,7 +34,7 @@ internal class GeneralizedNodeComparatorValueTest : Spek({
             }
 
             it("throws an exception if a non-JimpleNode instance is given") {
-                val template = JimpleNode(mock<Stmt> {})
+                val template = JimpleNode(mock {})
                 val instance = mock<Node> {}
 
                 assertThatThrownBy { comparator.generalizedValuesAreEqual(template, instance) }
@@ -46,9 +45,8 @@ internal class GeneralizedNodeComparatorValueTest : Spek({
 
         context("(in)equality does not change for the same check") {
             it("finds equality when comparing reflexively") {
-                val value = mockValue()
                 val node = JimpleNode(mock<ReturnStmt> {
-                    on { it.op } doReturn value
+                    on { it.op } doReturn SimpleValue("value")
                 })
 
                 comparator.satisfies(node, node)
@@ -56,7 +54,7 @@ internal class GeneralizedNodeComparatorValueTest : Spek({
             }
 
             it("finds equality for the same structure and value") {
-                val value = mockValue()
+                val value = SimpleValue("shared")
                 val template = JimpleNode(mock<IfStmt> {
                     on { it.condition } doReturn value
                 })
@@ -69,14 +67,11 @@ internal class GeneralizedNodeComparatorValueTest : Spek({
             }
 
             it("finds equality for the same structure and *kind* of value") {
-                val templateValue = mockValue()
                 val template = JimpleNode(mock<SwitchStmt> {
-                    on { it.key } doReturn templateValue
+                    on { it.key } doReturn SimpleValue("shared")
                 })
-
-                val instanceValue = mockValue()
                 val instance = JimpleNode(mock<SwitchStmt> {
-                    on { it.key } doReturn instanceValue
+                    on { it.key } doReturn SimpleValue("shared")
                 })
 
                 comparator.satisfies(template, instance)
@@ -84,14 +79,11 @@ internal class GeneralizedNodeComparatorValueTest : Spek({
             }
 
             it("finds inequality for the same structure but a different kind of value") {
-                val templateValue = mockTypedValue()
                 val template = JimpleNode(mock<ThrowStmt> {
-                    on { it.op } doReturn templateValue
+                    on { it.op } doReturn SimpleValue("template")
                 })
-
-                val instanceValue = mockTypedValue()
                 val instance = JimpleNode(mock<ThrowStmt> {
-                    on { it.op } doReturn instanceValue
+                    on { it.op } doReturn SimpleValue("instance")
                 })
 
                 comparator.satisfies(template, instance)
@@ -99,12 +91,10 @@ internal class GeneralizedNodeComparatorValueTest : Spek({
             }
 
             it("finds inequality for different structures") {
-                val value = mockValue()
                 val template = JimpleNode(mock<ReturnStmt> {
-                    on { it.op } doReturn value
+                    on { it.op } doReturn SimpleValue("value")
                 })
-
-                val instance = JimpleNode(mock<Stmt> {})
+                val instance = JimpleNode(mock {})
 
                 comparator.satisfies(template, instance)
                 assertThat(comparator.satisfies(template, instance)).isFalse()
@@ -113,19 +103,15 @@ internal class GeneralizedNodeComparatorValueTest : Spek({
 
         context("(in)equality depends on the template") {
             it("copies tags to two instances") {
-                val templateValue = mockValue()
                 val template = JimpleNode(mock<ThrowStmt> {
-                    on { it.op } doReturn templateValue
+                    on { it.op } doReturn SimpleValue("shared")
                 })
 
-                val instanceAValue = mockValue()
                 val instanceA = JimpleNode(mock<ThrowStmt> {
-                    on { it.op } doReturn instanceAValue
+                    on { it.op } doReturn SimpleValue("shared")
                 })
-
-                val instanceBValue = mockValue()
                 val instanceB = JimpleNode(mock<ThrowStmt> {
-                    on { it.op } doReturn instanceBValue
+                    on { it.op } doReturn SimpleValue("shared")
                 })
 
                 assertThat(comparator.satisfies(template, instanceA)).isTrue()
@@ -133,7 +119,7 @@ internal class GeneralizedNodeComparatorValueTest : Spek({
             }
 
             it("copies tags from non-finalised values") {
-                val templateValue = mockValue()
+                val templateValue = SimpleValue("shared")
                 val templateA = JimpleNode(mock<ThrowStmt> {
                     on { it.op } doReturn templateValue
                 })
@@ -141,7 +127,7 @@ internal class GeneralizedNodeComparatorValueTest : Spek({
                     on { it.op } doReturn templateValue
                 })
 
-                val instanceValue = mockValue()
+                val instanceValue = SimpleValue("shared")
                 val instanceA = JimpleNode(mock<ThrowStmt> {
                     on { it.op } doReturn instanceValue
                 })
@@ -154,7 +140,7 @@ internal class GeneralizedNodeComparatorValueTest : Spek({
             }
 
             it("does not copy tags from finalised values") {
-                val templateValue = mockValue()
+                val templateValue = SimpleValue("shared")
                 val templateA = JimpleNode(mock<ThrowStmt> {
                     on { it.op } doReturn templateValue
                 })
@@ -162,13 +148,11 @@ internal class GeneralizedNodeComparatorValueTest : Spek({
                     on { it.op } doReturn templateValue
                 })
 
-                val instanceAValue = mockValue()
-                val instanceBValue = mockValue()
                 val instanceA = JimpleNode(mock<ThrowStmt> {
-                    on { it.op } doReturn instanceAValue
+                    on { it.op } doReturn SimpleValue("shared")
                 })
                 val instanceB = JimpleNode(mock<ThrowStmt> {
-                    on { it.op } doReturn instanceBValue
+                    on { it.op } doReturn SimpleValue("shared")
                 })
 
                 comparator.satisfies(templateA, instanceA)
@@ -176,18 +160,15 @@ internal class GeneralizedNodeComparatorValueTest : Spek({
             }
 
             it("is not transitive") {
-                val templateValue = mockValue()
                 val template = JimpleNode(mock<ThrowStmt> {
-                    on { it.op } doReturn templateValue
+                    on { it.op } doReturn SimpleValue("shared")
                 })
 
-                val instanceAValue = mockValue()
-                val instanceBValue = mockValue()
                 val instanceA = JimpleNode(mock<ThrowStmt> {
-                    on { it.op } doReturn instanceAValue
+                    on { it.op } doReturn SimpleValue("shared")
                 })
                 val instanceB = JimpleNode(mock<ThrowStmt> {
-                    on { it.op } doReturn instanceBValue
+                    on { it.op } doReturn SimpleValue("shared")
                 })
 
                 comparator.satisfies(template, instanceA)
@@ -195,24 +176,22 @@ internal class GeneralizedNodeComparatorValueTest : Spek({
             }
 
             it("copies tags for one value even if the other is already assigned") {
-                val templateLeftValue = mockValue()
-                val templateRightValue = mockValue()
+                val templateSharedValue = SimpleValue("shared")
                 val templateA = JimpleNode(mock<IfStmt> {
-                    on { it.condition } doReturn templateLeftValue
+                    on { it.condition } doReturn templateSharedValue
                 })
                 val templateB = JimpleNode(mock<DefinitionStmt> {
-                    on { it.leftOp } doReturn templateLeftValue
-                    on { it.rightOp } doReturn templateRightValue
+                    on { it.leftOp } doReturn templateSharedValue
+                    on { it.rightOp } doReturn SimpleValue("shared")
                 })
 
-                val instanceLeftValue = mockValue()
-                val instanceRightValue = mockValue()
+                val instanceSharedValue = SimpleValue("shared")
                 val instanceA = JimpleNode(mock<IfStmt> {
-                    on { it.condition } doReturn instanceLeftValue
+                    on { it.condition } doReturn instanceSharedValue
                 })
                 val instanceB = JimpleNode(mock<DefinitionStmt> {
-                    on { it.leftOp } doReturn instanceLeftValue
-                    on { it.rightOp } doReturn instanceRightValue
+                    on { it.leftOp } doReturn instanceSharedValue
+                    on { it.rightOp } doReturn SimpleValue("shared")
                 })
 
                 comparator.satisfies(templateA, instanceA)
@@ -220,24 +199,22 @@ internal class GeneralizedNodeComparatorValueTest : Spek({
             }
 
             it("supports switching template side between statements") {
-                val templateLeftValue = mockValue()
-                val templateRightValue = mockValue()
+                val templateSharedValue = SimpleValue("shared")
                 val templateA = JimpleNode(mock<SwitchStmt> {
-                    on { it.key } doReturn templateLeftValue
+                    on { it.key } doReturn templateSharedValue
                 })
                 val templateB = JimpleNode(mock<DefinitionStmt> {
-                    on { it.leftOp } doReturn templateLeftValue
-                    on { it.rightOp } doReturn templateRightValue
+                    on { it.leftOp } doReturn templateSharedValue
+                    on { it.rightOp } doReturn SimpleValue("shared")
                 })
 
-                val instanceLeftValue = mockValue()
-                val instanceRightValue = mockValue()
+                val instanceSharedValue = SimpleValue("shared")
                 val instanceA = JimpleNode(mock<IfStmt> {
-                    on { it.condition } doReturn instanceLeftValue
+                    on { it.condition } doReturn instanceSharedValue
                 })
                 val instanceB = JimpleNode(mock<DefinitionStmt> {
-                    on { it.leftOp } doReturn instanceLeftValue
-                    on { it.rightOp } doReturn instanceRightValue
+                    on { it.leftOp } doReturn instanceSharedValue
+                    on { it.rightOp } doReturn SimpleValue("shared")
                 })
 
                 comparator.satisfies(templateA, instanceA)
@@ -245,21 +222,19 @@ internal class GeneralizedNodeComparatorValueTest : Spek({
             }
 
             it("rejects instances with tags where the template has none") {
-                val fakeTemplateValue = mockValue()
                 val fakeTemplate = JimpleNode(mock<ReturnStmt> {
-                    on { it.op } doReturn fakeTemplateValue
+                    on { it.op } doReturn SimpleValue("shared")
                 })
-                val realTemplateValue = mockValue()
                 val realTemplate = JimpleNode(mock<ThrowStmt> {
-                    on { it.op } doReturn realTemplateValue
+                    on { it.op } doReturn SimpleValue("shared")
                 })
 
-                val instanceValue = mockValue()
+                val instanceSharedValue = SimpleValue("shared")
                 val instanceA = JimpleNode(mock<ReturnStmt> {
-                    on { it.op } doReturn instanceValue
+                    on { it.op } doReturn instanceSharedValue
                 })
                 val instanceB = JimpleNode(mock<ThrowStmt> {
-                    on { it.op } doReturn instanceValue
+                    on { it.op } doReturn instanceSharedValue
                 })
 
                 comparator.satisfies(fakeTemplate, instanceA)
@@ -267,19 +242,17 @@ internal class GeneralizedNodeComparatorValueTest : Spek({
             }
 
             it("rejects instances with incorrect tags if the template is finalised") {
-                val fakeTemplateValue = mockValue()
                 val fakeTemplate = JimpleNode(mock<ReturnStmt> {
-                    on { it.op } doReturn fakeTemplateValue
+                    on { it.op } doReturn SimpleValue("shared")
                 })
 
-                val fakeInstanceValue = mockValue()
                 val fakeInstance = JimpleNode(mock<ReturnStmt> {
-                    on { it.op } doReturn fakeInstanceValue
+                    on { it.op } doReturn SimpleValue("shared")
                 })
 
                 comparator.satisfies(fakeTemplate, fakeInstance)
 
-                val realTemplateValue = mockValue()
+                val realTemplateValue = SimpleValue("shared")
                 val realUnfinalizedTemplate = JimpleNode(mock<ReturnStmt> {
                     on { it.op } doReturn realTemplateValue
                 })
@@ -287,7 +260,7 @@ internal class GeneralizedNodeComparatorValueTest : Spek({
                     on { it.op } doReturn realTemplateValue
                 })
 
-                val realInstanceValue = mockValue()
+                val realInstanceValue = SimpleValue("shared")
                 val realInstance = JimpleNode(mock<ReturnStmt> {
                     on { it.op } doReturn realInstanceValue
                 })
@@ -298,26 +271,20 @@ internal class GeneralizedNodeComparatorValueTest : Spek({
             }
 
             it("rejects instances with incorrect tags if the template is non-finalised") {
-                val fakeTemplateValue = mockValue()
                 val fakeTemplate = JimpleNode(mock<ReturnStmt> {
-                    on { it.op } doReturn fakeTemplateValue
+                    on { it.op } doReturn SimpleValue("shared")
                 })
-
-                val fakeInstanceValue = mockValue()
                 val fakeInstance = JimpleNode(mock<ReturnStmt> {
-                    on { it.op } doReturn fakeInstanceValue
+                    on { it.op } doReturn SimpleValue("shared")
                 })
 
                 comparator.satisfies(fakeTemplate, fakeInstance)
 
-                val realTemplateValue = mockValue()
                 val realTemplate = JimpleNode(mock<ReturnStmt> {
-                    on { it.op } doReturn realTemplateValue
+                    on { it.op } doReturn SimpleValue("shared")
                 })
-
-                val realInstanceValue = mockValue()
                 val realInstance = JimpleNode(mock<ReturnStmt> {
-                    on { it.op } doReturn realInstanceValue
+                    on { it.op } doReturn SimpleValue("shared")
                 })
 
                 comparator.satisfies(realTemplate, realInstance)
