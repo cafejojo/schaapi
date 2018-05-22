@@ -196,67 +196,42 @@ internal class GeneralizedNodeComparatorStructureTest : Spek({
             }
         }
 
-//        context("invoke statements") {
-//            fun mockInvokeExpr(type: String) =
-//                mock<InvokeExpr> {
-//                    on { it.type } doReturn RefType.v(type)
-//                    on { it.equivTo(any()) } doReturn {}
-//                }
-//
-//            fun mockTypedInvokeExpr() =
-//                mock<InvokeExpr> {
-//                    on { it.type } doReturn mock<Type> {}
-//                }
-//
-//            fun mockInvokeStmt(invokeExpr: InvokeExpr) =
-//                JimpleNode(mock<InvokeStmt> {
-//                    on { it.invokeExpr } doReturn invokeExpr
-//                })
-//
-//            it("equals itself") {
-//                val value = mockInvokeExpr()
-//                val stmt = mockInvokeStmt(value)
-//
-//                assertThat(comparator.satisfies(stmt, stmt)).isTrue()
-//            }
-//
-//            it("equals statements with the same values") {
-//                val value = mockInvokeExpr()
-//                val template = mockInvokeStmt(value)
-//                val instance = mockInvokeStmt(value)
-//
-//                assertThat(comparator.satisfies(template, instance)).isTrue()
-//            }
-//
-//            it("equals statements with the same structure") {
-//                val templateValue = mockInvokeExpr()
-//                val template = mockInvokeStmt(templateValue)
-//
-//                val instanceValue = mockInvokeExpr()
-//                val instance = mockInvokeStmt(instanceValue)
-//
-//                assertThat(comparator.satisfies(template, instance)).isTrue()
-//            }
-//
-//            it("does not equal statements with a different value type") {
-//                val templateValue = mockTypedInvokeExpr()
-//                val template = mockInvokeStmt(templateValue)
-//
-//                val instanceValue = mockTypedInvokeExpr()
-//                val instance = mockInvokeStmt(instanceValue)
-//
-//                assertThat(comparator.satisfies(template, instance)).isFalse()
-//            }
-//
-//            it("does not equal statements of a different class") {
-//                val value = mockInvokeExpr()
-//                val template = mockInvokeStmt(value)
-//
-//                val instance = JimpleNode(mock<Stmt> {})
-//
-//                assertThat(comparator.satisfies(template, instance)).isFalse()
-//            }
-//        }
+        context("invoke statements") {
+            it("equals itself") {
+                val stmt = JimpleNode(mockInvokeStmt(SimpleInvokeExpr("value")))
+
+                assertThat(comparator.satisfies(stmt, stmt)).isTrue()
+            }
+
+            it("equals statements with the same values") {
+                val value = SimpleInvokeExpr("shared")
+                val template = JimpleNode(mockInvokeStmt(value))
+                val instance = JimpleNode(mockInvokeStmt(value))
+
+                assertThat(comparator.satisfies(template, instance)).isTrue()
+            }
+
+            it("equals statements with the same structure") {
+                val template = JimpleNode(mockInvokeStmt(SimpleInvokeExpr("shared")))
+                val instance = JimpleNode(mockInvokeStmt(SimpleInvokeExpr("shared")))
+
+                assertThat(comparator.satisfies(template, instance)).isTrue()
+            }
+
+            it("does not equal statements with a different value type") {
+                val template = JimpleNode(mockInvokeStmt(SimpleInvokeExpr("template")))
+                val instance = JimpleNode(mockInvokeStmt(SimpleInvokeExpr("instance")))
+
+                assertThat(comparator.satisfies(template, instance)).isFalse()
+            }
+
+            it("does not equal statements of a different class") {
+                val template = JimpleNode(mockInvokeStmt(SimpleInvokeExpr("value")))
+                val instance = JimpleNode(mockStmt())
+
+                assertThat(comparator.satisfies(template, instance)).isFalse()
+            }
+        }
 
         context("return statements") {
             fun mockReturnStmt(value: Value) =
