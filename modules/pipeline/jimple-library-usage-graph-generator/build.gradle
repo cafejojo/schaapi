@@ -5,8 +5,8 @@ repositories {
 dependencies {
     compile project(":pipeline")
 
-    compile project(":java-maven-project")
-    compile project(":jimple-library-usage-graph")
+    compile project(":models:java-maven-project")
+    compile project(":models:jimple-library-usage-graph")
 
     compile group: "ca.mcgill.sable", name: "soot", version: sootVersion
 

@@ -1,7 +1,7 @@
 dependencies {
     compile project(":pipeline")
 
-    compile project(":java-maven-project")
+    compile project(":models:java-maven-project")
 
     compile group: "org.apache.maven.shared", name: "maven-invoker", version: mavenInvokerVersion
     compile group: "org.zeroturnaround", name: "zt-zip", version: ztZipVersion

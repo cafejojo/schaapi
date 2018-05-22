@@ -5,7 +5,7 @@ repositories {
 dependencies {
     compile project(":pipeline")
 
-    testCompile project(":jimple-library-usage-graph")
+    testCompile project(":models:jimple-library-usage-graph")
 
     testCompile group: "com.nhaarman", name: "mockito-kotlin", version: mockitoKotlinVersion
 }
