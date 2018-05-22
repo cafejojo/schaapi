@@ -240,6 +240,25 @@ internal class IntegrationTest : Spek({
             )
         }
     }
+
+    describe("the integration of different components of the package for classes containing complex statements") {
+        it("converts a class containing an arraylist and a lambda") {
+            val cfg = LibraryUsageGraphGenerator.generate(
+                libraryProject,
+                TestProject(testClassesClassPath,
+                    listOf("$TEST_CLASSES_PACKAGE.users.ArrayListAndLambdaTest"))
+            )[1]
+
+            assertThatStructureMatches(
+                node<JAssignStmt>(
+                    node<JInvokeStmt>(
+                        node<JReturnStmt>()
+                    )
+                ),
+                cfg
+            )
+        }
+    }
 })
 
 private fun assertThatStructureMatches(structure: Node, cfg: Node) {
