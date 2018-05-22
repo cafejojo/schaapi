@@ -57,7 +57,7 @@ class JimpleNode(val statement: Stmt, override val successors: MutableList<Node>
      */
     override fun hashCode(): Int {
         var hash = 0
-        getTopLevelValues().forEachIndexed { index, value -> hash += (index + 1) * value.type.hashCode() }
+        getTopLevelValues().forEachIndexed { index, value -> hash += (index + 1) * value.equivHashCode() }
         return hash
     }
 }

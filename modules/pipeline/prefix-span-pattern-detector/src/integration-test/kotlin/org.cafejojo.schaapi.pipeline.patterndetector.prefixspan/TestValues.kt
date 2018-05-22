@@ -4,7 +4,6 @@ import soot.RefType
 import soot.Type
 import soot.UnitPrinter
 import soot.Value
-import soot.ValueBox
 import soot.util.Switch
 import java.util.UUID
 
@@ -16,26 +15,16 @@ open class SimpleValue(private val type: String) : Value {
 
     override fun getType(): Type = RefType.v(type)
 
-    override fun apply(switch: Switch?) {
-        throw NotImplementedError("`apply` is not implemented in `SimpleValue`.")
-    }
+    override fun equivHashCode() = type.hashCode()
 
-    override fun clone(): Any {
-        throw NotImplementedError("`clone` is not implemented in `SimpleValue`.")
-    }
+    override fun apply(switch: Switch?) = throw NotImplementedError("The called method is not implemented.")
+
+    override fun clone() = throw NotImplementedError("The called method is not implemented.")
 
     @SuppressWarnings("ExceptionRaisedInUnexpectedLocation")
-    override fun toString(up: UnitPrinter?) {
-        throw NotImplementedError("`toString` is not implemented in `SimpleValue`.")
-    }
+    override fun toString(up: UnitPrinter?) = throw NotImplementedError("The called method is not implemented.")
 
-    override fun equivHashCode(): Int {
-        throw NotImplementedError("`equivHashCode` is not implemented in `SimpleValue`.")
-    }
-
-    override fun getUseBoxes(): MutableList<ValueBox> {
-        throw NotImplementedError("`getUseBoxes` is not implemented in `SimpleValue`.")
-    }
+    override fun getUseBoxes() = throw NotImplementedError("The called method is not implemented.")
 }
 
 /**

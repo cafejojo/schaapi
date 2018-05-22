@@ -20,14 +20,14 @@ class EmptyValue(private val type: String) : Value {
 
     override fun getType(): Type = RefType.v(type)
 
+    override fun equivHashCode() = type.hashCode()
+
     override fun apply(switch: Switch?) = throw NotImplementedError("The called method is not implemented.")
 
     override fun clone() = throw NotImplementedError("The called method is not implemented.")
 
     @SuppressWarnings("ExceptionRaisedInUnexpectedLocation")
     override fun toString(up: UnitPrinter?) = throw NotImplementedError("The called method is not implemented.")
-
-    override fun equivHashCode() = throw NotImplementedError("The called method is not implemented.")
 
     override fun getUseBoxes() = throw NotImplementedError("The called method is not implemented.")
 }
@@ -40,14 +40,14 @@ class EmptyInvokeExpr(private val type: String) : InvokeExpr {
 
     override fun equivTo(other: Any?) = other is EmptyInvokeExpr && this.type == other.type
 
+    override fun equivHashCode() = type.hashCode()
+
     override fun getMethodRef() = throw NotImplementedError("The called method is not implemented.")
 
     override fun getArgs() = throw NotImplementedError("The called method is not implemented.")
 
     @SuppressWarnings("ExceptionRaisedInUnexpectedLocation")
     override fun toString(up: UnitPrinter?) = throw NotImplementedError("The called method is not implemented.")
-
-    override fun equivHashCode() = throw NotImplementedError("The called method is not implemented.")
 
     override fun getMethod() = throw NotImplementedError("The called method is not implemented.")
 
