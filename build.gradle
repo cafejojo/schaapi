@@ -13,7 +13,7 @@ buildscript {
 
 
 // Shared config
-subprojects {
+allprojects {
     /// Plugins
     // Compilation
     apply plugin: "java"
@@ -91,11 +91,11 @@ apply from: "gradle/detekt.gradle"
 
 // Jacoco report combining all reports
 task jacocoRootReport(type: JacocoReport) {
-    dependsOn = subprojects.test
-    additionalSourceDirs = files(subprojects.sourceSets.main.allSource.srcDirs)
-    sourceDirectories = files(subprojects.sourceSets.main.allSource.srcDirs)
-    classDirectories = files(subprojects.sourceSets.main.output)
-    executionData = files(subprojects.jacocoTestReport.executionData)
+    dependsOn = allprojects.test
+    additionalSourceDirs = files(allprojects.sourceSets.main.allSource.srcDirs)
+    sourceDirectories = files(allprojects.sourceSets.main.allSource.srcDirs)
+    classDirectories = files(allprojects.sourceSets.main.output)
+    executionData = files(allprojects.jacocoTestReport.executionData)
 
     reports {
         html.enabled = true
