@@ -278,6 +278,24 @@ internal class IntegrationTest : Spek({
                 cfg
             )
         }
+
+        it("converts a class containing a throw statement with library usage to a filtered cfg") {
+            val cfg = LibraryUsageGraphGenerator.generate(
+                libraryProject,
+                TestProject(testClassesClassPath,
+                    listOf("$TEST_CLASSES_PACKAGE.users.ThrowTest"))
+            )[1]
+
+            assertThatStructureMatches(
+                node<JAssignStmt>(
+                    node<JInvokeStmt>(
+                        node<JAssignStmt>(
+                        )
+                    )
+                ),
+                cfg
+            )
+        }
     }
 })
 
