@@ -1,4 +1,4 @@
-package org.cafejojo.schaapi.pipeline.usagegraphgenerator.jimple.testclasses.users;
+package org.cafejojo.schaapi.pipeline.usagegraphgenerator.jimple.testclasses.users.ifconditional;
 
 import org.cafejojo.schaapi.pipeline.usagegraphgenerator.jimple.testclasses.library.Object1;
 

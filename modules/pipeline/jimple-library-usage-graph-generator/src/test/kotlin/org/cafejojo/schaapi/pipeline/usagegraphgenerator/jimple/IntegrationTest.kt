@@ -47,7 +47,7 @@ internal class IntegrationTest : Spek({
         it("converts a class containing an if with a library usage in the false-branch to a filtered cfg") {
             val cfg = LibraryUsageGraphGenerator.generate(
                 libraryProject,
-                TestProject(testClassesClassPath, listOf("$TEST_CLASSES_PACKAGE.users.IfFalseUseTest"))
+                TestProject(testClassesClassPath, listOf("$TEST_CLASSES_PACKAGE.users.ifconditional.IfFalseUseTest"))
             )[1]
 
             assertThatStructureMatches(
@@ -72,7 +72,7 @@ internal class IntegrationTest : Spek({
         it("converts a class containing an if with a library usage in the true-branch to a filtered cfg") {
             val cfg = LibraryUsageGraphGenerator.generate(
                 libraryProject,
-                TestProject(testClassesClassPath, listOf("$TEST_CLASSES_PACKAGE.users.IfTrueUseTest"))
+                TestProject(testClassesClassPath, listOf("$TEST_CLASSES_PACKAGE.users.ifconditional.IfTrueUseTest"))
             )[1]
 
             assertThatStructureMatches(
@@ -97,7 +97,7 @@ internal class IntegrationTest : Spek({
         it("converts a class containing an if with a library usage in both branches to a filtered cfg") {
             val cfg = LibraryUsageGraphGenerator.generate(
                 libraryProject,
-                TestProject(testClassesClassPath, listOf("$TEST_CLASSES_PACKAGE.users.IfBothUseTest"))
+                TestProject(testClassesClassPath, listOf("$TEST_CLASSES_PACKAGE.users.ifconditional.IfBothUseTest"))
             )[1]
 
             assertThatStructureMatches(
@@ -124,7 +124,7 @@ internal class IntegrationTest : Spek({
         it("converts a class containing an if with a library usage in both branches to a filtered cfg") {
             val cfg = LibraryUsageGraphGenerator.generate(
                 libraryProject,
-                TestProject(testClassesClassPath, listOf("$TEST_CLASSES_PACKAGE.users.IfNoUseTest"))
+                TestProject(testClassesClassPath, listOf("$TEST_CLASSES_PACKAGE.users.ifconditional.IfNoUseTest"))
             )[1]
 
             assertThatStructureMatches(
@@ -142,7 +142,7 @@ internal class IntegrationTest : Spek({
         it("converts a class containing an if with no successors of the true/false branch") {
             val cfg = LibraryUsageGraphGenerator.generate(
                 libraryProject,
-                TestProject(testClassesClassPath, listOf("$TEST_CLASSES_PACKAGE.users.IfNoEndTest"))
+                TestProject(testClassesClassPath, listOf("$TEST_CLASSES_PACKAGE.users.ifconditional.IfNoEndTest"))
             )[1]
 
             assertThatStructureMatches(
@@ -165,7 +165,8 @@ internal class IntegrationTest : Spek({
         it("converts a class containing a switch with a library usage in a branch to a filtered cfg") {
             val cfg = LibraryUsageGraphGenerator.generate(
                 libraryProject,
-                TestProject(testClassesClassPath, listOf("$TEST_CLASSES_PACKAGE.users.SwitchOneUseTest"))
+                TestProject(testClassesClassPath,
+                    listOf("$TEST_CLASSES_PACKAGE.users.switchconditional.SwitchOneUseTest"))
             )[1]
 
             assertThatStructureMatches(
@@ -193,7 +194,8 @@ internal class IntegrationTest : Spek({
         it("converts a class containing a switch with a library usage in the default branch to a filtered cfg") {
             val cfg = LibraryUsageGraphGenerator.generate(
                 libraryProject,
-                TestProject(testClassesClassPath, listOf("$TEST_CLASSES_PACKAGE.users.SwitchDefaultUseTest"))
+                TestProject(testClassesClassPath,
+                    listOf("$TEST_CLASSES_PACKAGE.users.switchconditional.SwitchDefaultUseTest"))
             )[1]
 
             assertThatStructureMatches(
@@ -221,7 +223,8 @@ internal class IntegrationTest : Spek({
         it("converts a class containing a switch with no library usage in its branches to a filtered cfg") {
             val cfg = LibraryUsageGraphGenerator.generate(
                 libraryProject,
-                TestProject(testClassesClassPath, listOf("$TEST_CLASSES_PACKAGE.users.SwitchNoUseTest"))
+                TestProject(testClassesClassPath,
+                    listOf("$TEST_CLASSES_PACKAGE.users.switchconditional.SwitchNoUseTest"))
             )[1]
 
             assertThatStructureMatches(
