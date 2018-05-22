@@ -138,6 +138,27 @@ internal class IntegrationTest : Spek({
                 cfg
             )
         }
+
+        it("converts a class containing an if with no successors of the true/false branch") {
+            val cfg = LibraryUsageGraphGenerator.generate(
+                libraryProject,
+                TestProject(testClassesClassPath, listOf("$TEST_CLASSES_PACKAGE.users.IfNoEndTest"))
+            )[1]
+
+            assertThatStructureMatches(
+                node<JAssignStmt>(
+                    node<JInvokeStmt>(
+                        node<JAssignStmt>(
+                            node<JIfStmt>(
+                                node<JReturnStmt>(),
+                                node<JReturnStmt>()
+                            )
+                        )
+                    )
+                ),
+                cfg
+            )
+        }
     }
 
     describe("the integration of different components of the package for classes containing switch statements") {

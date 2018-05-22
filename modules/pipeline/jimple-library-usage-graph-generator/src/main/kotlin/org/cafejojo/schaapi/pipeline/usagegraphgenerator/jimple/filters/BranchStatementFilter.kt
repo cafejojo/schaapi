@@ -57,21 +57,18 @@ private class BranchStatement(private val body: Body, val statement: Unit) {
 
     val cfg = BriefUnitGraph(body)
 
-    val redundantGoToStatements: List<GotoStmt>
+    var redundantGoToStatements: List<GotoStmt> = emptyList()
 
-    val hasNonEmptyBranches: Boolean
+    var hasNonEmptyBranches: Boolean = true
 
     init {
-        val end = findBranchStatementEnd()
+        findBranchStatementEnd()?.let { end ->
+            val branchTargets = cfg.getSuccsOf(statement)
 
-        val branchTargets = cfg.getSuccsOf(statement)
-
-        if (branchTargets.all { it === end || it is GotoStmt && it.target === end }) {
-            redundantGoToStatements = branchTargets.filterIsInstance<GotoStmt>()
-            hasNonEmptyBranches = false
-        } else {
-            redundantGoToStatements = emptyList()
-            hasNonEmptyBranches = true
+            if (branchTargets.all { it === end || it is GotoStmt && it.target === end }) {
+                redundantGoToStatements = branchTargets.filterIsInstance<GotoStmt>()
+                hasNonEmptyBranches = false
+            }
         }
     }
 
@@ -80,14 +77,14 @@ private class BranchStatement(private val body: Body, val statement: Unit) {
         body.units.removeAll(redundantGoToStatements)
     }
 
-    private fun findBranchStatementEnd(): soot.Unit {
+    private fun findBranchStatementEnd(): soot.Unit? {
         // Return type is fully classified because of false positives by static analysis tools
 
         val bodiesTillMethodEnd = cfg.getSuccsOf(statement).map { collectSuccessors(cfg, it) }
         val intersectedBodies =
             bodiesTillMethodEnd.fold(bodiesTillMethodEnd[0], { acc, list -> acc.intersect(list).toMutableList() })
 
-        if (intersectedBodies.isEmpty()) throw IllegalStateException("No common end statement found")
+        if (intersectedBodies.isEmpty()) return null
 
         return intersectedBodies[0]
     }
