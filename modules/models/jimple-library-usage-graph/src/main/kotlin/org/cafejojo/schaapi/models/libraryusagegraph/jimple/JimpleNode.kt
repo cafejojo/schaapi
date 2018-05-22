@@ -1,7 +1,6 @@
 package org.cafejojo.schaapi.models.libraryusagegraph.jimple
 
 import org.cafejojo.schaapi.models.Node
-import org.cafejojo.schaapi.models.libraryusagegraph.jimple.compare.isSubclassOf
 import soot.jimple.DefinitionStmt
 import soot.jimple.GotoStmt
 import soot.jimple.IfStmt
