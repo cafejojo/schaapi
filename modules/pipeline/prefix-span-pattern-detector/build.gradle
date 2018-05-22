@@ -12,7 +12,7 @@ dependencies {
 
     testCompile group: "com.nhaarman", name: "mockito-kotlin", version: mockitoKotlinVersion
 
-    integrationTestCompile project(":pipeline:jimple-library-usage-graph-generator")
+    integrationTestCompile project(":models:jimple-library-usage-graph")
     integrationTestCompile group: "ca.mcgill.sable", name: "soot", version: sootVersion
 }
 
