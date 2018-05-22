@@ -37,7 +37,7 @@ class DfsIterator(entryNode: Node) : Iterator<Node> {
             }
 
             nextNode = neighbors?.next()
-        } while (visited.contains(nextNode))
+        } while (visited.any { it === nextNode })
 
         successorStack.push(nextNode?.successors?.iterator())
     }
