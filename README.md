@@ -126,7 +126,7 @@ If you discover any security-related issues, please email cafejojo@fwdekker.com 
 - [Georgios Andreadis](https://github.com/gandreadis)
 - [Casper Boone](https://github.com/casperboone)
 - [Felix Dekker](https://github.com/fwdekker)
-- [All Contributors](../../contributors)
+- [All contributors](../../contributors)
 
 ## License
 The MIT License (MIT). Please see the [license file](LICENSE) for more information.
