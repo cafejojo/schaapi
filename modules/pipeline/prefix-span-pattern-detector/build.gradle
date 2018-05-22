@@ -2,20 +2,20 @@ repositories {
     maven { url "https://soot-build.cs.uni-paderborn.de/nexus/repository/soot-release/" }
 }
 
-dependencies {
-    compile project(":pipeline")
-
-    testCompile project(":models:jimple-library-usage-graph")
-
-    testCompile group: "com.nhaarman", name: "mockito-kotlin", version: mockitoKotlinVersion
-}
-
-// Integration tests
 configurations {
     integrationTestCompile.extendsFrom testCompile
     integrationTestRuntime.extendsFrom integrationTestCompile, testRuntime
 }
 
+dependencies {
+    compile project(":pipeline")
+
+    testCompile group: "com.nhaarman", name: "mockito-kotlin", version: mockitoKotlinVersion
+
+    integrationTestCompile project(":jimple-library-usage-graph")
+}
+
+// Integration test src
 sourceSets {
     integrationTest {
         kotlin.srcDirs file("src/integration-test/kotlin")
@@ -39,10 +39,10 @@ task integrationTest(type: Test, description: "Runs the integration tests.", gro
     useJUnitPlatform() {
         includeEngines "spek"
     }
-}
 
-jacocoTestReport {
-    executionData file("$buildDir/jacoco/integration-test.exec")
+    jacocoTestReport {
+        executionData file("$buildDir/jacoco/integration-test.exec")
+    }
 }
 
 integrationTest.mustRunAfter test
