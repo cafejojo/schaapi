@@ -37,5 +37,6 @@ test-pattern:
     - "LateinitUsage"
     - "MagicNumber"
     - "MatchingDeclarationName"
+    - "NotImplementedDeclaration"
     - "StringLiteralDuplication"
     - "TooManyFunctions"

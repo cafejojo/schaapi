@@ -1,31 +1,54 @@
 package org.cafejojo.schaapi.pipeline.patterndetector.prefixspan
 
+import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.mock
 import org.assertj.core.api.Assertions.assertThat
 import org.cafejojo.schaapi.models.libraryusagegraph.jimple.GeneralizedNodeComparator
+import org.cafejojo.schaapi.models.libraryusagegraph.jimple.JimpleNode
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.xit
-import soot.Type
+import soot.jimple.DefinitionStmt
+import soot.jimple.IfStmt
 
 class PrefixSpanJimpleNodeIntegrationTest : Spek({
+    /**
+     * Calculates how many sub-sequences a given sequence may have.
+     */
+    fun amountOfPossibleSubSequences(sequenceLength: Int): Int = (0..sequenceLength).sum()
+
+    /**
+     * Creates a [JimpleNode] without any [soot.Value]s.
+     */
+    fun createJimpleNode() = JimpleNode(mock<IfStmt> {
+        on { it.condition } doReturn UniqueValue()
+    })
+
+    /**
+     * Creates a [JimpleNode] with two [SimpleValue]s.
+     *
+     * @param leftType the [SimpleValue.type] of the first [SimpleValue]
+     * @param rightType the [SimpleValue.type] of the second [SimpleValue]
+     */
+    fun createJimpleNode(leftType: String, rightType: String) =
+        JimpleNode(mock<DefinitionStmt> {
+            on { it.leftOp } doReturn SimpleValue(leftType)
+            on { it.rightOp } doReturn SimpleValue(rightType)
+        })
+
     describe("when looking for common sequences in patterns of statements using the generalized soot comparator") {
         it("should find a pattern with multiple nodes which have different values with the same type") {
-            val type1 = mock<Type> {}
-            val type2 = mock<Type> {}
-            val type3 = mock<Type> {}
-
-            val node1 = mockJimpleNode(type1, type3)
-            val node2 = mockJimpleNode(type2, type2)
-            val node3 = mockJimpleNode(type3, type1)
-            val node4 = mockJimpleNode(type1, type3)
-            val node5 = mockJimpleNode(type2, type2)
-            val node6 = mockJimpleNode(type3, type1)
-            val node7 = mockJimpleNode()
-            val node8 = mockJimpleNode()
-            val node9 = mockJimpleNode()
-            val node10 = mockJimpleNode()
+            val node1 = createJimpleNode("A", "C")
+            val node2 = createJimpleNode("B", "B")
+            val node3 = createJimpleNode("C", "A")
+            val node4 = createJimpleNode("A", "C")
+            val node5 = createJimpleNode("B", "B")
+            val node6 = createJimpleNode("C", "A")
+            val node7 = createJimpleNode()
+            val node8 = createJimpleNode()
+            val node9 = createJimpleNode()
+            val node10 = createJimpleNode()
 
             val path1 = listOf(node1, node2, node3)
             val path2 = listOf(node7, node8, node9, node10, node4, node5, node6)
@@ -38,24 +61,20 @@ class PrefixSpanJimpleNodeIntegrationTest : Spek({
 
         // TODO make test pass
         xit("should not store duplicate patterns") {
-            val type1 = mock<Type> {}
-            val type2 = mock<Type> {}
-            val type3 = mock<Type> {}
+            val node1 = createJimpleNode("A", "C")
+            val node2 = createJimpleNode("B", "B")
+            val node3 = createJimpleNode("C", "A")
+            val node4 = createJimpleNode("B", "A")
+            val node5 = createJimpleNode("A", "B")
 
-            val node1 = mockJimpleNode(type1, type3)
-            val node2 = mockJimpleNode(type2, type2)
-            val node3 = mockJimpleNode(type3, type1)
-            val node4 = mockJimpleNode(type2, type1)
-            val node5 = mockJimpleNode(type1, type2)
+            val node6 = createJimpleNode("A", "C")
+            val node7 = createJimpleNode("B", "B")
+            val node8 = createJimpleNode("C", "A")
+            val node9 = createJimpleNode("B", "A")
+            val node10 = createJimpleNode("A", "B")
 
-            val node6 = mockJimpleNode(type1, type3)
-            val node7 = mockJimpleNode(type2, type2)
-            val node8 = mockJimpleNode(type3, type1)
-            val node9 = mockJimpleNode(type2, type1)
-            val node10 = mockJimpleNode(type1, type2)
-
-            val node11 = mockJimpleNode()
-            val node12 = mockJimpleNode()
+            val node11 = createJimpleNode()
+            val node12 = createJimpleNode()
 
             val path1 = listOf(node1, node2, node3, node4, node5)
             val path2 = listOf(node11, node12, node6, node7, node8, node9, node10)
@@ -67,22 +86,18 @@ class PrefixSpanJimpleNodeIntegrationTest : Spek({
         }
 
         it("should find a pattern with multiple nodes which have the same value") {
-            val value1 = mockTypedValue()
-            val value2 = mockTypedValue()
-            val value3 = mockTypedValue()
+            val node1 = createJimpleNode("B", "B")
+            val node2 = createJimpleNode("C", "A")
+            val node3 = createJimpleNode("A", "C")
+            val node4 = createJimpleNode("B", "A")
 
-            val node1 = mockJimpleNode(value2, value2)
-            val node2 = mockJimpleNode(value3, value1)
-            val node3 = mockJimpleNode(value1, value3)
-            val node4 = mockJimpleNode(value2, value1)
+            val node5 = createJimpleNode("B", "B")
+            val node6 = createJimpleNode("C", "A")
+            val node7 = createJimpleNode("A", "C")
+            val node8 = createJimpleNode("B", "A")
 
-            val node5 = mockJimpleNode(value2, value2)
-            val node6 = mockJimpleNode(value3, value1)
-            val node7 = mockJimpleNode(value1, value3)
-            val node8 = mockJimpleNode(value2, value1)
-
-            val node9 = mockJimpleNode()
-            val node10 = mockJimpleNode()
+            val node9 = createJimpleNode()
+            val node10 = createJimpleNode()
 
             val path1 = listOf(node1, node2, node3, node4)
             val path2 = listOf(node9, node10, node5, node6, node7, node8)
@@ -94,13 +109,13 @@ class PrefixSpanJimpleNodeIntegrationTest : Spek({
         }
 
         it("should find a pattern when nodes don't have the same value but are the same node") {
-            val node1 = mockJimpleNode()
-            val node2 = mockJimpleNode()
-            val node3 = mockJimpleNode()
-            val node7 = mockJimpleNode()
-            val node8 = mockJimpleNode()
-            val node9 = mockJimpleNode()
-            val node10 = mockJimpleNode()
+            val node1 = createJimpleNode()
+            val node2 = createJimpleNode()
+            val node3 = createJimpleNode()
+            val node7 = createJimpleNode()
+            val node8 = createJimpleNode()
+            val node9 = createJimpleNode()
+            val node10 = createJimpleNode()
 
             val path1 = listOf(node1, node2, node3)
             val path2 = listOf(node7, node8, node9, node10, node1, node2, node3)
@@ -112,16 +127,16 @@ class PrefixSpanJimpleNodeIntegrationTest : Spek({
         }
 
         it("should not find a pattern when there are only unique nodes") {
-            val node1 = mockJimpleNode()
-            val node2 = mockJimpleNode()
-            val node3 = mockJimpleNode()
-            val node4 = mockJimpleNode()
-            val node5 = mockJimpleNode()
-            val node6 = mockJimpleNode()
-            val node7 = mockJimpleNode()
-            val node8 = mockJimpleNode()
-            val node9 = mockJimpleNode()
-            val node10 = mockJimpleNode()
+            val node1 = createJimpleNode()
+            val node2 = createJimpleNode()
+            val node3 = createJimpleNode()
+            val node4 = createJimpleNode()
+            val node5 = createJimpleNode()
+            val node6 = createJimpleNode()
+            val node7 = createJimpleNode()
+            val node8 = createJimpleNode()
+            val node9 = createJimpleNode()
+            val node10 = createJimpleNode()
 
             val path1 = listOf(node1, node2, node3)
             val path2 = listOf(node7, node8, node9, node10, node4, node5, node6)
@@ -134,22 +149,18 @@ class PrefixSpanJimpleNodeIntegrationTest : Spek({
 
         // TODO make test pass
         xit("should not find a pattern when multiple patterns use the same values") {
-            val value1 = mockTypedValue()
-            val value2 = mockTypedValue()
-            val value3 = mockTypedValue()
+            val node1 = createJimpleNode("B", "B")
+            val node2 = createJimpleNode("C", "A")
+            val node3 = createJimpleNode("A", "C")
+            val node4 = createJimpleNode("B", "A")
 
-            val node1 = mockJimpleNode(value2, value2)
-            val node2 = mockJimpleNode(value3, value1)
-            val node3 = mockJimpleNode(value1, value3)
-            val node4 = mockJimpleNode(value2, value1)
+            val node5 = createJimpleNode("A", "C")
+            val node6 = createJimpleNode("B", "B")
+            val node7 = createJimpleNode("C", "A")
+            val node8 = createJimpleNode("B", "A")
 
-            val node5 = mockJimpleNode(value1, value3)
-            val node6 = mockJimpleNode(value2, value2)
-            val node7 = mockJimpleNode(value3, value1)
-            val node8 = mockJimpleNode(value2, value1)
-
-            val node9 = mockJimpleNode()
-            val node10 = mockJimpleNode()
+            val node9 = createJimpleNode()
+            val node10 = createJimpleNode()
 
             val path1 = listOf(node4, node2, node3, node1)
             val path2 = listOf(node9, node10, node5, node6, node7, node8)
