@@ -2,7 +2,10 @@ package org.cafejojo.schaapi.models.libraryusagegraph.jimple
 
 import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.mock
+import soot.SootMethod
+import soot.SootMethodRef
 import soot.Value
+import soot.ValueBox
 import soot.jimple.DefinitionStmt
 import soot.jimple.GotoStmt
 import soot.jimple.IfStmt
@@ -35,3 +38,7 @@ fun mockReturnStmt(op: Value) = mock<ReturnStmt> { on { it.op } doReturn op }
 fun mockGotoStmt() = mock<GotoStmt> {}
 
 fun mockReturnVoidStmt() = mock<ReturnVoidStmt> {}
+
+fun mockValueBox(value: Value) = mock<ValueBox> { on { it.value } doReturn value }
+
+fun mockSootMethodRef(sootMethod: SootMethod) = mock<SootMethodRef> { on { it.resolve() } doReturn sootMethod }

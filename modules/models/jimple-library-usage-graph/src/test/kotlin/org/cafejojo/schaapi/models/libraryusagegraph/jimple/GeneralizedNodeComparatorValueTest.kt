@@ -42,20 +42,20 @@ internal class GeneralizedNodeComparatorValueTest : Spek({
 
         context("(in)equality depends on the template") {
             it("copies tags to two instances") {
-                val template = JimpleNode(mockThrowStmt(SimpleValue("shared")))
-                val instanceA = JimpleNode(mockThrowStmt(SimpleValue("shared")))
-                val instanceB = JimpleNode(mockThrowStmt(SimpleValue("shared")))
+                val template = JimpleNode(mockThrowStmt(EmptyValue("shared")))
+                val instanceA = JimpleNode(mockThrowStmt(EmptyValue("shared")))
+                val instanceB = JimpleNode(mockThrowStmt(EmptyValue("shared")))
 
                 assertThat(comparator.generalizedValuesAreEqual(template, instanceA)).isTrue()
                 assertThat(comparator.generalizedValuesAreEqual(template, instanceB)).isTrue()
             }
 
             it("copies tags from non-finalised values") {
-                val templateValue = SimpleValue("shared")
+                val templateValue = EmptyValue("shared")
                 val templateA = JimpleNode(mockThrowStmt(templateValue))
                 val templateB = JimpleNode(mockThrowStmt(templateValue))
 
-                val instanceValue = SimpleValue("shared")
+                val instanceValue = EmptyValue("shared")
                 val instanceA = JimpleNode(mockThrowStmt(instanceValue))
                 val instanceB = JimpleNode(mockThrowStmt(instanceValue))
 
@@ -64,58 +64,58 @@ internal class GeneralizedNodeComparatorValueTest : Spek({
             }
 
             it("does not copy tags from finalised values") {
-                val templateValue = SimpleValue("shared")
+                val templateValue = EmptyValue("shared")
                 val templateA = JimpleNode(mockThrowStmt(templateValue))
                 val templateB = JimpleNode(mockThrowStmt(templateValue))
 
-                val instanceA = JimpleNode(mockThrowStmt(SimpleValue("shared")))
-                val instanceB = JimpleNode(mockThrowStmt(SimpleValue("shared")))
+                val instanceA = JimpleNode(mockThrowStmt(EmptyValue("shared")))
+                val instanceB = JimpleNode(mockThrowStmt(EmptyValue("shared")))
 
                 comparator.generalizedValuesAreEqual(templateA, instanceA)
                 assertThat(comparator.generalizedValuesAreEqual(templateB, instanceB)).isFalse()
             }
 
             it("is not transitive") {
-                val template = JimpleNode(mockThrowStmt(SimpleValue("shared")))
+                val template = JimpleNode(mockThrowStmt(EmptyValue("shared")))
 
-                val instanceA = JimpleNode(mockThrowStmt(SimpleValue("shared")))
-                val instanceB = JimpleNode(mockThrowStmt(SimpleValue("shared")))
+                val instanceA = JimpleNode(mockThrowStmt(EmptyValue("shared")))
+                val instanceB = JimpleNode(mockThrowStmt(EmptyValue("shared")))
 
                 comparator.generalizedValuesAreEqual(template, instanceA)
                 assertThat(comparator.generalizedValuesAreEqual(instanceA, instanceB)).isFalse()
             }
 
             it("copies tags for one value even if the other is already assigned") {
-                val templateSharedValue = SimpleValue("shared")
+                val templateSharedValue = EmptyValue("shared")
                 val templateA = JimpleNode(mockIfStmt(templateSharedValue))
-                val templateB = JimpleNode(mockDefinitionStmt(templateSharedValue, SimpleValue("shared")))
+                val templateB = JimpleNode(mockDefinitionStmt(templateSharedValue, EmptyValue("shared")))
 
-                val instanceSharedValue = SimpleValue("shared")
+                val instanceSharedValue = EmptyValue("shared")
                 val instanceA = JimpleNode(mockIfStmt(instanceSharedValue))
-                val instanceB = JimpleNode(mockDefinitionStmt(instanceSharedValue, SimpleValue("shared")))
+                val instanceB = JimpleNode(mockDefinitionStmt(instanceSharedValue, EmptyValue("shared")))
 
                 comparator.generalizedValuesAreEqual(templateA, instanceA)
                 assertThat(comparator.generalizedValuesAreEqual(templateB, instanceB)).isTrue()
             }
 
             it("supports switching template side between statements") {
-                val templateSharedValue = SimpleValue("shared")
+                val templateSharedValue = EmptyValue("shared")
                 val templateA = JimpleNode(mockSwitchStmt(templateSharedValue))
-                val templateB = JimpleNode(mockDefinitionStmt(templateSharedValue, SimpleValue("shared")))
+                val templateB = JimpleNode(mockDefinitionStmt(templateSharedValue, EmptyValue("shared")))
 
-                val instanceSharedValue = SimpleValue("shared")
+                val instanceSharedValue = EmptyValue("shared")
                 val instanceA = JimpleNode(mockIfStmt(instanceSharedValue))
-                val instanceB = JimpleNode(mockDefinitionStmt(instanceSharedValue, SimpleValue("shared")))
+                val instanceB = JimpleNode(mockDefinitionStmt(instanceSharedValue, EmptyValue("shared")))
 
                 comparator.generalizedValuesAreEqual(templateA, instanceA)
                 assertThat(comparator.generalizedValuesAreEqual(instanceB, templateB)).isTrue()
             }
 
             it("rejects instances with tags where the template has none") {
-                val fakeTemplate = JimpleNode(mockReturnStmt(SimpleValue("shared")))
-                val realTemplate = JimpleNode(mockThrowStmt(SimpleValue("shared")))
+                val fakeTemplate = JimpleNode(mockReturnStmt(EmptyValue("shared")))
+                val realTemplate = JimpleNode(mockThrowStmt(EmptyValue("shared")))
 
-                val instanceSharedValue = SimpleValue("shared")
+                val instanceSharedValue = EmptyValue("shared")
                 val instanceA = JimpleNode(mockReturnStmt(instanceSharedValue))
                 val instanceB = JimpleNode(mockThrowStmt(instanceSharedValue))
 
@@ -124,16 +124,16 @@ internal class GeneralizedNodeComparatorValueTest : Spek({
             }
 
             it("rejects instances with incorrect tags if the template is finalised") {
-                val fakeTemplate = JimpleNode(mockReturnStmt(SimpleValue("shared")))
-                val fakeInstance = JimpleNode(mockReturnStmt(SimpleValue("shared")))
+                val fakeTemplate = JimpleNode(mockReturnStmt(EmptyValue("shared")))
+                val fakeInstance = JimpleNode(mockReturnStmt(EmptyValue("shared")))
 
                 comparator.generalizedValuesAreEqual(fakeTemplate, fakeInstance)
 
-                val realTemplateValue = SimpleValue("shared")
+                val realTemplateValue = EmptyValue("shared")
                 val realUnfinalizedTemplate = JimpleNode(mockReturnStmt(realTemplateValue))
                 val realFinalizedTemplate = JimpleNode(mockReturnStmt(realTemplateValue))
 
-                val realInstanceValue = SimpleValue("shared")
+                val realInstanceValue = EmptyValue("shared")
                 val realInstance = JimpleNode(mockReturnStmt(realInstanceValue))
 
                 comparator.generalizedValuesAreEqual(realUnfinalizedTemplate, realInstance)
@@ -142,13 +142,13 @@ internal class GeneralizedNodeComparatorValueTest : Spek({
             }
 
             it("rejects instances with incorrect tags if the template is non-finalised") {
-                val fakeTemplate = JimpleNode(mockReturnStmt(SimpleValue("shared")))
-                val fakeInstance = JimpleNode(mockReturnStmt(SimpleValue("shared")))
+                val fakeTemplate = JimpleNode(mockReturnStmt(EmptyValue("shared")))
+                val fakeInstance = JimpleNode(mockReturnStmt(EmptyValue("shared")))
 
                 comparator.generalizedValuesAreEqual(fakeTemplate, fakeInstance)
 
-                val realTemplate = JimpleNode(mockReturnStmt(SimpleValue("shared")))
-                val realInstance = JimpleNode(mockReturnStmt(SimpleValue("shared")))
+                val realTemplate = JimpleNode(mockReturnStmt(EmptyValue("shared")))
+                val realInstance = JimpleNode(mockReturnStmt(EmptyValue("shared")))
 
                 comparator.generalizedValuesAreEqual(realTemplate, realInstance)
 
