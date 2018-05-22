@@ -276,23 +276,21 @@ internal class GeneralizedNodeComparatorStructureTest : Spek({
         }
 
         context("goto statements") {
-            fun mockGotoStmt() = JimpleNode(mock<GotoStmt> {})
-
             it("equals itself") {
-                val stmt = mockGotoStmt()
+                val stmt = JimpleNode(mockGotoStmt())
 
                 assertThat(comparator.satisfies(stmt, stmt)).isTrue()
             }
 
             it("equals any other goto") {
-                val template = mockGotoStmt()
-                val instance = mockGotoStmt()
+                val template = JimpleNode(mockGotoStmt())
+                val instance = JimpleNode(mockGotoStmt())
 
                 assertThat(comparator.satisfies(template, instance)).isTrue()
             }
 
             it("does not equal statements of a different class") {
-                val template = mockGotoStmt()
+                val template = JimpleNode(mockGotoStmt())
                 val instance = JimpleNode(mockStmt())
 
                 assertThat(comparator.satisfies(template, instance)).isFalse()
@@ -300,23 +298,21 @@ internal class GeneralizedNodeComparatorStructureTest : Spek({
         }
 
         context("return-void statements") {
-            fun mockReturnVoidStmt() = JimpleNode(mock<ReturnVoidStmt> {})
-
             it("equals itself") {
-                val stmt = mockReturnVoidStmt()
+                val stmt = JimpleNode(mockReturnVoidStmt())
 
                 assertThat(comparator.satisfies(stmt, stmt)).isTrue()
             }
 
             it("equals any other return void") {
-                val template = mockReturnVoidStmt()
-                val instance = mockReturnVoidStmt()
+                val template = JimpleNode(mockReturnVoidStmt())
+                val instance = JimpleNode(mockReturnVoidStmt())
 
                 assertThat(comparator.satisfies(template, instance)).isTrue()
             }
 
             it("does not equal statements of a different class") {
-                val template = mockReturnVoidStmt()
+                val template = JimpleNode(mockReturnVoidStmt())
                 val instance = JimpleNode(mockStmt())
 
                 assertThat(comparator.satisfies(template, instance)).isFalse()
