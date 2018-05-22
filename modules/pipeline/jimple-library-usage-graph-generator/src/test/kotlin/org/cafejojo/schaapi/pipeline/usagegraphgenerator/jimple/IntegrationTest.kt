@@ -297,7 +297,7 @@ internal class IntegrationTest : Spek({
             )
         }
 
-        it("converts a class containing a try-catch statement with library usages to a filtered cfg") {
+        it("converts a class containing a try-catch statement with library usage in the try block to a filtered cfg") {
             val cfg = LibraryUsageGraphGenerator.generate(
                 libraryProject,
                 TestProject(testClassesClassPath,
