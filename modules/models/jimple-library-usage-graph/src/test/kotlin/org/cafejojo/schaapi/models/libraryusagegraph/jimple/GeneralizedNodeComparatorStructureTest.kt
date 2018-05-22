@@ -18,6 +18,9 @@ import soot.jimple.ReturnVoidStmt
 import soot.jimple.SwitchStmt
 import soot.jimple.ThrowStmt
 
+/**
+ * Unit tests for [GeneralizedNodeComparator.structuresAreEqual].
+ */
 internal class GeneralizedNodeComparatorStructureTest : Spek({
     lateinit var comparator: GeneralizedNodeComparator
 
@@ -30,7 +33,7 @@ internal class GeneralizedNodeComparatorStructureTest : Spek({
             val template = mock<Node> {}
             val instance = JimpleNode(mock {})
 
-            assertThatThrownBy { comparator.structuresAreEqual(template, instance) }
+            assertThatThrownBy { comparator.generalizedValuesAreEqual(template, instance) }
                 .isExactlyInstanceOf(IllegalArgumentException::class.java)
                 .hasMessage("Jimple GeneralizedNodeComparator cannot handle non-Jimple nodes.")
         }
@@ -39,7 +42,7 @@ internal class GeneralizedNodeComparatorStructureTest : Spek({
             val template = JimpleNode(mock {})
             val instance = mock<Node> {}
 
-            assertThatThrownBy { comparator.structuresAreEqual(template, instance) }
+            assertThatThrownBy { comparator.generalizedValuesAreEqual(template, instance) }
                 .isExactlyInstanceOf(IllegalArgumentException::class.java)
                 .hasMessage("Jimple GeneralizedNodeComparator cannot handle non-Jimple nodes.")
         }
