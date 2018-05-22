@@ -7,7 +7,6 @@ import org.cafejojo.schaapi.models.libraryusagegraph.jimple.JimpleNode
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
-import soot.jimple.AssignStmt
 import soot.jimple.Stmt
 import soot.jimple.internal.JAssignStmt
 import soot.jimple.internal.JGotoStmt
@@ -166,8 +165,9 @@ internal class IntegrationTest : Spek({
         it("converts a class containing a switch with a library usage in a branch to a filtered cfg") {
             val cfg = LibraryUsageGraphGenerator.generate(
                 libraryProject,
-                TestProject(testClassesClassPath,
-                    listOf("$TEST_CLASSES_PACKAGE.users.switchconditional.SwitchOneUseTest"))
+                TestProject(testClassesClassPath, listOf(
+                    "$TEST_CLASSES_PACKAGE.users.switchconditional.SwitchOneUseTest"
+                ))
             )[1]
 
             assertThatStructureMatches(
@@ -195,8 +195,9 @@ internal class IntegrationTest : Spek({
         it("converts a class containing a switch with a library usage in the default branch to a filtered cfg") {
             val cfg = LibraryUsageGraphGenerator.generate(
                 libraryProject,
-                TestProject(testClassesClassPath,
-                    listOf("$TEST_CLASSES_PACKAGE.users.switchconditional.SwitchDefaultUseTest"))
+                TestProject(testClassesClassPath, listOf(
+                    "$TEST_CLASSES_PACKAGE.users.switchconditional.SwitchDefaultUseTest"
+                ))
             )[1]
 
             assertThatStructureMatches(
@@ -224,16 +225,16 @@ internal class IntegrationTest : Spek({
         it("converts a class containing a switch with no library usage in its branches to a filtered cfg") {
             val cfg = LibraryUsageGraphGenerator.generate(
                 libraryProject,
-                TestProject(testClassesClassPath,
-                    listOf("$TEST_CLASSES_PACKAGE.users.switchconditional.SwitchNoUseTest"))
+                TestProject(testClassesClassPath, listOf(
+                    "$TEST_CLASSES_PACKAGE.users.switchconditional.SwitchNoUseTest"
+                ))
             )[1]
 
             assertThatStructureMatches(
                 node<JAssignStmt>(
                     node<JInvokeStmt>(
                         node<JAssignStmt>(
-                            node<JReturnStmt>(
-                            )
+                            node<JReturnStmt>()
                         )
                     )
                 ),
@@ -246,8 +247,7 @@ internal class IntegrationTest : Spek({
         it("converts a class containing an arraylist and a lambda") {
             val cfg = LibraryUsageGraphGenerator.generate(
                 libraryProject,
-                TestProject(testClassesClassPath,
-                    listOf("$TEST_CLASSES_PACKAGE.users.ArrayListAndLambdaTest"))
+                TestProject(testClassesClassPath, listOf("$TEST_CLASSES_PACKAGE.users.ArrayListAndLambdaTest"))
             )[1]
 
             assertThatStructureMatches(
@@ -263,8 +263,7 @@ internal class IntegrationTest : Spek({
         it("converts a class containing annotations") {
             val cfg = LibraryUsageGraphGenerator.generate(
                 libraryProject,
-                TestProject(testClassesClassPath,
-                    listOf("$TEST_CLASSES_PACKAGE.users.AnnotationTest"))
+                TestProject(testClassesClassPath, listOf("$TEST_CLASSES_PACKAGE.users.AnnotationTest"))
             )[1]
 
             assertThatStructureMatches(
@@ -282,15 +281,13 @@ internal class IntegrationTest : Spek({
         it("converts a class containing a throw statement with library usage to a filtered cfg") {
             val cfg = LibraryUsageGraphGenerator.generate(
                 libraryProject,
-                TestProject(testClassesClassPath,
-                    listOf("$TEST_CLASSES_PACKAGE.users.ThrowTest"))
+                TestProject(testClassesClassPath, listOf("$TEST_CLASSES_PACKAGE.users.ThrowTest"))
             )[1]
 
             assertThatStructureMatches(
                 node<JAssignStmt>(
                     node<JInvokeStmt>(
-                        node<JAssignStmt>(
-                        )
+                        node<JAssignStmt>()
                     )
                 ),
                 cfg
@@ -300,8 +297,7 @@ internal class IntegrationTest : Spek({
         it("converts a class containing a try-catch statement with library usage in the try block to a filtered cfg") {
             val cfg = LibraryUsageGraphGenerator.generate(
                 libraryProject,
-                TestProject(testClassesClassPath,
-                    listOf("$TEST_CLASSES_PACKAGE.users.TryCatchTest"))
+                TestProject(testClassesClassPath, listOf("$TEST_CLASSES_PACKAGE.users.TryCatchTest"))
             )[1]
 
             assertThatStructureMatches(
@@ -309,8 +305,7 @@ internal class IntegrationTest : Spek({
                     node<JInvokeStmt>(
                         node<JInvokeStmt>(
                             node<JGotoStmt>(
-                                node<JReturnVoidStmt>(
-                                )
+                                node<JReturnVoidStmt>()
                             )
                         )
                     )
@@ -322,14 +317,12 @@ internal class IntegrationTest : Spek({
         it("converts a class containing a static class call to a filtered cfg") {
             val cfg = LibraryUsageGraphGenerator.generate(
                 libraryProject,
-                TestProject(testClassesClassPath,
-                    listOf("$TEST_CLASSES_PACKAGE.users.StaticTest"))
+                TestProject(testClassesClassPath, listOf("$TEST_CLASSES_PACKAGE.users.StaticTest"))
             )[1]
 
             assertThatStructureMatches(
                 node<JInvokeStmt>(
-                    node<JReturnVoidStmt>(
-                    )
+                    node<JReturnVoidStmt>()
                 ),
                 cfg
             )
