@@ -2,8 +2,6 @@ package org.cafejojo.schaapi.models.libraryusagegraph.jimple
 
 import org.cafejojo.schaapi.models.GeneralizedNodeComparator
 import org.cafejojo.schaapi.models.Node
-import soot.Scene
-import soot.Type
 import soot.Value
 import soot.jimple.Stmt
 
@@ -103,17 +101,3 @@ class GeneralizedNodeComparator : GeneralizedNodeComparator {
 
     private fun isDefinedIn(value: Value, statement: Stmt) = tagOrigins[valueTags[value]] === statement
 }
-
-/**
- * Returns true iff [this] is a subclass of [that].
- *
- * @param that a [Type]
- * @return true iff [this] is a subclass of [that]
- */
-@SuppressWarnings("TooGenericExceptionCaught") // Part of signature of Soot's [merge] method
-fun Type.isSubclassOf(that: Type) =
-    try {
-        this.merge(that, Scene.v()) == that
-    } catch (e: RuntimeException) {
-        false
-    }
