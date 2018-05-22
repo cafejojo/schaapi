@@ -12,8 +12,8 @@ dependencies {
 
     testCompile group: "com.nhaarman", name: "mockito-kotlin", version: mockitoKotlinVersion
 
-    integrationTestCompile project(":jimple-library-usage-graph")
-    integrationTestCompile  group: "ca.mcgill.sable", name: "soot", version: sootVersion
+    integrationTestCompile project(":pipeline:jimple-library-usage-graph-generator")
+    integrationTestCompile group: "ca.mcgill.sable", name: "soot", version: sootVersion
 }
 
 // Integration test src
