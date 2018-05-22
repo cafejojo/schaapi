@@ -318,6 +318,22 @@ internal class IntegrationTest : Spek({
                 cfg
             )
         }
+
+        it("converts a class containing a static class call to a filtered cfg") {
+            val cfg = LibraryUsageGraphGenerator.generate(
+                libraryProject,
+                TestProject(testClassesClassPath,
+                    listOf("$TEST_CLASSES_PACKAGE.users.StaticTest"))
+            )[1]
+
+            assertThatStructureMatches(
+                node<JInvokeStmt>(
+                    node<JReturnVoidStmt>(
+                    )
+                ),
+                cfg
+            )
+        }
     }
 })
 
