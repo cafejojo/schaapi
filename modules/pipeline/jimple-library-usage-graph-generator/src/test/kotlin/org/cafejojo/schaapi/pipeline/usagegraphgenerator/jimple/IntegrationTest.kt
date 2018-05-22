@@ -7,6 +7,7 @@ import org.cafejojo.schaapi.models.libraryusagegraph.jimple.JimpleNode
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
+import soot.jimple.AssignStmt
 import soot.jimple.Stmt
 import soot.jimple.internal.JAssignStmt
 import soot.jimple.internal.JGotoStmt
@@ -253,6 +254,25 @@ internal class IntegrationTest : Spek({
                 node<JAssignStmt>(
                     node<JInvokeStmt>(
                         node<JReturnStmt>()
+                    )
+                ),
+                cfg
+            )
+        }
+
+        it("converts a class containing annotations") {
+            val cfg = LibraryUsageGraphGenerator.generate(
+                libraryProject,
+                TestProject(testClassesClassPath,
+                    listOf("$TEST_CLASSES_PACKAGE.users.AnnotationTest"))
+            )[1]
+
+            assertThatStructureMatches(
+                node<JAssignStmt>(
+                    node<JInvokeStmt>(
+                        node<JAssignStmt>(
+                            node<JReturnStmt>()
+                        )
                     )
                 ),
                 cfg

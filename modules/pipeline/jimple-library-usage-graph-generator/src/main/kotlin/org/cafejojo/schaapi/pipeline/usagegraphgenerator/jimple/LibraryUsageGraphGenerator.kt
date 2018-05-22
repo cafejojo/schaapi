@@ -60,7 +60,6 @@ object LibraryUsageGraphGenerator : LibraryUsageGraphGenerator {
         val methodBody = method.retrieveActiveBody()
         val filters = listOf(StatementFilter(libraryProject), BranchStatementFilter(libraryProject))
         filters.forEach { it.apply(methodBody) }
-        println(methodBody)
 
         return ControlFlowGraphGenerator.create(methodBody)
             ?: throw IllegalStateException("Control flow graph could not be generated")
