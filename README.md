@@ -122,10 +122,10 @@ Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
 If you discover any security-related issues, please email cafejojo@fwdekker.com instead of using the issue tracker.
 
 ## Credits
-- [Joël Abrahams](https://github.com/jsabrahams)
+- [Joël Abrahams](https://github.com/JSAbrahams)
 - [Georgios Andreadis](https://github.com/gandreadis)
 - [Casper Boone](https://github.com/casperboone)
-- [Felix Dekker](https://github.com/fwdekker)
+- [Felix Dekker](https://github.com/FWDekker)
 - [All contributors](../../contributors)
 
 ## License
