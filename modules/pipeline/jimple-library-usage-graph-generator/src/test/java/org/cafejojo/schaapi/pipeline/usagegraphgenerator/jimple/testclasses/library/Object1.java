@@ -14,4 +14,8 @@ public class Object1 {
     public void m3() {
 
     }
+
+    public void m4() {
+        throw new LibraryException();
+    }
 }
