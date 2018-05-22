@@ -42,6 +42,7 @@ object LibraryUsageGraphGenerator : LibraryUsageGraphGenerator {
                 classpath
             ).joinToString(File.pathSeparator)
         )
+        Options.v().set_whole_program(true)
 
         Scene.v().loadNecessaryClasses()
 

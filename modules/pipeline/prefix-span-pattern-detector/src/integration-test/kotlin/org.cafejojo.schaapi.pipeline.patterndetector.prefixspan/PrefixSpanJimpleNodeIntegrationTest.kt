@@ -9,18 +9,8 @@ import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.xit
 import soot.Type
 
-class FrequentSequenceFinderAndSootComparatorTest : Spek({
+class PrefixSpanJimpleNodeIntegrationTest : Spek({
     describe("when looking for common sequences in patterns of statements using the generalized soot comparator") {
-        it("should find a sequence of path length 1") {
-            val node = mockJimpleNode()
-            val path = listOf(node)
-
-            val detector = FrequentSequenceFinder(listOf(path), 1, GeneralizedNodeComparator())
-            detector.findFrequentSequences()
-
-            assertThat(detector.pathContainsSequence(path, listOf(node))).isTrue()
-        }
-
         it("should find a pattern with multiple nodes which have different values with the same type") {
             val type1 = mock<Type> {}
             val type2 = mock<Type> {}
