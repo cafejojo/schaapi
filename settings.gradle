@@ -1,23 +1,24 @@
 // Based on `https://github.com/griffon/griffon/blob/ed86035/settings.gradle`
-def includeModule = { String directory, String projectName  ->
+def includeModule(String directory = "", String projectName) {
     File baseDir = new File((File) rootDir, "modules/" + directory)
     File moduleDir = new File(baseDir, projectName)
+    String projectPath = (directory == "" ? "" : ":${directory}") + ":${projectName}"
 
     assert moduleDir.isDirectory()
 
-    include projectName
-    project(":${projectName}").projectDir = moduleDir
+    include projectPath
+    project(projectPath).projectDir = moduleDir
 }
 
 rootProject.name = "schaapi"
 
-includeModule "", "application"
+includeModule "application"
 
-includeModule "", "models"
+includeModule "models"
 includeModule "models", "jimple-library-usage-graph"
 includeModule "models", "java-maven-project"
 
-includeModule "", "pipeline"
+includeModule "pipeline"
 includeModule "pipeline", "java-maven-project-compiler"
 includeModule "pipeline", "jimple-evosuite-test-generator"
 includeModule "pipeline", "jimple-library-usage-graph-generator"
