@@ -1,33 +1,27 @@
 package org.cafejojo.schaapi.pipeline.patterndetector.prefixspan
 
+import com.nhaarman.mockito_kotlin.any
+import com.nhaarman.mockito_kotlin.doAnswer
+import com.nhaarman.mockito_kotlin.doReturn
+import com.nhaarman.mockito_kotlin.mock
 import soot.RefType
-import soot.Type
-import soot.UnitPrinter
 import soot.Value
-import soot.util.Switch
 import java.util.UUID
 
 /**
- * A simple implementation of [Value] that implements only the functionality for comparing [Value]s.
+ * A [Value] that does not contain other values, and that implements only functionality related to equivalence.
  */
-open class EmptyValue(private val type: String) : Value {
-    override fun getType(): Type = RefType.v(type)
+fun mockValue(type: String): Value = mock {
+    on { it.type } doReturn RefType.v(type)
+    on { it.equivTo(any()) } doAnswer { answer ->
+        val other = answer.arguments[0]
 
-    override fun equivTo(other: Any?) = other is EmptyValue && this.type == other.type
-
-    override fun equivHashCode() = type.hashCode()
-
-    override fun apply(switch: Switch?) = throw NotImplementedError("The called method is not implemented.")
-
-    override fun clone() = throw NotImplementedError("The called method is not implemented.")
-
-    @SuppressWarnings("ExceptionRaisedInUnexpectedLocation")
-    override fun toString(up: UnitPrinter?) = throw NotImplementedError("The called method is not implemented.")
-
-    override fun getUseBoxes() = throw NotImplementedError("The called method is not implemented.")
+        other is Value && it.type == other.type
+    }
+    on { it.equivHashCode() } doReturn type.hashCode()
 }
 
 /**
  * A simple implementation of [Value] that is not equal or equivalent to any other [Value].
  */
-class UniqueValue : EmptyValue(UUID.randomUUID().toString())
+fun mockUniqueValue() = mockValue(UUID.randomUUID().toString())

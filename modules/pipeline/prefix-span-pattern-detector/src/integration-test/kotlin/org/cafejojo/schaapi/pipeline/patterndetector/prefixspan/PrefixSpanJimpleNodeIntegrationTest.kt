@@ -21,19 +21,27 @@ class PrefixSpanJimpleNodeIntegrationTest : Spek({
     /**
      * Creates a [JimpleNode] without any [soot.Value]s.
      */
-    fun createJimpleNode() = JimpleNode(mock<IfStmt> { on { it.condition } doReturn UniqueValue() })
+    fun createJimpleNode(): JimpleNode {
+        val condition = mockUniqueValue()
+
+        return JimpleNode(mock<IfStmt> { on { it.condition } doReturn condition })
+    }
 
     /**
-     * Creates a [JimpleNode] with two [EmptyValue]s.
+     * Creates a [JimpleNode] with two [soot.Value]s.
      *
-     * @param leftType the [EmptyValue.type] of the first [EmptyValue]
-     * @param rightType the [EmptyValue.type] of the second [EmptyValue]
+     * @param leftType the [soot.Value.getType] of the first [soot.Value]
+     * @param rightType the [soot.Value.getType] of the second [soot.Value]
      */
-    fun createJimpleNode(leftType: String, rightType: String) =
-        JimpleNode(mock<DefinitionStmt> {
-            on { it.leftOp } doReturn EmptyValue(leftType)
-            on { it.rightOp } doReturn EmptyValue(rightType)
+    fun createJimpleNode(leftType: String, rightType: String): JimpleNode {
+        val leftOp = mockValue(leftType)
+        val rightOp = mockValue(rightType)
+
+        return JimpleNode(mock<DefinitionStmt> {
+            on { it.leftOp } doReturn leftOp
+            on { it.rightOp } doReturn rightOp
         })
+    }
 
     describe("when looking for common sequences in patterns of statements using the generalized soot comparator") {
         it("should find a pattern with multiple nodes which have different values with the same type") {

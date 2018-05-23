@@ -1,10 +1,11 @@
 package org.cafejojo.schaapi.models.libraryusagegraph.jimple
 
+import com.nhaarman.mockito_kotlin.any
+import com.nhaarman.mockito_kotlin.doAnswer
+import com.nhaarman.mockito_kotlin.doReturn
+import com.nhaarman.mockito_kotlin.mock
 import soot.RefType
 import soot.SootMethod
-import soot.SootMethodRef
-import soot.Type
-import soot.UnitPrinter
 import soot.Value
 import soot.jimple.InvokeExpr
 import soot.jimple.internal.AbstractBinopExpr
@@ -15,57 +16,27 @@ import soot.util.Switch
 /**
  * A [Value] that does not contain other values, and that implements only functionality related to equivalence.
  */
-class EmptyValue(private val type: String) : Value {
-    override fun getType(): Type = RefType.v(type)
+fun mockValue(type: String): Value = mock {
+    on { it.type } doReturn RefType.v(type)
+    on { it.equivTo(any()) } doAnswer { answer ->
+        val other = answer.arguments[0]
 
-    override fun equivTo(other: Any?) = other is EmptyValue && this.type == other.type
-
-    override fun equivHashCode() = type.hashCode()
-
-    override fun apply(switch: Switch?) = throw NotImplementedError("The called method is not implemented.")
-
-    override fun clone() = throw NotImplementedError("The called method is not implemented.")
-
-    @SuppressWarnings("ExceptionRaisedInUnexpectedLocation")
-    override fun toString(up: UnitPrinter?) = throw NotImplementedError("The called method is not implemented.")
-
-    override fun getUseBoxes() = throw NotImplementedError("The called method is not implemented.")
+        other is Value && it.type == other.type
+    }
+    on { it.equivHashCode() } doReturn type.hashCode()
 }
 
 /**
  * An [InvokeExpr] that does not contain other values, and that implements only functionality related to equivalence.
  */
-class EmptyInvokeExpr(private val type: String) : InvokeExpr {
-    override fun getType(): Type = RefType.v(type)
+fun mockInvokeExpr(type: String): InvokeExpr = mock {
+    on { it.type } doReturn RefType.v(type)
+    on { it.equivTo(any()) } doAnswer { answer ->
+        val other = answer.arguments[0]
 
-    override fun equivTo(other: Any?) = other is EmptyInvokeExpr && this.type == other.type
-
-    override fun equivHashCode() = type.hashCode()
-
-    override fun getMethodRef() = throw NotImplementedError("The called method is not implemented.")
-
-    override fun getArgs() = throw NotImplementedError("The called method is not implemented.")
-
-    @SuppressWarnings("ExceptionRaisedInUnexpectedLocation")
-    override fun toString(up: UnitPrinter?) = throw NotImplementedError("The called method is not implemented.")
-
-    override fun getMethod() = throw NotImplementedError("The called method is not implemented.")
-
-    override fun getArgBox(index: Int) = throw NotImplementedError("The called method is not implemented.")
-
-    override fun setArg(index: Int, arg: Value?) = throw NotImplementedError("The called method is not implemented.")
-
-    override fun apply(switch: Switch?) = throw NotImplementedError("The called method is not implemented.")
-
-    override fun clone() = throw NotImplementedError("The called method is not implemented.")
-
-    override fun getArgCount() = throw NotImplementedError("The called method is not implemented.")
-
-    override fun getUseBoxes() = throw NotImplementedError("The called method is not implemented.")
-
-    override fun setMethodRef(smr: SootMethodRef?) = throw NotImplementedError("The called method is not implemented.")
-
-    override fun getArg(index: Int) = throw NotImplementedError("The called method is not implemented.")
+        other is InvokeExpr && it.type == other.type
+    }
+    on { it.equivHashCode() } doReturn type.hashCode()
 }
 
 /**
@@ -79,9 +50,9 @@ class SimpleSootMethod(name: String, parameterTypes: List<String>, returnType: S
  */
 class SimpleUnopExpr(value: Value) : AbstractNegExpr(mockValueBox(value)) {
     /**
-     * Creates a [SimpleUnopExpr] containing an [EmptyValue] of the given type.
+     * Creates a [SimpleUnopExpr] containing a [Value] of the given type.
      */
-    constructor(type: String) : this(EmptyValue(type))
+    constructor(type: String) : this(mockValue(type))
 
     override fun clone() = throw NotImplementedError("The called method is not implemented.")
 }
@@ -95,14 +66,11 @@ class SimpleBinopExpr(leftValue: Value, rightValue: Value) : AbstractBinopExpr()
         op2Box = mockValueBox(rightValue)
     }
 
-    /**
-     * Creates a [SimpleBinopExpr] containing [EmptyValue]s of the given types.
-     */
-    constructor(leftType: String, rightType: String) : this(EmptyValue(leftType), EmptyValue(rightType))
+    constructor(leftType: String, rightType: String) : this(mockValue(leftType), mockValue(rightType))
 
-    constructor(leftValue: Value, rightType: String) : this(leftValue, EmptyValue(rightType))
+    constructor(leftValue: Value, rightType: String) : this(leftValue, mockValue(rightType))
 
-    constructor(leftType: String, rightValue: Value) : this(EmptyValue(leftType), rightValue)
+    constructor(leftType: String, rightValue: Value) : this(mockValue(leftType), rightValue)
 
     override fun getSymbol() = "+"
 
@@ -124,13 +92,13 @@ class SimpleInvokeExpr(base: Value, sootMethod: SootMethod, vararg arguments: Va
         arguments.map { mockValueBox(it) }.toTypedArray()
     ) {
     constructor(base: String, sootMethod: SootMethod, vararg arguments: String)
-        : this(EmptyValue(base), sootMethod, *arguments.map { EmptyValue(it) }.toTypedArray())
+        : this(mockValue(base), sootMethod, *arguments.map { mockValue(it) }.toTypedArray())
 
     constructor(base: String, sootMethod: SootMethod, vararg arguments: Value)
-        : this(EmptyValue(base), sootMethod, *arguments)
+        : this(mockValue(base), sootMethod, *arguments)
 
     constructor(base: Value, sootMethod: SootMethod, vararg arguments: String)
-        : this(base, sootMethod, *arguments.map { EmptyValue(it) }.toTypedArray())
+        : this(base, sootMethod, *arguments.map { mockValue(it) }.toTypedArray())
 
     override fun clone() = throw NotImplementedError("The called method is not implemented.")
 }
