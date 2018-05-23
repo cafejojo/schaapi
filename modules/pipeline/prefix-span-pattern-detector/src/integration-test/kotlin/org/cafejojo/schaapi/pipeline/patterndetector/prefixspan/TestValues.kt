@@ -10,10 +10,10 @@ import java.util.UUID
 /**
  * A simple implementation of [Value] that implements only the functionality for comparing [Value]s.
  */
-open class SimpleValue(private val type: String) : Value {
+open class EmptyValue(private val type: String) : Value {
     override fun getType(): Type = RefType.v(type)
 
-    override fun equivTo(other: Any?) = other is SimpleValue && this.type == other.type
+    override fun equivTo(other: Any?) = other is EmptyValue && this.type == other.type
 
     override fun equivHashCode() = type.hashCode()
 
@@ -30,4 +30,4 @@ open class SimpleValue(private val type: String) : Value {
 /**
  * A simple implementation of [Value] that is not equal or equivalent to any other [Value].
  */
-class UniqueValue : SimpleValue(UUID.randomUUID().toString())
+class UniqueValue : EmptyValue(UUID.randomUUID().toString())

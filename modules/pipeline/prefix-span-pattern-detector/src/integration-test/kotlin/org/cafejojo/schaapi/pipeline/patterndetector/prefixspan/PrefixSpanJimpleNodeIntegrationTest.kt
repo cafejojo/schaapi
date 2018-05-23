@@ -24,15 +24,15 @@ class PrefixSpanJimpleNodeIntegrationTest : Spek({
     fun createJimpleNode() = JimpleNode(mock<IfStmt> { on { it.condition } doReturn UniqueValue() })
 
     /**
-     * Creates a [JimpleNode] with two [SimpleValue]s.
+     * Creates a [JimpleNode] with two [EmptyValue]s.
      *
-     * @param leftType the [SimpleValue.type] of the first [SimpleValue]
-     * @param rightType the [SimpleValue.type] of the second [SimpleValue]
+     * @param leftType the [EmptyValue.type] of the first [EmptyValue]
+     * @param rightType the [EmptyValue.type] of the second [EmptyValue]
      */
     fun createJimpleNode(leftType: String, rightType: String) =
         JimpleNode(mock<DefinitionStmt> {
-            on { it.leftOp } doReturn SimpleValue(leftType)
-            on { it.rightOp } doReturn SimpleValue(rightType)
+            on { it.leftOp } doReturn EmptyValue(leftType)
+            on { it.rightOp } doReturn EmptyValue(rightType)
         })
 
     describe("when looking for common sequences in patterns of statements using the generalized soot comparator") {
