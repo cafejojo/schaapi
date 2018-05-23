@@ -20,11 +20,11 @@ class Pipeline(
     /**
      * Executes all steps in the pipeline.
      */
-    fun run(project: Project, libraryProject: Project) {
+    fun run(projects: List<Project>, libraryProject: Project) {
         projectCompiler.compile(libraryProject)
 
-        projectCompiler.compile(project)
-            .next { libraryUsageGraphGenerator.generate(libraryProject, it) }
+        projects.map { projectCompiler.compile(it) }
+            .flatMap { libraryUsageGraphGenerator.generate(libraryProject, it) }
             .next(patternDetector::findPatterns)
             .next(patternFilter::filter)
             .next(testGenerator::generate)

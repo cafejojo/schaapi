@@ -7,4 +7,9 @@ public class UserClass {
         int x = new LibraryClass().libraryFoo();
         return x;
     }
+
+    public int userBar() {
+        System.out.println(new LibraryClass().foo);
+        return 922;
+    }
 }
