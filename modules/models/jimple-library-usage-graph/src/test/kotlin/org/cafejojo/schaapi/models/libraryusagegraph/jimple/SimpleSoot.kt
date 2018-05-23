@@ -78,6 +78,11 @@ class SimpleSootMethod(name: String, parameterTypes: List<String>, returnType: S
  * A simple implementation of [soot.jimple.internal.AbstractUnopExpr].
  */
 class SimpleUnopExpr(value: Value) : AbstractNegExpr(mockValueBox(value)) {
+    /**
+     * Creates a [SimpleUnopExpr] containing an [EmptyValue] of the given type.
+     */
+    constructor(type: String) : this(EmptyValue(type))
+
     override fun clone() = throw NotImplementedError("The called method is not implemented.")
 }
 
@@ -89,6 +94,15 @@ class SimpleBinopExpr(leftValue: Value, rightValue: Value) : AbstractBinopExpr()
         op1Box = mockValueBox(leftValue)
         op2Box = mockValueBox(rightValue)
     }
+
+    /**
+     * Creates a [SimpleBinopExpr] containing [EmptyValue]s of the given types.
+     */
+    constructor(leftType: String, rightType: String) : this(EmptyValue(leftType), EmptyValue(rightType))
+
+    constructor(leftValue: Value, rightType: String) : this(leftValue, EmptyValue(rightType))
+
+    constructor(leftType: String, rightValue: Value) : this(EmptyValue(leftType), rightValue)
 
     override fun getSymbol() = "+"
 
@@ -102,11 +116,21 @@ class SimpleBinopExpr(leftValue: Value, rightValue: Value) : AbstractBinopExpr()
 /**
  * A simple implementation of [soot.jimple.internal.AbstractInvokeExpr].
  */
-class SimpleInvokeExpr(base: Value, sootMethod: SootMethod, arguments: List<Value>) :
+@SuppressWarnings("SpreadOperator") // No clean alternative
+class SimpleInvokeExpr(base: Value, sootMethod: SootMethod, vararg arguments: Value) :
     AbstractSpecialInvokeExpr(
         mockValueBox(base),
         mockSootMethodRef(sootMethod),
         arguments.map { mockValueBox(it) }.toTypedArray()
     ) {
+    constructor(base: String, sootMethod: SootMethod, vararg arguments: String)
+        : this(EmptyValue(base), sootMethod, *arguments.map { EmptyValue(it) }.toTypedArray())
+
+    constructor(base: String, sootMethod: SootMethod, vararg arguments: Value)
+        : this(EmptyValue(base), sootMethod, *arguments)
+
+    constructor(base: Value, sootMethod: SootMethod, vararg arguments: String)
+        : this(base, sootMethod, *arguments.map { EmptyValue(it) }.toTypedArray())
+
     override fun clone() = throw NotImplementedError("The called method is not implemented.")
 }

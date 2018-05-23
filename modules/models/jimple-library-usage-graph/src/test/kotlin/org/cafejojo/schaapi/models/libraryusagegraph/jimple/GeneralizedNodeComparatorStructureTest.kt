@@ -321,48 +321,48 @@ internal class GeneralizedNodeComparatorStructureTest : Spek({
     describe("recursive structural comparison of statements") {
         context("UnopExpr") {
             it("finds self-equality at one level of nesting") {
-                val stmt = JimpleNode(mockIfStmt(SimpleUnopExpr(EmptyValue("value"))))
+                val stmt = JimpleNode(mockIfStmt(SimpleUnopExpr("value")))
 
                 assertThat(comparator.satisfies(stmt, stmt)).isTrue()
             }
 
             it("finds self-equality at two levels of nesting") {
-                val stmt = JimpleNode(mockIfStmt(SimpleUnopExpr(SimpleUnopExpr(EmptyValue("value")))))
+                val stmt = JimpleNode(mockIfStmt(SimpleUnopExpr(SimpleUnopExpr("value"))))
 
                 assertThat(comparator.satisfies(stmt, stmt)).isTrue()
             }
 
             it("finds equality for two equivalent nodes with one level of nesting") {
-                val template = JimpleNode(mockIfStmt(SimpleUnopExpr(EmptyValue("shared"))))
-                val instance = JimpleNode(mockIfStmt(SimpleUnopExpr(EmptyValue("shared"))))
+                val template = JimpleNode(mockIfStmt(SimpleUnopExpr("shared")))
+                val instance = JimpleNode(mockIfStmt(SimpleUnopExpr("shared")))
 
                 assertThat(comparator.satisfies(template, instance)).isTrue()
             }
 
             it("finds equality for two equivalent nodes with two levels of nesting") {
-                val template = JimpleNode(mockIfStmt(SimpleUnopExpr(SimpleUnopExpr(EmptyValue("shared")))))
-                val instance = JimpleNode(mockIfStmt(SimpleUnopExpr(SimpleUnopExpr(EmptyValue("shared")))))
+                val template = JimpleNode(mockIfStmt(SimpleUnopExpr(SimpleUnopExpr("shared"))))
+                val instance = JimpleNode(mockIfStmt(SimpleUnopExpr(SimpleUnopExpr("shared"))))
 
                 assertThat(comparator.satisfies(template, instance)).isTrue()
             }
 
             it("finds inequality for two nodes with different types at one level of nesting") {
-                val template = JimpleNode(mockIfStmt(SimpleUnopExpr(EmptyValue("template"))))
-                val instance = JimpleNode(mockIfStmt(SimpleUnopExpr(EmptyValue("instance"))))
+                val template = JimpleNode(mockIfStmt(SimpleUnopExpr("template")))
+                val instance = JimpleNode(mockIfStmt(SimpleUnopExpr("instance")))
 
                 assertThat(comparator.satisfies(template, instance)).isFalse()
             }
 
             it("finds inequality for two nodes with different types at two levels of nesting") {
-                val template = JimpleNode(mockIfStmt(SimpleUnopExpr(SimpleUnopExpr(EmptyValue("template")))))
-                val instance = JimpleNode(mockIfStmt(SimpleUnopExpr(SimpleUnopExpr(EmptyValue("instance")))))
+                val template = JimpleNode(mockIfStmt(SimpleUnopExpr(SimpleUnopExpr("template"))))
+                val instance = JimpleNode(mockIfStmt(SimpleUnopExpr(SimpleUnopExpr("instance"))))
 
                 assertThat(comparator.satisfies(template, instance)).isFalse()
             }
 
             it("finds inequality for two nodes with different levels of nesting") {
-                val template = JimpleNode(mockIfStmt(SimpleUnopExpr(EmptyValue("shared"))))
-                val instance = JimpleNode(mockIfStmt(SimpleUnopExpr(SimpleUnopExpr(EmptyValue("shared")))))
+                val template = JimpleNode(mockIfStmt(SimpleUnopExpr("shared")))
+                val instance = JimpleNode(mockIfStmt(SimpleUnopExpr(SimpleUnopExpr("shared"))))
 
                 assertThat(comparator.satisfies(template, instance)).isFalse()
             }
@@ -370,81 +370,63 @@ internal class GeneralizedNodeComparatorStructureTest : Spek({
 
         context("BinopExpr") {
             it("finds self-equality at one level of nesting") {
-                val stmt = JimpleNode(mockIfStmt(SimpleBinopExpr(EmptyValue("left"), EmptyValue("right"))))
+                val stmt = JimpleNode(mockIfStmt(SimpleBinopExpr("left", "right")))
 
                 assertThat(comparator.satisfies(stmt, stmt)).isTrue()
             }
 
             it("finds self-equality at two levels of nesting") {
                 val stmt = JimpleNode(mockIfStmt(SimpleBinopExpr(
-                    SimpleBinopExpr(EmptyValue("left-left"), EmptyValue("left-right")),
-                    SimpleBinopExpr(EmptyValue("right-left"), EmptyValue("right-right"))
+                    SimpleBinopExpr("left-left", "left-right"),
+                    SimpleBinopExpr("right-left", "right-right")
                 )))
 
                 assertThat(comparator.satisfies(stmt, stmt)).isTrue()
             }
 
             it("finds equality for two equivalent nodes with one level of nesting") {
-                val template = JimpleNode(mockIfStmt(SimpleBinopExpr(
-                    EmptyValue("shared-left"),
-                    EmptyValue("shared-right")
-                )))
-                val instance = JimpleNode(mockIfStmt(SimpleBinopExpr(
-                    EmptyValue("shared-left"),
-                    EmptyValue("shared-right")
-                )))
+                val template = JimpleNode(mockIfStmt(SimpleBinopExpr("shared-left", "shared-right")))
+                val instance = JimpleNode(mockIfStmt(SimpleBinopExpr("shared-left", "shared-right")))
 
                 assertThat(comparator.satisfies(template, instance)).isTrue()
             }
 
             it("finds equality for two equivalent nodes with two levels of nesting") {
                 val template = JimpleNode(mockIfStmt(SimpleBinopExpr(
-                    SimpleBinopExpr(EmptyValue("shared-left-left"), EmptyValue("shared-left-right")),
-                    SimpleBinopExpr(EmptyValue("shared-right-left"), EmptyValue("shared-right-right"))
+                    SimpleBinopExpr("shared-left-left", "shared-left-right"),
+                    SimpleBinopExpr("shared-right-left", "shared-right-right")
                 )))
                 val instance = JimpleNode(mockIfStmt(SimpleBinopExpr(
-                    SimpleBinopExpr(EmptyValue("shared-left-left"), EmptyValue("shared-left-right")),
-                    SimpleBinopExpr(EmptyValue("shared-right-left"), EmptyValue("shared-right-right"))
+                    SimpleBinopExpr("shared-left-left", "shared-left-right"),
+                    SimpleBinopExpr("shared-right-left", "shared-right-right")
                 )))
 
                 assertThat(comparator.satisfies(template, instance)).isTrue()
             }
 
             it("finds inequality for two nodes with different types at one level of nesting") {
-                val template = JimpleNode(mockIfStmt(SimpleBinopExpr(
-                    EmptyValue("left"),
-                    EmptyValue("template-right")
-                )))
-                val instance = JimpleNode(mockIfStmt(SimpleBinopExpr(
-                    EmptyValue("left"),
-                    EmptyValue("instance-right")
-                )))
+                val template = JimpleNode(mockIfStmt(SimpleBinopExpr("left", "template-right")))
+                val instance = JimpleNode(mockIfStmt(SimpleBinopExpr("left", "instance-right")))
 
                 assertThat(comparator.satisfies(template, instance)).isFalse()
             }
 
             it("finds inequality for two nodes with different types at two levels of nesting") {
                 val template = JimpleNode(mockIfStmt(SimpleBinopExpr(
-                    SimpleBinopExpr(EmptyValue("left-left"), EmptyValue("template-left-right")),
-                    SimpleBinopExpr(EmptyValue("right-left"), EmptyValue("right-right"))
+                    SimpleBinopExpr("left-left", "template-left-right"),
+                    SimpleBinopExpr("right-left", "right-right")
                 )))
                 val instance = JimpleNode(mockIfStmt(SimpleBinopExpr(
-                    SimpleBinopExpr(EmptyValue("left-left"), EmptyValue("instance-left-right")),
-                    SimpleBinopExpr(EmptyValue("right-left"), EmptyValue("right-right"))
+                    SimpleBinopExpr("left-left", "instance-left-right"),
+                    SimpleBinopExpr("right-left", "right-right")
                 )))
 
                 assertThat(comparator.satisfies(template, instance)).isFalse()
             }
 
             it("finds inequality for two nodes with different levels of nesting") {
-                val template = JimpleNode(mockIfStmt(SimpleBinopExpr(
-                    EmptyValue("shared-left"),
-                    EmptyValue("shared-right")
-                )))
-                val instance = JimpleNode(mockIfStmt(SimpleBinopExpr(
-                    SimpleUnopExpr(EmptyValue("shared-left")),
-                    EmptyValue("shared-right")
-                )))
+                val template = JimpleNode(mockIfStmt(SimpleBinopExpr("shared-left", "shared-right")))
+                val instance = JimpleNode(mockIfStmt(SimpleBinopExpr(SimpleUnopExpr("shared-left"), "shared-right")))
 
                 assertThat(comparator.satisfies(template, instance)).isFalse()
             }
@@ -452,286 +434,141 @@ internal class GeneralizedNodeComparatorStructureTest : Spek({
 
         context("InvokeExpr") {
             it("finds self-equality at one level of nesting") {
-                val method = SimpleSootMethod(
-                    "method",
-                    listOf("arg1", "arg2"),
-                    "output"
-                )
-                val base = JimpleNode(mockIfStmt(SimpleInvokeExpr(
-                    base = EmptyValue("base"),
-                    sootMethod = method,
-                    arguments = listOf(EmptyValue("arg1"), EmptyValue("arg2"))
-                )))
+                val method = SimpleSootMethod("method", listOf("arg1", "arg2"), "output")
+                val base = SimpleInvokeExpr("base", method, "arg1", "arg2")
+                val node = JimpleNode(mockIfStmt(base))
 
-                assertThat(comparator.structuresAreEqual(base, base)).isTrue()
+                assertThat(comparator.structuresAreEqual(node, node)).isTrue()
             }
 
             it("finds self-equality at two levels of nesting in the base") {
-                val innerMethod = SimpleSootMethod(
-                    "inner-method",
-                    listOf("inner-arg1", "inner-arg2"),
-                    "inner-output"
-                )
-                val innerBase = SimpleInvokeExpr(
-                    EmptyValue("inner-base"),
-                    innerMethod,
-                    listOf(EmptyValue("inner-arg1"), EmptyValue("inner-arg2"))
-                )
+                val innerMethod = SimpleSootMethod("inner-method", listOf("inner-arg1", "inner-arg2"), "inner-output")
+                val innerBase = SimpleInvokeExpr("inner-base", innerMethod, "inner-arg1", "inner-arg2")
 
-                val outerMethod = SimpleSootMethod(
-                    "outer-method",
-                    listOf("outer-arg1", "outer-arg2"),
-                    "outer-output"
-                )
-                val outerBase = JimpleNode(mockIfStmt(SimpleInvokeExpr(
-                    innerBase,
-                    outerMethod,
-                    listOf(EmptyValue("outer-arg1"), EmptyValue("outer-arg2"))
-                )))
+                val outerMethod = SimpleSootMethod("outer-method", listOf("outer-arg1", "outer-arg2"), "outer-output")
+                val outerBase = SimpleInvokeExpr(innerBase, outerMethod, "outer-arg1", "outer-arg2")
 
-                assertThat(comparator.structuresAreEqual(outerBase, outerBase)).isTrue()
+                val node = JimpleNode(mockIfStmt(outerBase))
+
+                assertThat(comparator.structuresAreEqual(node, node)).isTrue()
             }
 
             it("finds self-equality at two levels of nesting in an argument") {
-                val innerMethod = SimpleSootMethod(
-                    "inner-method",
-                    listOf("inner-arg1", "inner-arg2"),
-                    "inner-out"
-                )
-                val innerBase = SimpleInvokeExpr(
-                    EmptyValue("inner-base"),
-                    innerMethod,
-                    listOf(EmptyValue("inner-arg1"), EmptyValue("inner-arg2"))
-                )
+                val innerMethod = SimpleSootMethod("inner-method", listOf("inner-arg1", "inner-arg2"), "inner-out")
+                val innerBase = SimpleInvokeExpr("inner-base", innerMethod, "inner-arg1", "inner-arg2")
 
-                val outerMethod = SimpleSootMethod(
-                    "outer-method",
-                    listOf("outer-arg1", "outer-arg2"),
-                    "outer-out"
-                )
-                val outerBase = JimpleNode(mockIfStmt(SimpleInvokeExpr(
-                    base = EmptyValue("base"),
-                    sootMethod = outerMethod,
-                    arguments = listOf(EmptyValue("outer-arg1"), innerBase)
-                )))
+                val outerMethod = SimpleSootMethod("outer-method", listOf("outer-arg1", "outer-arg2"), "outer-out")
+                val outerBase = SimpleInvokeExpr("base", outerMethod, EmptyValue("outer-arg1"), innerBase)
 
-                assertThat(comparator.structuresAreEqual(outerBase, outerBase)).isTrue()
+                val node = JimpleNode(mockIfStmt(outerBase))
+
+                assertThat(comparator.structuresAreEqual(node, node)).isTrue()
             }
 
             it("finds equality for two equivalent nodes with one level of nesting") {
-                val method = SimpleSootMethod(
-                    "method",
-                    listOf("arg1", "arg2"),
-                    "output"
-                )
+                val method = SimpleSootMethod("method", listOf("arg1", "arg2"), "output")
 
-                val template = JimpleNode(mockIfStmt(SimpleInvokeExpr(
-                    base = EmptyValue("base"),
-                    sootMethod = method,
-                    arguments = listOf(EmptyValue("arg1"), EmptyValue("arg2"))
-                )))
-                val instance = JimpleNode(mockIfStmt(SimpleInvokeExpr(
-                    base = EmptyValue("base"),
-                    sootMethod = method,
-                    arguments = listOf(EmptyValue("arg1"), EmptyValue("arg2"))
-                )))
+                val template = JimpleNode(mockIfStmt(SimpleInvokeExpr("base", method, "arg1", "arg2")))
+                val instance = JimpleNode(mockIfStmt(SimpleInvokeExpr("base", method, "arg1", "arg2")))
 
                 assertThat(comparator.satisfies(template, instance)).isTrue()
             }
 
             it("finds equality for two equivalent nodes with two levels of nesting in the base") {
-                val innerMethod = SimpleSootMethod(
-                    "inner-method",
-                    listOf("inner-arg1", "inner-arg2"),
-                    "inner-output"
-                )
-                val outerMethod = SimpleSootMethod(
-                    "outer-method",
-                    listOf("outer-arg1", "outer-arg2"),
-                    "outer-output"
-                )
+                val innerMethod = SimpleSootMethod("inner-method", listOf("inner-arg1", "inner-arg2"), "inner-output")
+                val outerMethod = SimpleSootMethod("outer-method", listOf("outer-arg1", "outer-arg2"), "outer-output")
 
-                val templateBase = SimpleInvokeExpr(
-                    EmptyValue("inner-base"),
-                    innerMethod,
-                    listOf(EmptyValue("inner-arg1"), EmptyValue("inner-arg2"))
-                )
-                val template = JimpleNode(mockIfStmt(SimpleInvokeExpr(
-                    base = templateBase,
-                    sootMethod = outerMethod,
-                    arguments = listOf(EmptyValue("arg1"), EmptyValue("arg2"))
-                )))
+                val templateInnerBase = SimpleInvokeExpr("inner-base", innerMethod, "inner-arg1", "inner-arg2")
+                val templateOuterBase = SimpleInvokeExpr(templateInnerBase, outerMethod, "arg1", "arg2")
+                val templateNode = JimpleNode(mockIfStmt(templateOuterBase))
 
-                val instanceBase = SimpleInvokeExpr(
-                    EmptyValue("inner-base"),
-                    innerMethod,
-                    listOf(EmptyValue("inner-arg1"), EmptyValue("inner-arg2"))
-                )
-                val instance = JimpleNode(mockIfStmt(SimpleInvokeExpr(
-                    base = instanceBase,
-                    sootMethod = outerMethod,
-                    arguments = listOf(EmptyValue("arg1"), EmptyValue("arg2"))
-                )))
+                val instanceInnerBase = SimpleInvokeExpr("inner-base", innerMethod, "inner-arg1", "inner-arg2")
+                val instanceOuterBase = SimpleInvokeExpr(instanceInnerBase, outerMethod, "arg1", "arg2")
+                val instanceNode = JimpleNode(mockIfStmt(instanceOuterBase))
 
-                assertThat(comparator.satisfies(template, instance)).isTrue()
+                assertThat(comparator.satisfies(templateNode, instanceNode)).isTrue()
             }
 
             it("finds equality for two equivalent nodes with two levels of nesting in an argument") {
-                val innerMethod = SimpleSootMethod(
-                    "inner-method",
-                    listOf("inner-arg1", "inner-arg2"),
-                    "inner-output"
-                )
-                val outerMethod = SimpleSootMethod(
-                    "outer-method",
-                    listOf("outer-arg1", "outer-arg2"),
-                    "outer-output"
-                )
+                val innerMethod = SimpleSootMethod("inner-method", listOf("inner-arg1", "inner-arg2"), "inner-output")
+                val outerMethod = SimpleSootMethod("outer-method", listOf("outer-arg1", "outer-arg2"), "outer-output")
 
-                val templateArgument = SimpleInvokeExpr(
-                    EmptyValue("inner-base"),
-                    innerMethod,
-                    listOf(EmptyValue("inner-arg1"), EmptyValue("inner-arg2"))
+                val templateArgument = SimpleInvokeExpr("inner-base", innerMethod, "inner-arg1", "inner-arg2")
+                val templateInvoke = SimpleInvokeExpr(
+                    "outer-base",
+                    outerMethod,
+                    EmptyValue("outer-arg1"), templateArgument
                 )
-                val template = JimpleNode(mockIfStmt(SimpleInvokeExpr(
-                    base = EmptyValue("outer-base"),
-                    sootMethod = outerMethod,
-                    arguments = listOf(EmptyValue("outer-arg1"), templateArgument)
-                )))
+                val templateNode = JimpleNode(mockIfStmt(templateInvoke))
 
-                val instanceArgument = SimpleInvokeExpr(
-                    EmptyValue("inner-base"),
-                    innerMethod,
-                    listOf(EmptyValue("inner-arg1"), EmptyValue("inner-arg2"))
+                val instanceArgument = SimpleInvokeExpr("inner-base", innerMethod, "inner-arg1", "inner-arg2")
+                val instanceInvoke = SimpleInvokeExpr(
+                    "outer-base",
+                    outerMethod,
+                    EmptyValue("outer-arg1"), instanceArgument
                 )
-                val instance = JimpleNode(mockIfStmt(SimpleInvokeExpr(
-                    base = EmptyValue("outer-base"),
-                    sootMethod = outerMethod,
-                    arguments = listOf(EmptyValue("outer-arg1"), instanceArgument)
-                )))
+                val instanceNode = JimpleNode(mockIfStmt(instanceInvoke))
 
-                assertThat(comparator.satisfies(template, instance)).isTrue()
+                assertThat(comparator.satisfies(templateNode, instanceNode)).isTrue()
             }
 
             it("finds inequality for two nodes with different types at one level of nesting") {
-                val method = SimpleSootMethod(
-                    "method",
-                    listOf("arg1", "arg2"),
-                    "output"
-                )
+                val method = SimpleSootMethod("method", listOf("arg1", "arg2"), "output")
 
-                val template = JimpleNode(mockIfStmt(SimpleInvokeExpr(
-                    base = EmptyValue("base"),
-                    sootMethod = method,
-                    arguments = listOf(EmptyValue("template-arg1"), EmptyValue("arg2"))
-                )))
-                val instance = JimpleNode(mockIfStmt(SimpleInvokeExpr(
-                    base = EmptyValue("base"),
-                    sootMethod = method,
-                    arguments = listOf(EmptyValue("instance-arg1"), EmptyValue("arg2"))
-                )))
+                val template = JimpleNode(mockIfStmt(SimpleInvokeExpr("base", method, "template-arg1", "arg2")))
+                val instance = JimpleNode(mockIfStmt(SimpleInvokeExpr("base", method, "instance-arg1", "arg2")))
 
                 assertThat(comparator.satisfies(template, instance)).isFalse()
             }
 
             it("finds inequality for two nodes with different types at two levels of nesting in the base") {
-                val innerMethod = SimpleSootMethod(
-                    "inner-method",
-                    listOf("inner-arg1", "inner-arg2"),
-                    "inner-output"
-                )
-                val outerMethod = SimpleSootMethod(
-                    "outer-method",
-                    listOf("outer-arg1", "outer-arg2"),
-                    "outer-output"
-                )
+                val innerMethod = SimpleSootMethod("inner-method", listOf("inner-arg1", "inner-arg2"), "inner-output")
+                val outerMethod = SimpleSootMethod("outer-method", listOf("outer-arg1", "outer-arg2"), "outer-output")
 
-                val templateBase = SimpleInvokeExpr(
-                    EmptyValue("inner-base"),
-                    innerMethod,
-                    listOf(EmptyValue("template-inner-arg1"), EmptyValue("inner-arg2"))
-                )
-                val template = JimpleNode(mockIfStmt(SimpleInvokeExpr(
-                    base = templateBase,
-                    sootMethod = outerMethod,
-                    arguments = listOf(EmptyValue("arg1"), EmptyValue("arg2"))
-                )))
+                val templateInnerBase = SimpleInvokeExpr("inner-base", innerMethod, "template-inner-arg1", "inner-arg2")
+                val templateOuterBase = SimpleInvokeExpr(templateInnerBase, outerMethod, "arg1", "arg2")
+                val templateNode = JimpleNode(mockIfStmt(templateOuterBase))
 
-                val instanceBase = SimpleInvokeExpr(
-                    EmptyValue("inner-base"),
-                    innerMethod,
-                    listOf(EmptyValue("instance-inner-arg1"), EmptyValue("inner-arg2"))
-                )
-                val instance = JimpleNode(mockIfStmt(SimpleInvokeExpr(
-                    base = instanceBase,
-                    sootMethod = outerMethod,
-                    arguments = listOf(EmptyValue("arg1"), EmptyValue("arg2"))
-                )))
+                val instanceInnerBase = SimpleInvokeExpr("inner-base", innerMethod, "instance-inner-arg1", "inner-arg2")
+                val instanceOuterBase = SimpleInvokeExpr(instanceInnerBase, outerMethod, "arg1", "arg2")
+                val instanceNode = JimpleNode(mockIfStmt(instanceOuterBase))
 
-                assertThat(comparator.satisfies(template, instance)).isFalse()
+                assertThat(comparator.satisfies(templateNode, instanceNode)).isFalse()
             }
 
             it("finds inequality for two nodes with different types at two levels of nesting in an argument") {
-                val innerMethod = SimpleSootMethod(
-                    "inner-method",
-                    listOf("inner-arg1", "inner-arg2"),
-                    "inner-output"
-                )
-                val outerMethod = SimpleSootMethod(
-                    "outer-method",
-                    listOf("outer-arg1", "outer-arg2"),
-                    "outer-output"
-                )
+                val innerMethod = SimpleSootMethod("inner-method", listOf("inner-arg1", "inner-arg2"), "inner-output")
+                val outerMethod = SimpleSootMethod("outer-method", listOf("outer-arg1", "outer-arg2"), "outer-output")
 
-                val templateArgument = SimpleInvokeExpr(
-                    EmptyValue("inner-base"),
-                    innerMethod,
-                    listOf(EmptyValue("template-inner-arg1"), EmptyValue("inner-arg2"))
+                val templateArgument = SimpleInvokeExpr("inner-base", innerMethod, "template-inner-arg1", "inner-arg2")
+                val templateInvoke = SimpleInvokeExpr(
+                    "outer-base",
+                    outerMethod,
+                    EmptyValue("outer-arg1"), templateArgument
                 )
-                val template = JimpleNode(mockIfStmt(SimpleInvokeExpr(
-                    base = EmptyValue("outer-base"),
-                    sootMethod = outerMethod,
-                    arguments = listOf(EmptyValue("outer-arg1"), templateArgument)
-                )))
+                val templateNode = JimpleNode(mockIfStmt(templateInvoke))
 
-                val instanceArgument = SimpleInvokeExpr(
-                    EmptyValue("inner-base"),
-                    innerMethod,
-                    listOf(EmptyValue("instance-inner-arg1"), EmptyValue("inner-arg2"))
+                val instanceArgument = SimpleInvokeExpr("inner-base", innerMethod, "instance-inner-arg1", "inner-arg2")
+                val instanceInvoke = SimpleInvokeExpr(
+                    "outer-base",
+                    outerMethod,
+                    EmptyValue("outer-arg1"), instanceArgument
                 )
-                val instance = JimpleNode(mockIfStmt(SimpleInvokeExpr(
-                    base = EmptyValue("outer-base"),
-                    sootMethod = outerMethod,
-                    arguments = listOf(EmptyValue("outer-arg1"), instanceArgument)
-                )))
+                val instanceNode = JimpleNode(mockIfStmt(instanceInvoke))
 
-                assertThat(comparator.satisfies(template, instance)).isFalse()
+                assertThat(comparator.satisfies(templateNode, instanceNode)).isFalse()
             }
 
             it("finds inequality for two equivalent nodes if the called method is not exactly equal") {
-                val templateMethod = SimpleSootMethod(
-                    "method",
-                    listOf("arg1", "arg2"),
-                    "output"
-                )
-                val template = JimpleNode(mockIfStmt(SimpleInvokeExpr(
-                    base = EmptyValue("base"),
-                    sootMethod = templateMethod,
-                    arguments = listOf(EmptyValue("arg1"), EmptyValue("arg2"))
-                )))
+                val templateMethod = SimpleSootMethod("method", listOf("arg1", "arg2"), "output")
+                val templateInvoke = SimpleInvokeExpr("base", templateMethod, "arg1", "arg2")
+                val templateNode = JimpleNode(mockIfStmt(templateInvoke))
 
-                val instanceMethod = SimpleSootMethod(
-                    "method",
-                    listOf("arg1", "arg2"),
-                    "output"
-                )
-                val instance = JimpleNode(mockIfStmt(SimpleInvokeExpr(
-                    base = EmptyValue("base"),
-                    sootMethod = instanceMethod,
-                    arguments = listOf(EmptyValue("arg1"), EmptyValue("arg2"))
-                )))
+                val instanceMethod = SimpleSootMethod("method", listOf("arg1", "arg2"), "output")
+                val instanceInvoke = SimpleInvokeExpr("base", instanceMethod, "arg1", "arg2")
+                val instanceNode = JimpleNode(mockIfStmt(instanceInvoke))
 
-                assertThat(comparator.satisfies(template, instance)).isFalse()
+                assertThat(comparator.satisfies(templateNode, instanceNode)).isFalse()
             }
         }
     }
