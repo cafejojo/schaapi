@@ -326,7 +326,7 @@ internal class GeneralizedNodeComparatorStructureTest : Spek({
                 assertThat(comparator.satisfies(stmt, stmt)).isTrue()
             }
 
-            it("finds self-quality at two levels of nesting") {
+            it("finds self-equality at two levels of nesting") {
                 val stmt = JimpleNode(mockIfStmt(SimpleUnopExpr(SimpleUnopExpr(EmptyValue("value")))))
 
                 assertThat(comparator.satisfies(stmt, stmt)).isTrue()
@@ -375,7 +375,7 @@ internal class GeneralizedNodeComparatorStructureTest : Spek({
                 assertThat(comparator.satisfies(stmt, stmt)).isTrue()
             }
 
-            it("finds self-quality at two levels of nesting") {
+            it("finds self-equality at two levels of nesting") {
                 val stmt = JimpleNode(mockIfStmt(SimpleBinopExpr(
                     SimpleBinopExpr(EmptyValue("left-left"), EmptyValue("left-right")),
                     SimpleBinopExpr(EmptyValue("right-left"), EmptyValue("right-right"))

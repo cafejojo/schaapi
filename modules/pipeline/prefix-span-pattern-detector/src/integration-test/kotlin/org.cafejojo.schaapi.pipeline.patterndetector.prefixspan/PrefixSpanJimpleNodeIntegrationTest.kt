@@ -21,9 +21,7 @@ class PrefixSpanJimpleNodeIntegrationTest : Spek({
     /**
      * Creates a [JimpleNode] without any [soot.Value]s.
      */
-    fun createJimpleNode() = JimpleNode(mock<IfStmt> {
-        on { it.condition } doReturn UniqueValue()
-    })
+    fun createJimpleNode() = JimpleNode(mock<IfStmt> { on { it.condition } doReturn UniqueValue() })
 
     /**
      * Creates a [JimpleNode] with two [SimpleValue]s.

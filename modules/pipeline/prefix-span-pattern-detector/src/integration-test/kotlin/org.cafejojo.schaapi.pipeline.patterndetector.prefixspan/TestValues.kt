@@ -11,9 +11,9 @@ import java.util.UUID
  * A simple implementation of [Value] that implements only the functionality for comparing [Value]s.
  */
 open class SimpleValue(private val type: String) : Value {
-    override fun equivTo(other: Any?) = other is SimpleValue && this.type == other.type
-
     override fun getType(): Type = RefType.v(type)
+
+    override fun equivTo(other: Any?) = other is SimpleValue && this.type == other.type
 
     override fun equivHashCode() = type.hashCode()
 

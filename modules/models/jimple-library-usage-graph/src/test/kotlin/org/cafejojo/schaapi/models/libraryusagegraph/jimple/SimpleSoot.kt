@@ -16,9 +16,9 @@ import soot.util.Switch
  * A [Value] that does not contain other values, and that implements only functionality related to equivalence.
  */
 class EmptyValue(private val type: String) : Value {
-    override fun equivTo(other: Any?) = other is EmptyValue && this.type == other.type
-
     override fun getType(): Type = RefType.v(type)
+
+    override fun equivTo(other: Any?) = other is EmptyValue && this.type == other.type
 
     override fun equivHashCode() = type.hashCode()
 
