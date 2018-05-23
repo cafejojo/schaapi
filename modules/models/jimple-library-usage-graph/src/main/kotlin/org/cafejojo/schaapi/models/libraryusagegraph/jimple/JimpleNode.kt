@@ -43,12 +43,9 @@ class JimpleNode(val statement: Stmt, override val successors: MutableList<Node>
      *
      * @return true iff the [statement] is of same type and the values are in the same order and of the same type
      */
-    override fun equals(other: Any?): Boolean {
-        if (other !is JimpleNode || this.statement::class != other.statement::class) return false
-
-        return this.getTopLevelValues().zip(other.getTopLevelValues())
-            .all { it.first.equivTo(it.second) }
-    }
+    override fun equals(other: Any?) =
+        if (other !is JimpleNode || this.statement::class != other.statement::class) false
+        else this.getTopLevelValues().zip(other.getTopLevelValues()).all { it.first.equivTo(it.second) }
 
     /**
      * Generates a hashcode based on the values of the contained [Stmt], and their order.
