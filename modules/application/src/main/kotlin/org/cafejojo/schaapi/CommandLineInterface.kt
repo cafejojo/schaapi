@@ -61,7 +61,7 @@ fun main(args: Array<String>) {
             processStandardStream = if (testGeneratorEnableOutput) System.out else null,
             processErrorStream = if (testGeneratorEnableOutput) System.out else null
         )
-    ).run(users[0], library)
+    ).run(users, library)
 }
 
 private fun buildOptions(): Options =
