@@ -16,9 +16,10 @@ includeModule "application"
 
 includeModule "models"
 includeModule "models", "jimple-library-usage-graph"
-includeModule "models", "java-maven-project"
+includeModule "models", "java-project"
 
 includeModule "pipeline"
+includeModule "pipeline", "java-jar-project-compiler"
 includeModule "pipeline", "java-maven-project-compiler"
 includeModule "pipeline", "jimple-evosuite-test-generator"
 includeModule "pipeline", "jimple-library-usage-graph-generator"

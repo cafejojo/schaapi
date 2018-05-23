@@ -1,6 +1,6 @@
 package org.cafejojo.schaapi.pipeline.usagegraphgenerator.jimple.filters
 
-import org.cafejojo.schaapi.models.project.javamaven.JavaProject
+import org.cafejojo.schaapi.models.project.java.JavaProject
 import org.cafejojo.schaapi.pipeline.usagegraphgenerator.jimple.filters.BranchStatement.Companion.isBranchStatement
 import soot.Body
 import soot.Unit
