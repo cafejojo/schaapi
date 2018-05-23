@@ -6,7 +6,7 @@ import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Option
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
-import org.cafejojo.schaapi.models.libraryusagegraph.jimple.compare.GeneralizedNodeComparator
+import org.cafejojo.schaapi.models.libraryusagegraph.jimple.GeneralizedNodeComparator
 import org.cafejojo.schaapi.models.project.javamaven.JavaMavenProject
 import org.cafejojo.schaapi.pipeline.PatternFilter
 import org.cafejojo.schaapi.pipeline.patterndetector.prefixspan.PatternDetector

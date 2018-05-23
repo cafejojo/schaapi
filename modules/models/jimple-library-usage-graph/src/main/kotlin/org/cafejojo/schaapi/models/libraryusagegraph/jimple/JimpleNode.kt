@@ -1,7 +1,6 @@
 package org.cafejojo.schaapi.models.libraryusagegraph.jimple
 
 import org.cafejojo.schaapi.models.Node
-import org.cafejojo.schaapi.models.libraryusagegraph.jimple.compare.isSubclassOf
 import soot.jimple.DefinitionStmt
 import soot.jimple.GotoStmt
 import soot.jimple.IfStmt
@@ -44,24 +43,9 @@ class JimpleNode(val statement: Stmt, override val successors: MutableList<Node>
      *
      * @return true iff the [statement] is of same type and the values are in the same order and of the same type
      */
-    override fun equals(other: Any?): Boolean {
-        if (other !is JimpleNode || this.statement::class != other.statement::class) return false
-
-        val thisTypes = this.getTopLevelValues().map { it.type }
-        val otherTypes = other.getTopLevelValues().map { it.type }
-
-        thisTypes.forEachIndexed { index, thisType ->
-            val otherType = otherTypes[index]
-            if (thisType != otherType &&
-                !thisType.isSubclassOf(otherType) &&
-                !otherType.isSubclassOf(thisType)
-            ) {
-                return false
-            }
-        }
-
-        return true
-    }
+    override fun equals(other: Any?) =
+        if (other !is JimpleNode || this.statement::class != other.statement::class) false
+        else this.getTopLevelValues().zip(other.getTopLevelValues()).all { it.first.equivTo(it.second) }
 
     /**
      * Generates a hashcode based on the values of the contained [Stmt], and their order.
@@ -70,7 +54,7 @@ class JimpleNode(val statement: Stmt, override val successors: MutableList<Node>
      */
     override fun hashCode(): Int {
         var hash = 0
-        getTopLevelValues().forEachIndexed { index, value -> hash += (index + 1) * value.type.hashCode() }
+        getTopLevelValues().forEachIndexed { index, value -> hash += (index + 1) * value.equivHashCode() }
         return hash
     }
 }
