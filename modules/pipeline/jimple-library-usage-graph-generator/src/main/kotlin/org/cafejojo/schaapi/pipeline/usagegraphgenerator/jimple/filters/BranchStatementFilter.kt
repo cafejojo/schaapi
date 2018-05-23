@@ -92,6 +92,8 @@ private class BranchStatement(private val body: Body, val statement: Unit) {
     private fun collectSuccessors(
         cfg: UnitGraph, unit: Unit, collection: MutableList<Unit> = mutableListOf()
     ): MutableList<Unit> {
+        if (collection.contains(unit)) return collection
+
         collection.add(unit)
         cfg.getSuccsOf(unit).forEach { collectSuccessors(cfg, it, collection) }
 
