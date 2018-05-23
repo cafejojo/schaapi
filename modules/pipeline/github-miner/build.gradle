@@ -1,0 +1,5 @@
+dependencies {
+    compile project(":pipeline")
+
+    compile project(":models:java-maven-project")
+}
