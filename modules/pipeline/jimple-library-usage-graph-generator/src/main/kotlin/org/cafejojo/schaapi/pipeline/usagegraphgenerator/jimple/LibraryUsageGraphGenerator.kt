@@ -35,13 +35,11 @@ object LibraryUsageGraphGenerator : LibraryUsageGraphGenerator {
      * @return a Soot class
      */
     private fun createSootClass(classpath: String, className: String): SootClass {
-        Options.v().set_soot_classpath(
-            arrayOf(
-                System.getProperty("java.home") + "${File.separator}lib${File.separator}rt.jar",
-                System.getProperty("java.home") + "${File.separator}lib${File.separator}jce.jar",
-                classpath
-            ).joinToString(File.pathSeparator)
-        )
+        Scene.v().sootClassPath = arrayOf(
+            System.getProperty("java.home") + "${File.separator}lib${File.separator}rt.jar",
+            System.getProperty("java.home") + "${File.separator}lib${File.separator}jce.jar",
+            classpath
+        ).joinToString(File.pathSeparator)
         Options.v().set_whole_program(true)
 
         Scene.v().loadNecessaryClasses()
