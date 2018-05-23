@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.cafejojo.schaapi.test.user</groupId>
-    <artifactId>a</artifactId>
+    <artifactId>b</artifactId>
     <version>1.0.0</version>
 
     <repositories>
