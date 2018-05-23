@@ -2,14 +2,9 @@ package org.cafejojo.schaapi.pipeline.usagegraphgenerator.jimple.testclasses.use
 
 import org.cafejojo.schaapi.pipeline.usagegraphgenerator.jimple.testclasses.library.Object1;
 
-public class IfNoEndTest {
-    public int test() {
-        Object1 o1 = new Object1();
-
-        if (Math.random() > 123) {
-            return 456;
-        }
-
-        return 123;
+public class AnnotationTest {
+    @Override
+    public String toString() {
+        return String.valueOf(new Object1().p1);
     }
 }

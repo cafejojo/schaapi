@@ -11,6 +11,7 @@ import soot.jimple.BinopExpr
 import soot.jimple.CastExpr
 import soot.jimple.ConcreteRef
 import soot.jimple.Constant
+import soot.jimple.DynamicInvokeExpr
 import soot.jimple.Expr
 import soot.jimple.FieldRef
 import soot.jimple.IdentityRef
@@ -50,6 +51,7 @@ class ValueFilter(private val project: JavaProject) {
     }
 
     private fun retainExpr(expr: Expr) = when (expr) {
+        is DynamicInvokeExpr -> false // todo add support for lambdas
         is InvokeExpr -> isLibraryClass(expr.method.declaringClass.name)
         is UnopExpr -> retain(expr.op)
         is BinopExpr -> retain(expr.op1) || retain(expr.op2)
