@@ -327,6 +327,58 @@ internal class IntegrationTest : Spek({
                 cfg
             )
         }
+
+        it("converts a class containing a nested loop to a filtered cfg") {
+            val cfg = LibraryUsageGraphGenerator.generate(
+                libraryProject,
+                TestProject(testClassesClassPath, listOf("$TEST_CLASSES_PACKAGE.users.LoopTest"))
+            )[1]
+
+            assertThatFlattenedStructureMatches(
+                listOf(
+                    node<JAssignStmt>(),
+                    node<JInvokeStmt>(),
+                    node<JAssignStmt>(),
+                    node<JAssignStmt>(),
+                    node<JIfStmt>(),
+                    node<JInvokeStmt>(),
+                    node<JAssignStmt>(),
+                    node<JIfStmt>(),
+                    node<JInvokeStmt>(),
+                    node<JGotoStmt>(),
+                    node<JInvokeStmt>(),
+                    node<JGotoStmt>(),
+                    node<JReturnVoidStmt>()
+                ),
+                cfg.iterator().asSequence().toList()
+            )
+        }
+
+        it("converts a class containing a loop with a continue statement to a filtered cfg") {
+            val cfg = LibraryUsageGraphGenerator.generate(
+                libraryProject,
+                TestProject(testClassesClassPath, listOf("$TEST_CLASSES_PACKAGE.users.LoopContinueTest"))
+            )[1]
+
+            assertThatFlattenedStructureMatches(
+                listOf(
+                    node<JAssignStmt>(),
+                    node<JInvokeStmt>(),
+                    node<JAssignStmt>(),
+                    node<JAssignStmt>(),
+                    node<JIfStmt>(),
+                    node<JInvokeStmt>(),
+                    node<JAssignStmt>(),
+                    node<JIfStmt>(),
+                    node<JGotoStmt>(),
+                    node<JGotoStmt>(),
+                    node<JInvokeStmt>(),
+                    node<JGotoStmt>(),
+                    node<JReturnVoidStmt>()
+                ),
+                cfg.iterator().asSequence().toList()
+            )
+        }
     }
 })
 
@@ -341,6 +393,18 @@ private fun assertThatStructureMatches(structure: Node, cfg: Node) {
     structure.successors.forEachIndexed { index, structureSuccessor ->
         if (structureSuccessor !is PreviousBranchNode)
             assertThatStructureMatches(structureSuccessor, cfg.successors[index])
+    }
+}
+
+private fun assertThatFlattenedStructureMatches(structure: List<Node>, instance: List<Node>) {
+    assertThat(structure.size == instance.size)
+
+    structure.forEachIndexed { index, structureNode ->
+        val instanceNode = instance[index]
+
+        if (structureNode is JimpleNode && instanceNode is JimpleNode) {
+            assertThat(structureNode.statement).isInstanceOf(instanceNode.statement::class.java)
+        }
     }
 }
 
