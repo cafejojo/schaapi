@@ -327,6 +327,82 @@ internal class IntegrationTest : Spek({
                 cfg
             )
         }
+
+        it("converts a class containing a nested loop to a filtered cfg") {
+            val cfg = LibraryUsageGraphGenerator.generate(
+                libraryProject,
+                TestProject(testClassesClassPath, listOf("$TEST_CLASSES_PACKAGE.users.LoopTest"))
+            )[1]
+
+            assertThatStructureMatches(
+                node<JAssignStmt>(
+                    node<JInvokeStmt>(
+                        node<JAssignStmt>(
+                            node<JAssignStmt>(
+                                node<JIfStmt>(
+                                    node<JInvokeStmt>(
+                                        node<JAssignStmt>(
+                                            node<JIfStmt>(
+                                                node<JInvokeStmt>(
+                                                    node<JGotoStmt>(
+                                                        PreviousBranchNode()
+                                                    )
+                                                ),
+                                                node<JInvokeStmt>(
+                                                    node<JGotoStmt>(
+                                                        PreviousBranchNode()
+                                                    )
+                                                )
+                                            )
+                                        )
+                                    ),
+                                    node<JReturnVoidStmt>()
+                                )
+                            )
+                        )
+                    )
+                ),
+                cfg
+            )
+        }
+
+        it("converts a class containing a loop with a continue statement to a filtered cfg") {
+            val cfg = LibraryUsageGraphGenerator.generate(
+                libraryProject,
+                TestProject(testClassesClassPath, listOf("$TEST_CLASSES_PACKAGE.users.LoopContinueTest"))
+            )[1]
+
+            assertThatStructureMatches(
+                node<JAssignStmt>(
+                    node<JInvokeStmt>(
+                        node<JAssignStmt>(
+                            node<JAssignStmt>(
+                                node<JIfStmt>(
+                                    node<JInvokeStmt>(
+                                        node<JAssignStmt>(
+                                            node<JIfStmt>(
+                                                node<JGotoStmt>(
+                                                    node<JGotoStmt>(
+                                                        PreviousBranchNode()
+                                                    )
+                                                ),
+                                                node<JInvokeStmt>(
+                                                    node<JGotoStmt>(
+                                                        PreviousBranchNode()
+                                                    )
+                                                )
+                                            )
+                                        )
+                                    ),
+                                    node<JReturnVoidStmt>()
+                                )
+                            )
+                        )
+                    )
+                ),
+                cfg
+            )
+        }
     }
 
     describe("the integration of different components for types containing non-concrete method declarations") {
