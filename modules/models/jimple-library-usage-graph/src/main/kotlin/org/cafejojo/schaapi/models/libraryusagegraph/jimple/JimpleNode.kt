@@ -20,9 +20,9 @@ class JimpleNode(val statement: Stmt, override val successors: MutableList<Node>
     override fun toString() = statement.toString()
 
     /**
-     * Extract the values from the contained [Stmt] based on its type.
+     * Returns all [soot.Value]s used as fields in [statement].
      *
-     * @return all values of the contained [Stmt] based on the type of the [Stmt]
+     * @return all [soot.Value]s used as fields in [statement]
      */
     fun getTopLevelValues() =
         when (statement) {
@@ -36,6 +36,13 @@ class JimpleNode(val statement: Stmt, override val successors: MutableList<Node>
             is ReturnVoidStmt -> emptyList()
             else -> emptyList()
         }
+
+    /**
+     * Returns all [soot.Value]s recursively contained in [statement].
+     *
+     * @return all [soot.Value]s recursively contained in [statement]
+     */
+    fun getValues() = getTopLevelValues().union(getTopLevelValues().flatMap { it.useBoxes.map { it.value } }).toList()
 
     /**
      * A [JimpleNode] equals another [JimpleNode] if the [statement] is of the same type, they have the same amount of

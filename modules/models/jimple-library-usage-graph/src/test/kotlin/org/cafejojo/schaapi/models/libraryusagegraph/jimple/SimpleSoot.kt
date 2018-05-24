@@ -7,6 +7,7 @@ import com.nhaarman.mockito_kotlin.mock
 import soot.RefType
 import soot.SootMethod
 import soot.Value
+import soot.ValueBox
 import soot.jimple.InvokeExpr
 import soot.jimple.internal.AbstractBinopExpr
 import soot.jimple.internal.AbstractNegExpr
@@ -18,6 +19,7 @@ import soot.util.Switch
  */
 fun mockValue(type: String): Value = mock {
     on { it.type } doReturn RefType.v(type)
+    on { it.useBoxes } doReturn emptyList<ValueBox>()
     on { it.equivTo(any()) } doAnswer { answer ->
         val other = answer.arguments[0]
 
@@ -31,6 +33,7 @@ fun mockValue(type: String): Value = mock {
  */
 fun mockInvokeExpr(type: String): InvokeExpr = mock {
     on { it.type } doReturn RefType.v(type)
+    on { it.useBoxes } doReturn emptyList<ValueBox>()
     on { it.equivTo(any()) } doAnswer { answer ->
         val other = answer.arguments[0]
 
