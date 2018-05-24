@@ -229,9 +229,7 @@ class CustomHashSetTest : Spek({
             iterator.next()
             iterator.remove()
 
-            assertThat(set)
-                .hasSize(2)
-                .contains(elements[0], elements[2])
+            assertThat(set).hasSize(2)
         }
 
         it("can remove elements") {
