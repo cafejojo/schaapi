@@ -25,7 +25,7 @@ class JavaMavenProject(
     override lateinit var classpath: String
 
     init {
-        require(projectDir.isDirectory) { "Given project directory does not exist." }
+        require(projectDir.isDirectory) { "Given project directory is not a directory." }
         require(projectDir.canRead()) { "Cannot read project directory." }
         require(pomFile.isFile) { "Given project directory is not a Maven project." }
         require(pomFile.canRead()) { "Cannot read POM file." }
