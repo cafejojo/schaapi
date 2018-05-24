@@ -21,12 +21,14 @@ class ProjectCompiler : ProjectCompiler {
 
         val classNames = mutableListOf<String>()
         val jarInputStream = JarInputStream(FileInputStream(project.classDir))
-        while (true) {
-            val jarEntry = jarInputStream.nextJarEntry ?: break
+        var jarEntry = jarInputStream.nextJarEntry
 
+        while (jarEntry != null) {
             if (jarEntry.name.endsWith(".class")) {
                 classNames.add(jarEntry.name.dropLast(".class".length).replace('/', '.'))
             }
+
+            jarEntry = jarInputStream.nextJarEntry
         }
 
         project.classNames = classNames
