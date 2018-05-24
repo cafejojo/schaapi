@@ -11,12 +11,6 @@ import java.io.File
  * Compiles a Java project using Maven.
  */
 class ProjectCompiler : ProjectCompiler {
-    /**
-     * Compiles a project.
-     *
-     * @param project an uncompiled project
-     * @return a compiled project
-     */
     override fun compile(project: Project): Project {
         if (project !is JavaMavenProject) throw IllegalArgumentException("Project must be JavaMavenProject.")
 
