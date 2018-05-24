@@ -3,7 +3,7 @@ package org.cafejojo.schaapi.models
 /**
  * A (mutable) [HashMap] that allows one to use a custom hash function, [customHash].
  */
-class CustomHashMap<K, V>(private val customHash: (K) -> Int) : MutableMap<K, V> {
+class CustomHashHashMap<K, V>(private val customHash: (K) -> Int) : MutableMap<K, V> {
     private val innerMap = HashMap<HashWrapper<K>, V>()
 
     override val entries: MutableSet<MutableMap.MutableEntry<K, V>>
@@ -48,7 +48,7 @@ class CustomHashMap<K, V>(private val customHash: (K) -> Int) : MutableMap<K, V>
 /**
  * A (mutable) [HashSet] that allows one to use a custom hash function, [customHash].
  */
-class CustomHashSet<K>(private val customHash: (K) -> Int) : MutableSet<K> {
+class CustomHashHashSet<K>(private val customHash: (K) -> Int) : MutableSet<K> {
     private val innerSet = HashSet<HashWrapper<K>>()
 
     override val size: Int

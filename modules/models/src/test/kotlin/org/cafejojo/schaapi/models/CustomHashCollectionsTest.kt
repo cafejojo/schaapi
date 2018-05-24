@@ -56,10 +56,10 @@ class ValueWrapperTest : Spek({
 
 class CustomHashMapTest : Spek({
     describe("custom hash map") {
-        lateinit var map: CustomHashMap<Any, Any>
+        lateinit var map: CustomHashHashMap<Any, Any>
 
         beforeEachTest {
-            map = CustomHashMap(Any::hashCode)
+            map = CustomHashHashMap(Any::hashCode)
         }
 
         it("starts out empty") {
@@ -82,8 +82,8 @@ class CustomHashMapTest : Spek({
             assertThat(map)
                 .hasSize(2)
                 .contains(
-                    CustomHashMap.Entry(keyA, valueA),
-                    CustomHashMap.Entry(keyB, valueB)
+                    CustomHashHashMap.Entry(keyA, valueA),
+                    CustomHashHashMap.Entry(keyB, valueB)
                 )
         }
 
@@ -112,8 +112,8 @@ class CustomHashMapTest : Spek({
             assertThat(map)
                 .hasSize(2)
                 .contains(
-                    CustomHashMap.Entry(keyA, value),
-                    CustomHashMap.Entry(keyB, value)
+                    CustomHashHashMap.Entry(keyA, value),
+                    CustomHashHashMap.Entry(keyB, value)
                 )
         }
 
@@ -127,7 +127,7 @@ class CustomHashMapTest : Spek({
 
             assertThat(map)
                 .hasSize(1)
-                .contains(CustomHashMap.Entry(key, valueB))
+                .contains(CustomHashHashMap.Entry(key, valueB))
         }
 
         it("can remove keys") {
@@ -172,10 +172,10 @@ class CustomHashMapTest : Spek({
 
 class CustomHashSetTest : Spek({
     describe("custom hash set") {
-        lateinit var set: CustomHashSet<Any>
+        lateinit var set: CustomHashHashSet<Any>
 
         beforeEachTest {
-            set = CustomHashSet(Any::hashCode)
+            set = CustomHashHashSet(Any::hashCode)
         }
 
         it("can store multiple elements") {
