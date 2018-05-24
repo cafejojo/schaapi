@@ -9,12 +9,9 @@ import java.io.File
 import java.io.FileNotFoundException
 
 internal class ProjectCompilerTest : Spek({
-    val projectURI = ProjectCompilerTest::class.java.getResource("/schaapi.simple-project-1.0.0.jar")
-        ?: throw FileNotFoundException("Could not find test resources.")
-
     describe("Java JAR project compilation") {
         it("compiles simple projects") {
-            val projectFile = File(projectURI.path)
+            val projectFile = File(getResourceURI("/schaapi.simple-project-1.0.0.jar").path)
             val project = JavaJarProject(projectFile)
             ProjectCompiler().compile(project)
 
@@ -27,5 +24,20 @@ internal class ProjectCompilerTest : Spek({
             assertThat(project.dependencies).isEmpty()
             assertThat(project.classpath).isEqualTo(projectFile.absolutePath)
         }
+
+        it("compiles projects with no classes") {
+            val projectFile = File(getResourceURI("/schaapi.no-classes-project-1.0.0.jar").path)
+            val project = JavaJarProject(projectFile)
+            ProjectCompiler().compile(project)
+
+            assertThat(project.projectDir).isEqualTo(projectFile)
+            assertThat(project.classes).isEmpty()
+            assertThat(project.classNames).isEmpty()
+            assertThat(project.dependencies).isEmpty()
+            assertThat(project.classpath).isEqualTo(projectFile.absolutePath)
+        }
     }
 })
+
+fun getResourceURI(path: String) = ProjectCompilerTest::class.java.getResource(path)
+    ?: throw FileNotFoundException("Could not find test resources.")
