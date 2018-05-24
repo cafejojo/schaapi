@@ -54,7 +54,7 @@ class ValueWrapperTest : Spek({
     }
 })
 
-class CustomHashMapTest : Spek({
+class CustomHashHashMapTest : Spek({
     describe("custom hash map") {
         lateinit var map: CustomHashHashMap<Any, Any>
 
@@ -170,7 +170,7 @@ class CustomHashMapTest : Spek({
     }
 })
 
-class CustomHashSetTest : Spek({
+class CustomHashHashSetTest : Spek({
     describe("custom hash set") {
         lateinit var set: CustomHashHashSet<Any>
 
