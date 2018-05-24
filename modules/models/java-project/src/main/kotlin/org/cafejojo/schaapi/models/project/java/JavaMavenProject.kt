@@ -25,12 +25,10 @@ class JavaMavenProject(
     override lateinit var classpath: String
 
     init {
-        if (!projectDir.isDirectory) {
-            throw IllegalArgumentException("Given project directory does not exist")
-        }
-        if (!pomFile.isFile) {
-            throw IllegalArgumentException("Given project directory is not a Maven project")
-        }
+        require(projectDir.isDirectory) { "Given project directory is not a directory." }
+        require(projectDir.canRead()) { "Cannot read project directory." }
+        require(pomFile.isFile) { "Given project directory is not a Maven project." }
+        require(pomFile.canRead()) { "Cannot read POM file." }
 
         classDir.mkdirs()
         dependencyDir.mkdirs()
