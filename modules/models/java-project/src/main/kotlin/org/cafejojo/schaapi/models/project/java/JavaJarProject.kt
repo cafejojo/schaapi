@@ -18,6 +18,7 @@ class JavaJarProject(private val jar: File) : JavaProject {
     override lateinit var classNames: List<String>
 
     init {
-        require(!jar.isFile) { "Given project JAR is not a file." }
+        require(jar.isFile) { "Given project JAR is not a file." }
+        require(jar.canRead()) { "Cannot read project JAR." }
     }
 }
