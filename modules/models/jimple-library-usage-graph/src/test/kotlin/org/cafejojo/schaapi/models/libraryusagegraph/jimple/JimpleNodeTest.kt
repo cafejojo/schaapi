@@ -226,35 +226,35 @@ internal class JimpleNodeTest : Spek({
             val node1 = mockDefinitionStmt("left", "right")
             val node2 = mockDefinitionStmt("left", "right")
 
-            assertThat(node1).isEqualTo(node2)
+            assertThat(node1.equivTo(node2)).isTrue()
         }
 
         it("should have the same hashcode if they are equal") {
             val node1 = mockDefinitionStmt("left", "right")
             val node2 = mockDefinitionStmt("left", "right")
 
-            assertThat(node1.hashCode()).isEqualTo(node2.hashCode())
+            assertThat(node1.equivHashCode()).isEqualTo(node2.equivHashCode())
         }
 
         it("should not be equal if the values are not the same type") {
             val node1 = mockDefinitionStmt("left", "right-a")
             val node2 = mockDefinitionStmt("left", "right-b")
 
-            assertThat(node1).isNotEqualTo(node2)
+            assertThat(node1.equivTo(node2)).isFalse()
         }
 
         it("should not have the same hashcode if they are not equal") {
             val node1 = mockDefinitionStmt("left", "right-a")
             val node2 = mockDefinitionStmt("left", "right-b")
 
-            assertThat(node1.hashCode()).isNotEqualTo(node2.hashCode())
+            assertThat(node1.equivHashCode()).isNotEqualTo(node2.equivHashCode())
         }
 
         it("should not have the same hashcode if they have the same value types but in a different order") {
             val node1 = mockDefinitionStmt("left", "right")
             val node2 = mockDefinitionStmt("right", "left")
 
-            assertThat(node1.hashCode()).isNotEqualTo(node2.hashCode())
+            assertThat(node1.equivHashCode()).isNotEqualTo(node2.equivHashCode())
         }
     }
 })
