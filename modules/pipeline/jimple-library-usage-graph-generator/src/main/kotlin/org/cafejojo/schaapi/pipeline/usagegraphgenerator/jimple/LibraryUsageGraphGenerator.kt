@@ -2,7 +2,7 @@ package org.cafejojo.schaapi.pipeline.usagegraphgenerator.jimple
 
 import org.cafejojo.schaapi.models.Node
 import org.cafejojo.schaapi.models.Project
-import org.cafejojo.schaapi.models.project.javamaven.JavaProject
+import org.cafejojo.schaapi.models.project.java.JavaProject
 import org.cafejojo.schaapi.pipeline.LibraryUsageGraphGenerator
 import org.cafejojo.schaapi.pipeline.usagegraphgenerator.jimple.filters.BranchStatementFilter
 import org.cafejojo.schaapi.pipeline.usagegraphgenerator.jimple.filters.StatementFilter

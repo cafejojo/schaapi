@@ -1,6 +1,6 @@
 package org.cafejojo.schaapi.pipeline.testgenerator.jimpleevosuite
 
-import org.cafejojo.schaapi.models.project.javamaven.JavaProject
+import org.cafejojo.schaapi.models.project.java.JavaProject
 import org.cafejojo.schaapi.pipeline.Pattern
 import org.cafejojo.schaapi.pipeline.TestGenerator
 import java.io.File
