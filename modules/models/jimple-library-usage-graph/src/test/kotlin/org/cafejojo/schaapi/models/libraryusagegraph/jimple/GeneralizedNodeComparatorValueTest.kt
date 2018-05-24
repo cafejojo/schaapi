@@ -155,5 +155,55 @@ internal class GeneralizedNodeComparatorValueTest : Spek({
                 assertThat(comparator.generalizedValuesAreEqual(realTemplate, fakeInstance)).isFalse()
             }
         }
+
+        context("(in)equality in recursive nodes") {
+            it("allows reusing values that were nested before") {
+                val templateLeft = mockValue("left")
+                val templateRight = mockValue("right")
+                val instanceLeft = mockValue("left")
+                val instanceRight = mockValue("right")
+
+                val templateA = JimpleNode(mockIfStmt(SimpleBinopExpr(templateLeft, templateRight)))
+                val instanceA = JimpleNode(mockIfStmt(SimpleBinopExpr(instanceLeft, instanceRight)))
+                comparator.generalizedValuesAreEqual(templateA, instanceA)
+
+                val templateB = JimpleNode(mockIfStmt(SimpleUnopExpr(templateLeft)))
+                val instanceB = JimpleNode(mockIfStmt(SimpleUnopExpr(instanceLeft)))
+                assertThat(comparator.generalizedValuesAreEqual(templateB, instanceB)).isTrue()
+            }
+
+            it("allows reusing values that contain nested values") {
+                val templateLeft = mockValue("left")
+                val templateRight = mockValue("right")
+                val templateExpr = SimpleBinopExpr(templateLeft, templateRight)
+                val instanceLeft = mockValue("left")
+                val instanceRight = mockValue("right")
+                val instanceExpr = SimpleBinopExpr(instanceLeft, instanceRight)
+
+                val templateA = JimpleNode(mockIfStmt(templateExpr))
+                val instanceA = JimpleNode(mockIfStmt(instanceExpr))
+                comparator.generalizedValuesAreEqual(templateA, instanceA)
+
+                val templateB = JimpleNode(mockDefinitionStmt(templateExpr, templateLeft))
+                val instanceB = JimpleNode(mockDefinitionStmt(instanceExpr, instanceLeft))
+                assertThat(comparator.generalizedValuesAreEqual(templateB, instanceB)).isTrue()
+            }
+
+            it("allows method instances to be reused across statements") {
+                val method = SimpleSootMethod("base", listOf("arg1", "arg2"), "output")
+
+                val expr1A = SimpleInvokeExpr("base", method, "arg1", "arg2")
+                val expr1B = SimpleInvokeExpr("base", method, "arg1", "arg2")
+                val node1A = JimpleNode(mockInvokeStmt(expr1A))
+                val node1B = JimpleNode(mockInvokeStmt(expr1B))
+                comparator.generalizedValuesAreEqual(node1A, node1B)
+
+                val expr2A = SimpleInvokeExpr("base", method, "arg1", "arg2")
+                val expr2B = SimpleInvokeExpr("base", method, "arg1", "arg2")
+                val node2A = JimpleNode(mockInvokeStmt(expr2A))
+                val node2B = JimpleNode(mockInvokeStmt(expr2B))
+                assertThat(comparator.generalizedValuesAreEqual(node2A, node2B)).isTrue()
+            }
+        }
     }
 })
