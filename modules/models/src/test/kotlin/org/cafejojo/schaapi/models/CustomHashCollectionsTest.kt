@@ -63,11 +63,8 @@ class CustomHashHashMapTest : Spek({
         }
 
         it("starts out empty") {
-            assertThat(map)
-                .hasSize(0)
-                .isEmpty()
-            assertThat(map.entries)
-                .isEmpty()
+            assertThat(map).hasSize(0).isEmpty()
+            assertThat(map.entries).isEmpty()
         }
 
         it("can store multiple key-value pairs") {
@@ -205,9 +202,7 @@ class CustomHashHashSetTest : Spek({
             set.addAll(elements)
             set.clear()
 
-            assertThat(set)
-                .hasSize(0)
-                .isEmpty()
+            assertThat(set).hasSize(0).isEmpty()
         }
 
         it("can be iterated over") {
