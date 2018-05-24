@@ -18,8 +18,6 @@ class JavaJarProject(private val jar: File) : JavaProject {
     override lateinit var classNames: List<String>
 
     init {
-        if (!jar.isFile) {
-            throw IllegalArgumentException("Given project JAR is not a file.")
-        }
+        require(!jar.isFile) { "Given project JAR is not a file." }
     }
 }
