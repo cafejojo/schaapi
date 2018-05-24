@@ -328,6 +328,43 @@ internal class IntegrationTest : Spek({
             )
         }
     }
+
+    describe("the integration of different components for types containing non-concrete method declarations") {
+        it("ignores a non-concrete interface method declaration") {
+            val methods = LibraryUsageGraphGenerator.generate(
+                libraryProject,
+                TestProject(testClassesClassPath, listOf(
+                    "$TEST_CLASSES_PACKAGE.users.InterfaceTest"
+                ))
+            )
+
+            assertThat(methods.size).isEqualTo(0)
+        }
+
+        it("ignores a non-concrete abstract class method declaration") {
+            val methods = LibraryUsageGraphGenerator.generate(
+                libraryProject,
+                TestProject(testClassesClassPath, listOf(
+                    "$TEST_CLASSES_PACKAGE.users.AbstractClassTest"
+                ))
+            )
+
+            // Should only contain the implicit constructor
+            assertThat(methods.size).isEqualTo(1)
+        }
+
+        it("ignores a non-concrete abstract class method declaration") {
+            val methods = LibraryUsageGraphGenerator.generate(
+                libraryProject,
+                TestProject(testClassesClassPath, listOf(
+                    "$TEST_CLASSES_PACKAGE.users.PartiallyAbstractClassTest"
+                ))
+            )
+
+            // Should contain the implicit constructor and the fully specified method (not the declared method)
+            assertThat(methods.size).isEqualTo(2)
+        }
+    }
 })
 
 private fun assertThatStructureMatches(structure: Node, cfg: Node) {

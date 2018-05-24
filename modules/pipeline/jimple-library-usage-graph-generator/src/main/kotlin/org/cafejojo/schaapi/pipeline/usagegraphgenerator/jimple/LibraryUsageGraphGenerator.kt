@@ -23,7 +23,9 @@ object LibraryUsageGraphGenerator : LibraryUsageGraphGenerator {
         return userProject.classNames.flatMap {
             val sootClass = createSootClass(userProject.classpath, it)
 
-            sootClass.methods.map { generateMethodGraph(libraryProject, it) }
+            sootClass.methods
+                .filter { it.isConcrete }
+                .map { generateMethodGraph(libraryProject, it) }
         }
     }
 
