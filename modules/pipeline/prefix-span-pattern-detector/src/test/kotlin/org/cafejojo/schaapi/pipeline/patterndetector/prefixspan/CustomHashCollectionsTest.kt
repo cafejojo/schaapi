@@ -169,3 +169,125 @@ class CustomHashMapTest : Spek({
         }
     }
 })
+
+class CustomHashSetTest : Spek({
+    describe("custom hash set") {
+        lateinit var set: CustomHashSet<Any>
+
+        beforeEachTest {
+            set = CustomHashSet(Any::hashCode)
+        }
+
+        it("can store multiple elements") {
+            val elements = listOf(Any(), Any())
+
+            set.add(elements[0])
+            set.add(elements[1])
+
+            assertThat(set)
+                .hasSize(2)
+                .containsAll(elements)
+        }
+
+        it("can accept multiple elements at once") {
+            val elements = listOf(Any(), Any(), Any())
+
+            set.addAll(elements)
+
+            assertThat(set)
+                .hasSize(3)
+                .containsAll(elements)
+        }
+
+        it("can be cleared") {
+            val elements = listOf(Any(), Any(), Any())
+
+            set.addAll(elements)
+            set.clear()
+
+            assertThat(set)
+                .hasSize(0)
+                .isEmpty()
+        }
+
+        it("can be iterated over") {
+            val elements = listOf(Any(), Any(), Any())
+
+            set.addAll(elements)
+
+            assertThat(set.iterator())
+                .hasSize(3)
+                .containsAll(elements)
+        }
+
+        it("can delete while iterating") {
+            val elements = listOf(Any(), Any(), Any())
+
+            set.addAll(elements)
+            val iterator = set.iterator()
+            iterator.next()
+            iterator.remove()
+
+            assertThat(set)
+                .hasSize(2)
+                .contains(elements[0], elements[2])
+        }
+
+        it("can remove elements") {
+            val elements = listOf(Any(), Any(), Any())
+
+            set.addAll(elements)
+            set.remove(elements[1])
+
+            assertThat(set)
+                .hasSize(2)
+                .contains(elements[0], elements[2])
+        }
+
+        it("can remove multiple elements at once") {
+            val elements = listOf(Any(), Any(), Any(), Any(), Any())
+
+            set.addAll(elements)
+            set.removeAll(listOf(elements[1], elements[3]))
+
+            assertThat(set)
+                .hasSize(3)
+                .contains(elements[0], elements[2], elements[4])
+        }
+
+        it("can be filtered") {
+            val set = CustomHashSet(String::hashCode)
+            val elements = listOf("A", "B", "C")
+            val retain = listOf("B")
+
+            set.addAll(elements)
+            set.retainAll(retain)
+
+            assertThat(set)
+                .hasSize(1)
+                .containsAll(retain)
+        }
+
+        it("knows which element it contains") {
+            val elements = listOf(Any(), Any(), Any())
+
+            set.addAll(elements)
+
+            assertThat(set.contains(elements[1])).isTrue()
+        }
+
+        it("knows which elements it contains") {
+            val elements = listOf(Any(), Any(), Any())
+
+            set.addAll(elements)
+
+            assertThat(set.containsAll(elements)).isTrue()
+        }
+
+        it("starts out empty") {
+            assertThat(set)
+                .hasSize(0)
+                .isEmpty()
+        }
+    }
+})

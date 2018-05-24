@@ -60,7 +60,17 @@ class CustomHashSet<K>(private val customHash: (K) -> Int) : MutableSet<K> {
 
     override fun clear() = innerSet.clear()
 
-    override fun iterator() = innerSet.map { it.value }.toMutableSet().iterator()
+    override fun iterator(): MutableIterator<K> {
+        return object : MutableIterator<K> {
+            private val innerIterator = innerSet.iterator()
+
+            override fun hasNext() = innerIterator.hasNext()
+
+            override fun next() = innerIterator.next().value
+
+            override fun remove() = innerIterator.remove()
+        }
+    }
 
     override fun remove(element: K) = innerSet.remove(wrapElement(element))
 
