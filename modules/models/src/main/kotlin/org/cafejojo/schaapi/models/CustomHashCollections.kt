@@ -6,12 +6,21 @@ package org.cafejojo.schaapi.models
 class CustomHashHashMap<K, V>(private val customHash: (K) -> Int) : MutableMap<K, V> {
     private val innerMap = HashMap<HashWrapper<K>, V>()
 
+    /**
+     * A copy of the entries.
+     */
     override val entries: MutableSet<MutableMap.MutableEntry<K, V>>
         get() = innerMap.entries.map { (key, value) -> Entry(key.value, value) }.toMutableSet()
+    /**
+     * A copy of the keys.
+     */
     override val keys: MutableSet<K>
         get() = innerMap.keys.map { it.value }.toMutableSet()
     override val size: Int
         get() = innerMap.size
+    /**
+     * A copy of the values.
+     */
     override val values: MutableCollection<V>
         get() = innerMap.values
 
