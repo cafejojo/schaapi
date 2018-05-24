@@ -2,9 +2,11 @@ package org.cafejojo.schaapi.pipeline.projectcompiler.githubminer
 
 import org.cafejojo.schaapi.models.Project
 import org.cafejojo.schaapi.models.project.javamaven.JavaMavenProject
+import org.zeroturnaround.zip.ZipUtil
 import java.io.*
 import java.net.HttpURLConnection
 import java.net.URL
+
 
 /**
  * Clones the github repositories and returns a list of java projects.
@@ -43,8 +45,14 @@ class GithubDownloader(private val repositoryNames: Collection<String>) {
         val url = URL("https://github.com/$projectName/archive/master.zip")
         val connection = url.openConnection() as HttpURLConnection
         connection.requestMethod = "GET"
+
         return connection.inputStream
     }
 
-    private fun unzip(directory: File): File = File("")
+    private fun unzip(zipDirectory: File): File {
+        val output = File(zipDirectory.nameWithoutExtension)
+        ZipUtil.explode(zipDirectory)
+
+        return output
+    }
 }
