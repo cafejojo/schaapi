@@ -9,6 +9,7 @@ import org.cafejojo.schaapi.pipeline.usagegraphgenerator.jimple.filters.Statemen
 import soot.Scene
 import soot.SootClass
 import soot.SootMethod
+import soot.jimple.Jimple
 import soot.options.Options
 import java.io.File
 
@@ -60,6 +61,8 @@ object LibraryUsageGraphGenerator : LibraryUsageGraphGenerator {
         val methodBody = method.retrieveActiveBody()
         val filters = listOf(StatementFilter(libraryProject), BranchStatementFilter(libraryProject))
         filters.forEach { it.apply(methodBody) }
+
+        if (methodBody.units.isEmpty()) methodBody.units.add(Jimple.v().newReturnVoidStmt())
 
         return ControlFlowGraphGenerator.create(methodBody)
             ?: throw IllegalStateException("Control flow graph could not be generated")
