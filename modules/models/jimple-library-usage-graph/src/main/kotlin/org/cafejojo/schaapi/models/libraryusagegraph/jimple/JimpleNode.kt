@@ -50,16 +50,16 @@ class JimpleNode(val statement: Stmt, override val successors: MutableList<Node>
      *
      * @return true iff the [statement] is of same type and the values are in the same order and of the same type
      */
-    override fun equals(other: Any?) =
+    override fun equivTo(other: Node?) =
         if (other !is JimpleNode || this.statement::class != other.statement::class) false
         else this.getTopLevelValues().zip(other.getTopLevelValues()).all { it.first.equivTo(it.second) }
 
     /**
-     * Generates a hashcode based on the values of the contained [Stmt], and their order.
+     * Generates a hashcode based on the values of the contained [Stmt] and their order.
      *
-     * @return hashcode based on the hashcodes of the values contained in the contained [Stmt]
+     * @return a hashcode based on the hashcodes of the values contained in the contained [Stmt]
      */
-    override fun hashCode(): Int {
+    override fun equivHashCode(): Int {
         var hash = 0
         getTopLevelValues().forEachIndexed { index, value -> hash += (index + 1) * value.equivHashCode() }
         return hash

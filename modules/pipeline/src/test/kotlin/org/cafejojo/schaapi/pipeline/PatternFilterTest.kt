@@ -2,6 +2,7 @@ package org.cafejojo.schaapi.pipeline
 
 import org.assertj.core.api.Assertions.assertThat
 import org.cafejojo.schaapi.models.Node
+import org.cafejojo.schaapi.models.SimpleNode
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
@@ -10,8 +11,8 @@ internal object PatternFilterTest : Spek({
     describe("the pattern filter") {
         it("retains all patterns if no rules given") {
             val patterns = listOf(
-                listOf(FakeNode()),
-                listOf(FakeNode())
+                listOf(SimpleNode()),
+                listOf(SimpleNode())
             )
 
             val filteredPatterns = PatternFilter().filter(patterns)
@@ -20,9 +21,9 @@ internal object PatternFilterTest : Spek({
         }
 
         it("retains all patterns that are in accordance with the given rules") {
-            val lengthTwoPattern = listOf(FakeNode(), FakeNode())
+            val lengthTwoPattern = listOf(SimpleNode(), SimpleNode())
             val patterns = listOf(
-                listOf(FakeNode()),
+                listOf(SimpleNode()),
                 lengthTwoPattern,
                 emptyList()
             )
@@ -44,5 +45,3 @@ private class NoLengthOnePatternFilterRule : PatternFilterRule {
 private class NoEmptyPatternFilterRule : PatternFilterRule {
     override fun retain(pattern: List<Node>) = pattern.isNotEmpty()
 }
-
-private class FakeNode(override val successors: MutableList<Node> = mutableListOf()) : Node

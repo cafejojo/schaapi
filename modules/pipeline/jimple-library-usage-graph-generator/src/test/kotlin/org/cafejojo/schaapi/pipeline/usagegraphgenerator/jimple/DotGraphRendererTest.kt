@@ -56,13 +56,14 @@ internal class DotGraphRendererTest : Spek({
 })
 
 private class TestNode(override val successors: MutableList<Node> = mutableListOf(), val id: Int) : Node {
-    override fun hashCode() = id
-    override fun equals(other: Any?) = when {
+    override fun equivTo(other: Node?) = when {
         this === other -> true
         other !is TestNode -> false
         id != other.id -> false
         else -> true
     }
+
+    override fun equivHashCode() = id
 
     override fun toString() = "node-number-$id"
 }
