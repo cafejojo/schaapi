@@ -37,11 +37,7 @@ class CustomHashHashMap<K, V>(private val customHash: (K) -> Int) : MutableMap<K
      * A simple implementation of [MutableMap.MutableEntry].
      */
     internal class Entry<K, V>(override val key: K, override var value: V) : MutableMap.MutableEntry<K, V> {
-        override fun setValue(newValue: V): V {
-            val oldValue = value
-            value = newValue
-            return oldValue
-        }
+        override fun setValue(newValue: V) = value.also { value = newValue }
     }
 }
 
