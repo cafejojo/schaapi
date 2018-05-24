@@ -189,6 +189,23 @@ internal class GeneralizedNodeComparatorValueTest : Spek({
                 assertThat(comparator.generalizedValuesAreEqual(templateB, instanceB)).isTrue()
             }
 
+            it("rejects wrongly used nested values") {
+                val templateLeft = mockValue("left")
+                val templateRight = mockValue("right")
+                val templateExpr = SimpleBinopExpr(templateLeft, templateRight)
+                val instanceLeft = mockValue("left")
+                val instanceRight = mockValue("right")
+                val instanceExpr = SimpleBinopExpr(instanceLeft, instanceRight)
+
+                val templateA = JimpleNode(mockIfStmt(templateExpr))
+                val instanceA = JimpleNode(mockIfStmt(instanceExpr))
+                comparator.generalizedValuesAreEqual(templateA, instanceA)
+
+                val templateB = JimpleNode(mockDefinitionStmt(templateExpr, templateLeft))
+                val instanceB = JimpleNode(mockDefinitionStmt(instanceExpr, instanceRight))
+                assertThat(comparator.generalizedValuesAreEqual(templateB, instanceB)).isFalse()
+            }
+
             it("allows method instances to be reused across statements") {
                 val method = SimpleSootMethod("base", listOf("arg1", "arg2"), "output")
 
