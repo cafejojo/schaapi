@@ -1,4 +1,4 @@
-package org.cafejojo.schaapi.pipeline.patterndetector.prefixspan
+package org.cafejojo.schaapi.models
 
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.spek.api.Spek

@@ -1,4 +1,4 @@
-package org.cafejojo.schaapi.pipeline.patterndetector.prefixspan
+package org.cafejojo.schaapi.models
 
 /**
  * A (mutable) [HashMap] that allows one to use a custom hash function, [customHash].
