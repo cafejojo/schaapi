@@ -7,15 +7,9 @@ import java.io.FileInputStream
 import java.util.jar.JarInputStream
 
 /**
- * Compiles a Java project consisting of a single JAR.
+ * Finds all classes in a Java project consisting of a single JAR.
  */
 class ProjectCompiler : ProjectCompiler {
-    /**
-     * Compiles a project.
-     *
-     * @param project an uncompiled project
-     * @return a compiled project
-     */
     override fun compile(project: Project): Project {
         if (project !is JavaJarProject) throw IllegalArgumentException("Project must be JavaJarProject.")
 
