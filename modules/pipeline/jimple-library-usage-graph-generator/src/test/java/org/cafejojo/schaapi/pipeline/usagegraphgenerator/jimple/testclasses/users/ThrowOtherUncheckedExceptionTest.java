@@ -1,6 +1,6 @@
 package org.cafejojo.schaapi.pipeline.usagegraphgenerator.jimple.testclasses.users;
 
-public class ThrowOtherExceptionTest {
+public class ThrowOtherUncheckedExceptionTest {
     public void foo() {
         throw new RuntimeException();
     }
