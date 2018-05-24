@@ -14,7 +14,7 @@ internal class JimpleNodeTest : Spek({
         context("non-recursive statements") {
             it("returns the operator of a throw statement") {
                 val value = mockValue("value")
-                val node = JimpleNode(mockIfStmt(value))
+                val node = JimpleNode(mockThrowStmt(value))
 
                 assertThat(node.getTopLevelValues()).containsExactly(value)
                 assertThat(node.getValues()).containsExactly(value)
@@ -45,7 +45,7 @@ internal class JimpleNodeTest : Spek({
                 assertThat(node.getValues()).containsExactly(value)
             }
 
-            it("returns the key of a switch statement") {
+            it("returns the invocation expression of an invoke statement") {
                 val invokeExpr = mockInvokeExpr("value")
                 val node = JimpleNode(mockInvokeStmt(invokeExpr))
 
