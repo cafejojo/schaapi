@@ -6,7 +6,9 @@ import java.io.File
  * A Java project contained in a JAR file.
  */
 @SuppressWarnings("LateinitUsage") // Refer to PR #23
-class JavaJarProject(override val classDir: File) : JavaProject {
+class JavaJarProject(private val jar: File) : JavaProject {
+    override val classDir: File
+        get() = jar
     override val dependencyDir: File = classDir
     override var classes: List<File> = listOf()
     override var dependencies: List<File> = listOf()
@@ -14,4 +16,10 @@ class JavaJarProject(override val classDir: File) : JavaProject {
     override val projectDir: File = classDir
 
     override lateinit var classNames: List<String>
+
+    init {
+        if (!jar.isFile) {
+            throw IllegalArgumentException("Given project JAR is not a file.")
+        }
+    }
 }
