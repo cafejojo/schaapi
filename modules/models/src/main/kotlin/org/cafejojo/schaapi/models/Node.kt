@@ -10,9 +10,19 @@ interface Node : Iterable<Node> {
 
     override fun iterator() = DfsIterator(this)
 
-    // TODO add documentation here
+    /**
+     * Returns true iff this node is equivalent to [other].
+     *
+     * @param other a [Node]
+     * @return true iff this node is equivalent to [other]
+     */
     fun equivTo(other: Node?): Boolean
 
+    /**
+     * Behaves to [equivTo] like [hashCode] behaves to [equals].
+     *
+     * @return the equivalency hash code
+     */
     fun equivHashCode(): Int
 }
 
