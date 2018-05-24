@@ -60,8 +60,8 @@ class CustomHashSet<K>(private val customHash: (K) -> Int) : MutableSet<K> {
 
     override fun clear() = innerSet.clear()
 
-    override fun iterator(): MutableIterator<K> {
-        return object : MutableIterator<K> {
+    override fun iterator() =
+        object : MutableIterator<K> {
             private val innerIterator = innerSet.iterator()
 
             override fun hasNext() = innerIterator.hasNext()
@@ -70,7 +70,6 @@ class CustomHashSet<K>(private val customHash: (K) -> Int) : MutableSet<K> {
 
             override fun remove() = innerIterator.remove()
         }
-    }
 
     override fun remove(element: K) = innerSet.remove(wrapElement(element))
 
@@ -91,7 +90,7 @@ class CustomHashSet<K>(private val customHash: (K) -> Int) : MutableSet<K> {
  * Wraps an object such that its [hashCode] calls [customHash]. This allows one to "override" the [hashCode] method
  * without actually changing the object.
  */
-class HashWrapper<K>(val value: K, private val customHash: (K) -> Int) {
+data class HashWrapper<K>(val value: K, private val customHash: (K) -> Int) {
     /**
      * Returns true iff [other]'s value equals [value].
      *
@@ -105,7 +104,5 @@ class HashWrapper<K>(val value: K, private val customHash: (K) -> Int) {
      *
      * @return the result of applying [customHash] to [value]
      */
-    override fun hashCode(): Int {
-        return customHash(value)
-    }
+    override fun hashCode() = customHash(value)
 }

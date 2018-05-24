@@ -9,6 +9,8 @@ comments:
 complexity:
   ComplexMethod:
     threshold: 16
+  TooManyFunctions:
+    thresholdInClasses: 16
   StringLiteralDuplication:
     active: false
 

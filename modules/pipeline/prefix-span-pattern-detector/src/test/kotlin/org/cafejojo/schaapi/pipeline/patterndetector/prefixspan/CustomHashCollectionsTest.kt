@@ -226,6 +226,7 @@ class CustomHashSetTest : Spek({
             set.addAll(elements)
             val iterator = set.iterator()
             iterator.next()
+            iterator.next()
             iterator.remove()
 
             assertThat(set)
@@ -256,9 +257,8 @@ class CustomHashSetTest : Spek({
         }
 
         it("can be filtered") {
-            val set = CustomHashSet(String::hashCode)
-            val elements = listOf("A", "B", "C")
-            val retain = listOf("B")
+            val elements = listOf(Any(), Any(), Any())
+            val retain = listOf(elements[1])
 
             set.addAll(elements)
             set.retainAll(retain)
