@@ -3,7 +3,7 @@ dependencies {
 
     compile project(":models:java-maven-project")
 
-    compile 'com.squareup.okhttp3:okhttp:3.10.0'
-    implementation 'com.beust:klaxon:3.0.1'
-    compile 'org.zeroturnaround:zt-zip:1.13'
+    compile group: "com.squareup.okhttp3", name: "okhttp", version: okHttpVersion
+    implementation group: "com.beust", name: "klaxon", version: klaxonVersion
+    compile group: "org.zeroturnaround", name: "zt-zip", version: ztZipVersion
 }
