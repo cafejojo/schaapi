@@ -2,4 +2,7 @@ dependencies {
     compile project(":pipeline")
 
     compile project(":models:java-maven-project")
+
+    compile 'com.squareup.okhttp3:okhttp:3.10.0'
+    implementation 'com.beust:klaxon:3.0.1'
 }

@@ -3,11 +3,16 @@ package org.cafejojo.schaapi.pipeline
 import org.cafejojo.schaapi.models.Project
 
 /**
- * Mine code.
+ * Code miner.
  */
 interface CodeMiner {
     /**
-     * Mine.
+     * Mine projects which (likely) depend on a software library with the given group id, artifact id and version.
+     *
+     * @param groupId group id of library
+     * @param artifactId artifact id of library
+     * @param version version of library
+     * @return list of projects using library
      */
-    fun mine(groupId: String, artifactId: String): List<Project>
+    fun mine(groupId: String, artifactId: String, version: String): List<Project>
 }
