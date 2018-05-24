@@ -5,7 +5,7 @@ import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 
-class CustomHashMapTest : Spek({
+class ValueWrapperTest : Spek({
     describe("value wrapper") {
         it("returns the inserted value") {
             val key = Any()
@@ -52,7 +52,9 @@ class CustomHashMapTest : Spek({
             assertThat(wrapperA).isEqualTo(wrapperB)
         }
     }
+})
 
+class CustomHashMapTest : Spek({
     describe("custom hash map") {
         lateinit var map: CustomHashMap<Any, Any>
 

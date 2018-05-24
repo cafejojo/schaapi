@@ -46,6 +46,38 @@ class CustomHashMap<K, V>(private val customHash: (K) -> Int) : MutableMap<K, V>
 }
 
 /**
+ * A (mutable) [HashSet] that allows one to use a custom hash function, [customHash].
+ */
+class CustomHashSet<K>(private val customHash: (K) -> Int) : MutableSet<K> {
+    private val innerSet = HashSet<HashWrapper<K>>()
+
+    override val size: Int
+        get() = innerSet.size
+
+    override fun add(element: K) = innerSet.add(wrapElement(element))
+
+    override fun addAll(elements: Collection<K>) = innerSet.addAll(elements.map { wrapElement(it) })
+
+    override fun clear() = innerSet.clear()
+
+    override fun iterator() = innerSet.map { it.value }.toMutableSet().iterator()
+
+    override fun remove(element: K) = innerSet.remove(wrapElement(element))
+
+    override fun removeAll(elements: Collection<K>) = innerSet.removeAll(elements.map { wrapElement(it) })
+
+    override fun retainAll(elements: Collection<K>) = innerSet.retainAll(elements.map { wrapElement(it) })
+
+    override fun contains(element: K) = innerSet.contains(wrapElement(element))
+
+    override fun containsAll(elements: Collection<K>) = innerSet.containsAll(elements.map { wrapElement(it) })
+
+    override fun isEmpty() = innerSet.isEmpty()
+
+    private fun wrapElement(key: K) = HashWrapper(key, customHash)
+}
+
+/**
  * Wraps an object such that its [hashCode] calls [customHash]. This allows one to "override" the [hashCode] method
  * without actually changing the object.
  */
