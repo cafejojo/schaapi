@@ -42,7 +42,7 @@ usage: schaapi -o <arg> -l <arg> -u <arg> [--maven_dir <arg>]
 | **1.2 Analyse Usage per Project**                 | Create library usage graphs of user projects |
 | **1.3 Find Usage Patterns across all Projects**   | Find common library usage patterns across usage graphs |
 | **1.4 Filter Found Patterns**                     | Filter relevant library usage patterns |
-| **1.5 Generate Tests**                            | Generate regressions tests for library usage patterns |
+| **1.5 Generate Tests**                            | Generate regression tests for library usage patterns |
 
 #### 1.1 Project Mining
 | | |
@@ -75,21 +75,21 @@ usage: schaapi -o <arg> -l <arg> -u <arg> [--maven_dir <arg>]
 #### 1.5 Generate Tests
 | | |
 | ------------------ | ------------- |
-| Description        | Generate regressions tests for library usage patterns |
+| Description        | Generate regression tests for library usage patterns |
 | Interface          | `org.cafejojo.schaapi.pipeline.TestGenerator` |
 | Implementations    | **[Jimple EvoSuite Test Generator](https://github.com/cafejojo/schaapi/tree/master/modules/pipeline/jimple-evosuite-test-generator)**<br>Generates testable classes based on [Soot](https://github.com/Sable/soot) Jimple based patterns, and generates tests for those using [EvoSuite](http://www.evosuite.org/). |
 
 ### 2 Continuous Integration
 | Stage                      | Description |
 | -------------------------- | --- |
-| **2.1 Execute Tests**      | Run generated tests against new library versions |
+| **2.1 Execute Tests**      | Run generated tests against a new library version |
 | **2.2 Notify Developers**  | Notify library developer of possibly affected users |
 | **2.3 Notify Users**       | Notify library users of breaking changes |
 
 #### 2.1 Execute Tests
 | | |
 | ------------------ | ------------- |
-| Description        | Run generated tests against new library versions |
+| Description        | Run generated tests against a new library version |
 | Interface          | `--` |
 | Implementations    | |
 
