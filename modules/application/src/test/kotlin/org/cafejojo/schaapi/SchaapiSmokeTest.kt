@@ -26,7 +26,7 @@ internal class SchaapiSmokeTest : Spek({
 
     it("generates a test class from the patterns in a project using a library") {
         main(arrayOf(
-            "-a", target.absolutePath,
+            "-o", target.absolutePath,
             "-l", getResourcePath("/library/"),
             "-u", "${getResourcePath("/user/a/")};${getResourcePath("/user/b/")}",
             "--maven_dir", mavenDir.absolutePath,
