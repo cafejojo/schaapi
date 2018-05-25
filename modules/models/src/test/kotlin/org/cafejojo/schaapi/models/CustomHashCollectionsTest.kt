@@ -5,7 +5,7 @@ import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 
-class ValueWrapperTest : Spek({
+class HashWrapperTest : Spek({
     describe("value wrapper") {
         it("returns the inserted value") {
             val key = Any()
