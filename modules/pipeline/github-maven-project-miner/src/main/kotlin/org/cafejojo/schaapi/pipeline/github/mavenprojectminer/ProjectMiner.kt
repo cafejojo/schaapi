@@ -12,15 +12,15 @@ import java.io.File
 import java.io.IOException
 
 /**
- * Mines projects on Github using the Github REST API v3.
+ * Mines projects on GitHub using the GitHub REST API v3.
  *
  * Credentials must be provided to enable code searching. A code search is done using the group id, artifact id, and
  * version (number) of the desired library. String matching is done to find projects which contain a pom file which
- * likely contain a dependency on the desired library. No guarantees however are given, as github does not provide
+ * likely contain a dependency on the desired library. No guarantees however are given, as GitHub does not provide
  * information on which projects have a dependency on a given library.
  *
- * @property username username of github user
- * @property password password of github user
+ * @property username username of GitHub user
+ * @property password password of GitHub user
  * @property outputDirectory directory to store all the project directories
  * @property projectPacker packer which determines what type of [Project] to wrap the project directory in
  */
