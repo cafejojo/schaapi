@@ -42,7 +42,7 @@ class GeneralizedNodeComparator : GeneralizedNodeComparator {
             throw IllegalArgumentException("Jimple GeneralizedNodeComparator cannot handle non-Jimple nodes.")
         }
 
-        return template == instance
+        return template.equivTo(instance)
     }
 
     /**

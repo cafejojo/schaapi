@@ -2,6 +2,7 @@ package org.cafejojo.schaapi.pipeline.patterndetector.prefixspan
 
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
+import org.cafejojo.schaapi.models.SimpleNode
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
@@ -9,9 +10,9 @@ import org.jetbrains.spek.api.dsl.it
 internal class PathEnumeratorTest : Spek({
     describe("enumerating all paths in a control flow graph") {
         it("finds a single path in a linear graph") {
-            val node1 = TestNode()
-            val node2 = TestNode()
-            val node3 = TestNode()
+            val node1 = SimpleNode()
+            val node2 = SimpleNode()
+            val node3 = SimpleNode()
 
             node1.successors.addAll(listOf(node2))
             node2.successors.addAll(listOf(node3))
@@ -26,11 +27,11 @@ internal class PathEnumeratorTest : Spek({
         }
 
         it("finds the paths of a single if-branch") {
-            val node1 = TestNode()
-            val node2 = TestNode()
-            val node3 = TestNode()
-            val node4 = TestNode()
-            val node5 = TestNode()
+            val node1 = SimpleNode()
+            val node2 = SimpleNode()
+            val node3 = SimpleNode()
+            val node4 = SimpleNode()
+            val node5 = SimpleNode()
 
             node1.successors.addAll(listOf(node2))
             node2.successors.addAll(listOf(node3, node4))
@@ -49,14 +50,14 @@ internal class PathEnumeratorTest : Spek({
         }
 
         it("finds the paths of a nested if-branch") {
-            val node1 = TestNode()
-            val node2 = TestNode()
-            val node3 = TestNode()
-            val node4 = TestNode()
-            val node5 = TestNode()
-            val node6 = TestNode()
-            val node7 = TestNode()
-            val node8 = TestNode()
+            val node1 = SimpleNode()
+            val node2 = SimpleNode()
+            val node3 = SimpleNode()
+            val node4 = SimpleNode()
+            val node5 = SimpleNode()
+            val node6 = SimpleNode()
+            val node7 = SimpleNode()
+            val node8 = SimpleNode()
 
             node1.successors.addAll(listOf(node2))
             node2.successors.addAll(listOf(node3, node4))
@@ -79,10 +80,10 @@ internal class PathEnumeratorTest : Spek({
         }
 
         it("finds the simple path in a graph containing a cycle") {
-            val node1 = TestNode()
-            val node2 = TestNode()
-            val node3 = TestNode()
-            val node4 = TestNode()
+            val node1 = SimpleNode()
+            val node2 = SimpleNode()
+            val node3 = SimpleNode()
+            val node4 = SimpleNode()
 
             node1.successors.addAll(listOf(node2))
             node2.successors.addAll(listOf(node3))
@@ -100,12 +101,12 @@ internal class PathEnumeratorTest : Spek({
         }
 
         it("finds the simple path in a graph containing a nested cycle") {
-            val node1 = TestNode()
-            val node2 = TestNode()
-            val node3 = TestNode()
-            val node4 = TestNode()
-            val node5 = TestNode()
-            val node6 = TestNode()
+            val node1 = SimpleNode()
+            val node2 = SimpleNode()
+            val node3 = SimpleNode()
+            val node4 = SimpleNode()
+            val node5 = SimpleNode()
+            val node6 = SimpleNode()
 
             node1.successors.addAll(listOf(node2))
             node2.successors.addAll(listOf(node3))
@@ -128,10 +129,10 @@ internal class PathEnumeratorTest : Spek({
 
     describe("addition of exit nodes to the graph") {
         it("adds an exit node as successor to two leaves") {
-            val node1 = TestNode()
-            val node2 = TestNode()
-            val node3 = TestNode()
-            val node4 = TestNode()
+            val node1 = SimpleNode()
+            val node2 = SimpleNode()
+            val node3 = SimpleNode()
+            val node4 = SimpleNode()
 
             node1.successors.addAll(listOf(node2))
             node2.successors.addAll(listOf(node3, node4))
@@ -145,9 +146,9 @@ internal class PathEnumeratorTest : Spek({
         }
 
         it("throws an exception when faced with a tree without leaves") {
-            val node1 = TestNode()
-            val node2 = TestNode()
-            val node3 = TestNode()
+            val node1 = SimpleNode()
+            val node2 = SimpleNode()
+            val node3 = SimpleNode()
 
             node1.successors.add(node2)
             node2.successors.add(node3)
@@ -161,9 +162,9 @@ internal class PathEnumeratorTest : Spek({
 
     describe("removal of exit nodes from the graph") {
         it("removes an exit node from two successor lists") {
-            val node1 = TestNode()
-            val node2 = TestNode()
-            val node3 = TestNode()
+            val node1 = SimpleNode()
+            val node2 = SimpleNode()
+            val node3 = SimpleNode()
 
             node1.successors.addAll(listOf(node2, node3))
 
@@ -176,9 +177,9 @@ internal class PathEnumeratorTest : Spek({
         }
 
         it("keeps the list intact if no exit nodes are present") {
-            val node1 = TestNode()
-            val node2 = TestNode()
-            val node3 = TestNode()
+            val node1 = SimpleNode()
+            val node2 = SimpleNode()
+            val node3 = SimpleNode()
 
             node1.successors.addAll(listOf(node2, node3))
             node1.removeExitNodes()

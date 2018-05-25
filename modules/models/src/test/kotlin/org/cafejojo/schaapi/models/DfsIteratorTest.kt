@@ -8,7 +8,7 @@ import org.jetbrains.spek.api.dsl.it
 internal class DfsIteratorTest : Spek({
     describe("iteration of a graph in DFS order") {
         it("handles a single-node graph") {
-            val node1 = TestNode()
+            val node1 = SimpleNode()
 
             val iterator = DfsIterator(node1)
 
@@ -16,8 +16,8 @@ internal class DfsIteratorTest : Spek({
         }
 
         it("handles a linear 2-node graph") {
-            val node1 = TestNode()
-            val node2 = TestNode()
+            val node1 = SimpleNode()
+            val node2 = SimpleNode()
 
             node1.successors.add(node2)
 
@@ -27,10 +27,10 @@ internal class DfsIteratorTest : Spek({
         }
 
         it("handles a split in a graph") {
-            val node1 = TestNode()
-            val node2 = TestNode()
-            val node3 = TestNode()
-            val node4 = TestNode()
+            val node1 = SimpleNode()
+            val node2 = SimpleNode()
+            val node3 = SimpleNode()
+            val node4 = SimpleNode()
 
             node1.successors.add(node2)
             node2.successors.addAll(listOf(node3, node4))
@@ -41,12 +41,12 @@ internal class DfsIteratorTest : Spek({
         }
 
         it("handles a split in a graph that is joined again afterwards") {
-            val node1 = TestNode()
-            val node2 = TestNode()
-            val node3 = TestNode()
-            val node4 = TestNode()
-            val node5 = TestNode()
-            val node6 = TestNode()
+            val node1 = SimpleNode()
+            val node2 = SimpleNode()
+            val node3 = SimpleNode()
+            val node4 = SimpleNode()
+            val node5 = SimpleNode()
+            val node6 = SimpleNode()
 
             node1.successors.add(node2)
             node2.successors.addAll(listOf(node3, node5))
@@ -60,11 +60,11 @@ internal class DfsIteratorTest : Spek({
         }
 
         it("handles a double edge cycle") {
-            val node1 = TestNode()
-            val node2 = TestNode()
-            val node3 = TestNode()
-            val node4 = TestNode()
-            val node5 = TestNode()
+            val node1 = SimpleNode()
+            val node2 = SimpleNode()
+            val node3 = SimpleNode()
+            val node4 = SimpleNode()
+            val node5 = SimpleNode()
 
             node1.successors.add(node2)
             node2.successors.add(node3)
@@ -77,12 +77,12 @@ internal class DfsIteratorTest : Spek({
         }
 
         it("handles a 1-node cycle") {
-            val node1 = TestNode()
-            val node2 = TestNode()
-            val node3 = TestNode()
-            val node4 = TestNode()
-            val node5 = TestNode()
-            val node6 = TestNode()
+            val node1 = SimpleNode()
+            val node2 = SimpleNode()
+            val node3 = SimpleNode()
+            val node4 = SimpleNode()
+            val node5 = SimpleNode()
+            val node6 = SimpleNode()
 
             node1.successors.add(node2)
             node2.successors.add(node3)
@@ -96,9 +96,9 @@ internal class DfsIteratorTest : Spek({
         }
 
         it("handles reflexive edges") {
-            val node1 = TestNode()
-            val node2 = TestNode()
-            val node3 = TestNode()
+            val node1 = SimpleNode()
+            val node2 = SimpleNode()
+            val node3 = SimpleNode()
 
             node1.successors.addAll(listOf(node1, node2))
             node2.successors.addAll(listOf(node2, node3))
@@ -109,5 +109,3 @@ internal class DfsIteratorTest : Spek({
         }
     }
 })
-
-private class TestNode(override val successors: MutableList<Node> = mutableListOf()) : Node

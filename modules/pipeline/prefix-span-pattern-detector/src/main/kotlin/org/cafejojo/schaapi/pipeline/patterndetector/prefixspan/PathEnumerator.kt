@@ -1,6 +1,7 @@
 package org.cafejojo.schaapi.pipeline.patterndetector.prefixspan
 
 import org.cafejojo.schaapi.models.Node
+import org.cafejojo.schaapi.models.SimpleNode
 import java.util.Stack
 
 /**
@@ -55,7 +56,7 @@ class PathEnumerator(private val entryNode: Node) {
 /**
  * The sink of a control flow graph.
  */
-class ExitNode(override val successors: MutableList<Node> = mutableListOf()) : Node
+class ExitNode(successors: MutableList<Node> = mutableListOf()) : SimpleNode(successors)
 
 /**
  * Connects all nodes with no successors (connected to this node) with a single [ExitNode].

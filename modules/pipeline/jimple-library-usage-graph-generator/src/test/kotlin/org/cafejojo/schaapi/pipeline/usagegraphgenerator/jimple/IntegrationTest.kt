@@ -3,6 +3,7 @@ package org.cafejojo.schaapi.pipeline.usagegraphgenerator.jimple
 import com.nhaarman.mockito_kotlin.mock
 import org.assertj.core.api.Assertions.assertThat
 import org.cafejojo.schaapi.models.Node
+import org.cafejojo.schaapi.models.SimpleNode
 import org.cafejojo.schaapi.models.libraryusagegraph.jimple.JimpleNode
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
@@ -488,6 +489,6 @@ private fun assertThatStructureMatches(structure: Node, libraryUsageGraph: Node)
     }
 }
 
-private class PreviousBranchNode(override val successors: MutableList<Node> = arrayListOf()) : Node
+private class PreviousBranchNode(successors: MutableList<Node> = arrayListOf()) : SimpleNode(successors)
 
 private inline fun <reified T : Stmt> node(vararg successors: Node) = JimpleNode(mock<T>(), successors.toMutableList())

@@ -3,6 +3,7 @@ package org.cafejojo.schaapi.pipeline.patternfilter.jimple
 import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.mock
 import org.assertj.core.api.Assertions.assertThat
+import org.cafejojo.schaapi.models.SimpleNode
 import org.cafejojo.schaapi.models.libraryusagegraph.jimple.JimpleNode
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
@@ -79,7 +80,7 @@ internal class IncompleteInitPatternFilterRuleTest : Spek({
         }
 
         it("retains lists of non-Jimple nodes") {
-            val pattern = listOf(TestNode())
+            val pattern = listOf(SimpleNode())
 
             assertThat(IncompleteInitPatternFilterRule().retain(pattern)).isTrue()
         }

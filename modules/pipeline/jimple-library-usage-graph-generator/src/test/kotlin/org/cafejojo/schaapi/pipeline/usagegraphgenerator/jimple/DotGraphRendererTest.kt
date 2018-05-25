@@ -2,13 +2,14 @@ package org.cafejojo.schaapi.pipeline.usagegraphgenerator.jimple
 
 import org.assertj.core.api.Assertions.assertThat
 import org.cafejojo.schaapi.models.Node
+import org.cafejojo.schaapi.models.SimpleNode
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 
 internal class DotGraphRendererTest : Spek({
     describe("rendering of statement control flow graphs to dot graph files") {
-        it("renders as simple graph") {
+        it("renders a simple graph") {
             val exitNode = TestNode(id = 5)
 
             val cfg = TestNode(
@@ -55,14 +56,15 @@ internal class DotGraphRendererTest : Spek({
     }
 })
 
-private class TestNode(override val successors: MutableList<Node> = mutableListOf(), val id: Int) : Node {
-    override fun hashCode() = id
+private class TestNode(successors: MutableList<Node> = mutableListOf(), val id: Int) : SimpleNode(successors) {
     override fun equals(other: Any?) = when {
         this === other -> true
         other !is TestNode -> false
         id != other.id -> false
         else -> true
     }
+
+    override fun hashCode() = id
 
     override fun toString() = "node-number-$id"
 }
