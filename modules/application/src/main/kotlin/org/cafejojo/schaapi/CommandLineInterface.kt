@@ -85,7 +85,7 @@ private fun buildOptions(): Options =
             .longOpt("user_dirs")
             .desc("The user directories, separated by semi-colons.")
             .hasArgs()
-            .valueSeparator(';')
+            .valueSeparator(File.pathSeparatorChar)
             .required()
             .build())
         .addOption(Option
