@@ -1,4 +1,4 @@
-package org.cafejojo.schaapi.pipeline.githubminer.mavenproject
+package org.cafejojo.schaapi.pipeline.github.mavenprojectminer
 
 import org.cafejojo.schaapi.models.Project
 import org.zeroturnaround.zip.ZipUtil

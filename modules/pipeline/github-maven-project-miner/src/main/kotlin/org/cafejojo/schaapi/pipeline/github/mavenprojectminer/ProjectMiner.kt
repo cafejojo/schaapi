@@ -1,4 +1,4 @@
-package org.cafejojo.schaapi.pipeline.githubminer.mavenproject
+package org.cafejojo.schaapi.pipeline.github.mavenprojectminer
 
 import com.beust.klaxon.Json
 import com.beust.klaxon.Klaxon
@@ -7,7 +7,7 @@ import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.cafejojo.schaapi.models.Project
-import org.cafejojo.schaapi.pipeline.CodeMiner
+import org.cafejojo.schaapi.pipeline.ProjectMiner
 import java.io.File
 import java.io.IOException
 
@@ -25,9 +25,11 @@ import java.io.IOException
  * @property projectPacker packer which determines what type of [Project] to wrap the project directory in
  */
 @Suppress("PrintStackTrace") // TODO use a logger
-class CodeMiner(private val username: String, private val password: String,
-                private val outputDirectory: File,
-                private val projectPacker: (projectDirectory: File) -> Project) : CodeMiner {
+class ProjectMiner(
+    private val username: String, private val password: String,
+    private val outputDirectory: File,
+    private val projectPacker: (projectDirectory: File) -> Project
+) : ProjectMiner {
     init {
         require(outputDirectory.isDirectory) { "Output directory must be a directory." }
     }
@@ -52,7 +54,11 @@ class CodeMiner(private val username: String, private val password: String,
         val responseBody = executeRequest(request)
         val projectNames = getProjectNames(responseBody)
 
-        return GithubProjectDownloader(projectNames, outputDirectory, projectPacker).download()
+        return GithubProjectDownloader(
+            projectNames,
+            outputDirectory,
+            projectPacker
+        ).download()
     }
 
     internal fun executeRequest(request: Request): String =

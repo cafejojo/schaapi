@@ -3,9 +3,9 @@ package org.cafejojo.schaapi.pipeline
 import org.cafejojo.schaapi.models.Project
 
 /**
- * Code miner.
+ * Project miner.
  */
-interface CodeMiner {
+interface ProjectMiner {
     /**
      * Mine projects which (likely) depend on the library with the given group id, artifact id and version (number).
      *
