@@ -1,6 +1,5 @@
 package org.cafejojo.schaapi.pipeline.usagegraphgenerator.jimple
 
-import org.cafejojo.schaapi.models.Node
 import org.cafejojo.schaapi.models.libraryusagegraph.jimple.JimpleNode
 import soot.Body
 import soot.Unit
@@ -16,25 +15,25 @@ object ControlFlowGraphGenerator {
      * Creates the control flow graph of a method body.
      *
      * @param body a Soot method [Body]
-     * @return the [Body]'s root [Unit] wrapped in a [Node]
+     * @return the [Body]'s root [Stmt] wrapped in a [JimpleNode]
      */
-    fun create(body: Body): Node? = BriefUnitGraph(body).let { transform(it, HashMap(), it.rootUnitIfExists()) }
+    fun create(body: Body): JimpleNode? = BriefUnitGraph(body).let { transform(it, HashMap(), it.rootUnitIfExists()) }
 
     /**
-     * Wraps the control flow graph recursively within [Node] objects.
+     * Wraps the control flow graph recursively within [JimpleNode] objects.
      *
      * @param cfg the Soot control flow graph
      * @param mappedUnits visited units
      * @param unit the unit to wrap
-     * @param predecessor the predecessor of the [Node] to be created
-     * @return [unit] wrapped within a [Node]
+     * @param predecessor the predecessor of the [JimpleNode] to be created
+     * @return [unit] wrapped within a [JimpleNode]
      */
     private fun transform(
         cfg: UnitGraph,
-        mappedUnits: HashMap<Unit, Node>,
+        mappedUnits: HashMap<Unit, JimpleNode>,
         unit: Unit,
-        predecessor: Node? = null
-    ): Node? {
+        predecessor: JimpleNode? = null
+    ): JimpleNode? {
         if (mappedUnits.containsKey(unit)) {
             mappedUnits[unit]?.let { predecessor?.successors?.add(it) }
             return mappedUnits[unit]

@@ -22,11 +22,11 @@ private val testClassesClassPath = IntegrationTest::class.java.getResource("../.
 
 internal class IntegrationTest : Spek({
     describe("the integration of different components of the package for simple classes") {
-        it("converts a simple class to a filtered cfg") {
-            val cfg = LibraryUsageGraphGenerator.generate(
+        it("converts a simple class to a library usage graph") {
+            val libraryUsageGraph = LibraryUsageGraphGenerator.generate(
                 libraryProject,
                 TestProject(testClassesClassPath, listOf("$TEST_CLASSES_PACKAGE.users.SimpleTest"))
-            )[1]
+            )[0]
 
             assertThatStructureMatches(
                 node<JAssignStmt>(
@@ -38,17 +38,17 @@ internal class IntegrationTest : Spek({
                         )
                     )
                 ),
-                cfg
+                libraryUsageGraph
             )
         }
     }
 
     describe("the integration of different components of the package for classes containing if statements") {
-        it("converts a class containing an if with a library usage in the false-branch to a filtered cfg") {
-            val cfg = LibraryUsageGraphGenerator.generate(
+        it("converts a class containing an if with a library usage in the false-branch to a library usage graph") {
+            val libraryUsageGraph = LibraryUsageGraphGenerator.generate(
                 libraryProject,
                 TestProject(testClassesClassPath, listOf("$TEST_CLASSES_PACKAGE.users.ifconditional.IfFalseUseTest"))
-            )[1]
+            )[0]
 
             assertThatStructureMatches(
                 node<JAssignStmt>(
@@ -65,15 +65,15 @@ internal class IntegrationTest : Spek({
                         )
                     )
                 ),
-                cfg
+                libraryUsageGraph
             )
         }
 
-        it("converts a class containing an if with a library usage in the true-branch to a filtered cfg") {
-            val cfg = LibraryUsageGraphGenerator.generate(
+        it("converts a class containing an if with a library usage in the true-branch to a library usage graph") {
+            val libraryUsageGraph = LibraryUsageGraphGenerator.generate(
                 libraryProject,
                 TestProject(testClassesClassPath, listOf("$TEST_CLASSES_PACKAGE.users.ifconditional.IfTrueUseTest"))
-            )[1]
+            )[0]
 
             assertThatStructureMatches(
                 node<JAssignStmt>(
@@ -90,15 +90,15 @@ internal class IntegrationTest : Spek({
                         )
                     )
                 ),
-                cfg
+                libraryUsageGraph
             )
         }
 
-        it("converts a class containing an if with a library usage in both branches to a filtered cfg") {
-            val cfg = LibraryUsageGraphGenerator.generate(
+        it("converts a class containing an if with a library usage in both branches to a library usage graph") {
+            val libraryUsageGraph = LibraryUsageGraphGenerator.generate(
                 libraryProject,
                 TestProject(testClassesClassPath, listOf("$TEST_CLASSES_PACKAGE.users.ifconditional.IfBothUseTest"))
-            )[1]
+            )[0]
 
             assertThatStructureMatches(
                 node<JAssignStmt>(
@@ -117,15 +117,15 @@ internal class IntegrationTest : Spek({
                         )
                     )
                 ),
-                cfg
+                libraryUsageGraph
             )
         }
 
-        it("converts a class containing an if with a library usage in both branches to a filtered cfg") {
-            val cfg = LibraryUsageGraphGenerator.generate(
+        it("converts a class containing an if with a library usage in both branches to a library usage graph") {
+            val libraryUsageGraph = LibraryUsageGraphGenerator.generate(
                 libraryProject,
                 TestProject(testClassesClassPath, listOf("$TEST_CLASSES_PACKAGE.users.ifconditional.IfNoUseTest"))
-            )[1]
+            )[0]
 
             assertThatStructureMatches(
                 node<JAssignStmt>(
@@ -135,15 +135,15 @@ internal class IntegrationTest : Spek({
                         )
                     )
                 ),
-                cfg
+                libraryUsageGraph
             )
         }
 
         it("converts a class containing an if with no successors of the true/false branch") {
-            val cfg = LibraryUsageGraphGenerator.generate(
+            val libraryUsageGraph = LibraryUsageGraphGenerator.generate(
                 libraryProject,
                 TestProject(testClassesClassPath, listOf("$TEST_CLASSES_PACKAGE.users.ifconditional.IfNoEndTest"))
-            )[1]
+            )[0]
 
             assertThatStructureMatches(
                 node<JAssignStmt>(
@@ -156,19 +156,19 @@ internal class IntegrationTest : Spek({
                         )
                     )
                 ),
-                cfg
+                libraryUsageGraph
             )
         }
     }
 
     describe("the integration of different components of the package for classes containing switch statements") {
-        it("converts a class containing a switch with a library usage in a branch to a filtered cfg") {
-            val cfg = LibraryUsageGraphGenerator.generate(
+        it("converts a class containing a switch with a library usage in a branch to a library usage graph") {
+            val libraryUsageGraph = LibraryUsageGraphGenerator.generate(
                 libraryProject,
                 TestProject(testClassesClassPath, listOf(
                     "$TEST_CLASSES_PACKAGE.users.switchconditional.SwitchOneUseTest"
                 ))
-            )[1]
+            )[0]
 
             assertThatStructureMatches(
                 node<JAssignStmt>(
@@ -188,17 +188,17 @@ internal class IntegrationTest : Spek({
                         )
                     )
                 ),
-                cfg
+                libraryUsageGraph
             )
         }
 
-        it("converts a class containing a switch with a library usage in the default branch to a filtered cfg") {
-            val cfg = LibraryUsageGraphGenerator.generate(
+        it("converts a class containing a switch with a library usage in the default branch to a library usage graph") {
+            val libraryUsageGraph = LibraryUsageGraphGenerator.generate(
                 libraryProject,
                 TestProject(testClassesClassPath, listOf(
                     "$TEST_CLASSES_PACKAGE.users.switchconditional.SwitchDefaultUseTest"
                 ))
-            )[1]
+            )[0]
 
             assertThatStructureMatches(
                 node<JAssignStmt>(
@@ -218,17 +218,17 @@ internal class IntegrationTest : Spek({
                         )
                     )
                 ),
-                cfg
+                libraryUsageGraph
             )
         }
 
-        it("converts a class containing a switch with no library usage in its branches to a filtered cfg") {
-            val cfg = LibraryUsageGraphGenerator.generate(
+        it("converts a class containing a switch with no library usage in its branches to a library usage graph") {
+            val libraryUsageGraph = LibraryUsageGraphGenerator.generate(
                 libraryProject,
                 TestProject(testClassesClassPath, listOf(
                     "$TEST_CLASSES_PACKAGE.users.switchconditional.SwitchNoUseTest"
                 ))
-            )[1]
+            )[0]
 
             assertThatStructureMatches(
                 node<JAssignStmt>(
@@ -238,17 +238,17 @@ internal class IntegrationTest : Spek({
                         )
                     )
                 ),
-                cfg
+                libraryUsageGraph
             )
         }
     }
 
     describe("the integration of different components of the package for classes containing complex statements") {
         it("converts a class containing an arraylist and a lambda") {
-            val cfg = LibraryUsageGraphGenerator.generate(
+            val libraryUsageGraph = LibraryUsageGraphGenerator.generate(
                 libraryProject,
                 TestProject(testClassesClassPath, listOf("$TEST_CLASSES_PACKAGE.users.ArrayListAndLambdaTest"))
-            )[1]
+            )[0]
 
             assertThatStructureMatches(
                 node<JAssignStmt>(
@@ -256,15 +256,15 @@ internal class IntegrationTest : Spek({
                         node<JReturnStmt>()
                     )
                 ),
-                cfg
+                libraryUsageGraph
             )
         }
 
         it("converts a class containing annotations") {
-            val cfg = LibraryUsageGraphGenerator.generate(
+            val libraryUsageGraph = LibraryUsageGraphGenerator.generate(
                 libraryProject,
                 TestProject(testClassesClassPath, listOf("$TEST_CLASSES_PACKAGE.users.AnnotationTest"))
-            )[1]
+            )[0]
 
             assertThatStructureMatches(
                 node<JAssignStmt>(
@@ -274,15 +274,15 @@ internal class IntegrationTest : Spek({
                         )
                     )
                 ),
-                cfg
+                libraryUsageGraph
             )
         }
 
-        it("converts a class containing a throw statement with library usage to a filtered cfg") {
-            val cfg = LibraryUsageGraphGenerator.generate(
+        it("converts a class containing a throw statement with library usage to a library usage graph") {
+            val libraryUsageGraph = LibraryUsageGraphGenerator.generate(
                 libraryProject,
                 TestProject(testClassesClassPath, listOf("$TEST_CLASSES_PACKAGE.users.ThrowTest"))
-            )[1]
+            )[0]
 
             assertThatStructureMatches(
                 node<JAssignStmt>(
@@ -290,40 +290,34 @@ internal class IntegrationTest : Spek({
                         node<JAssignStmt>()
                     )
                 ),
-                cfg
+                libraryUsageGraph
             )
         }
 
-        it("converts a class containing a checked throw statement without library usage to a filtered cfg") {
-            val cfg = LibraryUsageGraphGenerator.generate(
+        it("does not convert a class containing a checked throw statement without library usage") {
+            val libraryUsageGraphs = LibraryUsageGraphGenerator.generate(
                 libraryProject,
                 TestProject(testClassesClassPath,
                     listOf("$TEST_CLASSES_PACKAGE.users.ThrowOtherUncheckedExceptionTest"))
-            )[1]
-
-            assertThatStructureMatches(
-                node<JReturnVoidStmt>(),
-                cfg
             )
+
+            assertThat(libraryUsageGraphs).isEmpty()
         }
 
-        it("converts a class containing an unchecked throw statement without library usage to a filtered cfg") {
-            val cfg = LibraryUsageGraphGenerator.generate(
+        it("does not convert a class containing an unchecked throw statement without library usage") {
+            val libraryUsageGraphs = LibraryUsageGraphGenerator.generate(
                 libraryProject,
                 TestProject(testClassesClassPath, listOf("$TEST_CLASSES_PACKAGE.users.ThrowOtherCheckedExceptionTest"))
-            )[1]
-
-            assertThatStructureMatches(
-                node<JReturnVoidStmt>(),
-                cfg
             )
+
+            assertThat(libraryUsageGraphs).isEmpty()
         }
 
-        it("converts a class containing a try-catch statement with library usage in the try block to a filtered cfg") {
-            val cfg = LibraryUsageGraphGenerator.generate(
+        it("converts a class with a try-catch with library usage in the try block to a library usage graph") {
+            val libraryUsageGraph = LibraryUsageGraphGenerator.generate(
                 libraryProject,
                 TestProject(testClassesClassPath, listOf("$TEST_CLASSES_PACKAGE.users.TryCatchTest"))
-            )[1]
+            )[0]
 
             assertThatStructureMatches(
                 node<JAssignStmt>(
@@ -335,29 +329,29 @@ internal class IntegrationTest : Spek({
                         )
                     )
                 ),
-                cfg
+                libraryUsageGraph
             )
         }
 
-        it("converts a class containing a static class call to a filtered cfg") {
-            val cfg = LibraryUsageGraphGenerator.generate(
+        it("converts a class containing a static class call to a library usage graph") {
+            val libraryUsageGraph = LibraryUsageGraphGenerator.generate(
                 libraryProject,
                 TestProject(testClassesClassPath, listOf("$TEST_CLASSES_PACKAGE.users.StaticTest"))
-            )[1]
+            )[0]
 
             assertThatStructureMatches(
                 node<JInvokeStmt>(
                     node<JReturnVoidStmt>()
                 ),
-                cfg
+                libraryUsageGraph
             )
         }
 
-        it("converts a class containing a nested loop to a filtered cfg") {
-            val cfg = LibraryUsageGraphGenerator.generate(
+        it("converts a class containing a nested loop to a library usage graph") {
+            val libraryUsageGraph = LibraryUsageGraphGenerator.generate(
                 libraryProject,
                 TestProject(testClassesClassPath, listOf("$TEST_CLASSES_PACKAGE.users.LoopTest"))
-            )[1]
+            )[0]
 
             assertThatStructureMatches(
                 node<JAssignStmt>(
@@ -387,15 +381,15 @@ internal class IntegrationTest : Spek({
                         )
                     )
                 ),
-                cfg
+                libraryUsageGraph
             )
         }
 
-        it("converts a class containing a loop with a continue statement to a filtered cfg") {
-            val cfg = LibraryUsageGraphGenerator.generate(
+        it("converts a class containing a loop with a continue statement to a library usage graph") {
+            val libraryUsageGraph = LibraryUsageGraphGenerator.generate(
                 libraryProject,
                 TestProject(testClassesClassPath, listOf("$TEST_CLASSES_PACKAGE.users.LoopContinueTest"))
-            )[1]
+            )[0]
 
             assertThatStructureMatches(
                 node<JAssignStmt>(
@@ -425,60 +419,72 @@ internal class IntegrationTest : Spek({
                         )
                     )
                 ),
-                cfg
+                libraryUsageGraph
             )
         }
     }
 
     describe("the integration of different components for types containing non-concrete method declarations") {
         it("ignores a non-concrete interface method declaration") {
-            val methods = LibraryUsageGraphGenerator.generate(
+            val libraryUsageGraphs = LibraryUsageGraphGenerator.generate(
                 libraryProject,
                 TestProject(testClassesClassPath, listOf(
                     "$TEST_CLASSES_PACKAGE.users.InterfaceTest"
                 ))
             )
 
-            assertThat(methods.size).isEqualTo(0)
+            assertThat(libraryUsageGraphs).hasSize(0)
         }
 
         it("ignores a non-concrete abstract class method declaration") {
-            val methods = LibraryUsageGraphGenerator.generate(
+            val libraryUsageGraphs = LibraryUsageGraphGenerator.generate(
                 libraryProject,
                 TestProject(testClassesClassPath, listOf(
                     "$TEST_CLASSES_PACKAGE.users.AbstractClassTest"
                 ))
             )
 
-            // Should only contain the implicit constructor
-            assertThat(methods.size).isEqualTo(1)
+            assertThat(libraryUsageGraphs).hasSize(0)
         }
 
         it("ignores a non-concrete abstract class method declaration") {
-            val methods = LibraryUsageGraphGenerator.generate(
+            val libraryUsageGraphs = LibraryUsageGraphGenerator.generate(
                 libraryProject,
                 TestProject(testClassesClassPath, listOf(
                     "$TEST_CLASSES_PACKAGE.users.PartiallyAbstractClassTest"
                 ))
             )
 
-            // Should contain the implicit constructor and the fully specified method (not the declared method)
-            assertThat(methods.size).isEqualTo(2)
+            // Should contain the fully specified method (not the declared method)
+            assertThat(libraryUsageGraphs).hasSize(1)
+        }
+    }
+
+    describe("it filters non-'empty' patterns") {
+        it("filters out patterns with only return statements") {
+            val libraryUsageGraphs = LibraryUsageGraphGenerator.generate(
+                libraryProject,
+                TestProject(testClassesClassPath, listOf(
+                    "$TEST_CLASSES_PACKAGE.users.EmptyPatternTest"
+                ))
+            )
+
+            assertThat(libraryUsageGraphs).isEmpty()
         }
     }
 })
 
-private fun assertThatStructureMatches(structure: Node, cfg: Node) {
-    assertThat(cfg::class).isEqualTo(structure::class)
-    assertThat(cfg.successors).hasSameSizeAs(structure.successors)
+private fun assertThatStructureMatches(structure: Node, libraryUsageGraph: Node) {
+    assertThat(libraryUsageGraph::class).isEqualTo(structure::class)
+    assertThat(libraryUsageGraph.successors).hasSameSizeAs(structure.successors)
 
-    if (cfg is JimpleNode && structure is JimpleNode) {
-        assertThat(structure.statement).isInstanceOf(cfg.statement::class.java)
+    if (libraryUsageGraph is JimpleNode && structure is JimpleNode) {
+        assertThat(structure.statement).isInstanceOf(libraryUsageGraph.statement::class.java)
     }
 
     structure.successors.forEachIndexed { index, structureSuccessor ->
         if (structureSuccessor !is PreviousBranchNode)
-            assertThatStructureMatches(structureSuccessor, cfg.successors[index])
+            assertThatStructureMatches(structureSuccessor, libraryUsageGraph.successors[index])
     }
 }
 
