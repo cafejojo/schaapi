@@ -39,7 +39,7 @@ class ProjectCompiler : ProjectCompiler {
             isBatchMode = true
             javaHome = File(System.getProperty("java.home"))
             mavenOpts = "-DskipTests=true"
-            pomFile = pomFile
+            pomFile = project.pomFile
         }
 
         val invoker = DefaultInvoker().apply {

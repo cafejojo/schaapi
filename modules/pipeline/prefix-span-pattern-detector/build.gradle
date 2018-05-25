@@ -10,5 +10,7 @@ dependencies {
     testCompile group: "com.nhaarman", name: "mockito-kotlin", version: mockitoKotlinVersion
 
     integrationTestCompile project(":models:jimple-library-usage-graph")
-    integrationTestCompile group: "ca.mcgill.sable", name: "soot", version: sootVersion
+    integrationTestCompile group: "ca.mcgill.sable", name: "soot", version: sootVersion, {
+        exclude group: "org.slf4j", module: "slf4j-simple"
+    }
 }

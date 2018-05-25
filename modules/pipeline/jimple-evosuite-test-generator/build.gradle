@@ -9,5 +9,7 @@ dependencies {
     compile project(":models:jimple-library-usage-graph")
 
     compile group: "org.evosuite", name: "evosuite-master", version: evosuiteMasterVersion
-    compile group: "ca.mcgill.sable", name: "soot", version: sootVersion
+    compile group: "ca.mcgill.sable", name: "soot", version: sootVersion, {
+        exclude group: "org.slf4j", module: "slf4j-simple"
+    }
 }
