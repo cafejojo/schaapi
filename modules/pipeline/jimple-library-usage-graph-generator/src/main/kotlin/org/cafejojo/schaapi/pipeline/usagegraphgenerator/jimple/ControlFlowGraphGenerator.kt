@@ -15,7 +15,7 @@ object ControlFlowGraphGenerator {
      * Creates the control flow graph of a method body.
      *
      * @param body a Soot method [Body]
-     * @return the [Body]'s root [Unit] wrapped in a [JimpleNode]
+     * @return the [Body]'s root [Stmt] wrapped in a [JimpleNode]
      */
     fun create(body: Body): JimpleNode? = BriefUnitGraph(body).let { transform(it, HashMap(), it.rootUnitIfExists()) }
 
