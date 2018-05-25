@@ -61,13 +61,14 @@ class ExitNode(successors: MutableList<Node> = mutableListOf()) : SimpleNode(suc
 /**
  * Connects all nodes with no successors (connected to this node) with a single [ExitNode].
  */
-internal fun Node.connectLeavesToExitNode() = ExitNode().also { exitNode ->
-    iterator().asSequence().toList().let { allNodes ->
-        allNodes.filter { it.successors.isEmpty() }
-            .let { if (it.isEmpty()) allNodes.takeLast(1) else it }
-            .forEach { it.successors.add(exitNode) }
+internal fun Node.connectLeavesToExitNode() =
+    ExitNode().also { exitNode ->
+        iterator().asSequence().toList().let { allNodes ->
+            allNodes.filter { it.successors.isEmpty() }
+                .let { if (it.isEmpty()) allNodes.takeLast(1) else it }
+                .forEach { it.successors.add(exitNode) }
+        }
     }
-}
 
 /**
  * Removes all [ExitNode]s from the graph of nodes connected to this node.
