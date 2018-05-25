@@ -10,40 +10,40 @@ data class HashedAny(private val hashCode: Int) {
     override fun hashCode() = hashCode
 }
 
-class HashWrapperTest : Spek({
+class EqualsWrapperTest : Spek({
     describe("value wrapper") {
         it("returns the inserted value") {
             val key = Any()
-            val wrapper = HashWrapper(key, Any::hashCode)
+            val wrapper = EqualsWrapper(key, Any::hashCode)
 
             assertThat(wrapper.value).isEqualTo(key)
         }
 
         it("uses the given hash function") {
             val key = Any()
-            val wrapper = HashWrapper(key, { 11716 })
+            val wrapper = EqualsWrapper(key, { 11716 })
 
             assertThat(wrapper.hashCode()).isEqualTo(11716)
         }
 
         it("equals itself") {
             val key = Any()
-            val wrapper = HashWrapper(key, Any::hashCode)
+            val wrapper = EqualsWrapper(key, Any::hashCode)
 
             assertThat(wrapper).isEqualTo(wrapper)
         }
 
         it("does not equal a non-value wrapper") {
             val key = Any()
-            val wrapper = HashWrapper(key, Any::hashCode)
+            val wrapper = EqualsWrapper(key, Any::hashCode)
 
             assertThat(wrapper).isNotEqualTo(Any())
         }
 
         it("equals a wrapper containing the same value") {
             val key = Any()
-            val wrapperA = HashWrapper(key, Any::hashCode)
-            val wrapperB = HashWrapper(key, Any::hashCode)
+            val wrapperA = EqualsWrapper(key, Any::hashCode)
+            val wrapperB = EqualsWrapper(key, Any::hashCode)
 
             assertThat(wrapperA).isEqualTo(wrapperB)
         }
@@ -51,8 +51,8 @@ class HashWrapperTest : Spek({
         it("equals a wrapper containing an equal value") {
             val keyA = emptyList<String>()
             val keyB = emptyList<String>()
-            val wrapperA = HashWrapper(keyA, List<String>::hashCode)
-            val wrapperB = HashWrapper(keyB, List<String>::hashCode)
+            val wrapperA = EqualsWrapper(keyA, List<String>::hashCode)
+            val wrapperB = EqualsWrapper(keyB, List<String>::hashCode)
 
             assertThat(wrapperA).isEqualTo(wrapperB)
         }
@@ -60,20 +60,20 @@ class HashWrapperTest : Spek({
         it("equals a wrapper containing a value of which the hash code coincides") {
             val keyA = HashedAny(14083)
             val keyB = HashedAny(14083)
-            val wrapperA = HashWrapper(keyA, Any::hashCode)
-            val wrapperB = HashWrapper(keyB, Any::hashCode)
+            val wrapperA = EqualsWrapper(keyA, Any::hashCode)
+            val wrapperB = EqualsWrapper(keyB, Any::hashCode)
 
             assertThat(wrapperA).isEqualTo(wrapperB)
         }
     }
 })
 
-class CustomHashHashMapTest : Spek({
+class CustomEqualsHashMapTest : Spek({
     describe("custom hash map") {
-        lateinit var map: CustomHashHashMap<Any, Any>
+        lateinit var map: CustomEqualsHashMap<Any, Any>
 
         beforeEachTest {
-            map = CustomHashHashMap(Any::hashCode)
+            map = CustomEqualsHashMap(Any::hashCode)
         }
 
         it("starts out empty") {
@@ -93,8 +93,8 @@ class CustomHashHashMapTest : Spek({
             assertThat(map)
                 .hasSize(2)
                 .contains(
-                    CustomHashHashMap.Entry(keyA, valueA),
-                    CustomHashHashMap.Entry(keyB, valueB)
+                    CustomEqualsHashMap.Entry(keyA, valueA),
+                    CustomEqualsHashMap.Entry(keyB, valueB)
                 )
         }
 
@@ -123,8 +123,8 @@ class CustomHashHashMapTest : Spek({
             assertThat(map)
                 .hasSize(2)
                 .contains(
-                    CustomHashHashMap.Entry(keyA, value),
-                    CustomHashHashMap.Entry(keyB, value)
+                    CustomEqualsHashMap.Entry(keyA, value),
+                    CustomEqualsHashMap.Entry(keyB, value)
                 )
         }
 
@@ -138,7 +138,7 @@ class CustomHashHashMapTest : Spek({
 
             assertThat(map)
                 .hasSize(1)
-                .contains(CustomHashHashMap.Entry(key, valueB))
+                .contains(CustomEqualsHashMap.Entry(key, valueB))
         }
 
         it("uses the custom hash code to determine duplicates") {
@@ -195,12 +195,12 @@ class CustomHashHashMapTest : Spek({
     }
 })
 
-class CustomHashHashSetTest : Spek({
+class CustomEqualsHashSetTest : Spek({
     describe("custom hash set") {
-        lateinit var set: CustomHashHashSet<Any>
+        lateinit var set: CustomEqualsHashSet<Any>
 
         beforeEachTest {
-            set = CustomHashHashSet(Any::hashCode)
+            set = CustomEqualsHashSet(Any::hashCode)
         }
 
         it("can store multiple elements") {

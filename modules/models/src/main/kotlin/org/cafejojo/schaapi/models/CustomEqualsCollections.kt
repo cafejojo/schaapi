@@ -3,8 +3,8 @@ package org.cafejojo.schaapi.models
 /**
  * A (mutable) [HashMap] that allows one to use a custom hash function, [customHash].
  */
-class CustomHashHashMap<K, V>(private val customHash: (K) -> Int) : MutableMap<K, V> {
-    private val innerMap = HashMap<HashWrapper<K>, V>()
+class CustomEqualsHashMap<K, V>(private val customHash: (K) -> Int) : MutableMap<K, V> {
+    private val innerMap = HashMap<EqualsWrapper<K>, V>()
 
     /**
      * A copy of the entries.
@@ -40,7 +40,7 @@ class CustomHashHashMap<K, V>(private val customHash: (K) -> Int) : MutableMap<K
 
     override fun remove(key: K) = innerMap.remove(wrapKey(key))
 
-    private fun wrapKey(key: K) = HashWrapper(key, customHash)
+    private fun wrapKey(key: K) = EqualsWrapper(key, customHash)
 
     /**
      * A simple implementation of [MutableMap.MutableEntry].
@@ -53,8 +53,8 @@ class CustomHashHashMap<K, V>(private val customHash: (K) -> Int) : MutableMap<K
 /**
  * A (mutable) [HashSet] that allows one to use a custom hash function, [customHash].
  */
-class CustomHashHashSet<K>(private val customHash: (K) -> Int) : MutableSet<K> {
-    private val innerSet = HashSet<HashWrapper<K>>()
+class CustomEqualsHashSet<K>(private val customHash: (K) -> Int) : MutableSet<K> {
+    private val innerSet = HashSet<EqualsWrapper<K>>()
 
     override val size: Int
         get() = innerSet.size
@@ -88,20 +88,20 @@ class CustomHashHashSet<K>(private val customHash: (K) -> Int) : MutableSet<K> {
 
     override fun isEmpty() = innerSet.isEmpty()
 
-    private fun wrapElement(key: K) = HashWrapper(key, customHash)
+    private fun wrapElement(key: K) = EqualsWrapper(key, customHash)
 }
 
 /**
  * Wraps an object such that two values equal if their [customHash]es equal.
  */
-data class HashWrapper<K>(val value: K, private val customHash: (K) -> Int) {
+data class EqualsWrapper<K>(val value: K, private val customHash: (K) -> Int) {
     /**
      * Returns true iff [other]'s hash code equals [value]'s hash code.
      *
      * @param other the object to compare to this
      * @return true iff [other]'s hash code equals [value]'s hash code
      */
-    override fun equals(other: Any?) = other is HashWrapper<*> && this.hashCode() == other.hashCode()
+    override fun equals(other: Any?) = other is EqualsWrapper<*> && this.hashCode() == other.hashCode()
 
     /**
      * Returns the result of applying [customHash] to [value].

@@ -1,7 +1,7 @@
 package org.cafejojo.schaapi.pipeline.patterndetector.prefixspan
 
-import org.cafejojo.schaapi.models.CustomHashHashMap
-import org.cafejojo.schaapi.models.CustomHashHashSet
+import org.cafejojo.schaapi.models.CustomEqualsHashMap
+import org.cafejojo.schaapi.models.CustomEqualsHashSet
 import org.cafejojo.schaapi.models.GeneralizedNodeComparator
 import org.cafejojo.schaapi.models.Node
 
@@ -25,7 +25,7 @@ class FrequentSequenceFinder(
     }
 
     private val frequentSequences = mutableListOf<List<Node>>()
-    private val frequentItems = CustomHashHashSet(Node::equivHashCode)
+    private val frequentItems = CustomEqualsHashSet(Node::equivHashCode)
 
     /**
      * Finds frequent (sub)sequences of [Node]s using the PrefixSpan algorithm by Pei et al. (2004). The algorithm uses
@@ -130,7 +130,7 @@ class FrequentSequenceFinder(
     }
 
     private fun generateFrequentItems(minimumCount: Int) {
-        val nodeCounts: MutableMap<Node, Int> = CustomHashHashMap(Node::equivHashCode)
+        val nodeCounts: MutableMap<Node, Int> = CustomEqualsHashMap(Node::equivHashCode)
         allPaths.forEach { it.forEach { node -> nodeCounts[node] = nodeCounts[node]?.inc() ?: 1 } }
 
         frequentItems.addAll(nodeCounts.filter { (_, amount) -> amount >= minimumCount }.keys)
