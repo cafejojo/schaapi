@@ -21,11 +21,17 @@ import java.io.IOException
  *
  * @property username username of github user
  * @property password password of github user
+ * @property outputDirectory directory to store all the project directories
  * @property projectPacker packer which determines what type of [Project] to wrap the project directory in
  */
 @Suppress("PrintStackTrace") // TODO use a logger
 class CodeMiner(private val username: String, private val password: String,
+                private val outputDirectory: File,
                 private val projectPacker: (projectDirectory: File) -> Project) : CodeMiner {
+    init {
+        require(outputDirectory.isDirectory) { "Output directory must be a directory." }
+    }
+
     private val filename = "pom"
     private val extension = "xml"
 
@@ -46,7 +52,7 @@ class CodeMiner(private val username: String, private val password: String,
         val responseBody = executeRequest(request)
         val projectNames = getProjectNames(responseBody)
 
-        return GithubProjectDownloader(projectNames, projectPacker).download()
+        return GithubProjectDownloader(projectNames, outputDirectory, projectPacker).download()
     }
 
     internal fun executeRequest(request: Request): String =

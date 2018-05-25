@@ -12,11 +12,13 @@ import java.net.URL
 /**
  * Downloads the zip files of the give github repositories and returns a list of java projects.
  *
- * @property repositoryNames the names of all repositories to be downloaded
+ * @property projectNames the names of all repositories to be downloaded
+ * @property outputDirectory the directory to store all the project directories
  * @property projectPacker packer which determines what type of [Project] to wrap the project directory in
  */
 @Suppress("PrintStackTrace") // TODO use a logger
-class GithubProjectDownloader(private val repositoryNames: Collection<String>,
+class GithubProjectDownloader(private val projectNames: Collection<String>,
+                              private val outputDirectory: File,
                               private val projectPacker: (projectDirectory: File) -> Project) {
     /**
      * Start downloading repositories.
@@ -26,7 +28,7 @@ class GithubProjectDownloader(private val repositoryNames: Collection<String>,
     fun download(): List<Project> {
         val projects = mutableListOf<Project>()
 
-        for (repoName in repositoryNames) {
+        for (repoName in projectNames) {
             val input = getInputStream(repoName) ?: continue
 
             val outputFile = saveToFile(input, repoName)
@@ -39,19 +41,35 @@ class GithubProjectDownloader(private val repositoryNames: Collection<String>,
     }
 
     internal fun saveToFile(input: InputStream, projectName: String): File {
-        val resourceFolder = javaClass.getResource("")
-
-        val regex = Regex("[^A-Za-z0-9 ]")
-        val outputFile = File("$resourceFolder${regex.replace(projectName, "")}-project.zip")
+        val regex = Regex("[^A-Za-z0-9]")
+        val outputFile = File(
+            outputDirectory,
+            "${regex.replace(projectName, "")}${projectNames.indexOf(projectName)}-project.zip")
 
         try {
             // TODO log if file not created
             if (outputFile.createNewFile()) input.copyTo(FileOutputStream(outputFile))
         } catch (e: IOException) {
             e.printStackTrace() // TODO use logger
+        } finally {
+            input.close()
         }
 
         return outputFile
+    }
+
+    internal fun unzip(zipFile: File): File {
+        val output = File(zipFile.parent, zipFile.nameWithoutExtension)
+
+        try {
+            ZipUtil.unpack(zipFile, output)
+        } catch (e: IOException) {
+            e.printStackTrace() // TODO use logger
+        } finally {
+            if (zipFile.exists()) zipFile.deleteRecursively()
+        }
+
+        return output
     }
 
     private fun getInputStream(projectName: String): InputStream? {
@@ -66,19 +84,5 @@ class GithubProjectDownloader(private val repositoryNames: Collection<String>,
             e.printStackTrace() // TODO use logger
             null
         }
-    }
-
-    private fun unzip(zipDirectory: File): File {
-        val output = File(zipDirectory.nameWithoutExtension)
-
-        try {
-            ZipUtil.explode(zipDirectory)
-        } catch (e: IOException) {
-            e.printStackTrace() // TODO use logger
-        } finally {
-            if (zipDirectory.exists()) zipDirectory.deleteRecursively()
-        }
-
-        return output
     }
 }
