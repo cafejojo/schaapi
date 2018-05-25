@@ -36,9 +36,9 @@ class ProjectCompiler : ProjectCompiler {
         val request = DefaultInvocationRequest().apply {
             baseDirectory = project.projectDir
             goals = listOf("clean", "install", "dependency:copy-dependencies")
-            mavenOpts = "-DskipTests=true"
             isBatchMode = true
             javaHome = File(System.getProperty("java.home"))
+            mavenOpts = "-DskipTests=true"
             pomFile = pomFile
         }
 
