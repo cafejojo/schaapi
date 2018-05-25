@@ -106,10 +106,10 @@ data class EqualsWrapper<K>(
     private val customHash: (K) -> Int = { self -> self?.hashCode() ?: 0 }
 ) {
     /**
-     * Returns true iff [other]'s hash code equals [value]'s hash code.
+     * Returns the result of applying [customEquals] to the [value]s of this and [other].
      *
      * @param other the wrapper
-     * @return true iff [other]'s hash code equals [value]'s hash code
+     * @return the result of applying [customEquals] to the [value]s of this and [other]
      */
     override fun equals(other: Any?) = other is EqualsWrapper<*> && customEquals(this.value, other.value)
 
