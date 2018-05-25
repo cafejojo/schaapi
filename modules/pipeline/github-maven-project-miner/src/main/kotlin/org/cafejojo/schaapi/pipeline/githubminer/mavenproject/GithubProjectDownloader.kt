@@ -3,8 +3,8 @@ package org.cafejojo.schaapi.pipeline.githubminer.mavenproject
 import org.cafejojo.schaapi.models.Project
 import org.zeroturnaround.zip.ZipUtil
 import java.io.File
-import java.io.FileNotFoundException
 import java.io.FileOutputStream
+import java.io.IOException
 import java.io.InputStream
 import java.net.HttpURLConnection
 import java.net.URL
@@ -15,6 +15,7 @@ import java.net.URL
  * @property repositoryNames the names of all repositories to be downloaded
  * @property projectPacker packer which determines what type of [Project] to wrap the project directory in
  */
+@Suppress("PrintStackTrace") // TODO use a logger
 class GithubProjectDownloader(private val repositoryNames: Collection<String>,
                               private val projectPacker: (projectDirectory: File) -> Project) {
     /**
@@ -25,39 +26,58 @@ class GithubProjectDownloader(private val repositoryNames: Collection<String>,
     fun download(): List<Project> {
         val projects = mutableListOf<Project>()
 
-        repositoryNames.forEachIndexed { index, projectName ->
-            try {
-                val input = getInputStream(projectName)
+        for (repoName in repositoryNames) {
+            val input = getInputStream(repoName) ?: continue
 
-                val resourceFolder = javaClass.getResource("")
-                val outputFile = File("$resourceFolder$index-project.zip")
-                val outputStream = FileOutputStream(outputFile)
+            val outputFile = saveToFile(input, repoName)
+            val unzippedFile = unzip(outputFile)
 
-                input.copyTo(outputStream)
-
-                val unzippedFileUrl = unzip(outputFile)
-                projects.add(projectPacker(unzippedFileUrl))
-            } catch (e: FileNotFoundException) {
-                // TODO use logger
-                e.printStackTrace()
-            }
+            if (unzippedFile.exists()) projects.add(projectPacker(unzippedFile))
         }
 
         return projects
     }
 
-    private fun getInputStream(projectName: String): InputStream {
+    internal fun saveToFile(input: InputStream, projectName: String): File {
+        val resourceFolder = javaClass.getResource("")
+
+        val regex = Regex("[^A-Za-z0-9 ]")
+        val outputFile = File("$resourceFolder${regex.replace(projectName, "")}-project.zip")
+
+        try {
+            // TODO log if file not created
+            if (outputFile.createNewFile()) input.copyTo(FileOutputStream(outputFile))
+        } catch (e: IOException) {
+            e.printStackTrace() // TODO use logger
+        }
+
+        return outputFile
+    }
+
+    private fun getInputStream(projectName: String): InputStream? {
         val url = URL("https://github.com/$projectName/archive/master.zip")
-        val connection = url.openConnection()
 
-        if (connection is HttpURLConnection) connection.requestMethod = "GET"
+        return try {
+            val connection = url.openConnection()
+            if (connection is HttpURLConnection) connection.requestMethod = "GET"
 
-        return connection.inputStream
+            connection.inputStream
+        } catch (e: IOException) {
+            e.printStackTrace() // TODO use logger
+            null
+        }
     }
 
     private fun unzip(zipDirectory: File): File {
         val output = File(zipDirectory.nameWithoutExtension)
-        ZipUtil.explode(zipDirectory)
+
+        try {
+            ZipUtil.explode(zipDirectory)
+        } catch (e: IOException) {
+            e.printStackTrace() // TODO use logger
+        } finally {
+            if (zipDirectory.exists()) zipDirectory.deleteRecursively()
+        }
 
         return output
     }

@@ -23,6 +23,7 @@ import java.io.IOException
  * @property password password of github user
  * @property projectPacker packer which determines what type of [Project] to wrap the project directory in
  */
+@Suppress("PrintStackTrace") // TODO use a logger
 class CodeMiner(private val username: String, private val password: String,
                 private val projectPacker: (projectDirectory: File) -> Project) : CodeMiner {
     private val filename = "pom"
@@ -48,16 +49,14 @@ class CodeMiner(private val username: String, private val password: String,
         return GithubProjectDownloader(projectNames, projectPacker).download()
     }
 
-    internal fun executeRequest(request: Request): String {
-        return try {
+    internal fun executeRequest(request: Request): String =
+        try {
             val response = OkHttpClient().newCall(request).execute()
-            response?.body()?.string() ?: ""
+            response.body()?.string() ?: ""
         } catch (e: IOException) {
-            // TODO add logger
-            e.printStackTrace()
+            e.printStackTrace() // TODO add logger
             ""
         }
-    }
 
     internal fun getProjectNames(requestBody: String): Set<String> {
         if (requestBody.isEmpty()) return emptySet()
