@@ -2,6 +2,7 @@ package org.cafejojo.schaapi.pipeline.usagegraphgenerator.jimple
 
 import org.cafejojo.schaapi.models.Node
 import org.cafejojo.schaapi.models.Project
+import org.cafejojo.schaapi.models.libraryusagegraph.jimple.JimpleNode
 import org.cafejojo.schaapi.models.project.java.JavaProject
 import org.cafejojo.schaapi.pipeline.LibraryUsageGraphGenerator
 import org.cafejojo.schaapi.pipeline.usagegraphgenerator.jimple.filters.BranchStatementFilter
@@ -10,6 +11,8 @@ import soot.Scene
 import soot.SootClass
 import soot.SootMethod
 import soot.jimple.Jimple
+import soot.jimple.ReturnStmt
+import soot.jimple.ReturnVoidStmt
 import soot.options.Options
 import java.io.File
 
@@ -27,6 +30,7 @@ object LibraryUsageGraphGenerator : LibraryUsageGraphGenerator {
             sootClass.methods
                 .filter { it.isConcrete }
                 .map { generateMethodGraph(libraryProject, it) }
+                .filter { it.statement !is ReturnStmt && it.statement !is ReturnVoidStmt }
         }
     }
 
@@ -57,7 +61,7 @@ object LibraryUsageGraphGenerator : LibraryUsageGraphGenerator {
      * @param method method for which to generate the graph
      * @return library usage graph
      */
-    private fun generateMethodGraph(libraryProject: JavaProject, method: SootMethod): Node {
+    private fun generateMethodGraph(libraryProject: JavaProject, method: SootMethod): JimpleNode {
         val methodBody = method.retrieveActiveBody()
         val filters = listOf(StatementFilter(libraryProject), BranchStatementFilter(libraryProject))
         filters.forEach { it.apply(methodBody) }
