@@ -1,7 +1,6 @@
 package org.cafejojo.schaapi.pipeline.patterndetector.prefixspan
 
 import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.cafejojo.schaapi.models.SimpleNode
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
@@ -154,9 +153,8 @@ internal class PathEnumeratorTest : Spek({
             node2.successors.add(node3)
             node3.successors.add(node2)
 
-            assertThatThrownBy {
-                node1.connectLeavesToExitNode()
-            }.isInstanceOf(IllegalStateException::class.java)
+            val exitNode = node1.connectLeavesToExitNode()
+            assertThat(node3.successors).contains(exitNode)
         }
     }
 
