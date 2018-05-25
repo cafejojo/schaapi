@@ -7,6 +7,7 @@ import org.apache.commons.cli.Option
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.cafejojo.schaapi.models.libraryusagegraph.jimple.GeneralizedNodeComparator
+import org.cafejojo.schaapi.models.project.java.JavaJarProject
 import org.cafejojo.schaapi.models.project.java.JavaMavenProject
 import org.cafejojo.schaapi.pipeline.PatternFilter
 import org.cafejojo.schaapi.pipeline.patterndetector.prefixspan.PatternDetector
@@ -34,7 +35,14 @@ fun main(args: Array<String>) {
     val mavenDir = File(cmd.getOptionValue("maven_dir") ?: JavaMavenProject.DEFAULT_MAVEN_HOME.absolutePath)
     val output = File(cmd.getOptionValue('o')).apply { mkdirs() }
     val library = JavaMavenProject(File(cmd.getOptionValue('l')), mavenDir)
-    val users = cmd.getOptionValues('u').map { JavaMavenProject(File(it), mavenDir) }
+    val users = cmd.getOptionValues('u').map {
+        val user = File(it)
+        if (user.isFile && user.extension == "jar") {
+            JavaJarProject(user)
+        } else {
+            JavaMavenProject(user, mavenDir)
+        }
+    }
 
     if (!mavenDir.resolve("bin/mvn").exists() || cmd.hasOption("repair_maven")) {
         MavenInstaller().installMaven(mavenDir)
