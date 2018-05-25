@@ -38,6 +38,7 @@ class ProjectCompiler : ProjectCompiler {
             goals = listOf("clean", "install", "dependency:copy-dependencies")
             isBatchMode = true
             javaHome = File(System.getProperty("java.home"))
+            mavenOpts = "-DskipTests=true"
             pomFile = project.pomFile
         }
 
