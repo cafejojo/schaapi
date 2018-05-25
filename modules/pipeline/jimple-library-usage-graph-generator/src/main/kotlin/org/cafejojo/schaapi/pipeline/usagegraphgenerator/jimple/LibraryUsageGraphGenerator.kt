@@ -24,8 +24,18 @@ object LibraryUsageGraphGenerator : LibraryUsageGraphGenerator {
         if (libraryProject !is JavaProject) throw IllegalArgumentException("Library project must be JavaProject.")
         if (userProject !is JavaProject) throw IllegalArgumentException("User project must be JavaProject.")
 
+        Scene.v().sootClassPath = arrayOf(
+            System.getProperty("java.home") + "${File.separator}lib${File.separator}rt.jar",
+            System.getProperty("java.home") + "${File.separator}lib${File.separator}jce.jar",
+            libraryProject.classDir.absolutePath,
+            userProject.classpath
+        ).joinToString(File.pathSeparator)
+        Options.v().set_whole_program(true)
+        Options.v().set_allow_phantom_refs(true)
+        Scene.v().loadNecessaryClasses()
+
         return userProject.classNames.flatMap {
-            val sootClass = createSootClass(userProject.classpath, it)
+            val sootClass = createSootClass(it)
 
             sootClass.methods
                 .filter { it.isConcrete }
@@ -35,25 +45,13 @@ object LibraryUsageGraphGenerator : LibraryUsageGraphGenerator {
     }
 
     /**
-     * Creates instance of a Soot class.
+     * Creates instance of a [SootClass].
      *
-     * @param classpath classpath of the project
      * @param className name of the class
-     * @return a Soot class
+     * @return a [SootClass]
      */
-    private fun createSootClass(classpath: String, className: String): SootClass {
-        Scene.v().sootClassPath = arrayOf(
-            System.getProperty("java.home") + "${File.separator}lib${File.separator}rt.jar",
-            System.getProperty("java.home") + "${File.separator}lib${File.separator}jce.jar",
-            classpath
-        ).joinToString(File.pathSeparator)
-        Options.v().set_whole_program(true)
-        Options.v().set_allow_phantom_refs(true)
-
-        Scene.v().loadNecessaryClasses()
-
-        return Scene.v().forceResolve(className, SootClass.BODIES).apply { setApplicationClass() }
-    }
+    private fun createSootClass(className: String) =
+        Scene.v().forceResolve(className, SootClass.BODIES).apply { setApplicationClass() }
 
     /**
      * Generates a library usage graph for a method.

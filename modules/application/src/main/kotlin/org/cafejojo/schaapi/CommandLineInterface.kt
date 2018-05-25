@@ -7,16 +7,18 @@ import org.apache.commons.cli.Option
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.cafejojo.schaapi.models.libraryusagegraph.jimple.GeneralizedNodeComparator
+import org.cafejojo.schaapi.models.project.java.JavaJarProject
 import org.cafejojo.schaapi.models.project.java.JavaMavenProject
 import org.cafejojo.schaapi.pipeline.PatternFilter
 import org.cafejojo.schaapi.pipeline.patterndetector.prefixspan.PatternDetector
 import org.cafejojo.schaapi.pipeline.patternfilter.jimple.IncompleteInitPatternFilterRule
 import org.cafejojo.schaapi.pipeline.patternfilter.jimple.LengthPatternFilterRule
 import org.cafejojo.schaapi.pipeline.projectcompiler.javamaven.MavenInstaller
-import org.cafejojo.schaapi.pipeline.projectcompiler.javamaven.ProjectCompiler
 import org.cafejojo.schaapi.pipeline.testgenerator.jimpleevosuite.TestGenerator
 import org.cafejojo.schaapi.pipeline.usagegraphgenerator.jimple.LibraryUsageGraphGenerator
 import java.io.File
+import org.cafejojo.schaapi.pipeline.projectcompiler.javajar.ProjectCompiler as JavaJarCompiler
+import org.cafejojo.schaapi.pipeline.projectcompiler.javamaven.ProjectCompiler as JavaMavenCompiler
 
 private const val DEFAULT_TEST_GENERATOR_TIMEOUT = "60"
 private const val DEFAULT_PATTERN_DETECTOR_MINIMUM_COUNT = "3"
@@ -33,7 +35,7 @@ fun main(args: Array<String>) {
     val mavenDir = File(cmd.getOptionValue("maven_dir") ?: JavaMavenProject.DEFAULT_MAVEN_HOME.absolutePath)
     val output = File(cmd.getOptionValue('o')).apply { mkdirs() }
     val library = JavaMavenProject(File(cmd.getOptionValue('l')), mavenDir)
-    val users = cmd.getOptionValues('u').map { JavaMavenProject(File(it), mavenDir) }
+    val users = cmd.getOptionValues('u').map { JavaJarProject(File(it)) }
 
     if (!mavenDir.resolve("bin/mvn").exists() || cmd.hasOption("repair_maven")) {
         MavenInstaller().installMaven(mavenDir)
@@ -43,8 +45,8 @@ fun main(args: Array<String>) {
     val testGeneratorEnableOutput = cmd.hasOption("test_generator_enable_output")
 
     Pipeline(
-        libraryProjectCompiler = ProjectCompiler(),
-        userProjectCompiler = ProjectCompiler(),
+        libraryProjectCompiler = JavaMavenCompiler(),
+        userProjectCompiler = JavaJarCompiler(),
         libraryUsageGraphGenerator = LibraryUsageGraphGenerator,
         patternDetector = PatternDetector(
             cmd.getOptionOrDefault("pattern_detector_minimum_count", DEFAULT_PATTERN_DETECTOR_MINIMUM_COUNT).toInt(),
