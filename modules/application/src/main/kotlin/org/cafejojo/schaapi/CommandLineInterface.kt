@@ -26,7 +26,6 @@ private const val DEFAULT_PATTERN_DETECTOR_MINIMUM_COUNT = "3"
  *
  * @param args the path to the output directory, the path to the library project, and the paths to the user projects
  */
-@SuppressWarnings("LongMethod", "UnsafeCast")
 fun main(args: Array<String>) {
     val options = buildOptions()
     val cmd = parseArgs(options, args) ?: return
@@ -44,7 +43,8 @@ fun main(args: Array<String>) {
     val testGeneratorEnableOutput = cmd.hasOption("test_generator_enable_output")
 
     Pipeline(
-        projectCompiler = ProjectCompiler(),
+        libraryProjectCompiler = ProjectCompiler(),
+        userProjectCompiler = ProjectCompiler(),
         libraryUsageGraphGenerator = LibraryUsageGraphGenerator,
         patternDetector = PatternDetector(
             cmd.getOptionOrDefault("pattern_detector_minimum_count", DEFAULT_PATTERN_DETECTOR_MINIMUM_COUNT).toInt(),
