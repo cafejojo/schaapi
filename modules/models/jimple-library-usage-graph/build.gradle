@@ -5,7 +5,9 @@ repositories {
 dependencies {
     compile project(":models")
 
-    compile group: "ca.mcgill.sable", name: "soot", version: sootVersion
+    compile group: "ca.mcgill.sable", name: "soot", version: sootVersion, {
+        exclude group: "org.slf4j", module: "slf4j-simple"
+    }
 
     testCompile group: "com.nhaarman", name: "mockito-kotlin", version: mockitoKotlinVersion
 }
