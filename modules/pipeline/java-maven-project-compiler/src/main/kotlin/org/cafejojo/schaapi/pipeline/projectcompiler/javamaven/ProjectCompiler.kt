@@ -38,7 +38,7 @@ class ProjectCompiler : ProjectCompiler {
             goals = listOf("clean", "install", "dependency:copy-dependencies")
             isBatchMode = true
             javaHome = File(System.getProperty("java.home"))
-            pomFile = pomFile
+            pomFile = project.pomFile
         }
 
         val invoker = DefaultInvoker().apply {
