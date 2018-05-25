@@ -39,7 +39,7 @@ class ClassGenerator(className: String) {
      *
      * Unbound variables in the list of [Unit]s are used as method parameters. All variables are stored as locals
      * of the method. If a return statement is found in the sequence, this statement is the last statement, even if it
-     * is not the last statement in the [statements] sequence. If no return statement is found the method returns void.
+     * is not the last statement in the statements sequence. If no return statement is found the method returns void.
      *
      * The method itself does no verification of the body of the method. Verification can be done by calling
      * [soot.Body.validate] on [soot.SootMethod.activeBody] to validate that the body is well formed.
