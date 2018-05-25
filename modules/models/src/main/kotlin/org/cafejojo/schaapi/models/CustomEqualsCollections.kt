@@ -1,10 +1,13 @@
 package org.cafejojo.schaapi.models
 
 /**
- * A (mutable) [HashMap] that allows one to use a custom hash function, [customHash].
+ * A (mutable) [HashMap] that allows one to use custom [equals] and [hashCode] functions.
  */
-class CustomHashHashMap<K, V>(private val customHash: (K) -> Int) : MutableMap<K, V> {
-    private val innerMap = HashMap<HashWrapper<K>, V>()
+class CustomEqualsHashMap<K, V>(
+    private val customEquals: (K, Any?) -> Boolean,
+    private val customHash: (K) -> Int
+) : MutableMap<K, V> {
+    private val innerMap = HashMap<EqualsWrapper<K>, V>()
 
     /**
      * A copy of the entries.
@@ -40,7 +43,7 @@ class CustomHashHashMap<K, V>(private val customHash: (K) -> Int) : MutableMap<K
 
     override fun remove(key: K) = innerMap.remove(wrapKey(key))
 
-    private fun wrapKey(key: K) = HashWrapper(key, customHash)
+    private fun wrapKey(key: K) = EqualsWrapper(key, customEquals, customHash)
 
     /**
      * A simple implementation of [MutableMap.MutableEntry].
@@ -51,10 +54,13 @@ class CustomHashHashMap<K, V>(private val customHash: (K) -> Int) : MutableMap<K
 }
 
 /**
- * A (mutable) [HashSet] that allows one to use a custom hash function, [customHash].
+ * A (mutable) [HashSet] that allows one to use custom [equals] and [hashCode] functions.
  */
-class CustomHashHashSet<K>(private val customHash: (K) -> Int) : MutableSet<K> {
-    private val innerSet = HashSet<HashWrapper<K>>()
+class CustomEqualsHashSet<K>(
+    private val customEquals: (K, Any?) -> Boolean,
+    private val customHash: (K) -> Int
+) : MutableSet<K> {
+    private val innerSet = HashSet<EqualsWrapper<K>>()
 
     override val size: Int
         get() = innerSet.size
@@ -88,20 +94,24 @@ class CustomHashHashSet<K>(private val customHash: (K) -> Int) : MutableSet<K> {
 
     override fun isEmpty() = innerSet.isEmpty()
 
-    private fun wrapElement(key: K) = HashWrapper(key, customHash)
+    private fun wrapElement(key: K) = EqualsWrapper(key, customEquals, customHash)
 }
 
 /**
- * Wraps an object such that two values equal if their [customHash]es equal.
+ * Wraps an object such that [equals] is implemented as [customEquals] and [hashCode] is implemented as [customHash].
  */
-data class HashWrapper<K>(val value: K, private val customHash: (K) -> Int) {
+data class EqualsWrapper<K>(
+    val value: K,
+    private val customEquals: (K, Any?) -> Boolean = { self, other -> self == other },
+    private val customHash: (K) -> Int = { self -> self?.hashCode() ?: 0 }
+) {
     /**
-     * Returns true iff [other]'s hash code equals [value]'s hash code.
+     * Returns the result of applying [customEquals] to the [value]s of this and [other].
      *
-     * @param other the object to compare to this
-     * @return true iff [other]'s hash code equals [value]'s hash code
+     * @param other the wrapper
+     * @return the result of applying [customEquals] to the [value]s of this and [other]
      */
-    override fun equals(other: Any?) = other is HashWrapper<*> && this.hashCode() == other.hashCode()
+    override fun equals(other: Any?) = other is EqualsWrapper<*> && customEquals(this.value, other.value)
 
     /**
      * Returns the result of applying [customHash] to [value].
