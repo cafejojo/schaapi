@@ -103,7 +103,7 @@ usage: schaapi -o <arg> -l <arg> -u <arg> [--maven_dir <arg>]
 #### 2.3 Notify Users
 | | |
 | ------------------ | ------------- |
-| Description        | Notify library users of breaking changes |
+| Description        | Notify affected library users of possibly breaking changes |
 | Interface          | `--` |
 | Implementations    | |
 
