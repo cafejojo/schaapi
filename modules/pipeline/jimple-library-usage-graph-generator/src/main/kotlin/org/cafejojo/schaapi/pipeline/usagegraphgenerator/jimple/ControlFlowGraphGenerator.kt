@@ -2,10 +2,10 @@ package org.cafejojo.schaapi.pipeline.usagegraphgenerator.jimple
 
 import org.cafejojo.schaapi.models.libraryusagegraph.jimple.JimpleNode
 import soot.Body
-import soot.Unit
 import soot.jimple.Stmt
 import soot.toolkits.graph.BriefUnitGraph
 import soot.toolkits.graph.UnitGraph
+import soot.Unit as SootUnit
 
 /**
  * Creates the control flow graph of a method body.
@@ -30,8 +30,8 @@ object ControlFlowGraphGenerator {
      */
     private fun transform(
         cfg: UnitGraph,
-        mappedUnits: HashMap<Unit, JimpleNode>,
-        unit: Unit,
+        mappedUnits: HashMap<SootUnit, JimpleNode>,
+        unit: SootUnit,
         predecessor: JimpleNode? = null
     ): JimpleNode? {
         if (mappedUnits.containsKey(unit)) {
@@ -58,9 +58,10 @@ object ControlFlowGraphGenerator {
  *
  * @return the root of the control flow graph.
  */
-fun UnitGraph.rootUnitIfExists(): Unit = if (heads.isEmpty()) throw NoRootInControlFlowGraphException() else heads[0]
+fun UnitGraph.rootUnitIfExists(): SootUnit =
+    if (heads.isEmpty()) throw NoRootInControlFlowGraphException() else heads[0]
 
 /**
- * Exception for control flow graphs that have no root [Unit].
+ * Exception for control flow graphs that have no root [SootUnit].
  */
 class NoRootInControlFlowGraphException : Exception("The control flow graph does not contain a root unit.")
