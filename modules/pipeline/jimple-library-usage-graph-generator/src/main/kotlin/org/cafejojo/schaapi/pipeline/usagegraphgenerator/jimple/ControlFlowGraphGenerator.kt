@@ -58,7 +58,7 @@ object ControlFlowGraphGenerator {
  *
  * @return the root of the control flow graph.
  */
-fun UnitGraph.rootUnitIfExists() = if (heads.isEmpty()) throw NoRootInControlFlowGraphException() else heads[0]
+fun UnitGraph.rootUnitIfExists(): Unit = if (heads.isEmpty()) throw NoRootInControlFlowGraphException() else heads[0]
 
 /**
  * Exception for control flow graphs that have no root [Unit].

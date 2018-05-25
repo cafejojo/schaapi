@@ -20,28 +20,28 @@ interface JavaProject : Project {
     /**
      * The project's compiled class files.
      *
-     * May be null before the project is [compile]d.
+     * May be null before the project is compiled.
      */
     var classes: List<File>
 
     /**
      * The names of the project's compiled classes.
      *
-     * May be null before the project is [compile]d.
+     * May be null before the project is compiled.
      */
     var classNames: List<String>
 
     /**
      * The project's dependencies as JARs.
      *
-     * May be null before the project is [compile]d.
+     * May be null before the project is compiled.
      */
     var dependencies: List<File>
 
     /**
      * The classpath needed to load the complete project.
      *
-     * May be null before the project is [compile]d.
+     * May be null before the project is compiled.
      */
     var classpath: String
 }
