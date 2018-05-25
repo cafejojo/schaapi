@@ -65,7 +65,7 @@ internal fun Node.connectLeavesToExitNode() = ExitNode().also { exitNode ->
     iterator().asSequence().toList().let { allNodes ->
         allNodes.filter { it.successors.isEmpty() }
             .let { if (it.isEmpty()) allNodes.takeLast(1) else it }
-        .forEach { it.successors.add(exitNode) }
+            .forEach { it.successors.add(exitNode) }
     }
 }
 
