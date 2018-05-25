@@ -1,4 +1,4 @@
-package org.cafejojo.schaapi.pipeline.projectcompiler.githubminer
+package org.cafejojo.schaapi.pipeline.githubminer.mavenproject
 
 import org.cafejojo.schaapi.models.Project
 import org.zeroturnaround.zip.ZipUtil
@@ -10,15 +10,19 @@ import java.net.HttpURLConnection
 import java.net.URL
 
 /**
- * Clones the github repositories and returns a list of java projects.
+ * Downloads the zip files of the give github repositories and returns a list of java projects.
  *
  * @property repositoryNames the names of all repositories to be downloaded
+ * @property projectPacker packer which determines what type of [Project] to wrap the project directory in
  */
-class GithubDownloader(private val repositoryNames: Collection<String>) {
+class GithubProjectDownloader(private val repositoryNames: Collection<String>,
+                              private val projectPacker: (projectDirectory: File) -> Project) {
     /**
      * Start downloading repositories.
+     *
+     * @return list of [Project]s which reference the downloaded projects from github
      */
-    fun download(projectPacker: (projectDirectory: File) -> Project): List<Project> {
+    fun download(): List<Project> {
         val projects = mutableListOf<Project>()
 
         repositoryNames.forEachIndexed { index, projectName ->

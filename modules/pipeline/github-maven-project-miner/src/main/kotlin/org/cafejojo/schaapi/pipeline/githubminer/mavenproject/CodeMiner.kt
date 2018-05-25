@@ -1,4 +1,4 @@
-package org.cafejojo.schaapi.pipeline.projectcompiler.githubminer
+package org.cafejojo.schaapi.pipeline.githubminer.mavenproject
 
 import com.beust.klaxon.Json
 import com.beust.klaxon.Klaxon
@@ -9,13 +9,15 @@ import okhttp3.Request
 import org.cafejojo.schaapi.models.Project
 import org.cafejojo.schaapi.pipeline.CodeMiner
 import java.io.File
+import java.io.IOException
 
 /**
- * Mine Github using the search API.
+ * Mines projects on Github using the Github REST API v3.
  *
- * Credentials must be provided to enable code searching. A code search is done using the group id id artifact id and
- * version of the desired library. String matching is done to find projects which contain a pom file which likely
- * contain a dependency on the desired library. No guarantees however are given.
+ * Credentials must be provided to enable code searching. A code search is done using the group id, artifact id, and
+ * version (number) of the desired library. String matching is done to find projects which contain a pom file which
+ * likely contain a dependency on the desired library. No guarantees however are given, as github does not provide
+ * information on which projects have a dependency on a given library.
  *
  * @property username username of github user
  * @property password password of github user
@@ -40,14 +42,27 @@ class CodeMiner(private val username: String, private val password: String,
             .apply { header("Authorization", Credentials.basic(username, password)) }
             .build()
 
-        val response = OkHttpClient().newCall(request).execute()
-        val projectNames = projectNames(response.body()?.string() ?: "")
+        val responseBody = executeRequest(request)
+        val projectNames = getProjectNames(responseBody)
 
-        return GithubDownloader(projectNames).download(projectPacker)
+        return GithubProjectDownloader(projectNames, projectPacker).download()
     }
 
-    internal fun projectNames(jsonBody: String): Set<String> {
-        val items = Klaxon().parse<CodeSearchResponse>(jsonBody)?.items ?: return emptySet()
+    internal fun executeRequest(request: Request): String {
+        return try {
+            val response = OkHttpClient().newCall(request).execute()
+            response?.body()?.string() ?: ""
+        } catch (e: IOException) {
+            // TODO add logger
+            e.printStackTrace()
+            ""
+        }
+    }
+
+    internal fun getProjectNames(requestBody: String): Set<String> {
+        if (requestBody.isEmpty()) return emptySet()
+
+        val items = Klaxon().parse<CodeSearchResponse>(requestBody)?.items ?: return emptySet()
         return items.map { it.repository.fullName }.toSet()
     }
 
