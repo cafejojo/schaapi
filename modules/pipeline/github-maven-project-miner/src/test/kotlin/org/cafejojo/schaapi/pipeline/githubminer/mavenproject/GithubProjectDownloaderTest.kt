@@ -6,6 +6,7 @@ import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 import org.zeroturnaround.zip.ZipUtil
 import java.io.File
+import java.net.URL
 import java.nio.file.Files
 
 class GithubProjectDownloaderTest : Spek({
@@ -102,6 +103,22 @@ class GithubProjectDownloaderTest : Spek({
             val unzippedFile = GithubProjectDownloader(emptyList(), output, ::testProjectPacker).unzip(zipFile)
 
             assertThat(unzippedFile.listFiles().first().readText()).isEqualTo("test text")
+        }
+    }
+
+    describe("when downloading a project") {
+        it("should create a connection request with the correct url") {
+            val connection = GithubProjectDownloader(emptyList(), output, ::testProjectPacker)
+                .getConnection("cafejojo/schaapi")
+
+            assertThat(connection?.url).isEqualTo(URL("https://github.com/cafejojo/schaapi/archive/master.zip"))
+        }
+
+        it("should create a connection request with a get request method") {
+            val connection = GithubProjectDownloader(emptyList(), output, ::testProjectPacker)
+                .getConnection("cafejojo/schaapi")
+
+            assertThat(connection?.requestMethod).isEqualTo("GET")
         }
     }
 })

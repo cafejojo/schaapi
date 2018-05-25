@@ -17,9 +17,11 @@ import java.net.URL
  * @property projectPacker packer which determines what type of [Project] to wrap the project directory in
  */
 @Suppress("PrintStackTrace") // TODO use a logger
-class GithubProjectDownloader(private val projectNames: Collection<String>,
-                              private val outputDirectory: File,
-                              private val projectPacker: (projectDirectory: File) -> Project) {
+class GithubProjectDownloader(
+    private val projectNames: Collection<String>,
+    private val outputDirectory: File,
+    private val projectPacker: (projectDirectory: File) -> Project
+) {
     /**
      * Start downloading repositories.
      *
@@ -29,9 +31,9 @@ class GithubProjectDownloader(private val projectNames: Collection<String>,
         val projects = mutableListOf<Project>()
 
         for (repoName in projectNames) {
-            val input = getInputStream(repoName) ?: continue
+            val connection = getConnection(repoName) ?: continue
 
-            val outputFile = saveToFile(input, repoName)
+            val outputFile = saveToFile(connection.inputStream, repoName)
             val unzippedFile = unzip(outputFile)
 
             if (unzippedFile.exists()) projects.add(projectPacker(unzippedFile))
@@ -44,7 +46,8 @@ class GithubProjectDownloader(private val projectNames: Collection<String>,
         val regex = Regex("[^A-Za-z0-9]")
         val outputFile = File(
             outputDirectory,
-            "${regex.replace(projectName, "")}${projectNames.indexOf(projectName)}-project.zip")
+            "${regex.replace(projectName, "")}${projectNames.indexOf(projectName)}-project.zip"
+        )
 
         try {
             // TODO log if file not created
@@ -72,14 +75,14 @@ class GithubProjectDownloader(private val projectNames: Collection<String>,
         return output
     }
 
-    private fun getInputStream(projectName: String): InputStream? {
+    internal fun getConnection(projectName: String): HttpURLConnection? {
         val url = URL("https://github.com/$projectName/archive/master.zip")
 
         return try {
-            val connection = url.openConnection()
-            if (connection is HttpURLConnection) connection.requestMethod = "GET"
+            val connection = url.openConnection() as? HttpURLConnection ?: return null
 
-            connection.inputStream
+            connection.requestMethod = "GET"
+            connection
         } catch (e: IOException) {
             e.printStackTrace() // TODO use logger
             null
