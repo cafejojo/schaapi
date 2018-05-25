@@ -5,6 +5,11 @@ import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 
+data class HashedAny(private val hashCode: Int) {
+    override fun equals(other: Any?) = this === other
+    override fun hashCode() = hashCode
+}
+
 class HashWrapperTest : Spek({
     describe("value wrapper") {
         it("returns the inserted value") {
@@ -51,6 +56,15 @@ class HashWrapperTest : Spek({
 
             assertThat(wrapperA).isEqualTo(wrapperB)
         }
+
+        it("equals a wrapper containing a value of which the hash code coincides") {
+            val keyA = HashedAny(14083)
+            val keyB = HashedAny(14083)
+            val wrapperA = HashWrapper(keyA, Any::hashCode)
+            val wrapperB = HashWrapper(keyB, Any::hashCode)
+
+            assertThat(wrapperA).isEqualTo(wrapperB)
+        }
     }
 })
 
@@ -68,8 +82,8 @@ class CustomHashHashMapTest : Spek({
         }
 
         it("can store multiple key-value pairs") {
-            val keyA = Any()
-            val keyB = Any()
+            val keyA = HashedAny(47204)
+            val keyB = HashedAny(42751)
             val valueA = Any()
             val valueB = Any()
 
@@ -86,9 +100,9 @@ class CustomHashHashMapTest : Spek({
 
         it("can store multiple key-value pairs in one call") {
             val pairs = listOf(
-                Pair(Any(), Any()),
-                Pair(Any(), Any()),
-                Pair(Any(), Any())
+                Pair(HashedAny(16445), Any()),
+                Pair(HashedAny(91213), Any()),
+                Pair(HashedAny(23669), Any())
             ).toMap()
 
             map.putAll(pairs)
@@ -99,8 +113,8 @@ class CustomHashHashMapTest : Spek({
         }
 
         it("can store a value under two keys") {
-            val keyA = Any()
-            val keyB = Any()
+            val keyA = HashedAny(43940)
+            val keyB = HashedAny(18339)
             val value = Any()
 
             map[keyA] = value
@@ -127,9 +141,23 @@ class CustomHashHashMapTest : Spek({
                 .contains(CustomHashHashMap.Entry(key, valueB))
         }
 
+        it("uses the custom hash code to determine duplicates") {
+            val keyA = HashedAny(14083)
+            val keyB = HashedAny(14083)
+            val valueA = Any()
+            val valueB = Any()
+
+            map[keyA] = valueA
+            map[keyB] = valueB
+
+            assertThat(map[keyA])
+                .isEqualTo(map[keyB])
+                .isEqualTo(valueB)
+        }
+
         it("can remove keys") {
-            val keyA = Any()
-            val keyB = Any()
+            val keyA = HashedAny(79283)
+            val keyB = HashedAny(82993)
             val valueA = Any()
             val valueB = Any()
 
@@ -150,9 +178,9 @@ class CustomHashHashMapTest : Spek({
         }
 
         it("can be searched by value") {
-            val keyA = Any()
-            val keyB = Any()
-            val keyC = Any()
+            val keyA = HashedAny(46083)
+            val keyB = HashedAny(89198)
+            val keyC = HashedAny(48262)
             val valueA = Any()
             val valueB = Any()
             val valueC = Any()
@@ -176,7 +204,7 @@ class CustomHashHashSetTest : Spek({
         }
 
         it("can store multiple elements") {
-            val elements = listOf(Any(), Any())
+            val elements = listOf(HashedAny(16977), HashedAny(18313))
 
             set.add(elements[0])
             set.add(elements[1])
@@ -186,8 +214,27 @@ class CustomHashHashSetTest : Spek({
                 .containsAll(elements)
         }
 
+        it("does not store duplicates") {
+            val element = Any()
+
+            set.add(element)
+            set.add(element)
+
+            assertThat(set)
+                .hasSize(1)
+                .containsExactly(element)
+        }
+
+        it("determines duplicates by hash code") {
+            val elements = listOf(HashedAny(60786), HashedAny(60786))
+
+            set.addAll(elements)
+
+            assertThat(set).hasSize(1)
+        }
+
         it("can accept multiple elements at once") {
-            val elements = listOf(Any(), Any(), Any())
+            val elements = listOf(HashedAny(62536), HashedAny(61084), HashedAny(49265))
 
             set.addAll(elements)
 
@@ -197,7 +244,7 @@ class CustomHashHashSetTest : Spek({
         }
 
         it("can be cleared") {
-            val elements = listOf(Any(), Any(), Any())
+            val elements = listOf(HashedAny(40881), HashedAny(26322), HashedAny(95920))
 
             set.addAll(elements)
             set.clear()
@@ -206,7 +253,7 @@ class CustomHashHashSetTest : Spek({
         }
 
         it("can be iterated over") {
-            val elements = listOf(Any(), Any(), Any())
+            val elements = listOf(HashedAny(14408), HashedAny(19725), HashedAny(29802))
 
             set.addAll(elements)
 
@@ -216,7 +263,7 @@ class CustomHashHashSetTest : Spek({
         }
 
         it("can delete while iterating") {
-            val elements = listOf(Any(), Any(), Any())
+            val elements = listOf(HashedAny(26944), HashedAny(83091), HashedAny(22670))
 
             set.addAll(elements)
             val iterator = set.iterator()
@@ -228,7 +275,7 @@ class CustomHashHashSetTest : Spek({
         }
 
         it("can remove elements") {
-            val elements = listOf(Any(), Any(), Any())
+            val elements = listOf(HashedAny(19613), HashedAny(78295), HashedAny(28409))
 
             set.addAll(elements)
             set.remove(elements[1])
@@ -239,7 +286,9 @@ class CustomHashHashSetTest : Spek({
         }
 
         it("can remove multiple elements at once") {
-            val elements = listOf(Any(), Any(), Any(), Any(), Any())
+            val elements = listOf(
+                HashedAny(22282), HashedAny(96470), HashedAny(60858), HashedAny(26560), HashedAny(53746)
+            )
 
             set.addAll(elements)
             set.removeAll(listOf(elements[1], elements[3]))
@@ -250,7 +299,7 @@ class CustomHashHashSetTest : Spek({
         }
 
         it("can be filtered") {
-            val elements = listOf(Any(), Any(), Any())
+            val elements = listOf(HashedAny(83102), HashedAny(84548), HashedAny(42789))
             val retain = listOf(elements[1])
 
             set.addAll(elements)
@@ -262,7 +311,7 @@ class CustomHashHashSetTest : Spek({
         }
 
         it("knows which element it contains") {
-            val elements = listOf(Any(), Any(), Any())
+            val elements = listOf(HashedAny(41367), HashedAny(45409), HashedAny(28624))
 
             set.addAll(elements)
 
@@ -270,7 +319,7 @@ class CustomHashHashSetTest : Spek({
         }
 
         it("knows which elements it contains") {
-            val elements = listOf(Any(), Any(), Any())
+            val elements = listOf(HashedAny(46175), HashedAny(76787), HashedAny(32460))
 
             set.addAll(elements)
 

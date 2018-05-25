@@ -92,17 +92,16 @@ class CustomHashHashSet<K>(private val customHash: (K) -> Int) : MutableSet<K> {
 }
 
 /**
- * Wraps an object such that its [hashCode] calls [customHash]. This allows one to "override" the [hashCode] method
- * without actually changing the object.
+ * Wraps an object such that two values equal if their [customHash]es equal.
  */
 data class HashWrapper<K>(val value: K, private val customHash: (K) -> Int) {
     /**
-     * Returns true iff [other]'s value equals [value].
+     * Returns true iff [other]'s hash code equals [value]'s hash code.
      *
      * @param other the object to compare to this
-     * @return true iff [other]'s value equals [value]
+     * @return true iff [other]'s hash code equals [value]'s hash code
      */
-    override fun equals(other: Any?) = other is HashWrapper<*> && this.value == other.value
+    override fun equals(other: Any?) = other is HashWrapper<*> && this.hashCode() == other.hashCode()
 
     /**
      * Returns the result of applying [customHash] to [value].
