@@ -24,6 +24,17 @@ interface Node : Iterable<Node> {
      * @return the equivalency hash code
      */
     fun equivHashCode(): Int
+
+    companion object {
+        /**
+         * Returns true iff [left] and [right] are [Node]s and [equivTo] returns true.
+         *
+         * @param left a [Node]
+         * @param right a [Node]
+         * @return true iff [left] and [right] are [Node]s and [equivTo] returns true
+         */
+        fun equiv(left: Any?, right: Any?) = left is Node && right is Node && left.equivTo(right)
+    }
 }
 
 /**

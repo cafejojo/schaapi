@@ -5,65 +5,54 @@ import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 
-data class HashedAny(private val hashCode: Int) {
-    override fun equals(other: Any?) = this === other
-    override fun hashCode() = hashCode
-}
-
 class EqualsWrapperTest : Spek({
     describe("value wrapper") {
         it("returns the inserted value") {
             val key = Any()
-            val wrapper = EqualsWrapper(key, Any::hashCode)
+            val wrapper = EqualsWrapper(key, Any::equals, Any::hashCode)
 
             assertThat(wrapper.value).isEqualTo(key)
         }
 
+        it("uses the wrapped type's equals implementation by default") {
+            @SuppressWarnings("EqualsWithHashCodeExist")
+            val key = object : Any() {
+                @SuppressWarnings("EqualsAlwaysReturnsTrueOrFalse")
+                override fun equals(other: Any?) = false
+            }
+            val wrapper = EqualsWrapper(
+                value = key,
+                customHash = Any::hashCode
+            )
+
+            assertThat(wrapper).isNotEqualTo(wrapper)
+        }
+
+        it("uses the given equals function") {
+            val key = Any()
+            val wrapper = EqualsWrapper(key, { _, _ -> false }, Any::hashCode)
+
+            assertThat(wrapper).isNotEqualTo(wrapper)
+        }
+
+        it("uses the wrapped type's hash code implementation by default") {
+            @SuppressWarnings("EqualsWithHashCodeExist")
+            val key = object : Any() {
+                override fun hashCode() = 31749
+            }
+            val wrapper = EqualsWrapper(
+                value = key,
+                customEquals = Any::equals
+            )
+
+            assertThat(wrapper.hashCode()).isEqualTo(31749)
+        }
+
         it("uses the given hash function") {
             val key = Any()
-            val wrapper = EqualsWrapper(key, { 11716 })
+            val wrapper = EqualsWrapper(key, Any::equals, { 11716 })
 
             assertThat(wrapper.hashCode()).isEqualTo(11716)
-        }
-
-        it("equals itself") {
-            val key = Any()
-            val wrapper = EqualsWrapper(key, Any::hashCode)
-
-            assertThat(wrapper).isEqualTo(wrapper)
-        }
-
-        it("does not equal a non-value wrapper") {
-            val key = Any()
-            val wrapper = EqualsWrapper(key, Any::hashCode)
-
-            assertThat(wrapper).isNotEqualTo(Any())
-        }
-
-        it("equals a wrapper containing the same value") {
-            val key = Any()
-            val wrapperA = EqualsWrapper(key, Any::hashCode)
-            val wrapperB = EqualsWrapper(key, Any::hashCode)
-
-            assertThat(wrapperA).isEqualTo(wrapperB)
-        }
-
-        it("equals a wrapper containing an equal value") {
-            val keyA = emptyList<String>()
-            val keyB = emptyList<String>()
-            val wrapperA = EqualsWrapper(keyA, List<String>::hashCode)
-            val wrapperB = EqualsWrapper(keyB, List<String>::hashCode)
-
-            assertThat(wrapperA).isEqualTo(wrapperB)
-        }
-
-        it("equals a wrapper containing a value of which the hash code coincides") {
-            val keyA = HashedAny(14083)
-            val keyB = HashedAny(14083)
-            val wrapperA = EqualsWrapper(keyA, Any::hashCode)
-            val wrapperB = EqualsWrapper(keyB, Any::hashCode)
-
-            assertThat(wrapperA).isEqualTo(wrapperB)
         }
     }
 })
@@ -73,7 +62,7 @@ class CustomEqualsHashMapTest : Spek({
         lateinit var map: CustomEqualsHashMap<Any, Any>
 
         beforeEachTest {
-            map = CustomEqualsHashMap(Any::hashCode)
+            map = CustomEqualsHashMap(Any::equals, Any::hashCode)
         }
 
         it("starts out empty") {
@@ -82,8 +71,8 @@ class CustomEqualsHashMapTest : Spek({
         }
 
         it("can store multiple key-value pairs") {
-            val keyA = HashedAny(47204)
-            val keyB = HashedAny(42751)
+            val keyA = EqualsWrapper("benelux")
+            val keyB = EqualsWrapper("acolyte")
             val valueA = Any()
             val valueB = Any()
 
@@ -100,9 +89,9 @@ class CustomEqualsHashMapTest : Spek({
 
         it("can store multiple key-value pairs in one call") {
             val pairs = listOf(
-                Pair(HashedAny(16445), Any()),
-                Pair(HashedAny(91213), Any()),
-                Pair(HashedAny(23669), Any())
+                Pair(EqualsWrapper(16445), Any()),
+                Pair(EqualsWrapper(91213), Any()),
+                Pair(EqualsWrapper(23669), Any())
             ).toMap()
 
             map.putAll(pairs)
@@ -112,9 +101,9 @@ class CustomEqualsHashMapTest : Spek({
                 .containsAllEntriesOf(pairs)
         }
 
-        it("can store a value under two keys") {
-            val keyA = HashedAny(43940)
-            val keyB = HashedAny(18339)
+        it("can store one value under two keys") {
+            val keyA = EqualsWrapper(43940)
+            val keyB = EqualsWrapper(18339)
             val value = Any()
 
             map[keyA] = value
@@ -141,9 +130,9 @@ class CustomEqualsHashMapTest : Spek({
                 .contains(CustomEqualsHashMap.Entry(key, valueB))
         }
 
-        it("uses the custom hash code to determine duplicates") {
-            val keyA = HashedAny(14083)
-            val keyB = HashedAny(14083)
+        it("uses the custom equals to determine duplicates") {
+            val keyA = EqualsWrapper(68327, { _, _ -> true }, { _ -> 72170 })
+            val keyB = EqualsWrapper(21531, { _, _ -> true }, { _ -> 72170 })
             val valueA = Any()
             val valueB = Any()
 
@@ -156,8 +145,8 @@ class CustomEqualsHashMapTest : Spek({
         }
 
         it("can remove keys") {
-            val keyA = HashedAny(79283)
-            val keyB = HashedAny(82993)
+            val keyA = EqualsWrapper(79283)
+            val keyB = EqualsWrapper(82993)
             val valueA = Any()
             val valueB = Any()
 
@@ -178,9 +167,9 @@ class CustomEqualsHashMapTest : Spek({
         }
 
         it("can be searched by value") {
-            val keyA = HashedAny(46083)
-            val keyB = HashedAny(89198)
-            val keyC = HashedAny(48262)
+            val keyA = EqualsWrapper(46083)
+            val keyB = EqualsWrapper(89198)
+            val keyC = EqualsWrapper(48262)
             val valueA = Any()
             val valueB = Any()
             val valueC = Any()
@@ -200,11 +189,11 @@ class CustomEqualsHashSetTest : Spek({
         lateinit var set: CustomEqualsHashSet<Any>
 
         beforeEachTest {
-            set = CustomEqualsHashSet(Any::hashCode)
+            set = CustomEqualsHashSet(Any::equals, Any::hashCode)
         }
 
         it("can store multiple elements") {
-            val elements = listOf(HashedAny(16977), HashedAny(18313))
+            val elements = listOf(EqualsWrapper(16977), EqualsWrapper(18313))
 
             set.add(elements[0])
             set.add(elements[1])
@@ -225,8 +214,11 @@ class CustomEqualsHashSetTest : Spek({
                 .containsExactly(element)
         }
 
-        it("determines duplicates by hash code") {
-            val elements = listOf(HashedAny(60786), HashedAny(60786))
+        it("uses the custom equals to determine duplicates") {
+            val elements = listOf(
+                EqualsWrapper(16597, { _, _ -> true }, { 28457 }),
+                EqualsWrapper(60786, { _, _ -> true }, { 28457 })
+            )
 
             set.addAll(elements)
 
@@ -234,7 +226,7 @@ class CustomEqualsHashSetTest : Spek({
         }
 
         it("can accept multiple elements at once") {
-            val elements = listOf(HashedAny(62536), HashedAny(61084), HashedAny(49265))
+            val elements = listOf(EqualsWrapper(62536), EqualsWrapper(61084), EqualsWrapper(49265))
 
             set.addAll(elements)
 
@@ -244,7 +236,7 @@ class CustomEqualsHashSetTest : Spek({
         }
 
         it("can be cleared") {
-            val elements = listOf(HashedAny(40881), HashedAny(26322), HashedAny(95920))
+            val elements = listOf(EqualsWrapper(40881), EqualsWrapper(26322), EqualsWrapper(95920))
 
             set.addAll(elements)
             set.clear()
@@ -253,7 +245,7 @@ class CustomEqualsHashSetTest : Spek({
         }
 
         it("can be iterated over") {
-            val elements = listOf(HashedAny(14408), HashedAny(19725), HashedAny(29802))
+            val elements = listOf(EqualsWrapper(14408), EqualsWrapper(19725), EqualsWrapper(29802))
 
             set.addAll(elements)
 
@@ -263,7 +255,7 @@ class CustomEqualsHashSetTest : Spek({
         }
 
         it("can delete while iterating") {
-            val elements = listOf(HashedAny(26944), HashedAny(83091), HashedAny(22670))
+            val elements = listOf(EqualsWrapper(26944), EqualsWrapper(83091), EqualsWrapper(22670))
 
             set.addAll(elements)
             val iterator = set.iterator()
@@ -275,7 +267,7 @@ class CustomEqualsHashSetTest : Spek({
         }
 
         it("can remove elements") {
-            val elements = listOf(HashedAny(19613), HashedAny(78295), HashedAny(28409))
+            val elements = listOf(EqualsWrapper(19613), EqualsWrapper(78295), EqualsWrapper(28409))
 
             set.addAll(elements)
             set.remove(elements[1])
@@ -287,7 +279,11 @@ class CustomEqualsHashSetTest : Spek({
 
         it("can remove multiple elements at once") {
             val elements = listOf(
-                HashedAny(22282), HashedAny(96470), HashedAny(60858), HashedAny(26560), HashedAny(53746)
+                EqualsWrapper(22282),
+                EqualsWrapper(96470),
+                EqualsWrapper(60858),
+                EqualsWrapper(26560),
+                EqualsWrapper(53746)
             )
 
             set.addAll(elements)
@@ -299,7 +295,7 @@ class CustomEqualsHashSetTest : Spek({
         }
 
         it("can be filtered") {
-            val elements = listOf(HashedAny(83102), HashedAny(84548), HashedAny(42789))
+            val elements = listOf(EqualsWrapper(83102), EqualsWrapper(84548), EqualsWrapper(42789))
             val retain = listOf(elements[1])
 
             set.addAll(elements)
@@ -311,7 +307,7 @@ class CustomEqualsHashSetTest : Spek({
         }
 
         it("knows which element it contains") {
-            val elements = listOf(HashedAny(41367), HashedAny(45409), HashedAny(28624))
+            val elements = listOf(EqualsWrapper(41367), EqualsWrapper(45409), EqualsWrapper(28624))
 
             set.addAll(elements)
 
@@ -319,7 +315,7 @@ class CustomEqualsHashSetTest : Spek({
         }
 
         it("knows which elements it contains") {
-            val elements = listOf(HashedAny(46175), HashedAny(76787), HashedAny(32460))
+            val elements = listOf(EqualsWrapper(46175), EqualsWrapper(76787), EqualsWrapper(32460))
 
             set.addAll(elements)
 
