@@ -31,7 +31,7 @@ class ProjectMiner(
     private val projectPacker: (projectDirectory: File) -> Project
 ) : ProjectMiner {
     init {
-        require(outputDirectory.isDirectory) { "Output directory must be a directory." }
+        if (!outputDirectory.isDirectory) outputDirectory.mkdirs()
     }
 
     private val filename = "pom"
