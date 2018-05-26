@@ -31,6 +31,7 @@ class GithubProjectDownloader(
         val projects = mutableListOf<Project>()
 
         for (repoName in projectNames) {
+            // TODO log if unable to make a connection
             val connection = getConnection(repoName) ?: continue
 
             val outputFile = saveToFile(connection.inputStream, repoName)
@@ -43,10 +44,10 @@ class GithubProjectDownloader(
     }
 
     internal fun saveToFile(input: InputStream, projectName: String): File {
-        val regex = Regex("[^A-Za-z0-9]")
+        val alphaNumericRegex = Regex("[^A-Za-z0-9]")
         val outputFile = File(
             outputDirectory,
-            "${regex.replace(projectName, "")}${projectNames.indexOf(projectName)}-project.zip"
+            "${alphaNumericRegex.replace(projectName, "")}${projectNames.indexOf(projectName)}-project.zip"
         )
 
         try {

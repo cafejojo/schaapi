@@ -21,21 +21,19 @@ import java.io.IOException
  *
  * @property username username of GitHub user
  * @property password password of GitHub user
- * @property outputDirectory directory to store all the project directories
+ * @property outputDirectory directory to store all the project directories. If directory doesn't exit new directory
+ * is created
  * @property projectPacker packer which determines what type of [Project] to wrap the project directory in
  */
 @Suppress("PrintStackTrace") // TODO use a logger
 class ProjectMiner(
     private val username: String, private val password: String,
     private val outputDirectory: File,
-    private val projectPacker: (projectDirectory: File) -> Project
+    private val projectPacker: (File) -> Project
 ) : ProjectMiner {
     init {
         if (!outputDirectory.isDirectory) outputDirectory.mkdirs()
     }
-
-    private val filename = "pom"
-    private val extension = "xml"
 
     override fun mine(groupId: String, artifactId: String, version: String): List<Project> {
         val url = HttpUrl.Builder()
@@ -78,7 +76,7 @@ class ProjectMiner(
     }
 
     private fun buildCodeSearchQueryText(groupId: String, artifactId: String, version: String): String =
-        "$groupId+$artifactId+$version+in:file+filename:$filename+extension:$extension"
+        "$groupId+$artifactId+$version+in:file+filename:pom+extension:xml"
 }
 
 private data class CodeSearchResponse(val items: List<FileResponse>)
