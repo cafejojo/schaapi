@@ -35,7 +35,7 @@ class GithubProjectDownloader(
             val connection = getConnection(repoName) ?: continue
 
             val outputFile = saveToFile(connection.inputStream, repoName)
-            connection.inputStream.close()
+            connection.disconnect()
 
             val unzippedFile = unzip(outputFile)
             if (unzippedFile.exists()) projects.add(projectPacker(unzippedFile))
