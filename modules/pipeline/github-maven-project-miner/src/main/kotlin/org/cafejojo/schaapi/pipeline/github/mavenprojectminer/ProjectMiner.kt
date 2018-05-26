@@ -65,9 +65,9 @@ class ProjectMiner(
         }
 
     internal fun getProjectNames(requestBody: String?): Set<String> {
-        if (requestBody.isNullOrEmpty()) return emptySet()
+        if (requestBody == null || requestBody.isEmpty()) return emptySet()
 
-        val items = Klaxon().parse<CodeSearchResponse>(requestBody!!)?.items ?: return emptySet()
+        val items = Klaxon().parse<CodeSearchResponse>(requestBody)?.items ?: return emptySet()
         return items.map { it.repository.fullName }.toSet()
     }
 
