@@ -8,6 +8,7 @@ import java.io.IOException
 import java.io.InputStream
 import java.net.HttpURLConnection
 import java.net.URL
+import kotlin.streams.toList
 
 /**
  * Downloads the zip files of the give github repositories and returns a list of java projects.
@@ -25,26 +26,35 @@ class GithubProjectDownloader(
     /**
      * Start downloading repositories.
      *
+     * A project is not returned if any of the following occurred:
+     * * A connection could not be established or the zip file could simply not be downloaded
+     * * No zip file could be created to store
+     * * The downloaded zip could not be extracted
+     * * No file could be created to store the extracted project in
+     *
      * @return list of [Project]s which reference the downloaded projects from github
      */
-    fun download(): List<Project> {
-        val projects = mutableListOf<Project>()
+    fun download(): List<Project> =
+        projectNames
+            .parallelStream()
+            .map { downloadAndSaveProject(it) }
+            .toList()
+            .filterNotNull()
 
-        for (repoName in projectNames) {
-            // TODO log if unable to make a connection
-            val connection = getConnection(repoName) ?: continue
+    private fun downloadAndSaveProject(projectName: String): Project? {
+        val connection = getConnection(projectName) ?: return null
 
-            val outputFile = saveToFile(connection.inputStream, repoName)
+        try {
+            val zipFile = saveToFile(connection.inputStream, projectName) ?: return null
+            val unzippedFile = unzip(zipFile) ?: return null
+
+            return if (unzippedFile.exists()) projectPacker(unzippedFile) else null
+        } finally {
             connection.disconnect()
-
-            val unzippedFile = unzip(outputFile)
-            if (unzippedFile.exists()) projects.add(projectPacker(unzippedFile))
         }
-
-        return projects
     }
 
-    internal fun saveToFile(input: InputStream, projectName: String): File {
+    internal fun saveToFile(input: InputStream, projectName: String): File? {
         val alphaNumericRegex = Regex("[^A-Za-z0-9]")
         val outputFile = File(
             outputDirectory,
@@ -52,23 +62,24 @@ class GithubProjectDownloader(
         )
 
         try {
-            // TODO log if file not created
-            if (outputFile.exists()) outputFile.deleteRecursively()
+            if (outputFile.exists()) outputFile.delete()
             if (outputFile.createNewFile()) input.copyTo(FileOutputStream(outputFile))
         } catch (e: IOException) {
             e.printStackTrace() // TODO use logger
+            return null
         }
 
         return outputFile
     }
 
-    internal fun unzip(zipFile: File): File {
+    internal fun unzip(zipFile: File): File? {
         val output = File(zipFile.parent, zipFile.nameWithoutExtension)
 
         try {
             ZipUtil.unpack(zipFile, output)
         } catch (e: IOException) {
             e.printStackTrace() // TODO use logger
+            return null
         } finally {
             if (zipFile.exists()) zipFile.delete()
         }
@@ -79,14 +90,12 @@ class GithubProjectDownloader(
     internal fun getConnection(projectName: String): HttpURLConnection? {
         val url = URL("https://github.com/$projectName/archive/master.zip")
 
-        return try {
+        try {
             val connection = url.openConnection() as? HttpURLConnection ?: return null
-
-            connection.requestMethod = "GET"
-            connection
+            return connection.apply { requestMethod = "GET" }
         } catch (e: IOException) {
             e.printStackTrace() // TODO use logger
-            null
+            return null
         }
     }
 }
