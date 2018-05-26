@@ -104,7 +104,7 @@ class GithubProjectDownloaderTest : Spek({
             val unzippedFile = GithubProjectDownloader(emptyList(), output, ::testProjectPacker)
                 .unzip(zipFile)
 
-            assertThat(unzippedFile.listFiles().first().readText()).isEqualTo("test text")
+            assertThat(unzippedFile?.listFiles()?.first()?.readText()).isEqualTo("test text")
         }
     }
 
