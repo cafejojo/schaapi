@@ -49,11 +49,7 @@ class GithubProjectDownloaderTest : Spek({
             val zipStreamContent = "testZip"
             val repoZipStream = zipStreamContent.byteInputStream()
 
-            GithubProjectDownloader(
-                repoNames,
-                output,
-                ::testProjectPacker
-            )
+            GithubProjectDownloader(repoNames, output, ::testProjectPacker)
                 .saveToFile(repoZipStream, repoName)
 
             assertThat(File(output, "${repoName}0-project.zip")).exists()
@@ -66,11 +62,7 @@ class GithubProjectDownloaderTest : Spek({
             val zipStreamContent = "testZip"
             val repoZipStream = zipStreamContent.byteInputStream()
 
-            GithubProjectDownloader(
-                repoNames,
-                output,
-                ::testProjectPacker
-            )
+            GithubProjectDownloader(repoNames, output, ::testProjectPacker)
                 .saveToFile(repoZipStream, repoName)
 
             assertThat(File(output, "0-project.zip")).exists()
@@ -85,11 +77,7 @@ class GithubProjectDownloaderTest : Spek({
             val repo2ZipStream = zip2StreamContent.byteInputStream()
 
             val repoNames = listOf(repoName1, repoName2)
-            GithubProjectDownloader(
-                repoNames,
-                output,
-                ::testProjectPacker
-            )
+            GithubProjectDownloader(repoNames, output, ::testProjectPacker)
                 .apply { saveToFile(repo1ZipStream, repoName1) }
                 .apply { saveToFile(repo2ZipStream, repoName2) }
 
@@ -104,11 +92,8 @@ class GithubProjectDownloaderTest : Spek({
     describe("when unzipping a file") {
         it("should create a new directory and remove the old") {
             val zipFile = addZipFile("testZipDirectory", "")
-            val unzippedFile = GithubProjectDownloader(
-                emptyList(),
-                output,
-                ::testProjectPacker
-            ).unzip(zipFile)
+            val unzippedFile = GithubProjectDownloader(emptyList(), output, ::testProjectPacker)
+                .unzip(zipFile)
 
             assertThat(output.listFiles()).doesNotContain(zipFile)
             assertThat(output.listFiles()).contains(unzippedFile)
@@ -116,11 +101,8 @@ class GithubProjectDownloaderTest : Spek({
 
         it("should create a new directory which has a file with the expected content") {
             val zipFile = addZipFile("testZipDirectory", "test text")
-            val unzippedFile = GithubProjectDownloader(
-                emptyList(),
-                output,
-                ::testProjectPacker
-            ).unzip(zipFile)
+            val unzippedFile = GithubProjectDownloader(emptyList(), output, ::testProjectPacker)
+                .unzip(zipFile)
 
             assertThat(unzippedFile.listFiles().first().readText()).isEqualTo("test text")
         }
@@ -128,22 +110,14 @@ class GithubProjectDownloaderTest : Spek({
 
     describe("when downloading a project") {
         it("should create a connection request with the correct url") {
-            val connection = GithubProjectDownloader(
-                emptyList(),
-                output,
-                ::testProjectPacker
-            )
+            val connection = GithubProjectDownloader(emptyList(), output, ::testProjectPacker)
                 .getConnection("cafejojo/schaapi")
 
             assertThat(connection?.url).isEqualTo(URL("https://github.com/cafejojo/schaapi/archive/master.zip"))
         }
 
         it("should create a connection request with a get request method") {
-            val connection = GithubProjectDownloader(
-                emptyList(),
-                output,
-                ::testProjectPacker
-            )
+            val connection = GithubProjectDownloader(emptyList(), output, ::testProjectPacker)
                 .getConnection("cafejojo/schaapi")
 
             assertThat(connection?.requestMethod).isEqualTo("GET")

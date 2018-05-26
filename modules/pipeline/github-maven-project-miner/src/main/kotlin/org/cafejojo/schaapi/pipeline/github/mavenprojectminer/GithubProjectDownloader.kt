@@ -20,7 +20,7 @@ import java.net.URL
 class GithubProjectDownloader(
     private val projectNames: Collection<String>,
     private val outputDirectory: File,
-    private val projectPacker: (projectDirectory: File) -> Project
+    private val projectPacker: (File) -> Project
 ) {
     /**
      * Start downloading repositories.
@@ -35,8 +35,9 @@ class GithubProjectDownloader(
             val connection = getConnection(repoName) ?: continue
 
             val outputFile = saveToFile(connection.inputStream, repoName)
-            val unzippedFile = unzip(outputFile)
+            connection.inputStream.close()
 
+            val unzippedFile = unzip(outputFile)
             if (unzippedFile.exists()) projects.add(projectPacker(unzippedFile))
         }
 
@@ -52,11 +53,10 @@ class GithubProjectDownloader(
 
         try {
             // TODO log if file not created
+            if (outputFile.exists()) outputFile.deleteRecursively()
             if (outputFile.createNewFile()) input.copyTo(FileOutputStream(outputFile))
         } catch (e: IOException) {
             e.printStackTrace() // TODO use logger
-        } finally {
-            input.close()
         }
 
         return outputFile
@@ -70,7 +70,7 @@ class GithubProjectDownloader(
         } catch (e: IOException) {
             e.printStackTrace() // TODO use logger
         } finally {
-            if (zipFile.exists()) zipFile.deleteRecursively()
+            if (zipFile.exists()) zipFile.delete()
         }
 
         return output

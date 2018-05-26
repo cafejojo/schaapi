@@ -44,7 +44,8 @@ class ProjectMinerTest : Spek({
                     "  ]\n" +
                     "}"
 
-            val names = ProjectMiner("", "", output, ::testProjectPacker).getProjectNames(json)
+            val names = ProjectMiner("", "", output, ::testProjectPacker)
+                .getProjectNames(json)
 
             assertThat(names).contains("jquery/jquery")
             assertThat(names).contains("otherjquery/jquery")

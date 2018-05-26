@@ -49,29 +49,25 @@ class ProjectMiner(
             .apply { header("Authorization", Credentials.basic(username, password)) }
             .build()
 
-        val responseBody = executeRequest(request)
+        val responseBody = executeRequest(request) ?: return emptyList()
         val projectNames = getProjectNames(responseBody)
 
-        return GithubProjectDownloader(
-            projectNames,
-            outputDirectory,
-            projectPacker
-        ).download()
+        return GithubProjectDownloader(projectNames, outputDirectory, projectPacker).download()
     }
 
-    internal fun executeRequest(request: Request): String =
+    internal fun executeRequest(request: Request): String? =
         try {
             val response = OkHttpClient().newCall(request).execute()
             response.body()?.string() ?: ""
         } catch (e: IOException) {
             e.printStackTrace() // TODO add logger
-            ""
+            null
         }
 
-    internal fun getProjectNames(requestBody: String): Set<String> {
-        if (requestBody.isEmpty()) return emptySet()
+    internal fun getProjectNames(requestBody: String?): Set<String> {
+        if (requestBody.isNullOrEmpty()) return emptySet()
 
-        val items = Klaxon().parse<CodeSearchResponse>(requestBody)?.items ?: return emptySet()
+        val items = Klaxon().parse<CodeSearchResponse>(requestBody!!)?.items ?: return emptySet()
         return items.map { it.repository.fullName }.toSet()
     }
 
