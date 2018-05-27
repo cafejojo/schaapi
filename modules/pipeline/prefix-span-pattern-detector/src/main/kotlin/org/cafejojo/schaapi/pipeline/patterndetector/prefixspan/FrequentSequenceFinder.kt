@@ -114,21 +114,13 @@ class FrequentSequenceFinder(
      * @param sequence the sequence which may be contained in path
      * @return true if path contains the given sequence
      */
-    internal fun pathContainsSequence(path: List<Node>, sequence: List<Node>): Boolean {
-        for (pathIndex in path.indices) {
-            for (sequenceIndex in sequence.indices) {
-                if (pathIndex + sequenceIndex >= path.size ||
+    internal fun pathContainsSequence(path: List<Node>, sequence: List<Node>) =
+        path.indices.any { pathIndex ->
+            !sequence.indices.any { sequenceIndex ->
+                pathIndex + sequenceIndex >= path.size ||
                     !comparator.satisfies(path[pathIndex + sequenceIndex], sequence[sequenceIndex])
-                ) {
-                    break
-                }
-
-                if (sequenceIndex == sequence.size - 1) return true
             }
         }
-
-        return false
-    }
 
     private fun generateFrequentItems(minimumCount: Int) {
         val nodeCounts: MutableMap<Node, Int> = CustomEqualsHashMap(Node.Companion::equiv, Node::equivHashCode)
