@@ -14,35 +14,34 @@ class ProjectMinerTest : Spek({
     describe("when extracting project names from a json object returned by the GitHub v3 api") {
         it("should extract the full project name") {
             val json =
-                "{\n" +
-                    "  \"total_count\": 7,\n" +
-                    "  \"incomplete_results\": false,\n" +
-                    "  \"items\": [\n" +
-                    "    {\n" +
-                    "      \"name\": \"classes.js\",\n" +
-                    "      \"repository\": {\n" +
-                    "        \"id\": 167174,\n" +
-                    "        \"name\": \"jquery\",\n" +
-                    "        \"full_name\": \"jquery/jquery\",\n" +
-                    "        \"owner\": {\n" +
-                    "          \"login\": \"jquery\",\n" +
-                    "        },\n" +
-                    "      },\n" +
-                    "    },\n" +
-                    "    {" +
-                    "      \"name\": \"otherclasses.js\",\n" +
-                    "      \"repository\": {\n" +
-                    "        \"id\": 123123123,\n" +
-                    "        \"name\": \"jquery\",\n" +
-                    "        \"full_name\": \"otherjquery/jquery\",\n" +
-                    "        \"owner\": {\n" +
-                    "          \"login\": \"otherjquery\",\n" +
-                    "        },\n" +
-                    "      },\n" +
-                    "    }\n" +
-
-                    "  ]\n" +
-                    "}"
+                """
+                    {
+                      "total_count": 7,
+                      "incomplete_results": false,
+                      "items": [
+                        {
+                          "name": "classes.js",
+                          "repository": {
+                            "id": 167174,
+                            "name": "jquery",
+                            "full_name": "jquery/jquery",
+                            "owner": {
+                              "login": "jquery",
+                            },
+                          },
+                        },
+                        {      "name": "otherclasses.js",
+                          "repository": {
+                            "id": 123123123,
+                            "name": "jquery",
+                            "full_name": "otherjquery/jquery",
+                            "owner": {
+                              "login": "otherjquery",
+                            },
+                          },
+                        }
+                      ]
+                    }""".trimIndent()
 
             val names = ProjectMiner("", "", output, ::testProjectPacker)
                 .getProjectNames(json)
