@@ -56,7 +56,7 @@ class GithubProjectDownloaderTest : Spek({
             assertThat(File(output, "${repoName}0-project.zip").readText()).isEqualTo(zipStreamContent)
         }
 
-        it("should removes illegal characters from the repo name") {
+        it("should remove illegal characters from the repo name") {
             val repoName = ",./<>?;':\"[]{}-=_+!@#$%^&*()"
             val repoNames = listOf(repoName)
             val zipStreamContent = "testZip"
