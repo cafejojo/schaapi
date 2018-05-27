@@ -116,10 +116,10 @@ class FrequentSequenceFinder(
      */
     internal fun pathContainsSequence(path: List<Node>, sequence: List<Node>) =
         path.indices.any { pathIndex ->
-            !sequence.filterIndexed { sequenceIndex, sequenceNode ->
+            !sequence.indices.any { sequenceIndex ->
                 pathIndex + sequenceIndex >= path.size ||
-                    !comparator.satisfies(path[pathIndex + sequenceIndex], sequenceNode)
-            }.any()
+                    !comparator.satisfies(path[pathIndex + sequenceIndex], sequence[sequenceIndex])
+            }
         }
 
     private fun generateFrequentItems(minimumCount: Int) {
