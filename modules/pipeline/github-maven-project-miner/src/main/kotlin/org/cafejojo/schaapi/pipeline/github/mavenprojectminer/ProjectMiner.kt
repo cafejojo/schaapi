@@ -35,6 +35,16 @@ class ProjectMiner(
         if (!outputDirectory.isDirectory) outputDirectory.mkdirs()
     }
 
+    /**
+     * Mine github for projects with `pom.xml` files which contain a dependency on a library with a given group id,
+     * artifact id and version (number).
+     *
+     * @param groupId the group id of library
+     * @param artifactId the artifact id of the library
+     * @param version the version (number) of the library
+     * @return list of [Project]s which likely depend on said library
+     * @see GithubProjectDownloader.download
+     */
     override fun mine(groupId: String, artifactId: String, version: String): List<Project> {
         val url = HttpUrl.Builder()
             .apply { scheme("https") }
@@ -58,7 +68,7 @@ class ProjectMiner(
     internal fun executeRequest(request: Request): String? =
         try {
             val response = OkHttpClient().newCall(request).execute()
-            response.body()?.string() ?: ""
+            response.body()?.string()
         } catch (e: IOException) {
             e.printStackTrace() // TODO add logger
             null

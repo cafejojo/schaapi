@@ -28,7 +28,7 @@ class GithubProjectDownloader(
      *
      * A project is not returned if any of the following occurred:
      * * A connection could not be established or the zip file could simply not be downloaded
-     * * No zip file could be created to store
+     * * No zip file could be created to store the downloaded file
      * * The downloaded zip could not be extracted
      * * No file could be created to store the extracted project in
      *
