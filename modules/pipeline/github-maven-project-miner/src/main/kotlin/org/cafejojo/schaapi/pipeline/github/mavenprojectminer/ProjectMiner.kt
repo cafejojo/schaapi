@@ -36,7 +36,7 @@ class ProjectMiner(
     }
 
     /**
-     * Mine github for projects with `pom.xml` files which contain a dependency on a library with a given group id,
+     * Mine GitHub for projects with `pom.xml` files which contain a dependency on a library with a given group id,
      * artifact id and version (number).
      *
      * @param groupId the group id of library

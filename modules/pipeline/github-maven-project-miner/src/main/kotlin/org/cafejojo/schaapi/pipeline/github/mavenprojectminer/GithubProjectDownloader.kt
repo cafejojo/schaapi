@@ -11,7 +11,7 @@ import java.net.URL
 import kotlin.streams.toList
 
 /**
- * Downloads the zip files of the give github repositories and returns a list of java projects.
+ * Downloads the zip files of the given GitHub repositories and returns a list of Java projects.
  *
  * @property projectNames the names of all repositories to be downloaded
  * @property outputDirectory the directory to store all the project directories
@@ -24,7 +24,7 @@ class GithubProjectDownloader(
     private val projectPacker: (File) -> Project
 ) {
     /**
-     * Start downloading repositories.
+     * Starts downloading repositories.
      *
      * A project is not returned if any of the following occurred:
      * * A connection could not be established or the zip file could simply not be downloaded
@@ -32,7 +32,7 @@ class GithubProjectDownloader(
      * * The downloaded zip could not be extracted
      * * No file could be created to store the extracted project in
      *
-     * @return list of [Project]s which reference the downloaded projects from github
+     * @return list of [Project]s which reference the downloaded projects from GitHub
      */
     fun download(): List<Project> =
         projectNames

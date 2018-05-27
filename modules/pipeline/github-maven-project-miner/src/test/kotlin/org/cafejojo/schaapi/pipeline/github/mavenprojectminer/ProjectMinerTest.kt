@@ -11,7 +11,7 @@ class ProjectMinerTest : Spek({
 
     afterGroup { output.deleteRecursively() }
 
-    describe("when extracting project names from a json object returned by the github v3 api") {
+    describe("when extracting project names from a json object returned by the GitHub v3 api") {
         it("should extract the full project name") {
             val json =
                 "{\n" +
