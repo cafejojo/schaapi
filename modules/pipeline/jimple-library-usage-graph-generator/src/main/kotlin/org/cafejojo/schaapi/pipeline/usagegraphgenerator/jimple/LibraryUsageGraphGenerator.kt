@@ -1,5 +1,6 @@
 package org.cafejojo.schaapi.pipeline.usagegraphgenerator.jimple
 
+import org.cafejojo.schaapi.models.DfsIterator
 import org.cafejojo.schaapi.models.Node
 import org.cafejojo.schaapi.models.Project
 import org.cafejojo.schaapi.models.libraryusagegraph.jimple.JimpleNode
@@ -10,9 +11,13 @@ import org.cafejojo.schaapi.pipeline.usagegraphgenerator.jimple.filters.Statemen
 import soot.Scene
 import soot.SootClass
 import soot.SootMethod
+import soot.jimple.GotoStmt
+import soot.jimple.IfStmt
 import soot.jimple.Jimple
 import soot.jimple.ReturnStmt
 import soot.jimple.ReturnVoidStmt
+import soot.jimple.Stmt
+import soot.jimple.SwitchStmt
 import soot.options.Options
 import java.io.File
 
@@ -40,7 +45,11 @@ object LibraryUsageGraphGenerator : LibraryUsageGraphGenerator {
             sootClass.methods
                 .filter { it.isConcrete }
                 .map { generateMethodGraph(libraryProject, it) }
-                .filter { it.statement !is ReturnStmt && it.statement !is ReturnVoidStmt }
+                .filter {
+                    !DfsIterator(it).asSequence().toList().all {
+                        it is JimpleNode && isMeaninglessStatementWithoutContext(it.statement)
+                    }
+                }
         }
     }
 
@@ -69,5 +78,14 @@ object LibraryUsageGraphGenerator : LibraryUsageGraphGenerator {
 
         return ControlFlowGraphGenerator.create(methodBody)
             ?: throw IllegalStateException("Control flow graph could not be generated")
+    }
+
+    private fun isMeaninglessStatementWithoutContext(statement: Stmt) = when (statement) {
+        is GotoStmt -> true
+        is ReturnVoidStmt -> true
+        is ReturnStmt -> true
+        is SwitchStmt -> true
+        is IfStmt -> true
+        else -> false
     }
 }
