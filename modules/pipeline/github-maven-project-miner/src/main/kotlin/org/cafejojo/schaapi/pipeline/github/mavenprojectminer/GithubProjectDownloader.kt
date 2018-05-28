@@ -1,6 +1,7 @@
 package org.cafejojo.schaapi.pipeline.github.mavenprojectminer
 
 import org.cafejojo.schaapi.models.Project
+import org.zeroturnaround.zip.ZipException
 import org.zeroturnaround.zip.ZipUtil
 import java.io.File
 import java.io.FileOutputStream
@@ -74,10 +75,14 @@ class GithubProjectDownloader(
 
     internal fun unzip(zipFile: File): File? {
         val output = File(zipFile.parent, zipFile.nameWithoutExtension)
+        if (output.exists()) output.deleteRecursively()
 
         try {
             ZipUtil.unpack(zipFile, output)
         } catch (e: IOException) {
+            e.printStackTrace() // TODO use logger
+            return null
+        } catch (e: ZipException) {
             e.printStackTrace() // TODO use logger
             return null
         } finally {
@@ -88,7 +93,7 @@ class GithubProjectDownloader(
     }
 
     internal fun getConnection(projectName: String): HttpURLConnection? {
-        val url = URL("https://github.com/$projectName/archive/master.zip")
+        val url = getURl(projectName)
 
         try {
             val connection = url.openConnection() as? HttpURLConnection ?: return null
@@ -98,4 +103,6 @@ class GithubProjectDownloader(
             return null
         }
     }
+
+    internal fun getURl(projectName: String) = URL("https://github.com/$projectName/archive/master.zip")
 }

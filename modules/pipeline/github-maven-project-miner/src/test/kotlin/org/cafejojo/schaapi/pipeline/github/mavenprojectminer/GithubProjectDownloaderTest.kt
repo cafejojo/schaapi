@@ -1,46 +1,47 @@
 package org.cafejojo.schaapi.pipeline.github.mavenprojectminer
 
+import com.nhaarman.mockito_kotlin.doReturn
+import com.nhaarman.mockito_kotlin.mock
+import com.nhaarman.mockito_kotlin.spy
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 import org.zeroturnaround.zip.ZipUtil
 import java.io.File
+import java.io.FileInputStream
+import java.net.HttpURLConnection
 import java.net.URL
 import java.nio.file.Files
 
 class GithubProjectDownloaderTest : Spek({
-    val output = Files.createTempDirectory("project-downloader").toFile()
+    var output = Files.createTempDirectory("project-downloader").toFile()
 
     // Create zip file with given dir name (+ zip extension) in output with a single text file with given file content
-    fun addZipFile(dirName: String, fileContent: String): File {
+    fun addZipFile(dirName: String, fileContent: String, customOutput: File = output): File {
         // Directory which represents what should be zipped
-        val tempDir = File(output, dirName)
-        val tempFile = File(output, "/$dirName/temp.txt")
+        val tempDir = File(customOutput, dirName)
+        val tempFile = File(tempDir, "temp.txt")
 
         tempDir.mkdirs()
         tempFile.createNewFile()
         tempFile.writeText(fileContent)
 
         // File which represents the zip file
-        val zipFile = File(output, "/$dirName.zip")
+        val zipFile = File(customOutput, "$dirName.zip")
 
         zipFile.createNewFile()
         ZipUtil.pack(tempDir, zipFile)
         tempDir.deleteRecursively()
 
-        assertThat(output.listFiles()).contains(zipFile)
-        assertThat(output.listFiles()).doesNotContain(tempDir)
+        assertThat(customOutput.listFiles()).contains(zipFile)
+        assertThat(customOutput.listFiles()).doesNotContain(tempDir)
 
         return zipFile
     }
 
-    afterEachTest {
-        if (output.exists()) output.deleteRecursively()
-        output.mkdir()
-    }
-
-    afterGroup { output.deleteRecursively() }
+    beforeEachTest { output = Files.createTempDirectory("project-downloader").toFile() }
+    afterEachTest { output.deleteRecursively() }
 
     describe("When saving a stream to file") {
         it("should save the contents of the file to stream") {
@@ -87,6 +88,20 @@ class GithubProjectDownloaderTest : Spek({
             assertThat(File(output, "${repoName1}0-project.zip").readText()).isEqualTo(zip1StreamContent)
             assertThat(File(output, "${repoName2}1-project.zip").readText()).isEqualTo(zip2StreamContent)
         }
+
+        it("should overwrite directories which exist") {
+            val repoName = "testRepo"
+            val repoNames = listOf(repoName)
+            val zipStreamContent = "testZip"
+            val repoZipStream = zipStreamContent.byteInputStream()
+            File(output, "testRepo0-project.zip").createNewFile()
+
+            assertThat(output.listFiles().size).isEqualTo(1)
+
+            GithubProjectDownloader(repoNames, output, ::testProjectPacker).saveToFile(repoZipStream, repoName)
+
+            assertThat(output.listFiles().size).isEqualTo(1)
+        }
     }
 
     describe("when unzipping a file") {
@@ -106,6 +121,42 @@ class GithubProjectDownloaderTest : Spek({
 
             assertThat(unzippedFile?.listFiles()?.first()?.readText()).isEqualTo("test text")
         }
+
+        it("should delete the zip file after extraction") {
+            val zipFile = addZipFile("testZipDirectory", "test text")
+
+            assertThat(output.listFiles()).containsExactly(zipFile)
+
+            val unzippedFile = GithubProjectDownloader(emptyList(), output, ::testProjectPacker).unzip(zipFile)
+
+            assertThat(output.listFiles()).containsExactly(unzippedFile)
+        }
+
+        it("should overwrite a directory which already exists") {
+            val zipFile = addZipFile("testZipDirectory", "test text")
+            File(output, "testZipDirectory").createNewFile()
+
+            assertThat(output.listFiles().size).isEqualTo(2)
+
+            GithubProjectDownloader(emptyList(), output, ::testProjectPacker).unzip(zipFile)
+
+            assertThat(output.listFiles().size).isEqualTo(1)
+        }
+
+        it("should return null if the zip file does not exist") {
+            val invisibleFile = File(output, "invisibleFile")
+
+            assertThat(GithubProjectDownloader(emptyList(), output, ::testProjectPacker).unzip(invisibleFile)).isNull()
+            assertThat(output.listFiles()).isEmpty()
+        }
+
+        it("should return null if the zip file is not a zip file") {
+            val notAZipFile = File(output, "notAZipFile")
+            notAZipFile.createNewFile()
+
+            assertThat(GithubProjectDownloader(emptyList(), output, ::testProjectPacker).unzip(notAZipFile)).isNull()
+            assertThat(output.listFiles()).isEmpty()
+        }
     }
 
     describe("when downloading a project") {
@@ -121,6 +172,26 @@ class GithubProjectDownloaderTest : Spek({
                 .getConnection("cafejojo/schaapi")
 
             assertThat(connection?.requestMethod).isEqualTo("GET")
+        }
+
+        it("should save the unzipped file") {
+            val zipFile = addZipFile("testProject", "content", Files.createTempDirectory("project-downloader").toFile())
+
+            val downloader = spy(GithubProjectDownloader(listOf("testProject"), output, ::testProjectPacker))
+
+            val mockHttpURLConnection = mock<HttpURLConnection> {
+                on(it.inputStream) doReturn FileInputStream(zipFile)
+            }
+            val mockURL = mock<URL> { on(it.openConnection()) doReturn mockHttpURLConnection }
+
+            doReturn(mockURL).`when`(downloader).getURl("testProject")
+
+            assertThat(output.listFiles()).isEmpty()
+
+            downloader.download()
+
+            assertThat(output.listFiles()).isNotEmpty()
+            assertThat(output.listFiles().first().listFiles().first().readText()).isEqualTo("content")
         }
     }
 })
