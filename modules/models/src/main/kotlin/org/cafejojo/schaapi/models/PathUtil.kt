@@ -1,5 +1,8 @@
 package org.cafejojo.schaapi.models
 
+/**
+ * Utilities for paths of [Node]s.
+ */
 object PathUtil {
     /**
      * Checks whether a given sequence can be found within a given path.
