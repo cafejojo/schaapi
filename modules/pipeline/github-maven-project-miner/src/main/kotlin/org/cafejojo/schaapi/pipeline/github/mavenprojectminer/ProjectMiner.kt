@@ -1,15 +1,10 @@
 package org.cafejojo.schaapi.pipeline.github.mavenprojectminer
 
-import com.beust.klaxon.Json
-import com.beust.klaxon.Klaxon
-import okhttp3.Credentials
-import okhttp3.HttpUrl
-import okhttp3.OkHttpClient
-import okhttp3.Request
 import org.cafejojo.schaapi.models.Project
+import org.cafejojo.schaapi.models.project.java.JavaMavenProject
 import org.cafejojo.schaapi.pipeline.ProjectMiner
+import org.kohsuke.github.GitHub
 import java.io.File
-import java.io.IOException
 
 /**
  * Mines projects on GitHub using the GitHub REST API v3.
@@ -46,45 +41,26 @@ class ProjectMiner(
      * @see GithubProjectDownloader.download
      */
     override fun mine(groupId: String, artifactId: String, version: String): List<Project> {
-        val url = HttpUrl.Builder()
-            .apply { scheme("https") }
-            .apply { host("api.github.com") }
-            .apply { addPathSegment("search") }
-            .apply { addPathSegment("code") }
-            .apply { addQueryParameter("q", buildCodeSearchQueryText(groupId, artifactId, version)) }
-            .build()
+        val github = GitHub.connectUsingPassword(username, password)
 
-        val request = Request.Builder()
-            .apply { url(url) }
-            .apply { header("Authorization", Credentials.basic(username, password)) }
-            .build()
+        require(!github.isOffline) { "Unable to connect to Github." }
+        require(github.isCredentialValid) { "Valid credentials are required to connect to Github." }
 
-        val responseBody = executeRequest(request) ?: return emptyList()
-        val projectNames = getProjectNames(responseBody)
+        val projectNames = github.searchContent()
+            .apply {
+                q("dependency $groupId $artifactId $version")
+                `in`("file")
+                filename("pom")
+                extension("xml")
+            }
+            .list()
+            .map { it.owner.fullName }
 
         return GithubProjectDownloader(projectNames, outputDirectory, projectPacker).download()
     }
-
-    internal fun executeRequest(request: Request): String? =
-        try {
-            val response = OkHttpClient().newCall(request).execute()
-            response.body()?.string()
-        } catch (e: IOException) {
-            e.printStackTrace() // TODO add logger
-            null
-        }
-
-    internal fun getProjectNames(requestBody: String?): Set<String> {
-        if (requestBody == null || requestBody.isEmpty()) return emptySet()
-
-        val items = Klaxon().parse<CodeSearchResponse>(requestBody)?.items ?: return emptySet()
-        return items.map { it.repository.fullName }.toSet()
-    }
-
-    private fun buildCodeSearchQueryText(groupId: String, artifactId: String, version: String): String =
-        "$groupId+$artifactId+$version+in:file+filename:pom+extension:xml"
 }
 
-private data class CodeSearchResponse(val items: List<FileResponse>)
-private data class FileResponse(val repository: RepositoryResponse)
-private data class RepositoryResponse(@Json(name = "full_name") val fullName: String)
+fun main(args: Array<String>) {
+    ProjectMiner(args[0], args[1], File(""), { file -> JavaMavenProject(file) })
+        .mine("com.google.guava", "guava", "25.1-jre")
+}

@@ -3,9 +3,8 @@ dependencies {
 
     compile project(":models:java-project")
 
+    compile group: 'org.kohsuke', name: 'github-api', version: kohsukeVersion
     testCompile group: "com.nhaarman", name: "mockito-kotlin", version: mockitoKotlinVersion
-    
-    compile group: "com.squareup.okhttp3", name: "okhttp", version: okHttpVersion
-    implementation group: "com.beust", name: "klaxon", version: klaxonVersion
     compile group: "org.zeroturnaround", name: "zt-zip", version: ztZipVersion
+
 }
