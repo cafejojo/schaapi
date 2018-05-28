@@ -149,16 +149,20 @@ internal class IntegrationTest : Spek({
             assertThatStructureMatches(
                 node<JAssignStmt>(
                     node<JInvokeStmt>(
-                        node<JAssignStmt>(
-                            node<JIfStmt>(
-                                node<JReturnStmt>(),
-                                node<JReturnStmt>()
-                            )
-                        )
+                        node<JAssignStmt>()
                     )
                 ),
                 libraryUsageGraph
             )
+        }
+
+        it("filters out a class containing an if with method exitting return statements") {
+            val libraryUsageGraphs = LibraryUsageGraphGenerator.generate(
+                libraryProject,
+                TestProject(testClassesClassPath, listOf("$TEST_CLASSES_PACKAGE.users.ifconditional.IfReturnsTest"))
+            )
+
+            assertThat(libraryUsageGraphs).isEmpty()
         }
     }
 

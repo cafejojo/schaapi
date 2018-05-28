@@ -1,13 +1,15 @@
 package org.cafejojo.schaapi.pipeline.usagegraphgenerator.jimple.filters
 
 import org.cafejojo.schaapi.models.project.java.JavaProject
-import org.cafejojo.schaapi.pipeline.usagegraphgenerator.jimple.filters.BranchStatement.Companion.isBranchStatement
 import soot.Body
 import soot.Unit
 import soot.Value
 import soot.jimple.GotoStmt
 import soot.jimple.IfStmt
+import soot.jimple.ReturnStmt
+import soot.jimple.ReturnVoidStmt
 import soot.jimple.SwitchStmt
+import soot.jimple.ThrowStmt
 import soot.toolkits.graph.BriefUnitGraph
 import soot.toolkits.graph.UnitGraph
 
@@ -17,7 +19,7 @@ import soot.toolkits.graph.UnitGraph
  * @param project library project
  */
 class BranchStatementFilter(project: JavaProject) : Filter {
-    private val valueFilter = ValueFilter(project)
+    internal val valueFilter = ValueFilter(project)
 
     override fun apply(body: Body) {
         var changed = true
@@ -37,10 +39,8 @@ class BranchStatementFilter(project: JavaProject) : Filter {
     }
 
     private fun retain(branch: BranchStatement) =
-        branch.hasNonEmptyBranches || valueFilter.retain(BranchStatement.getConditionValue(branch.statement))
-}
+        branch.hasNonEmptyBranches || valueFilter.retain(getConditionValue(branch.statement))
 
-private class BranchStatement(private val body: Body, val statement: Unit) {
     companion object {
         internal fun isBranchStatement(statement: Unit) = when (statement) {
             is IfStmt -> true
@@ -55,48 +55,66 @@ private class BranchStatement(private val body: Body, val statement: Unit) {
         }
     }
 
-    val cfg = BriefUnitGraph(body)
+    private inner class BranchStatement(private val body: Body, val statement: Unit) {
+        val cfg = BriefUnitGraph(body)
 
-    var redundantGoToStatements: List<GotoStmt> = emptyList()
+        var redundantStatements: List<Unit> = emptyList()
 
-    var hasNonEmptyBranches: Boolean = true
+        var hasNonEmptyBranches: Boolean = true
 
-    init {
-        findBranchStatementEnd()?.let { end ->
-            val branchTargets = cfg.getSuccsOf(statement)
+        init {
+            findBranchStatementEnd()?.let { end ->
+                val branchTargets = cfg.getSuccsOf(statement)
 
-            if (branchTargets.all { it === end || it is GotoStmt && it.target === end }) {
-                redundantGoToStatements = branchTargets.filterIsInstance<GotoStmt>()
-                hasNonEmptyBranches = false
+                if (branchTargets.all { it === end || it is GotoStmt && it.target === end }) {
+                    redundantStatements = branchTargets.filterIsInstance<GotoStmt>()
+                    hasNonEmptyBranches = false
+                }
+            }
+
+            cfg.getSuccsOf(statement).let { branchTargets ->
+                if (branchesContainOnlyReturnOrThrowStatements(branchTargets)) {
+                    redundantStatements = branchTargets
+                    hasNonEmptyBranches = false
+                }
             }
         }
-    }
 
-    internal fun remove() {
-        body.units.remove(statement)
-        body.units.removeAll(redundantGoToStatements)
-    }
+        internal fun remove() {
+            body.units.remove(statement)
+            body.units.removeAll(redundantStatements)
+        }
 
-    private fun findBranchStatementEnd(): soot.Unit? {
-        // Return type is fully classified because of false positives by static analysis tools
+        private fun findBranchStatementEnd(): soot.Unit? {
+            // Return type is fully classified because of false positives by static analysis tools
 
-        val bodiesTillMethodEnd = cfg.getSuccsOf(statement).map { collectSuccessors(cfg, it) }
-        val intersectedBodies =
-            bodiesTillMethodEnd.fold(bodiesTillMethodEnd[0], { acc, list -> acc.intersect(list).toMutableList() })
+            val bodiesTillMethodEnd = cfg.getSuccsOf(statement).map { collectSuccessors(cfg, it) }
+            val intersectedBodies =
+                bodiesTillMethodEnd.fold(bodiesTillMethodEnd[0], { acc, list -> acc.intersect(list).toMutableList() })
 
-        if (intersectedBodies.isEmpty()) return null
+            if (intersectedBodies.isEmpty()) return null
 
-        return intersectedBodies[0]
-    }
+            return intersectedBodies[0]
+        }
 
-    private fun collectSuccessors(
-        cfg: UnitGraph, unit: Unit, collection: MutableList<Unit> = mutableListOf()
-    ): MutableList<Unit> {
-        if (collection.contains(unit)) return collection
+        private fun branchesContainOnlyReturnOrThrowStatements(branchTargets: List<Unit>) = branchTargets.all {
+            cfg.getSuccsOf(it).size == 0 && when (it) {
+                is ReturnStmt -> !valueFilter.retain(it.op)
+                is ReturnVoidStmt -> true
+                is ThrowStmt -> !valueFilter.retain(it.op)
+                else -> false
+            }
+        }
 
-        collection.add(unit)
-        cfg.getSuccsOf(unit).forEach { collectSuccessors(cfg, it, collection) }
+        private fun collectSuccessors(
+            cfg: UnitGraph, unit: Unit, collection: MutableList<Unit> = mutableListOf()
+        ): MutableList<Unit> {
+            if (collection.contains(unit)) return collection
 
-        return collection
+            collection.add(unit)
+            cfg.getSuccsOf(unit).forEach { collectSuccessors(cfg, it, collection) }
+
+            return collection
+        }
     }
 }
