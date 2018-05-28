@@ -1,4 +1,4 @@
-apply from: "$rootDir/gradle/integration-tests.gradle"
+apply from: "$rootDir/gradle/tests/module-integration.gradle"
 
 repositories {
     maven { url "https://soot-build.cs.uni-paderborn.de/nexus/repository/soot-release/" }
@@ -9,8 +9,8 @@ dependencies {
 
     testCompile group: "com.nhaarman", name: "mockito-kotlin", version: mockitoKotlinVersion
 
-    integrationTestCompile project(":models:jimple-library-usage-graph")
-    integrationTestCompile group: "ca.mcgill.sable", name: "soot", version: sootVersion, {
+    moduleIntegrationTestCompile project(":models:jimple-library-usage-graph")
+    moduleIntegrationTestCompile group: "ca.mcgill.sable", name: "soot", version: sootVersion, {
         exclude group: "org.slf4j", module: "slf4j-simple"
     }
 }

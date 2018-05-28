@@ -1,0 +1,41 @@
+ext.generateTestConfiguration = { String taskName, String directoryName ->
+    configurations {
+        def myCompileConfig = configurations.create("${taskName}Compile")
+        myCompileConfig.extendsFrom testCompile
+
+        def myRuntimeConfig = configurations.create("${taskName}Runtime")
+        myRuntimeConfig.extendsFrom myCompileConfig, testRuntime
+    }
+
+    sourceSets {
+        "$taskName" {
+            kotlin.srcDirs file("src/$directoryName/kotlin")
+            resources.srcDirs file("src/$directoryName/resources")
+
+            compileClasspath += sourceSets.main.output
+            compileClasspath += configurations.compileOnly
+            compileClasspath += configurations.testCompileOnly
+            runtimeClasspath += compileClasspath
+        }
+    }
+
+    def myTestTask = task(taskName, type: Test, group: "Verification") {
+        testClassesDirs = sourceSets[taskName].output.classesDirs
+        classpath = sourceSets[taskName].runtimeClasspath
+
+        jacoco {
+            append = false
+        }
+
+        useJUnitPlatform() {
+            includeEngines "spek"
+        }
+
+        jacocoTestReport {
+            executionData file("$buildDir/jacoco/${directoryName}.exec")
+        }
+    }
+
+    myTestTask.mustRunAfter test
+    check.dependsOn myTestTask
+}
