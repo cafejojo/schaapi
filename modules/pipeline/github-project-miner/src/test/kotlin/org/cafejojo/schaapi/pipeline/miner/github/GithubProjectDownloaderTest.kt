@@ -109,11 +109,7 @@ class GithubProjectDownloaderTest : Spek({
     describe("when unzipping searchContent file") {
         it("should create searchContent new directory and remove the old") {
             val zipFile = addZipFile("testZipDirectory", "")
-            val unzippedFile = GithubProjectDownloader(
-                emptyList(),
-                output,
-                ::testProjectPacker
-            )
+            val unzippedFile = GithubProjectDownloader(emptyList(), output, ::testProjectPacker)
                 .unzip(zipFile)
 
             assertThat(output.listFiles()).doesNotContain(zipFile)
@@ -122,11 +118,7 @@ class GithubProjectDownloaderTest : Spek({
 
         it("should create searchContent new directory which has searchContent file with the expected content") {
             val zipFile = addZipFile("testZipDirectory", "test text")
-            val unzippedFile = GithubProjectDownloader(
-                emptyList(),
-                output,
-                ::testProjectPacker
-            )
+            val unzippedFile = GithubProjectDownloader(emptyList(), output, ::testProjectPacker)
                 .unzip(zipFile)
 
             assertThat(unzippedFile?.listFiles()?.first()?.readText()).isEqualTo("test text")
@@ -160,12 +152,7 @@ class GithubProjectDownloaderTest : Spek({
         it("should return null if the zip file does not exist") {
             val invisibleFile = File(output, "invisibleFile")
 
-            assertThat(
-                GithubProjectDownloader(
-                    emptyList(),
-                    output,
-                    ::testProjectPacker
-                ).unzip(invisibleFile)).isNull()
+            assertThat(GithubProjectDownloader(emptyList(), output, ::testProjectPacker).unzip(invisibleFile)).isNull()
             assertThat(output.listFiles()).isEmpty()
         }
 
@@ -173,34 +160,21 @@ class GithubProjectDownloaderTest : Spek({
             val notAZipFile = File(output, "notAZipFile")
             notAZipFile.createNewFile()
 
-            assertThat(
-                GithubProjectDownloader(
-                    emptyList(),
-                    output,
-                    ::testProjectPacker
-                ).unzip(notAZipFile)).isNull()
+            assertThat(GithubProjectDownloader(emptyList(), output, ::testProjectPacker).unzip(notAZipFile)).isNull()
             assertThat(output.listFiles()).isEmpty()
         }
     }
 
     describe("when downloading searchContent project") {
         it("should create searchContent connection request with the correct url") {
-            val connection = GithubProjectDownloader(
-                emptyList(),
-                output,
-                ::testProjectPacker
-            )
+            val connection = GithubProjectDownloader(emptyList(), output, ::testProjectPacker)
                 .getConnection("cafejojo/schaapi")
 
             assertThat(connection?.url).isEqualTo(URL("https://github.com/cafejojo/schaapi/archive/master.zip"))
         }
 
         it("should create searchContent connection request with searchContent get request method") {
-            val connection = GithubProjectDownloader(
-                emptyList(),
-                output,
-                ::testProjectPacker
-            )
+            val connection = GithubProjectDownloader(emptyList(), output, ::testProjectPacker)
                 .getConnection("cafejojo/schaapi")
 
             assertThat(connection?.requestMethod).isEqualTo("GET")
@@ -209,14 +183,7 @@ class GithubProjectDownloaderTest : Spek({
         it("should save the unzipped file") {
             val zipFile = addZipFile("testProject", "content", Files.createTempDirectory("project-downloader").toFile())
 
-            val downloader = spy(
-                GithubProjectDownloader(
-                    listOf("testProject"),
-                    output,
-                    ::testProjectPacker
-                )
-            )
-
+            val downloader = spy(GithubProjectDownloader(listOf("testProject"), output, ::testProjectPacker))
             val mockHttpURLConnection = mock<HttpURLConnection> {
                 on(it.inputStream) doReturn FileInputStream(zipFile)
             }
