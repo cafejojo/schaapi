@@ -1,7 +1,5 @@
-package org.cafejojo.schaapi.pipeline.patterndetector.prefixspan
+package org.cafejojo.schaapi.models
 
-import org.cafejojo.schaapi.models.Node
-import org.cafejojo.schaapi.models.SimpleNode
 import java.util.Stack
 
 /**

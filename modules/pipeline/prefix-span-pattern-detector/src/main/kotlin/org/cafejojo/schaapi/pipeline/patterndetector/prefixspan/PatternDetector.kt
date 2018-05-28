@@ -2,6 +2,7 @@ package org.cafejojo.schaapi.pipeline.patterndetector.prefixspan
 
 import org.cafejojo.schaapi.models.GeneralizedNodeComparator
 import org.cafejojo.schaapi.models.Node
+import org.cafejojo.schaapi.models.PathEnumerator
 import org.cafejojo.schaapi.pipeline.Pattern
 import org.cafejojo.schaapi.pipeline.PatternDetector
 

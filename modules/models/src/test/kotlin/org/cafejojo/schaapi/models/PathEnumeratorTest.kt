@@ -1,7 +1,6 @@
-package org.cafejojo.schaapi.pipeline.patterndetector.prefixspan
+package org.cafejojo.schaapi.models
 
 import org.assertj.core.api.Assertions.assertThat
-import org.cafejojo.schaapi.models.SimpleNode
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
