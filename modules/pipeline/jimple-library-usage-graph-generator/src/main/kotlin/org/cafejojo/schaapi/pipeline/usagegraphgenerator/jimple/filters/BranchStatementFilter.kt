@@ -98,7 +98,7 @@ class BranchStatementFilter(project: JavaProject) : Filter {
         }
 
         private fun branchesContainOnlyReturnOrThrowStatements(branchTargets: List<Unit>) = branchTargets.all {
-            cfg.getSuccsOf(it).size == 0 && when (it) {
+            cfg.getSuccsOf(it).isEmpty() && when (it) {
                 is ReturnStmt -> !valueFilter.retain(it.op)
                 is ReturnVoidStmt -> true
                 is ThrowStmt -> !valueFilter.retain(it.op)
