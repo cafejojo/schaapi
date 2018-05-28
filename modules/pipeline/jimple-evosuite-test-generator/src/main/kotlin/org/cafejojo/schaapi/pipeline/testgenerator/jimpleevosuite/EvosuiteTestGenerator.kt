@@ -38,6 +38,7 @@ class EvoSuiteRunner(
         "-class", fullyQualifiedClassName,
         "-base_dir", outputDirectory,
         "-projectCP", classpath,
+        "-Dno_runtime_dependency=true",
         "-Dsearch_budget=$generationTimeoutSeconds",
         "-Dstatistics_backend=NONE"
     ).start()
