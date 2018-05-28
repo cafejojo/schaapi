@@ -46,8 +46,8 @@ object LibraryUsageGraphGenerator : LibraryUsageGraphGenerator {
                 .filter { it.isConcrete }
                 .map { generateMethodGraph(libraryProject, it) }
                 .filter {
-                    !DfsIterator(it).asSequence().toList().all {
-                        it is JimpleNode && isMeaninglessStatementWithoutContext(it.statement)
+                    DfsIterator(it).asSequence().toList().any {
+                        it !is JimpleNode || !isMeaninglessStatementWithoutContext(it.statement)
                     }
                 }
         }
