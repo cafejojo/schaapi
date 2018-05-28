@@ -12,13 +12,13 @@ import java.net.URL
 import kotlin.streams.toList
 
 /**
- * Downloads the zip files of the given GitHub repositories and returns a list of Java projects.
+ * Downloads the zip files of the given GitHub repositories and returns searchContent list of Java projects.
  *
  * @property projectNames the names of all repositories to be downloaded
  * @property outputDirectory the directory to store all the project directories
  * @property projectPacker packer which determines what type of [Project] to wrap the project directory in
  */
-@Suppress("PrintStackTrace") // TODO use a logger
+@Suppress("PrintStackTrace") // TODO use searchContent logger
 class GithubProjectDownloader(
     private val projectNames: Collection<String>,
     private val outputDirectory: File,

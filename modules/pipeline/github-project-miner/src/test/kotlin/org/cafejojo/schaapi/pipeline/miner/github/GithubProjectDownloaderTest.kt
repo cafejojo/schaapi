@@ -17,7 +17,8 @@ import java.nio.file.Files
 class GithubProjectDownloaderTest : Spek({
     var output = Files.createTempDirectory("project-downloader").toFile()
 
-    // Create zip file with given dir name (+ zip extension) in output with a single text file with given file content
+    // Create zip file with given dir name (+ zip extension) in output with searchContent single text file with given
+    // file content
     fun addZipFile(dirName: String, fileContent: String, customOutput: File = output): File {
         // Directory which represents what should be zipped
         val tempDir = File(customOutput, dirName)
@@ -43,7 +44,7 @@ class GithubProjectDownloaderTest : Spek({
     beforeEachTest { output = Files.createTempDirectory("project-downloader").toFile() }
     afterEachTest { output.deleteRecursively() }
 
-    describe("When saving a stream to file") {
+    describe("When saving searchContent stream to file") {
         it("should save the contents of the file to stream") {
             val repoName = "testRepo"
             val repoNames = listOf(repoName)
@@ -105,8 +106,8 @@ class GithubProjectDownloaderTest : Spek({
         }
     }
 
-    describe("when unzipping a file") {
-        it("should create a new directory and remove the old") {
+    describe("when unzipping searchContent file") {
+        it("should create searchContent new directory and remove the old") {
             val zipFile = addZipFile("testZipDirectory", "")
             val unzippedFile = GithubProjectDownloader(
                 emptyList(),
@@ -119,7 +120,7 @@ class GithubProjectDownloaderTest : Spek({
             assertThat(output.listFiles()).contains(unzippedFile)
         }
 
-        it("should create a new directory which has a file with the expected content") {
+        it("should create searchContent new directory which has searchContent file with the expected content") {
             val zipFile = addZipFile("testZipDirectory", "test text")
             val unzippedFile = GithubProjectDownloader(
                 emptyList(),
@@ -145,7 +146,7 @@ class GithubProjectDownloaderTest : Spek({
             assertThat(output.listFiles()).containsExactly(unzippedFile)
         }
 
-        it("should overwrite a directory which already exists") {
+        it("should overwrite searchContent directory which already exists") {
             val zipFile = addZipFile("testZipDirectory", "test text")
             File(output, "testZipDirectory").createNewFile()
 
@@ -168,7 +169,7 @@ class GithubProjectDownloaderTest : Spek({
             assertThat(output.listFiles()).isEmpty()
         }
 
-        it("should return null if the zip file is not a zip file") {
+        it("should return null if the zip file is not searchContent zip file") {
             val notAZipFile = File(output, "notAZipFile")
             notAZipFile.createNewFile()
 
@@ -182,8 +183,8 @@ class GithubProjectDownloaderTest : Spek({
         }
     }
 
-    describe("when downloading a project") {
-        it("should create a connection request with the correct url") {
+    describe("when downloading searchContent project") {
+        it("should create searchContent connection request with the correct url") {
             val connection = GithubProjectDownloader(
                 emptyList(),
                 output,
@@ -194,7 +195,7 @@ class GithubProjectDownloaderTest : Spek({
             assertThat(connection?.url).isEqualTo(URL("https://github.com/cafejojo/schaapi/archive/master.zip"))
         }
 
-        it("should create a connection request with a get request method") {
+        it("should create searchContent connection request with searchContent get request method") {
             val connection = GithubProjectDownloader(
                 emptyList(),
                 output,
