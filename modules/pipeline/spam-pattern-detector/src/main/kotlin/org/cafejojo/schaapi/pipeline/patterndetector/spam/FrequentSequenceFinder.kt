@@ -42,12 +42,9 @@ class FrequentSequenceFinder(
      * @return a mapping from the frequent patterns to sequences which contain said sequence
      */
     fun mapFrequentSequencesToPaths(): Map<List<Node>, List<List<Node>>> =
-        frequentSequences
-            .map { sequence ->
-                Pair(sequence,
-                    allPaths.filter { pathContainsSequence(it, sequence, comparator) })
-            }
-            .toMap()
+        frequentSequences.map { sequence ->
+            Pair(sequence, allPaths.filter { pathContainsSequence(it, sequence, comparator) })
+        }.toMap()
 
     private fun runAlgorithm(pattern: List<Node>, extensions: Set<Node>) {
         frequentSequences.add(pattern)
