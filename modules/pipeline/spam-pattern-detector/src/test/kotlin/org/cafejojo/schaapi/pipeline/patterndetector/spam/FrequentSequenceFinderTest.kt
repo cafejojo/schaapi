@@ -2,7 +2,6 @@ package org.cafejojo.schaapi.pipeline.patterndetector.spam
 
 import org.assertj.core.api.Assertions.assertThat
 import org.cafejojo.schaapi.models.SimpleNode
-import org.cafejojo.schaapi.pipeline.patterndetector.spam.FrequentSequenceFinder
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it

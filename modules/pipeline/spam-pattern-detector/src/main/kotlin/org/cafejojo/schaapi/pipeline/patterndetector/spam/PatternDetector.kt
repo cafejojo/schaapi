@@ -5,7 +5,6 @@ import org.cafejojo.schaapi.models.Node
 import org.cafejojo.schaapi.models.PathEnumerator
 import org.cafejojo.schaapi.pipeline.Pattern
 import org.cafejojo.schaapi.pipeline.PatternDetector
-import org.cafejojo.schaapi.pipeline.patterndetector.spam.FrequentSequenceFinder
 
 /**
  * Represents a pattern detector.
