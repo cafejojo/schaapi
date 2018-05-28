@@ -1,4 +1,5 @@
 apply plugin: "application"
+apply from: "$rootDir/gradle/integration-tests.gradle"
 
 mainClassName = "org.cafejojo.schaapi.CommandLineInterfaceKt"
 
