@@ -1,0 +1,3 @@
+dependencies {
+    compile group: "com.auth0", name: "java-jwt", version: javaJwtVersion
+}
