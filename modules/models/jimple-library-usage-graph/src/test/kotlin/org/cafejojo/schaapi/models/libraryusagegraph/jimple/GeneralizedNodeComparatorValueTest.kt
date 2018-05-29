@@ -17,7 +17,7 @@ internal class GeneralizedNodeComparatorValueTest : Spek({
     }
 
     describe("generalized value comparison of statements") {
-                context("(in)equality depends on the template") {
+        context("(in)equality depends on the template") {
             it("copies tags to two instances") {
                 val template = JimpleNode(mockThrowStmt(mockValue("shared")))
                 val instanceA = JimpleNode(mockThrowStmt(mockValue("shared")))

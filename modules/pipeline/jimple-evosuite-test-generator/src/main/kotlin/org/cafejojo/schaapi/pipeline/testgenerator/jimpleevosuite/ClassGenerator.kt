@@ -51,7 +51,6 @@ class ClassGenerator(className: String) {
      */
     fun generateMethod(methodName: String, nodes: List<JimpleNode>) {
         val statements = nodes.map { it.statement }
-
         val methodParams = findUnboundVariables(statements)
         val sootMethod = SootMethod(methodName, methodParams.map { it.type }, VoidType.v())
         sootMethod.modifiers = Modifier.PUBLIC.or(Modifier.STATIC)

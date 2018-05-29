@@ -37,7 +37,7 @@ class GeneralizedNodeComparator : GeneralizedNodeComparator<JimpleNode> {
      * @param instance the instance [Node]
      * @return true iff [template] and [instance] have the same structure
      */
-    override fun structuresAreEqual(template: JimpleNode, instance: JimpleNode): Boolean = template.equivTo(instance)
+    override fun structuresAreEqual(template: JimpleNode, instance: JimpleNode) = template.equivTo(instance)
 
     /**
      * Returns true iff [template] and [instance] have the same generalized values.
