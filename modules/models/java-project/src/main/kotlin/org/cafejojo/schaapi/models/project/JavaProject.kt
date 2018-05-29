@@ -1,4 +1,4 @@
-package org.cafejojo.schaapi.models.project.java
+package org.cafejojo.schaapi.models.project
 
 import org.cafejojo.schaapi.models.Project
 import java.io.File

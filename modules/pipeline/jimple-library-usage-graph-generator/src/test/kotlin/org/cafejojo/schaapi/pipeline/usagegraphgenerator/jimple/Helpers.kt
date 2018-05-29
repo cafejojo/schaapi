@@ -1,6 +1,6 @@
 package org.cafejojo.schaapi.pipeline.usagegraphgenerator.jimple
 
-import org.cafejojo.schaapi.models.project.java.JavaProject
+import org.cafejojo.schaapi.models.project.JavaProject
 import java.io.File
 
 internal data class TestProject(

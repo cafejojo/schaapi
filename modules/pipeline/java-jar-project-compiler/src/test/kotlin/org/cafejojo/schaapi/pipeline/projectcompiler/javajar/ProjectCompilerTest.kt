@@ -1,7 +1,7 @@
 package org.cafejojo.schaapi.pipeline.projectcompiler.javajar
 
 import org.assertj.core.api.Assertions.assertThat
-import org.cafejojo.schaapi.models.project.java.JavaJarProject
+import org.cafejojo.schaapi.models.project.JavaJarProject
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
