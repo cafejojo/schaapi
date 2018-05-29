@@ -47,17 +47,18 @@ class FrequentSequenceFinder<N : Node>(
             Pair(sequence, allPaths.filter { pathUtil.pathContainsSequence(it, sequence, comparator) })
         }.toMap()
 
+    @Suppress("UnsafeCast") // pattern: List<N> + extension: N is always a List<N>
     private fun runAlgorithm(pattern: List<N>, extensions: Set<N>) {
         frequentSequences.add(pattern)
 
         val frequentExtensions = extensions.mapNotNull { extension ->
-            val extendedPattern = pattern.toMutableList().apply { add(extension) }
+            val extendedPattern: List<N> = (pattern + extension) as List<N>
             val support = allPaths.count { path -> pathUtil.pathContainsSequence(path, extendedPattern, comparator) }
 
             if (support >= minimumCount) extension
             else null
         }.toSet()
 
-        frequentExtensions.forEach { runAlgorithm(pattern.toMutableList().apply { add(it) }, frequentExtensions) }
+        frequentExtensions.forEach { runAlgorithm((pattern + it) as List<N>, frequentExtensions) }
     }
 }

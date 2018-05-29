@@ -88,19 +88,21 @@ class FrequentSequenceFinder<N : Node>(
                 Pair(sequence, allPaths.filter { pathUtil.pathContainsSequence(it, sequence, comparator) }) }
             .toMap()
 
+    @Suppress("UnsafeCast") // prefix: List<N> + extension: N is always a List<N>
     private fun runAlgorithm(prefix: List<N> = emptyList(), projectedPaths: Collection<List<N>> = allPaths) {
         frequentItems.forEach { frequentItem ->
             if (projectedPaths.any { pathContainsPrefix(it, prefix, frequentItem) }) {
-                val newPrefix = prefix.toMutableList().apply { add(frequentItem) }
-                frequentPatterns += newPrefix
+                val newPrefix = (prefix + frequentItem) as List<N>
+                frequentPatterns += newPrefix.toList()
 
                 runAlgorithm(newPrefix, extractSuffixes(prefix, allPaths))
             }
         }
     }
 
+    @Suppress("UnsafeCast") // prefix: List<N> + extension: N is always a List<N>
     private fun pathContainsPrefix(path: List<N>, prefix: List<N>, frequentItem: N) =
-        pathUtil.pathContainsSequence(path, prefix.toMutableList().apply { add(frequentItem) }, comparator) ||
+        pathUtil.pathContainsSequence(path, (prefix + frequentItem) as List<N>, comparator) ||
             prefix.isNotEmpty() && pathUtil.pathContainsSequence(path, listOf(prefix.last(), frequentItem), comparator)
 
     internal fun extractSuffixes(prefix: List<N>, paths: Collection<List<N>>): List<List<N>> =
