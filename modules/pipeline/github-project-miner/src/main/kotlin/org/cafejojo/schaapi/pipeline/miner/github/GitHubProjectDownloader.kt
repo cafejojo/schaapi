@@ -19,10 +19,10 @@ import kotlin.streams.toList
  * @property projectPacker packer which determines what type of [Project] to wrap the project directory in
  */
 @Suppress("PrintStackTrace") // TODO use searchContent logger
-class GitHubProjectDownloader(
+class GitHubProjectDownloader<P : Project>(
     private val projectNames: Collection<String>,
     private val outputDirectory: File,
-    private val projectPacker: (File) -> Project
+    private val projectPacker: (File) -> P
 ) {
     /**
      * Starts downloading repositories.
@@ -35,14 +35,14 @@ class GitHubProjectDownloader(
      *
      * @return list of [Project]s which reference the downloaded projects from GitHub
      */
-    fun download(): List<Project> =
+    fun download(): List<P> =
         projectNames
             .parallelStream()
             .map { downloadAndSaveProject(it) }
             .toList()
             .filterNotNull()
 
-    private fun downloadAndSaveProject(projectName: String): Project? {
+    private fun downloadAndSaveProject(projectName: String): P? {
         val connection = getConnection(projectName) ?: return null
 
         try {
