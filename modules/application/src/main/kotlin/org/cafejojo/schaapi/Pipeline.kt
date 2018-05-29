@@ -11,10 +11,10 @@ import org.cafejojo.schaapi.pipeline.TestGenerator
 /**
  * Represents the complete Schaapi pipeline.
  */
-class Pipeline<N : Node>(
-    private val libraryProjectCompiler: ProjectCompiler,
-    private val userProjectCompiler: ProjectCompiler,
-    private val libraryUsageGraphGenerator: LibraryUsageGraphGenerator<N>,
+class Pipeline<N : Node, LP : Project, UP : Project>(
+    private val libraryProjectCompiler: ProjectCompiler<LP>,
+    private val userProjectCompiler: ProjectCompiler<UP>,
+    private val libraryUsageGraphGenerator: LibraryUsageGraphGenerator<LP, UP, N>,
     private val patternDetector: PatternDetector<N>,
     private val patternFilter: PatternFilter<N>,
     private val testGenerator: TestGenerator<N>
@@ -22,7 +22,7 @@ class Pipeline<N : Node>(
     /**
      * Executes all steps in the pipeline.
      */
-    fun run(projects: List<Project>, libraryProject: Project) {
+    fun run(projects: List<UP>, libraryProject: LP) {
         libraryProjectCompiler.compile(libraryProject)
 
         projects.map { userProjectCompiler.compile(it) }
