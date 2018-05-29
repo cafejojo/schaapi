@@ -1,10 +1,11 @@
 package org.cafejojo.schaapi.pipeline.patterndetector.prefixspan
 
-import org.cafejojo.schaapi.models.CustomEqualsHashMap
 import org.cafejojo.schaapi.models.CustomEqualsHashSet
 import org.cafejojo.schaapi.models.GeneralizedNodeComparator
 import org.cafejojo.schaapi.models.Node
 import org.cafejojo.schaapi.models.Node.Companion.equiv
+import org.cafejojo.schaapi.models.PathUtil.findFrequentNodesInPaths
+import org.cafejojo.schaapi.models.PathUtil.pathContainsSequence
 
 /**
  * Finds all the frequent sequences of [Node]s in the given collection of paths.
@@ -74,7 +75,7 @@ class FrequentSequenceFinder(
      * @return the list of sequences, each a list of nodes, that are common within [allPaths]
      */
     fun findFrequentSequences(): List<List<Node>> {
-        generateFrequentItems(minimumCount)
+        frequentItems.addAll(findFrequentNodesInPaths(allPaths, minimumCount))
         runAlgorithm()
 
         return frequentSequences
@@ -89,7 +90,7 @@ class FrequentSequenceFinder(
      */
     fun mapFrequentSequencesToPaths(): Map<List<Node>, List<List<Node>>> =
         frequentSequences
-            .map { sequence -> Pair(sequence, allPaths.filter { pathContainsSequence(it, sequence) }) }
+            .map { sequence -> Pair(sequence, allPaths.filter { pathContainsSequence(it, sequence, comparator) }) }
             .toMap()
 
     private fun runAlgorithm(prefix: List<Node> = emptyList(), projectedPaths: Collection<List<Node>> = allPaths) {
@@ -104,28 +105,6 @@ class FrequentSequenceFinder(
     }
 
     private fun pathContainsPrefix(path: List<Node>, prefix: List<Node>, frequentItem: Node) =
-        pathContainsSequence(path, prefix + frequentItem) ||
-            prefix.isNotEmpty() && pathContainsSequence(path, listOf(prefix.last(), frequentItem))
-
-    /**
-     * Checks whether a given sequence can be found within a given path.
-     *
-     * @param path the path which may contain the given sequence
-     * @param sequence the sequence which may be contained in path
-     * @return true if path contains the given sequence
-     */
-    internal fun pathContainsSequence(path: List<Node>, sequence: List<Node>) =
-        path.indices.any { pathIndex ->
-            !sequence.indices.any { sequenceIndex ->
-                pathIndex + sequenceIndex >= path.size ||
-                    !comparator.satisfies(path[pathIndex + sequenceIndex], sequence[sequenceIndex])
-            }
-        }
-
-    private fun generateFrequentItems(minimumCount: Int) {
-        val nodeCounts: MutableMap<Node, Int> = CustomEqualsHashMap(Node.Companion::equiv, Node::equivHashCode)
-        allPaths.forEach { it.forEach { node -> nodeCounts[node] = nodeCounts[node]?.inc() ?: 1 } }
-
-        frequentItems.addAll(nodeCounts.filter { (_, amount) -> amount >= minimumCount }.keys)
-    }
+        pathContainsSequence(path, prefix + frequentItem, comparator) ||
+            prefix.isNotEmpty() && pathContainsSequence(path, listOf(prefix.last(), frequentItem), comparator)
 }
