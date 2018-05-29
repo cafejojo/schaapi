@@ -27,3 +27,5 @@ includeModule "pipeline", "jimple-library-usage-graph-generator"
 includeModule "pipeline", "jimple-pattern-filter"
 includeModule "pipeline", "prefix-span-pattern-detector"
 includeModule "pipeline", "spam-pattern-detector"
+
+includeModule "web"
