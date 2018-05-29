@@ -86,6 +86,7 @@ class FrequentSequenceFinder<N : Node>(
             .map { sequence -> Pair(sequence, allPaths.filter { pathContainsSequence(it, sequence) }) }
             .toMap()
 
+    @Suppress("UnsafeCast") // (prefix: List<N> + frequentItem: N) is always a List<N>
     private fun runAlgorithm(prefix: List<N> = emptyList(), projectedPaths: Collection<List<N>> = allPaths) {
         frequentItems.forEach { frequentItem ->
             if (projectedPaths.any { pathContainsPrefix(it, prefix, frequentItem) }) {
@@ -97,6 +98,7 @@ class FrequentSequenceFinder<N : Node>(
         }
     }
 
+    @Suppress("UnsafeCast") // (prefix: List<N> + frequentItem: N) is always a List<N>
     private fun pathContainsPrefix(path: List<N>, prefix: List<N>, frequentItem: N) =
         pathContainsSequence(path, (prefix + frequentItem) as List<N>) ||
             prefix.isNotEmpty() && pathContainsSequence(path, listOf(prefix.last(), frequentItem))

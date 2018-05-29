@@ -15,7 +15,7 @@ internal object PatternFilterTest : Spek({
                 listOf(SimpleNode())
             )
 
-            val filteredPatterns = PatternFilter().filter(patterns)
+            val filteredPatterns = PatternFilter<SimpleNode>().filter(patterns)
 
             assertThat(filteredPatterns).isEqualTo(patterns)
         }
@@ -28,7 +28,7 @@ internal object PatternFilterTest : Spek({
                 emptyList()
             )
 
-            val filteredPatterns = PatternFilter(
+            val filteredPatterns = PatternFilter<SimpleNode>(
                 NoEmptyPatternFilterRule(),
                 NoLengthOnePatternFilterRule()
             ).filter(patterns)
@@ -38,10 +38,10 @@ internal object PatternFilterTest : Spek({
     }
 })
 
-private class NoLengthOnePatternFilterRule : PatternFilterRule {
-    override fun retain(pattern: List<Node>) = pattern.size != 1
+private class NoLengthOnePatternFilterRule<N : Node> : PatternFilterRule<N> {
+    override fun retain(pattern: List<N>) = pattern.size != 1
 }
 
-private class NoEmptyPatternFilterRule : PatternFilterRule {
-    override fun retain(pattern: List<Node>) = pattern.isNotEmpty()
+private class NoEmptyPatternFilterRule<N : Node> : PatternFilterRule<N> {
+    override fun retain(pattern: List<N>) = pattern.isNotEmpty()
 }

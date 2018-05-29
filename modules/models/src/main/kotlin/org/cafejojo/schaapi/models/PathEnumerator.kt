@@ -25,6 +25,7 @@ class PathEnumerator<N : Node>(private val entryNode: N) {
      *
      * @return list of found paths, with all [Node]s guaranteed to be of type [N]
      */
+    @Suppress("UnsafeCast") // We assume that all artificial Nodes are removed
     fun enumerate(): List<List<N>> {
         recursivelyEnumerate(entryNode)
         entryNode.removeExitNodes()

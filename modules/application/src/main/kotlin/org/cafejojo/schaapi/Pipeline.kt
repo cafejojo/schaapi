@@ -1,5 +1,6 @@
 package org.cafejojo.schaapi
 
+import org.cafejojo.schaapi.models.Node
 import org.cafejojo.schaapi.models.Project
 import org.cafejojo.schaapi.pipeline.LibraryUsageGraphGenerator
 import org.cafejojo.schaapi.pipeline.PatternDetector
@@ -10,13 +11,13 @@ import org.cafejojo.schaapi.pipeline.TestGenerator
 /**
  * Represents the complete Schaapi pipeline.
  */
-class Pipeline(
+class Pipeline<N : Node>(
     private val libraryProjectCompiler: ProjectCompiler,
     private val userProjectCompiler: ProjectCompiler,
-    private val libraryUsageGraphGenerator: LibraryUsageGraphGenerator,
-    private val patternDetector: PatternDetector,
-    private val patternFilter: PatternFilter,
-    private val testGenerator: TestGenerator
+    private val libraryUsageGraphGenerator: LibraryUsageGraphGenerator<N>,
+    private val patternDetector: PatternDetector<N>,
+    private val patternFilter: PatternFilter<N>,
+    private val testGenerator: TestGenerator<N>
 ) {
     /**
      * Executes all steps in the pipeline.

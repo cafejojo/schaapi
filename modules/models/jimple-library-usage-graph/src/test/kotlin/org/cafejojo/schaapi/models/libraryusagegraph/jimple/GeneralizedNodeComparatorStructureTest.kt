@@ -3,8 +3,6 @@ package org.cafejojo.schaapi.models.libraryusagegraph.jimple
 import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.mock
 import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.cafejojo.schaapi.models.Node
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.context
 import org.jetbrains.spek.api.dsl.describe
@@ -20,26 +18,6 @@ internal class GeneralizedNodeComparatorStructureTest : Spek({
 
     beforeEachTest {
         comparator = GeneralizedNodeComparator()
-    }
-
-    describe("bad weather cases") {
-        it("throws an exception if a non-JimpleNode template is given") {
-            val template = mock<Node> {}
-            val instance = JimpleNode(mockStmt())
-
-            assertThatThrownBy { comparator.generalizedValuesAreEqual(template, instance) }
-                .isExactlyInstanceOf(IllegalArgumentException::class.java)
-                .hasMessage("Jimple GeneralizedNodeComparator cannot handle non-Jimple nodes.")
-        }
-
-        it("throws an exception if a non-JimpleNode instance is given") {
-            val template = JimpleNode(mockStmt())
-            val instance = mock<Node> {}
-
-            assertThatThrownBy { comparator.generalizedValuesAreEqual(template, instance) }
-                .isExactlyInstanceOf(IllegalArgumentException::class.java)
-                .hasMessage("Jimple GeneralizedNodeComparator cannot handle non-Jimple nodes.")
-        }
     }
 
     describe("structural comparison of statements") {
@@ -376,10 +354,14 @@ internal class GeneralizedNodeComparatorStructureTest : Spek({
             }
 
             it("finds self-equality at two levels of nesting") {
-                val stmt = JimpleNode(mockIfStmt(SimpleBinopExpr(
-                    SimpleBinopExpr("left-left", "left-right"),
-                    SimpleBinopExpr("right-left", "right-right")
-                )))
+                val stmt = JimpleNode(
+                    mockIfStmt(
+                        SimpleBinopExpr(
+                            SimpleBinopExpr("left-left", "left-right"),
+                            SimpleBinopExpr("right-left", "right-right")
+                        )
+                    )
+                )
 
                 assertThat(comparator.satisfies(stmt, stmt)).isTrue()
             }
@@ -392,14 +374,22 @@ internal class GeneralizedNodeComparatorStructureTest : Spek({
             }
 
             it("finds equality for two equivalent nodes with two levels of nesting") {
-                val template = JimpleNode(mockIfStmt(SimpleBinopExpr(
-                    SimpleBinopExpr("shared-left-left", "shared-left-right"),
-                    SimpleBinopExpr("shared-right-left", "shared-right-right")
-                )))
-                val instance = JimpleNode(mockIfStmt(SimpleBinopExpr(
-                    SimpleBinopExpr("shared-left-left", "shared-left-right"),
-                    SimpleBinopExpr("shared-right-left", "shared-right-right")
-                )))
+                val template = JimpleNode(
+                    mockIfStmt(
+                        SimpleBinopExpr(
+                            SimpleBinopExpr("shared-left-left", "shared-left-right"),
+                            SimpleBinopExpr("shared-right-left", "shared-right-right")
+                        )
+                    )
+                )
+                val instance = JimpleNode(
+                    mockIfStmt(
+                        SimpleBinopExpr(
+                            SimpleBinopExpr("shared-left-left", "shared-left-right"),
+                            SimpleBinopExpr("shared-right-left", "shared-right-right")
+                        )
+                    )
+                )
 
                 assertThat(comparator.satisfies(template, instance)).isTrue()
             }
@@ -412,14 +402,22 @@ internal class GeneralizedNodeComparatorStructureTest : Spek({
             }
 
             it("finds inequality for two nodes with different types at two levels of nesting") {
-                val template = JimpleNode(mockIfStmt(SimpleBinopExpr(
-                    SimpleBinopExpr("left-left", "template-left-right"),
-                    SimpleBinopExpr("right-left", "right-right")
-                )))
-                val instance = JimpleNode(mockIfStmt(SimpleBinopExpr(
-                    SimpleBinopExpr("left-left", "instance-left-right"),
-                    SimpleBinopExpr("right-left", "right-right")
-                )))
+                val template = JimpleNode(
+                    mockIfStmt(
+                        SimpleBinopExpr(
+                            SimpleBinopExpr("left-left", "template-left-right"),
+                            SimpleBinopExpr("right-left", "right-right")
+                        )
+                    )
+                )
+                val instance = JimpleNode(
+                    mockIfStmt(
+                        SimpleBinopExpr(
+                            SimpleBinopExpr("left-left", "instance-left-right"),
+                            SimpleBinopExpr("right-left", "right-right")
+                        )
+                    )
+                )
 
                 assertThat(comparator.satisfies(template, instance)).isFalse()
             }
