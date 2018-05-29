@@ -10,7 +10,7 @@ import java.io.File
  * @property projectPacker the packer that transforms [File]s into projects. It may be invoked on both directories and
  * files.
  */
-class ProjectMiner(private val projectPacker: (File) -> Project) : ProjectMiner<SearchOptions> {
-    override fun mine(searchOptions: SearchOptions) =
+class ProjectMiner<P : Project>(private val projectPacker: (File) -> P) : ProjectMiner<P, SearchOptions<P>> {
+    override fun mine(searchOptions: SearchOptions<P>) =
         searchOptions.directory.listFiles()?.map { projectPacker(it) } ?: emptyList()
 }
