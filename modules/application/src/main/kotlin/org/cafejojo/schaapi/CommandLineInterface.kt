@@ -7,8 +7,8 @@ import org.apache.commons.cli.Option
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.cafejojo.schaapi.models.libraryusagegraph.jimple.GeneralizedNodeComparator
-import org.cafejojo.schaapi.models.project.java.JavaJarProject
-import org.cafejojo.schaapi.models.project.java.JavaMavenProject
+import org.cafejojo.schaapi.models.project.JavaJarProject
+import org.cafejojo.schaapi.models.project.JavaMavenProject
 import org.cafejojo.schaapi.pipeline.PatternFilter
 import org.cafejojo.schaapi.pipeline.patterndetector.prefixspan.PatternDetector
 import org.cafejojo.schaapi.pipeline.patternfilter.jimple.IncompleteInitPatternFilterRule

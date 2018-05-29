@@ -1,7 +1,7 @@
 package org.cafejojo.schaapi.pipeline.projectcompiler.javajar
 
 import org.cafejojo.schaapi.models.Project
-import org.cafejojo.schaapi.models.project.java.JavaJarProject
+import org.cafejojo.schaapi.models.project.JavaJarProject
 import org.cafejojo.schaapi.pipeline.ProjectCompiler
 import java.io.FileInputStream
 import java.util.jar.JarInputStream
