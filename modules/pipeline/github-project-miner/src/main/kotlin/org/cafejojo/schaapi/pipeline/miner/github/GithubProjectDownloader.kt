@@ -63,7 +63,9 @@ class GithubProjectDownloader(
         )
 
         try {
+            // TODO logo if output file existed and had to be deleted
             if (outputFile.exists()) outputFile.delete()
+            // TODO log if creation of new file returns false
             if (outputFile.createNewFile()) input.copyTo(FileOutputStream(outputFile))
         } catch (e: IOException) {
             e.printStackTrace() // TODO use logger

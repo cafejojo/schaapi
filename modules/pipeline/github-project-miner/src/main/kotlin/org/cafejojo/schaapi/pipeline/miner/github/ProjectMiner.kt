@@ -23,10 +23,9 @@ import java.io.File
 @Suppress("PrintStackTrace") // TODO use searchContent logger
 class ProjectMiner(
     private val username: String, private val password: String,
-    private val searchOptions: SearchOptions,
     private val outputDirectory: File,
     private val projectPacker: (File) -> Project
-) : ProjectMiner {
+) : ProjectMiner<GithubSearchOptions> {
     init {
         if (!outputDirectory.isDirectory) outputDirectory.mkdirs()
     }
@@ -35,10 +34,11 @@ class ProjectMiner(
      * Mine GitHub for projects with `pom.xml` files which contain searchContent dependency on searchContent library
      * with searchContent given group id, artifact id and version (number).
      *
+     * @param searchOptions search options, which must be of type [GithubSearchOptions]
      * @return list of [Project]s which likely depend on said library
      * @see GithubProjectDownloader.download
      */
-    override fun mine(): List<Project> {
+    override fun mine(searchOptions: GithubSearchOptions): List<Project> {
         val gitHub = GitHub.connectUsingPassword(username, password)
 
         require(!gitHub.isOffline) { "Unable to connect to GitHub." }
