@@ -1,9 +1,6 @@
 package org.cafejojo.schaapi.models.libraryusagegraph.jimple
 
-import com.nhaarman.mockito_kotlin.mock
 import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.cafejojo.schaapi.models.Node
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.context
 import org.jetbrains.spek.api.dsl.describe
@@ -20,26 +17,6 @@ internal class GeneralizedNodeComparatorValueTest : Spek({
     }
 
     describe("generalized value comparison of statements") {
-        context("bad weather cases") {
-            it("throws an exception if a non-JimpleNode template is given") {
-                val template = mock<Node> {}
-                val instance = JimpleNode(mockStmt())
-
-                assertThatThrownBy { comparator.generalizedValuesAreEqual(template, instance) }
-                    .isExactlyInstanceOf(IllegalArgumentException::class.java)
-                    .hasMessage("Jimple GeneralizedNodeComparator cannot handle non-Jimple nodes.")
-            }
-
-            it("throws an exception if a non-JimpleNode instance is given") {
-                val template = JimpleNode(mockStmt())
-                val instance = mock<Node> {}
-
-                assertThatThrownBy { comparator.generalizedValuesAreEqual(template, instance) }
-                    .isExactlyInstanceOf(IllegalArgumentException::class.java)
-                    .hasMessage("Jimple GeneralizedNodeComparator cannot handle non-Jimple nodes.")
-            }
-        }
-
         context("(in)equality depends on the template") {
             it("copies tags to two instances") {
                 val template = JimpleNode(mockThrowStmt(mockValue("shared")))

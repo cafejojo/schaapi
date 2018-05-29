@@ -11,7 +11,7 @@ import java.util.Stack
  *
  * @property entryNode the entry node of the method graph.
  */
-class PathEnumerator(private val entryNode: Node) {
+class PathEnumerator<N : Node>(private val entryNode: N) {
     private val allPaths = mutableListOf<List<Node>>()
     private val visited = Stack<Node>()
     private val exitNode = entryNode.connectLeavesToExitNode()
@@ -22,11 +22,15 @@ class PathEnumerator(private val entryNode: Node) {
 
     /**
      * Enumerates all paths of the control flow graph.
+     *
+     * @return list of found paths, with all [Node]s guaranteed to be of type [N]
      */
-    fun enumerate(): List<List<Node>> {
+    @Suppress("UnsafeCast") // We assume that all artificial Nodes are removed
+    fun enumerate(): List<List<N>> {
         recursivelyEnumerate(entryNode)
         entryNode.removeExitNodes()
-        return allPaths.toList()
+
+        return allPaths as List<List<N>>
     }
 
     private fun recursivelyEnumerate(node: Node) {

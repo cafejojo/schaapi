@@ -5,8 +5,8 @@ package org.cafejojo.schaapi.models
  *
  * Two [Node]s are considered equal if they have the same reference.
  */
-class TestNodeComparator : GeneralizedNodeComparator {
-    override fun structuresAreEqual(template: Node, instance: Node) = template === instance
-    override fun generalizedValuesAreEqual(template: Node, instance: Node) = template === instance
-    override fun satisfies(template: Node, instance: Node) = template === instance
+class TestNodeComparator<N : Node> : GeneralizedNodeComparator<N> {
+    override fun structuresAreEqual(template: N, instance: N) = template === instance
+    override fun generalizedValuesAreEqual(template: N, instance: N) = template === instance
+    override fun satisfies(template: N, instance: N) = template === instance
 }

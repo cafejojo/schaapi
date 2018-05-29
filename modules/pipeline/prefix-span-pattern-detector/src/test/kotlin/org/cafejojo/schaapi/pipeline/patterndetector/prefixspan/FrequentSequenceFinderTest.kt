@@ -2,7 +2,6 @@ package org.cafejojo.schaapi.pipeline.patterndetector.prefixspan
 
 import org.assertj.core.api.Assertions.assertThat
 import org.cafejojo.schaapi.models.SimpleNode
-import org.cafejojo.schaapi.pipeline.patterndetector.prefixspan.FrequentSequenceFinder.Companion.extractSuffixes
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
@@ -15,7 +14,8 @@ internal class FrequentSequenceFinderTest : Spek({
             val path1 = listOf(SimpleNode(), SimpleNode())
             val path2 = listOf(SimpleNode())
 
-            assertThat(extractSuffixes(prefix, listOf(path1, path2))).isEmpty()
+            val sequenceFinder = FrequentSequenceFinder(emptyList(), 0, TestNodeComparator())
+            assertThat(sequenceFinder.extractSuffixes(prefix, listOf(path1, path2))).isEmpty()
         }
 
         it("should extract the suffix from paths with the given prefix") {
@@ -26,7 +26,8 @@ internal class FrequentSequenceFinderTest : Spek({
             val path1 = listOf(node1, node2)
             val path2 = listOf(SimpleNode())
 
-            assertThat(extractSuffixes(prefix, listOf(path1, path2))).containsExactly(listOf(node2))
+            val sequenceFinder = FrequentSequenceFinder(emptyList(), 0, TestNodeComparator())
+            assertThat(sequenceFinder.extractSuffixes(prefix, listOf(path1, path2))).containsExactly(listOf(node2))
         }
     }
 
@@ -124,7 +125,7 @@ internal class FrequentSequenceFinderTest : Spek({
             val patternDetector = FrequentSequenceFinder(paths, 2, TestNodeComparator())
 
             patternDetector.findFrequentSequences()
-            val patterns = patternDetector.mapFrequentSequencesToPaths()
+            val patterns = patternDetector.mapFrequentPatternsToPaths()
 
             assertThat(patterns[listOf(node1, node2, node3, node4)]).isEqualTo(listOf(path1, path3))
         }

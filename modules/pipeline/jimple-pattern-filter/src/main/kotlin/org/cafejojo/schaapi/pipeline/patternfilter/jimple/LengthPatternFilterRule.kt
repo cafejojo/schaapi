@@ -1,6 +1,6 @@
 package org.cafejojo.schaapi.pipeline.patternfilter.jimple
 
-import org.cafejojo.schaapi.models.Node
+import org.cafejojo.schaapi.models.libraryusagegraph.jimple.JimpleNode
 import org.cafejojo.schaapi.pipeline.PatternFilterRule
 
 private const val DEFAULT_MINIMUM_PATTERN_LENGTH = 2
@@ -11,7 +11,7 @@ private const val DEFAULT_MINIMUM_PATTERN_LENGTH = 2
  * @property minimumLength the minimum length (inclusive) a pattern should have for it to be retained, which must at
  * least be 1. [DEFAULT_MINIMUM_PATTERN_LENGTH] by default
  */
-class LengthPatternFilterRule(private val minimumLength: Int = DEFAULT_MINIMUM_PATTERN_LENGTH)
-    : PatternFilterRule {
-    override fun retain(pattern: List<Node>): Boolean = pattern.size >= minimumLength
+class LengthPatternFilterRule(private val minimumLength: Int = DEFAULT_MINIMUM_PATTERN_LENGTH) :
+    PatternFilterRule<JimpleNode> {
+    override fun retain(pattern: List<JimpleNode>): Boolean = pattern.size >= minimumLength
 }

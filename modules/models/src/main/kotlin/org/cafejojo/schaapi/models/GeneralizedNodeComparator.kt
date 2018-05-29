@@ -10,7 +10,7 @@ package org.cafejojo.schaapi.models
  * While the template may be chosen arbitrarily from a set of instances, the selection should not change between
  * comparisons of instances.
  */
-interface GeneralizedNodeComparator {
+interface GeneralizedNodeComparator<N : Node> {
     /**
      * Returns true iff [instance] satisfies the structure and generalized values of [template].
      *
@@ -18,7 +18,7 @@ interface GeneralizedNodeComparator {
      * @param instance the instance [Node]
      * @return true iff [instance] satisfies the structure and generalized values of [template]
      */
-    fun satisfies(template: Node, instance: Node): Boolean
+    fun satisfies(template: N, instance: N): Boolean
 
     /**
      * Returns true iff [template] and [instance] have the same structure.
@@ -27,7 +27,7 @@ interface GeneralizedNodeComparator {
      * @param instance the instance [Node]
      * @return true iff [template] and [instance] have the same structure
      */
-    fun structuresAreEqual(template: Node, instance: Node): Boolean
+    fun structuresAreEqual(template: N, instance: N): Boolean
 
     /**
      * Returns true iff [template] and [instance] have the same generalized values.
@@ -36,5 +36,5 @@ interface GeneralizedNodeComparator {
      * @param instance the instance [Node]
      * @return true iff [template] and [instance] have the same generalized values
      */
-    fun generalizedValuesAreEqual(template: Node, instance: Node): Boolean
+    fun generalizedValuesAreEqual(template: N, instance: N): Boolean
 }
