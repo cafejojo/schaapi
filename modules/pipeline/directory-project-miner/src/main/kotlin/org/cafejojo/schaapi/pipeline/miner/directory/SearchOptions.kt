@@ -5,10 +5,9 @@ import java.io.File
 
 /**
  * Search options for a [ProjectMiner].
+ *
+ * @property directory the directory containing the projects to be mined
  */
 class SearchOptions(
-    /**
-     * The directory containing the projects to be mined.
-     */
     val directory: File
 ) : SearchOptions
