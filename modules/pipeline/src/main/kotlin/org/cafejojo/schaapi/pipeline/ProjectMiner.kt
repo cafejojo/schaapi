@@ -5,9 +5,9 @@ import org.cafejojo.schaapi.models.Project
 /**
  * Project miner.
  */
-interface ProjectMiner<S : SearchOptions> {
+interface ProjectMiner<S : SearchOptions, P : Project> {
     /**
      * Mines projects.
      */
-    fun mine(searchOptions: S): List<Project>
+    fun mine(searchOptions: S): List<P>
 }

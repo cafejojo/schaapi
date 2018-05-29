@@ -20,11 +20,11 @@ import java.io.File
  * @property projectPacker packer which determines what type of [Project] to wrap the project directory in
  */
 @Suppress("PrintStackTrace") // TODO use searchContent logger
-class ProjectMiner(
+class ProjectMiner<P : Project>(
     private val username: String, private val password: String,
     private val outputDirectory: File,
-    private val projectPacker: (File) -> Project
-) : ProjectMiner<GitHubSearchOptions> {
+    private val projectPacker: (File) -> P
+) : ProjectMiner<GitHubSearchOptions<P>, P> {
     init {
         if (!outputDirectory.isDirectory) outputDirectory.mkdirs()
     }
@@ -37,7 +37,7 @@ class ProjectMiner(
      * @return list of [Project]s which likely depend on said library
      * @see GitHubProjectDownloader.download
      */
-    override fun mine(searchOptions: GitHubSearchOptions): List<Project> {
+    override fun mine(searchOptions: GitHubSearchOptions<P>): List<P> {
         val gitHub = GitHub.connectUsingPassword(username, password)
 
         require(!gitHub.isOffline) { "Unable to connect to GitHub." }
