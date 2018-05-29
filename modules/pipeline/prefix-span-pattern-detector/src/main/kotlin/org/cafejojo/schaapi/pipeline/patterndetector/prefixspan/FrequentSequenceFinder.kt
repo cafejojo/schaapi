@@ -69,7 +69,7 @@ class FrequentSequenceFinder<N : Node>(
      * @return the list of sequences, each a list of nodes, that are common within [allPaths]
      */
     fun findFrequentSequences(): List<Pattern<N>> {
-        pathUtil.findFrequentNodesInPaths(allPaths, minimumCount)
+        frequentItems.addAll(pathUtil.findFrequentNodesInPaths(allPaths, minimumCount))
         runAlgorithm()
 
         return frequentPatterns
@@ -85,10 +85,7 @@ class FrequentSequenceFinder<N : Node>(
     fun mapFrequentPatternsToPaths(): Map<Pattern<N>, List<List<N>>> =
         frequentPatterns
             .map { sequence ->
-                Pair(
-                    sequence,
-                    allPaths.filter { pathUtil.pathContainsSequence(it, sequence, comparator) })
-            }
+                Pair(sequence, allPaths.filter { pathUtil.pathContainsSequence(it, sequence, comparator) }) }
             .toMap()
 
     private fun runAlgorithm(prefix: List<N> = emptyList(), projectedPaths: Collection<List<N>> = allPaths) {
