@@ -12,5 +12,5 @@ interface PatternFilterRule<N : Node> {
      * @param pattern a generated pattern
      * @return true if the pattern should be retained
      */
-    fun retain(pattern: List<N>): Boolean
+    fun retain(pattern: Pattern<N>): Boolean
 }
