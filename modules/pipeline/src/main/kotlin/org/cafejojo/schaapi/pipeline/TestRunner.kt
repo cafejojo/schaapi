@@ -7,12 +7,13 @@ import java.io.File
  */
 interface TestRunner {
     /**
-     * Runs the tests contained in the files in [testDir].
+     * Runs the tests contained in the files in [rootDir].
      *
-     * @param testDir the directory that contains the files with the tests to be executed
+     * @param rootDir the root directory of the project that contains the test files
+     * @param testFiles the files that contain the tests to be run
      * @return the results of the executed tests
      */
-    fun run(testDir: File): TestResults
+    fun run(rootDir: File, testFiles: List<File>): TestResults
 }
 
 /**
@@ -20,27 +21,35 @@ interface TestRunner {
  *
  * The counts (i.e. [passCount], [ignoreCount], [failureCount]) should not include the counts from the [subResults].
  */
-open class TestResults(
+interface TestResults {
     /**
      * The results of the tests in a subcategory.
      */
-    val subResults: Map<String, TestResults> = emptyMap(),
+    val subResults: Map<String, TestResults>
+
+    /**
+     * The total number of tests executed.
+     */
+    val totalCount: Int
     /**
      * The number of passed tests.
      */
-    val passCount: Int = 0,
+    val passCount: Int
     /**
      * The number of ignored tests.
      */
-    val ignoreCount: Int = 0,
-    /**
-     * Descriptions of the failed tests.
-     */
-    val failures: Collection<String> = emptyList()
-) {
+    val ignoreCount: Int
     /**
      * The number of failed tests.
      */
     val failureCount: Int
-        get() = failures.size
+    /**
+     * Descriptions of the failed tests.
+     */
+    val failures: Collection<String>
+
+    /**
+     * Equals true iff no tests were executed at this level nor in the [subResults].
+     */
+    val isEmpty: Boolean
 }
