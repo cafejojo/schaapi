@@ -19,7 +19,7 @@ import kotlin.streams.toList
  * @property projectPacker packer which determines what type of [Project] to wrap the project directory in
  */
 @Suppress("PrintStackTrace") // TODO use searchContent logger
-class GithubProjectDownloader(
+class GitHubProjectDownloader(
     private val projectNames: Collection<String>,
     private val outputDirectory: File,
     private val projectPacker: (File) -> Project
