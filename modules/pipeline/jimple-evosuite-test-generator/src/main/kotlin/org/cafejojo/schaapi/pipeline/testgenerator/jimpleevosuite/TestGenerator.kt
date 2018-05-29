@@ -1,5 +1,6 @@
 package org.cafejojo.schaapi.pipeline.testgenerator.jimpleevosuite
 
+import org.cafejojo.schaapi.models.libraryusagegraph.jimple.JimpleNode
 import org.cafejojo.schaapi.models.project.JavaProject
 import org.cafejojo.schaapi.pipeline.Pattern
 import org.cafejojo.schaapi.pipeline.TestGenerator
@@ -17,8 +18,8 @@ class TestGenerator(
     private val timeout: Int,
     private val processStandardStream: PrintStream? = null,
     private val processErrorStream: PrintStream? = null
-) : TestGenerator {
-    override fun generate(patterns: List<Pattern>): File {
+) : TestGenerator<JimpleNode> {
+    override fun generate(patterns: List<Pattern<JimpleNode>>): File {
         val outputPatterns = outputDirectory.resolve("patterns/").apply { mkdirs() }
         val outputTests = outputDirectory.resolve("tests/").apply { mkdirs() }
 

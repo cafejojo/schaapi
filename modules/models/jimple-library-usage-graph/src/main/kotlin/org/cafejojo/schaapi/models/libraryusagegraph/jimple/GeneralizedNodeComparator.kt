@@ -11,7 +11,7 @@ import soot.jimple.Stmt
  * This comparator is stateful and is sensitive to the order in which methods are called. Refer to the documentation of
  * [satisfies].
  */
-class GeneralizedNodeComparator : GeneralizedNodeComparator {
+class GeneralizedNodeComparator : GeneralizedNodeComparator<JimpleNode> {
     /**
      * Maps [Value]s to tags.
      */
@@ -21,7 +21,7 @@ class GeneralizedNodeComparator : GeneralizedNodeComparator {
      */
     private val tagOrigins = HashMap<Int, Stmt>()
 
-    override fun satisfies(template: Node, instance: Node) =
+    override fun satisfies(template: JimpleNode, instance: JimpleNode) =
         structuresAreEqual(template, instance) && generalizedValuesAreEqual(template, instance)
 
     /**
@@ -37,13 +37,7 @@ class GeneralizedNodeComparator : GeneralizedNodeComparator {
      * @param instance the instance [Node]
      * @return true iff [template] and [instance] have the same structure
      */
-    override fun structuresAreEqual(template: Node, instance: Node): Boolean {
-        if (template !is JimpleNode || instance !is JimpleNode) {
-            throw IllegalArgumentException("Jimple GeneralizedNodeComparator cannot handle non-Jimple nodes.")
-        }
-
-        return template.equivTo(instance)
-    }
+    override fun structuresAreEqual(template: JimpleNode, instance: JimpleNode): Boolean = template.equivTo(instance)
 
     /**
      * Returns true iff [template] and [instance] have the same generalized values.
@@ -58,11 +52,7 @@ class GeneralizedNodeComparator : GeneralizedNodeComparator {
      * @return true iff [template] and [instance] have the same generalized values
      */
     @SuppressWarnings("UnsafeCallOnNullableType") // The !! is implicitly avoided by checking `templateHasTag`
-    override fun generalizedValuesAreEqual(template: Node, instance: Node): Boolean {
-        if (template !is JimpleNode || instance !is JimpleNode) {
-            throw IllegalArgumentException("Jimple GeneralizedNodeComparator cannot handle non-Jimple nodes.")
-        }
-
+    override fun generalizedValuesAreEqual(template: JimpleNode, instance: JimpleNode): Boolean {
         val templateValues = template.getValues()
         val instanceValues = instance.getValues()
 

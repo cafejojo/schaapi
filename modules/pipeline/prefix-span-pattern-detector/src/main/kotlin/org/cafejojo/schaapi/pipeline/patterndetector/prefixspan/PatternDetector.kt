@@ -9,13 +9,13 @@ import org.cafejojo.schaapi.pipeline.PatternDetector
 /**
  * Represents a pattern detector.
  */
-class PatternDetector(
+class PatternDetector<N : Node>(
     private val minimumCount: Int,
-    private val comparator: GeneralizedNodeComparator
-) : PatternDetector {
-    override fun findPatterns(graphs: List<Node>): List<Pattern> {
+    private val comparator: GeneralizedNodeComparator<N>
+) : PatternDetector<N> {
+    override fun findPatterns(graphs: List<N>): List<Pattern<N>> {
         val userPaths = graphs.flatMap { PathEnumerator(it).enumerate() }
 
-        return FrequentSequenceFinder(userPaths, minimumCount, comparator).findFrequentSequences()
+        return FrequentSequenceFinder(userPaths, minimumCount, comparator).findFrequentPatterns()
     }
 }
