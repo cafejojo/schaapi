@@ -21,7 +21,7 @@ interface GithubSearchOptions : SearchOptions {
  * @property artifactId artifact id of library maven project should depend on
  * @property version version of library maven project should depend on
  */
-class MavenProjectSeachOptions(
+class MavenProjectSearchOptions(
     private val groupId: String,
     private val artifactId: String,
     private val version: String
