@@ -1,18 +1,19 @@
 package org.cafejojo.schaapi.models
 
 import org.assertj.core.api.Assertions.assertThat
-import org.cafejojo.schaapi.models.PathUtil.pathContainsSequence
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 
 internal class PathUtilTest : Spek({
+    val pathUtil = PathUtil<Node>()
+
     describe("when looking for common sequences of simple nodes in a path") {
         it("should find a sequence in a path of length 1") {
             val node1 = SimpleNode()
             val path = listOf(node1)
 
-            assertThat(pathContainsSequence(path, listOf(node1), TestNodeComparator())).isTrue()
+            assertThat(pathUtil.pathContainsSequence(path, listOf(node1), TestNodeComparator())).isTrue()
         }
 
         it("should not find a sequence that isn't in the path") {
@@ -20,7 +21,7 @@ internal class PathUtilTest : Spek({
             val node2 = SimpleNode()
             val path = listOf(node1)
 
-            assertThat(pathContainsSequence(path, listOf(node2), TestNodeComparator())).isFalse()
+            assertThat(pathUtil.pathContainsSequence(path, listOf(node2), TestNodeComparator())).isFalse()
         }
 
         it("should find a sequence at the start of a path") {
@@ -32,7 +33,7 @@ internal class PathUtilTest : Spek({
             val node6 = SimpleNode()
             val path = listOf(node1, node2, node3, node4, node5, node6)
 
-            assertThat(pathContainsSequence(path, listOf(node1, node2), TestNodeComparator())).isTrue()
+            assertThat(pathUtil.pathContainsSequence(path, listOf(node1, node2), TestNodeComparator())).isTrue()
         }
 
         it("should find a sequence in the middle of a path") {
@@ -44,7 +45,7 @@ internal class PathUtilTest : Spek({
             val node6 = SimpleNode()
             val path = listOf(node1, node2, node3, node4, node5, node6)
 
-            assertThat(pathContainsSequence(path, listOf(node3, node4, node5), TestNodeComparator())).isTrue()
+            assertThat(pathUtil.pathContainsSequence(path, listOf(node3, node4, node5), TestNodeComparator())).isTrue()
         }
 
         it("should find a sequence at the end of a path") {
@@ -56,7 +57,7 @@ internal class PathUtilTest : Spek({
             val node6 = SimpleNode()
             val path = listOf(node1, node2, node3, node4, node5, node6)
 
-            assertThat(pathContainsSequence(path, listOf(node5, node6), TestNodeComparator())).isTrue()
+            assertThat(pathUtil.pathContainsSequence(path, listOf(node5, node6), TestNodeComparator())).isTrue()
         }
 
         it("should not find an out-of-order sequence that is not in a path") {
@@ -68,7 +69,7 @@ internal class PathUtilTest : Spek({
             val node6 = SimpleNode()
             val path = listOf(node1, node2, node3, node4, node5, node6)
 
-            assertThat(pathContainsSequence(path, listOf(node5, node4), TestNodeComparator())).isFalse()
+            assertThat(pathUtil.pathContainsSequence(path, listOf(node5, node4), TestNodeComparator())).isFalse()
         }
 
         it("should not find a non-consecutive sequence that is not in a path") {
@@ -78,7 +79,7 @@ internal class PathUtilTest : Spek({
             val node5 = SimpleNode()
             val path = listOf(node2, node3, node4, node5)
 
-            assertThat(pathContainsSequence(path, listOf(node2, node4, node5), TestNodeComparator())).isFalse()
+            assertThat(pathUtil.pathContainsSequence(path, listOf(node2, node4, node5), TestNodeComparator())).isFalse()
         }
     }
 })

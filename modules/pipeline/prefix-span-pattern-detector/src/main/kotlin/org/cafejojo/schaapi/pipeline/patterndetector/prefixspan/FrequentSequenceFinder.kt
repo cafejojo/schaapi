@@ -1,9 +1,9 @@
 package org.cafejojo.schaapi.pipeline.patterndetector.prefixspan
 
-import org.cafejojo.schaapi.models.CustomEqualsHashMap
 import org.cafejojo.schaapi.models.CustomEqualsHashSet
 import org.cafejojo.schaapi.models.GeneralizedNodeComparator
 import org.cafejojo.schaapi.models.Node
+import org.cafejojo.schaapi.models.PathUtil
 import org.cafejojo.schaapi.pipeline.Pattern
 
 /**
@@ -19,6 +19,7 @@ class FrequentSequenceFinder<N : Node>(
     private val minimumCount: Int,
     private val comparator: GeneralizedNodeComparator<N>
 ) {
+    private val pathUtil = PathUtil<N>()
     private val frequentPatterns = mutableListOf<Pattern<N>>()
     private val frequentItems = CustomEqualsHashSet<N>(Node.Companion::equiv, Node::equivHashCode)
 
@@ -67,8 +68,8 @@ class FrequentSequenceFinder<N : Node>(
      *
      * @return the list of sequences, each a list of nodes, that are common within [allPaths]
      */
-    fun findFrequentPatterns(): List<Pattern<N>> {
-        generateFrequentItems(minimumCount)
+    fun findFrequentSequences(): List<Pattern<N>> {
+        pathUtil.findFrequentNodesInPaths(allPaths, minimumCount)
         runAlgorithm()
 
         return frequentPatterns
@@ -77,20 +78,23 @@ class FrequentSequenceFinder<N : Node>(
     /**
      * Creates a mapping from the found frequent patterns to [allPaths] which contain said sequence.
      *
-     * If [findFrequentPatterns] has not been run before, the resulting map will not contain any keys.
+     * If [findFrequentSequences] has not been run before, the resulting map will not contain any keys.
      *
      * @return a mapping from the frequent patterns to sequences which contain said sequence
      */
     fun mapFrequentPatternsToPaths(): Map<Pattern<N>, List<List<N>>> =
         frequentPatterns
-            .map { sequence -> Pair(sequence, allPaths.filter { pathContainsSequence(it, sequence) }) }
+            .map { sequence ->
+                Pair(
+                    sequence,
+                    allPaths.filter { pathUtil.pathContainsSequence(it, sequence, comparator) })
+            }
             .toMap()
 
-    @Suppress("UnsafeCast") // (prefix: List<N> + frequentItem: N) is always a List<N>
     private fun runAlgorithm(prefix: List<N> = emptyList(), projectedPaths: Collection<List<N>> = allPaths) {
         frequentItems.forEach { frequentItem ->
             if (projectedPaths.any { pathContainsPrefix(it, prefix, frequentItem) }) {
-                val newPrefix = (prefix + frequentItem) as List<N>
+                val newPrefix = prefix.toMutableList().apply { add(frequentItem) }
                 frequentPatterns += newPrefix
 
                 runAlgorithm(newPrefix, extractSuffixes(prefix, allPaths))
@@ -98,34 +102,11 @@ class FrequentSequenceFinder<N : Node>(
         }
     }
 
-    @Suppress("UnsafeCast") // (prefix: List<N> + frequentItem: N) is always a List<N>
     private fun pathContainsPrefix(path: List<N>, prefix: List<N>, frequentItem: N) =
-        pathContainsSequence(path, (prefix + frequentItem) as List<N>) ||
-            prefix.isNotEmpty() && pathContainsSequence(path, listOf(prefix.last(), frequentItem))
-
-    /**
-     * Checks whether a given sequence can be found within a given path.
-     *
-     * @param path the path which may contain the given sequence
-     * @param sequence the sequence which may be contained in path
-     * @return true if path contains the given sequence
-     */
-    internal fun pathContainsSequence(path: List<N>, sequence: List<N>) =
-        path.indices.any { pathIndex ->
-            !sequence.indices.any { sequenceIndex ->
-                pathIndex + sequenceIndex >= path.size ||
-                    !comparator.satisfies(path[pathIndex + sequenceIndex], sequence[sequenceIndex])
-            }
-        }
+        pathUtil.pathContainsSequence(path, prefix.toMutableList().apply { add(frequentItem) }, comparator) ||
+            prefix.isNotEmpty() && pathUtil.pathContainsSequence(path, listOf(prefix.last(), frequentItem), comparator)
 
     internal fun extractSuffixes(prefix: List<N>, paths: Collection<List<N>>): List<List<N>> =
         paths.filter { it.size >= prefix.size && it.subList(0, prefix.size) == prefix }
             .map { it.subList(prefix.size, it.size) }
-
-    private fun generateFrequentItems(minimumCount: Int) {
-        val nodeCounts = CustomEqualsHashMap<N, Int>(Node.Companion::equiv, Node::equivHashCode)
-        allPaths.forEach { it.forEach { node -> nodeCounts[node] = nodeCounts[node]?.inc() ?: 1 } }
-
-        frequentItems.addAll(nodeCounts.filter { (_, amount) -> amount >= minimumCount }.keys)
-    }
 }
