@@ -23,18 +23,17 @@ ext.generateTestConfiguration = { String taskName, String directoryName ->
         testClassesDirs = sourceSets[taskName].output.classesDirs
         classpath = sourceSets[taskName].runtimeClasspath
 
-        jacoco {
-            append = false
-        }
-
         useJUnitPlatform() {
             includeEngines "spek"
         }
 
-        jacocoTestReport {
-            executionData file("$buildDir/jacoco/${directoryName}.exec")
+        jacoco {
+            append = true
+            destinationFile = file("$buildDir/jacoco/test.exec")
         }
     }
+
+    jacocoTestReport.dependsOn customTestTask
 
     customTestTask.mustRunAfter test
     check.dependsOn customTestTask
