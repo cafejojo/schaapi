@@ -37,7 +37,7 @@ fun main(args: Array<String>) {
     val mavenDir = File(cmd.getOptionValue("maven_dir") ?: JavaMavenProject.DEFAULT_MAVEN_HOME.absolutePath)
     val output = File(cmd.getOptionValue('o')).apply { mkdirs() }
     val library = JavaMavenProject(File(cmd.getOptionValue('l')), mavenDir)
-    val userDirs = File(cmd.getOptionValue('u'))
+    val userBaseDir = File(cmd.getOptionValue('u'))
 
     if (!mavenDir.resolve("bin/mvn").exists() || cmd.hasOption("repair_maven")) {
         MavenInstaller().installMaven(mavenDir)
@@ -48,7 +48,7 @@ fun main(args: Array<String>) {
 
     Pipeline(
         projectMiner = ProjectMiner(::JavaJarProject),
-        searchOptions = DirectorySearchOptions(userDirs),
+        searchOptions = DirectorySearchOptions(userBaseDir),
         libraryProjectCompiler = JavaMavenCompiler(),
         userProjectCompiler = JavaJarCompiler(),
         libraryUsageGraphGenerator = LibraryUsageGraphGenerator,
