@@ -18,6 +18,17 @@ interface ProgressBar {
     fun getProgress(): Int
 
     /**
+     * Applies the [mapper] to the normalized progress, which is the progress expressed as a number between 0 and 1,
+     * inclusive.
+     *
+     * The mapper function can be used to display a different progress to create a different user experience.
+     *
+     * @param mapper maps the normalized progress to a number between 0 and 1, inclusive
+     * @return the result of applying the [mapper] to the progress as a number between 0 and 1, inclusive
+     */
+    fun getNormalizedProgress(mapper: (Double) -> Double = { it }): Double
+
+    /**
      * Returns true iff the progress bar indicates that the process is done.
      */
     fun isDone(): Boolean
@@ -45,6 +56,9 @@ class FlatProgressBar(@Volatile private var target: Int, @Volatile private var p
 
     @Synchronized
     override fun getProgress() = progress
+
+    @Synchronized
+    override fun getNormalizedProgress(mapper: (Double) -> Double) = mapper(progress.toDouble() / target)
 
     /**
      * Updates the progress value.
@@ -86,6 +100,9 @@ class HierarchicalProgressBar(private val subProgressBars: Set<ProgressBar>) : P
     override fun getTarget() = subProgressBars.sumBy { it.getTarget() }
 
     override fun getProgress() = subProgressBars.sumBy { it.getProgress() }
+
+    override fun getNormalizedProgress(mapper: (Double) -> Double) =
+        mapper(subProgressBars.sumByDouble { it.getNormalizedProgress() } / subProgressBars.size)
 
     override fun isDone() = subProgressBars.all { it.isDone() }
 }
