@@ -24,7 +24,7 @@ class ProjectMiner<P : Project>(
     private val username: String, private val password: String,
     private val outputDirectory: File,
     private val projectPacker: (File) -> P
-) : ProjectMiner<GitHubSearchOptions<P>, P> {
+) : ProjectMiner<GitHubSearchOptions, P> {
     init {
         if (!outputDirectory.isDirectory) outputDirectory.mkdirs()
     }
@@ -37,7 +37,7 @@ class ProjectMiner<P : Project>(
      * @return list of [Project]s which likely depend on said library
      * @see GitHubProjectDownloader.download
      */
-    override fun mine(searchOptions: GitHubSearchOptions<P>): List<P> {
+    override fun mine(searchOptions: GitHubSearchOptions): List<P> {
         val gitHub = GitHub.connectUsingPassword(username, password)
 
         require(!gitHub.isOffline) { "Unable to connect to GitHub." }
