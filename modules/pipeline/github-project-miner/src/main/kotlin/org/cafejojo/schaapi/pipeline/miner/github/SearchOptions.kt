@@ -28,7 +28,7 @@ class MavenProjectSearchOptions(
     private val groupId: String,
     private val artifactId: String,
     private val version: String
-) : GithubSearchOptions<MavenProject> {
+) : GitHubSearchOptions<MavenProject> {
     override fun searchContent(gitHub: GitHub): List<String> =
         gitHub.searchContent()
             .apply {
