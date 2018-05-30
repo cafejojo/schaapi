@@ -10,6 +10,8 @@ import org.cafejojo.schaapi.models.libraryusagegraph.jimple.GeneralizedNodeCompa
 import org.cafejojo.schaapi.models.project.JavaJarProject
 import org.cafejojo.schaapi.models.project.JavaMavenProject
 import org.cafejojo.schaapi.pipeline.PatternFilter
+import org.cafejojo.schaapi.pipeline.miner.directory.DirectorySearchOptions
+import org.cafejojo.schaapi.pipeline.miner.directory.ProjectMiner
 import org.cafejojo.schaapi.pipeline.patterndetector.prefixspan.PatternDetector
 import org.cafejojo.schaapi.pipeline.patternfilter.jimple.IncompleteInitPatternFilterRule
 import org.cafejojo.schaapi.pipeline.patternfilter.jimple.LengthPatternFilterRule
@@ -35,7 +37,7 @@ fun main(args: Array<String>) {
     val mavenDir = File(cmd.getOptionValue("maven_dir") ?: JavaMavenProject.DEFAULT_MAVEN_HOME.absolutePath)
     val output = File(cmd.getOptionValue('o')).apply { mkdirs() }
     val library = JavaMavenProject(File(cmd.getOptionValue('l')), mavenDir)
-    val users = cmd.getOptionValues('u').map { JavaJarProject(File(it)) }
+    val userDir = cmd.getOptionValue('u')
 
     if (!mavenDir.resolve("bin/mvn").exists() || cmd.hasOption("repair_maven")) {
         MavenInstaller().installMaven(mavenDir)
@@ -45,6 +47,8 @@ fun main(args: Array<String>) {
     val testGeneratorEnableOutput = cmd.hasOption("test_generator_enable_output")
 
     Pipeline(
+        projectMiner = ProjectMiner(::JavaJarProject),
+        searchOptions = DirectorySearchOptions(File(userDir)),
         libraryProjectCompiler = JavaMavenCompiler(),
         userProjectCompiler = JavaJarCompiler(),
         libraryUsageGraphGenerator = LibraryUsageGraphGenerator,
@@ -63,7 +67,7 @@ fun main(args: Array<String>) {
             processStandardStream = if (testGeneratorEnableOutput) System.out else null,
             processErrorStream = if (testGeneratorEnableOutput) System.out else null
         )
-    ).run(users, library)
+    ).run(library)
 }
 
 private fun buildOptions(): Options =
@@ -85,9 +89,8 @@ private fun buildOptions(): Options =
         .addOption(Option
             .builder("u")
             .longOpt("user_dirs")
-            .desc("The user directories, separated by semi-colons.")
+            .desc("The directory containing user directories")
             .hasArgs()
-            .valueSeparator(File.pathSeparatorChar)
             .required()
             .build())
         .addOption(Option

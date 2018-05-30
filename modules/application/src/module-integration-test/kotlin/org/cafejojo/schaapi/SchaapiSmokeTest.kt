@@ -28,8 +28,7 @@ internal class SchaapiSmokeTest : Spek({
         main(arrayOf(
             "-o", target.absolutePath,
             "-l", getResourcePath("/library/"),
-            "-u", getResourcePath("/user/a/target/a-1.0.0.jar") + File.pathSeparatorChar +
-                getResourcePath("/user/b/target/b-1.0.0.jar"),
+            "-u", getResourcePath("/user/a/target"),
             "--maven_dir", mavenDir.absolutePath,
             "--pattern_detector_minimum_count", "1",
             "--test_generator_timeout", "3"
