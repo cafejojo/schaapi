@@ -107,8 +107,19 @@ class HierarchicalProgressBar(private val subProgressBars: Set<ProgressBar>) : P
 
     override fun getProgress() = subProgressBars.sumBy { it.getProgress() }
 
-    override fun getNormalizedProgress(mapper: (Double) -> Double) =
-        mapper(subProgressBars.sumByDouble { it.getNormalizedProgress() } / subProgressBars.size)
+    override fun getNormalizedProgress(mapper: (Double) -> Double): Double {
+        var progressSum = 0
+        var targetSum = 0
+
+        subProgressBars.forEach {
+            synchronized(it) {
+                progressSum += it.getProgress()
+                targetSum += it.getTarget()
+            }
+        }
+
+        return mapper(progressSum.toDouble() / targetSum)
+    }
 
     override fun isDone() = subProgressBars.all { it.isDone() }
 }
