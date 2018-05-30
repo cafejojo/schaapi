@@ -6,7 +6,7 @@ import java.io.File
 /**
  * Generates test files based on [Pattern]s.
  */
-interface TestGenerator<N : Node> {
+interface TestGenerator<in N : Node> {
     /**
      * Generates a test file based on the given [patterns].
      *

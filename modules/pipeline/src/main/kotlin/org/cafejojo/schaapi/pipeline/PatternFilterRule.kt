@@ -5,7 +5,7 @@ import org.cafejojo.schaapi.models.Node
 /**
  * Decides whether a [Pattern] should be retained.
  */
-interface PatternFilterRule<N : Node> {
+interface PatternFilterRule<in N : Node> {
     /**
      * Determines if [pattern] should be retained.
      *

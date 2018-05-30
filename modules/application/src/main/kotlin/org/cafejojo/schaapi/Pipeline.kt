@@ -11,7 +11,7 @@ import org.cafejojo.schaapi.pipeline.TestGenerator
 /**
  * Represents the complete Schaapi pipeline.
  */
-class Pipeline<N : Node, LP : Project, UP : Project>(
+class Pipeline<LP : Project, UP : Project, N : Node>(
     private val libraryProjectCompiler: ProjectCompiler<LP>,
     private val userProjectCompiler: ProjectCompiler<UP>,
     private val libraryUsageGraphGenerator: LibraryUsageGraphGenerator<LP, UP, N>,
