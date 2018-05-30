@@ -13,7 +13,7 @@ import org.cafejojo.schaapi.pipeline.TestGenerator
 /**
  * Represents the complete Schaapi pipeline.
  */
-class Pipeline<SO : SearchOptions, LP : Project, UP : Project, N : Node>(
+class Pipeline<SO : SearchOptions, UP : Project, LP : Project, N : Node>(
     private val projectMiner: ProjectMiner<SO, UP>,
     private val searchOptions: SO,
     private val libraryProjectCompiler: ProjectCompiler<LP>,
