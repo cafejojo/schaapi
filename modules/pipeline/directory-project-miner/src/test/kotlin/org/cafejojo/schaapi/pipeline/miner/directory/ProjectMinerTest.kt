@@ -17,7 +17,7 @@ internal class ProjectMinerTest : Spek({
         File(URLDecoder.decode(ProjectMinerTest::class.java.getResource(path).path, "UTF-8"))
 
     describe("directory project miner") {
-        lateinit var miner: ProjectMiner
+        lateinit var miner: ProjectMiner<Project>
         lateinit var packer: (File) -> Project
 
         beforeEachTest {
@@ -36,7 +36,7 @@ internal class ProjectMinerTest : Spek({
         it("finds a single file-based project") {
             miner.mine(SearchOptions(getResourceAsFile("/one-file-project")))
 
-            verify(packer, times(1)).invoke(any())
+            verify(packer).invoke(any())
         }
 
         it("finds multiple file-based projects") {
@@ -48,7 +48,7 @@ internal class ProjectMinerTest : Spek({
         it("finds a single directory-based project") {
             miner.mine(SearchOptions(getResourceAsFile("/one-directory-project")))
 
-            verify(packer, times(1)).invoke(any())
+            verify(packer).invoke(any())
         }
 
         it("finds multiple directory-based projects") {

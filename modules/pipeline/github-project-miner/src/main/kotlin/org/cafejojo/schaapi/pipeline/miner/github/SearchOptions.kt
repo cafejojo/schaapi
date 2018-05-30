@@ -1,12 +1,14 @@
 package org.cafejojo.schaapi.pipeline.miner.github
 
+import org.cafejojo.schaapi.models.Project
+import org.cafejojo.schaapi.models.project.MavenProject
 import org.cafejojo.schaapi.pipeline.SearchOptions
 import org.kohsuke.github.GitHub
 
 /**
  * Represents options used to mine [GitHub].
  */
-interface GitHubSearchOptions : SearchOptions {
+interface GitHubSearchOptions<P : Project> : SearchOptions<P> {
     /**
      * Search content on GitHub with the given options and return a list of the full names of the found repositories.
      *
@@ -26,7 +28,7 @@ class MavenProjectSearchOptions(
     private val groupId: String,
     private val artifactId: String,
     private val version: String
-) : GitHubSearchOptions {
+) : GitHubSearchOptions<MavenProject> {
     override fun searchContent(gitHub: GitHub): List<String> =
         gitHub.searchContent()
             .apply {

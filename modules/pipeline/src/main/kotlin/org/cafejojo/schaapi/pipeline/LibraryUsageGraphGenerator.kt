@@ -6,7 +6,7 @@ import org.cafejojo.schaapi.models.Project
 /**
  * Library usage graph generator.
  */
-interface LibraryUsageGraphGenerator<N : Node> {
+interface LibraryUsageGraphGenerator<in LP : Project, in UP : Project, out N : Node> {
     /**
      * Generates all usage graphs for the user project with respect to the library project.
      *
@@ -14,5 +14,5 @@ interface LibraryUsageGraphGenerator<N : Node> {
      * @param userProject library user project
      * @return list of graphs
      */
-    fun generate(libraryProject: Project, userProject: Project): List<N>
+    fun generate(libraryProject: LP, userProject: UP): List<N>
 }

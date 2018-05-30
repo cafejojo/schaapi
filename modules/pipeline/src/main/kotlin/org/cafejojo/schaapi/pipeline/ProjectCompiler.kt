@@ -5,7 +5,7 @@ import org.cafejojo.schaapi.models.Project
 /**
  * Compiles [Project]s.
  */
-interface ProjectCompiler {
+interface ProjectCompiler<P : Project> {
     /**
      * Compiles a [Project].
      *
@@ -14,5 +14,5 @@ interface ProjectCompiler {
      * @param project an uncompiled project
      * @return a compiled project
      */
-    fun compile(project: Project): Project
+    fun compile(project: P): P
 }
