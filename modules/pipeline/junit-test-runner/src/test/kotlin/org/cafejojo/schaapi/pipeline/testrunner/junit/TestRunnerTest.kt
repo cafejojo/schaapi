@@ -6,13 +6,14 @@ import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 import java.io.File
+import java.net.URLDecoder
 
 internal class TestRunnerTest : Spek({
     val testPackage = "org.cafejojo.schaapi.pipeline.testrunner.junit.test"
     val testDirectory = testPackage.replace(Regex("[.]"), "/")
 
     fun getResourceAsFile(path: String) =
-        File(TestRunnerTest::class.java.getResource(path).path)
+        File(URLDecoder.decode(TestRunnerTest::class.java.getResource(path).path, "UTF-8"))
 
     fun getFileFromClasspath(path: String) =
         File(TestRunnerTest::class.java.getResource("../../../../../../").toURI().path, path)
