@@ -27,6 +27,7 @@ includeModule "mining-pipeline", "jimple-evosuite-test-generator"
 includeModule "mining-pipeline", "jimple-library-usage-graph-generator"
 includeModule "mining-pipeline", "jimple-pattern-filter"
 includeModule "mining-pipeline", "prefix-span-pattern-detector"
+includeModule "mining-pipeline", "ccspan-pattern-detector"
 includeModule "mining-pipeline", "spam-pattern-detector"
 
 includeModule "validation-pipeline"
