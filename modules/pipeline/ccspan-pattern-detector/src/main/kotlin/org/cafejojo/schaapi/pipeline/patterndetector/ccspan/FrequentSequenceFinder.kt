@@ -40,7 +40,26 @@ class FrequentSequenceFinder<N : Any>(private val userPaths: List<List<N>>, priv
     }
 
     private fun initGen() {
+        val checkedSubsequences = mutableListOf<List<N>>()
 
+        userPaths.forEach { path ->
+            path.forEach { element ->
+                if (!checkedSubsequences.contains(listOf(element))) {
+                    var support = 0
+                    userPaths.takeLastWhile { path !== it }.drop(1).forEach {
+                        if (pathUtil.pathContainsSequenceCool(it, listOf(element))) {
+                            support++
+                        }
+                    }
+
+                    if (support >= minimumCount) {
+                        previous += Triple(listOf(element), support, MutableBoolean(true))
+                    } else {
+                        checkedSubsequences += listOf(element)
+                    }
+                }
+            }
+        }
     }
 
     private fun generateContiguousSequences(
@@ -49,7 +68,7 @@ class FrequentSequenceFinder<N : Any>(private val userPaths: List<List<N>>, priv
         else if (previous.any { it.first == makePre(it.first) } && current.any { it.first == makePost(it.first) }) {
             var support = 0
 
-            userPaths.dropLastWhile { parentPath !== it }.dropLast(1).forEach {
+            userPaths.takeLastWhile { parentPath !== it }.drop(1).forEach {
                 if (pathUtil.pathContainsSequenceCool(it, subSequence)) {
                     support++
                 }
@@ -65,8 +84,8 @@ class FrequentSequenceFinder<N : Any>(private val userPaths: List<List<N>>, priv
         }
     }
 
-    private fun makePre(sequence: List<N>) = sequence.subList(0, sequence.size - 2)
-    private fun makePost(sequence: List<N>) = sequence.subList(1, sequence.size - 1)
+    private fun makePre(sequence: List<N>) = sequence.subList(0, sequence.size - 1)
+    private fun makePost(sequence: List<N>) = sequence.subList(1, sequence.size)
 
     private fun generateClosedContiguousSequences() {
         current.forEach { (sequence, _, _) ->
