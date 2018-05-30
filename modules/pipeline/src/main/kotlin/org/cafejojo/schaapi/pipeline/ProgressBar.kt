@@ -37,7 +37,12 @@ interface ProgressBar {
 /**
  * A plain, thread-safe [ProgressBar].
  */
-class FlatProgressBar(@Volatile private var target: Int, @Volatile private var progress: Int) : ProgressBar {
+class FlatProgressBar(@Volatile private var progress: Int, @Volatile private var target: Int) : ProgressBar {
+    init {
+        require(target >= progress) { "Target must be larger than current progress." }
+        require(progress in 0..target) { "Progress must be between 0 and target, inclusive." }
+    }
+
     @Synchronized
     override fun getTarget() = target
 
@@ -48,7 +53,7 @@ class FlatProgressBar(@Volatile private var target: Int, @Volatile private var p
      */
     @Synchronized
     fun setTarget(newTarget: Int) {
-        if (isDone()) throw IllegalStateException("Cannot change the progress once the process has completed.")
+        check(!isDone()) { "Cannot change the target once the process has completed." }
         require(newTarget >= progress) { "Target cannot be smaller than current progress, $progress." }
 
         target = newTarget
@@ -67,7 +72,7 @@ class FlatProgressBar(@Volatile private var target: Int, @Volatile private var p
      */
     @Synchronized
     fun setProgress(newProgress: Int) {
-        if (isDone()) throw IllegalStateException("Cannot change the target once the process has completed.")
+        check(!isDone()) { "Cannot change the progress once the process has completed." }
         require(newProgress >= 0) { "Progress cannot be negative." }
         require(newProgress <= target) { "Progress cannot be higher than the target, $target." }
 
@@ -81,8 +86,9 @@ class FlatProgressBar(@Volatile private var target: Int, @Volatile private var p
      */
     @Synchronized
     fun incrementProgress(): Int {
-        setProgress(progress + 1)
-        return progress
+        check(!isDone()) { "Cannot increment the progress once the process has completed." }
+
+        return ++progress
     }
 
     @Synchronized
