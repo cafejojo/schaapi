@@ -1,4 +1,4 @@
-package org.cafejojo.schaapi.pipeline.patterndetector.cspan
+package org.cafejojo.schaapi.pipeline.patterndetector.ccspan
 
 import org.cafejojo.schaapi.models.GeneralizedNodeComparator
 import org.cafejojo.schaapi.models.Node
