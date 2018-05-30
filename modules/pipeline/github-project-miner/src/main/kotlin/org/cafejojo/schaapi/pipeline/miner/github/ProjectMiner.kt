@@ -24,7 +24,7 @@ class ProjectMiner<P : Project>(
     private val username: String, private val password: String,
     private val outputDirectory: File,
     private val projectPacker: (File) -> P
-) : ProjectMiner<P, GitHubSearchOptions<P>> {
+) : ProjectMiner<GitHubSearchOptions<P>, P> {
     init {
         if (!outputDirectory.isDirectory) outputDirectory.mkdirs()
     }
