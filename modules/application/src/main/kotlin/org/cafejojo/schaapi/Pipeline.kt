@@ -6,12 +6,16 @@ import org.cafejojo.schaapi.pipeline.LibraryUsageGraphGenerator
 import org.cafejojo.schaapi.pipeline.PatternDetector
 import org.cafejojo.schaapi.pipeline.PatternFilter
 import org.cafejojo.schaapi.pipeline.ProjectCompiler
+import org.cafejojo.schaapi.pipeline.ProjectMiner
+import org.cafejojo.schaapi.pipeline.SearchOptions
 import org.cafejojo.schaapi.pipeline.TestGenerator
 
 /**
  * Represents the complete Schaapi pipeline.
  */
-class Pipeline<LP : Project, UP : Project, N : Node>(
+class Pipeline<SO : SearchOptions, UP : Project, LP : Project, N : Node>(
+    private val projectMiner: ProjectMiner<SO, UP>,
+    private val searchOptions: SO,
     private val libraryProjectCompiler: ProjectCompiler<LP>,
     private val userProjectCompiler: ProjectCompiler<UP>,
     private val libraryUsageGraphGenerator: LibraryUsageGraphGenerator<LP, UP, N>,
@@ -22,10 +26,11 @@ class Pipeline<LP : Project, UP : Project, N : Node>(
     /**
      * Executes all steps in the pipeline.
      */
-    fun run(projects: List<UP>, libraryProject: LP) {
+    fun run(libraryProject: LP) {
         libraryProjectCompiler.compile(libraryProject)
 
-        projects.map { userProjectCompiler.compile(it) }
+        projectMiner.mine(searchOptions)
+            .map { userProjectCompiler.compile(it) }
             .flatMap { libraryUsageGraphGenerator.generate(libraryProject, it) }
             .next(patternDetector::findPatterns)
             .next(patternFilter::filter)

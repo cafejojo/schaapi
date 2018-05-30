@@ -28,37 +28,37 @@ internal class ProjectMinerTest : Spek({
         }
 
         it("finds no projects if the directory is invalid") {
-            miner.mine(SearchOptions(File("does_not_exist")))
+            miner.mine(DirectorySearchOptions(File("does_not_exist")))
 
             verifyNoMoreInteractions(packer)
         }
 
         it("finds a single file-based project") {
-            miner.mine(SearchOptions(getResourceAsFile("/one-file-project")))
+            miner.mine(DirectorySearchOptions(getResourceAsFile("/one-file-project")))
 
             verify(packer).invoke(any())
         }
 
         it("finds multiple file-based projects") {
-            miner.mine(SearchOptions(getResourceAsFile("/multiple-file-projects")))
+            miner.mine(DirectorySearchOptions(getResourceAsFile("/multiple-file-projects")))
 
             verify(packer, times(3)).invoke(any())
         }
 
         it("finds a single directory-based project") {
-            miner.mine(SearchOptions(getResourceAsFile("/one-directory-project")))
+            miner.mine(DirectorySearchOptions(getResourceAsFile("/one-directory-project")))
 
             verify(packer).invoke(any())
         }
 
         it("finds multiple directory-based projects") {
-            miner.mine(SearchOptions(getResourceAsFile("/multiple-directory-projects")))
+            miner.mine(DirectorySearchOptions(getResourceAsFile("/multiple-directory-projects")))
 
             verify(packer, times(3)).invoke(any())
         }
 
         it("finds both file- and directory-based projects") {
-            miner.mine(SearchOptions(getResourceAsFile("/mixed-projects")))
+            miner.mine(DirectorySearchOptions(getResourceAsFile("/mixed-projects")))
 
             verify(packer, times(4)).invoke(any())
         }
