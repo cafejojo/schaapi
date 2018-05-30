@@ -15,7 +15,6 @@ import java.io.File
  *
  * @property username username of GitHub user
  * @property password password of GitHub user
- * @property searchOptions options to use during searching
  * @property outputDirectory directory to store all the project directories. If directory doesn't exit new directory
  * is created
  * @property projectPacker packer which determines what type of [Project] to wrap the project directory in
@@ -25,7 +24,7 @@ class ProjectMiner(
     private val username: String, private val password: String,
     private val outputDirectory: File,
     private val projectPacker: (File) -> Project
-) : ProjectMiner<GithubSearchOptions> {
+) : ProjectMiner<GitHubSearchOptions> {
     init {
         if (!outputDirectory.isDirectory) outputDirectory.mkdirs()
     }
@@ -34,17 +33,17 @@ class ProjectMiner(
      * Mine GitHub for projects with `pom.xml` files which contain searchContent dependency on searchContent library
      * with searchContent given group id, artifact id and version (number).
      *
-     * @param searchOptions search options, which must be of type [GithubSearchOptions]
+     * @param searchOptions search options, which must be of type [GitHubSearchOptions]
      * @return list of [Project]s which likely depend on said library
-     * @see GithubProjectDownloader.download
+     * @see GitHubProjectDownloader.download
      */
-    override fun mine(searchOptions: GithubSearchOptions): List<Project> {
+    override fun mine(searchOptions: GitHubSearchOptions): List<Project> {
         val gitHub = GitHub.connectUsingPassword(username, password)
 
         require(!gitHub.isOffline) { "Unable to connect to GitHub." }
         require(gitHub.isCredentialValid) { "Valid credentials are required to connect to GitHub." }
 
         val projectNames = searchOptions.searchContent(gitHub)
-        return GithubProjectDownloader(projectNames, outputDirectory, projectPacker).download()
+        return GitHubProjectDownloader(projectNames, outputDirectory, projectPacker).download()
     }
 }

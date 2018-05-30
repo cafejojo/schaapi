@@ -6,9 +6,10 @@ import org.kohsuke.github.GitHub
 /**
  * Represents options used to mine [GitHub].
  */
-interface GithubSearchOptions : SearchOptions {
+interface GitHubSearchOptions : SearchOptions {
     /**
-     * Search content on github with the given options and return a list of the full names of the found repositories.
+     * Search content on GitHub with the given options and return a list of the full names of the found repositories.
+     *
      * @return list of full names of found repositories on [GitHub] based on the passed options
      */
     fun searchContent(gitHub: GitHub): List<String>
@@ -21,11 +22,11 @@ interface GithubSearchOptions : SearchOptions {
  * @property artifactId artifact id of library maven project should depend on
  * @property version version of library maven project should depend on
  */
-class MavenProjectSeachOptions(
+class MavenProjectSearchOptions(
     private val groupId: String,
     private val artifactId: String,
     private val version: String
-) : GithubSearchOptions {
+) : GitHubSearchOptions {
     override fun searchContent(gitHub: GitHub): List<String> =
         gitHub.searchContent()
             .apply {
