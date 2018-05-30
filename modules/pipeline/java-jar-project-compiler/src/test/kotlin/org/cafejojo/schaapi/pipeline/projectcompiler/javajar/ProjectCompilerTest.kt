@@ -7,11 +7,13 @@ import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 import java.io.File
 import java.io.FileNotFoundException
+import java.net.URLDecoder
 
 internal class ProjectCompilerTest : Spek({
     describe("Java JAR project compilation") {
         it("compiles simple projects") {
-            val projectFile = File(getResourceURI("/schaapi.simple-project-1.0.0.jar").path)
+            val projectFile = File(URLDecoder.decode(
+                getResourceURI("/schaapi.simple-project-1.0.0.jar").path, "UTF-8"))
             val project = JavaJarProject(projectFile)
             ProjectCompiler().compile(project)
 
@@ -26,7 +28,8 @@ internal class ProjectCompilerTest : Spek({
         }
 
         it("compiles projects with no classes") {
-            val projectFile = File(getResourceURI("/schaapi.no-classes-project-1.0.0.jar").path)
+            val projectFile = File(URLDecoder.decode(
+                getResourceURI("/schaapi.no-classes-project-1.0.0.jar").path, "UTF-8"))
             val project = JavaJarProject(projectFile)
             ProjectCompiler().compile(project)
 
