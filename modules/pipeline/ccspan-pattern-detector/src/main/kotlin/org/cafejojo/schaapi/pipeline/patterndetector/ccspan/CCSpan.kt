@@ -76,7 +76,7 @@ internal class CCSpan<N : Node>(
 
         sequences.flatten().forEach { element ->
             if (!checkedSequences.contains(element)) {
-                val support = sequences.filter { pathUtil.pathContainsSequence(it, listOf(element), nodeComparator) }.size
+                val support = sequences.count { pathUtil.pathContainsSequence(it, listOf(element), nodeComparator) }
                 if (support >= minimumSupport) previous += SequenceTriple(listOf(element), support)
 
                 checkedSequences += element
@@ -88,7 +88,7 @@ internal class CCSpan<N : Node>(
         if (checkedSequences.contains(subSequence)) return
 
         if (previous.any { it.sequence == subSequence.pre() } && previous.any { it.sequence == subSequence.post() }) {
-            val support = sequences.filter { pathUtil.pathContainsSequence(it, subSequence, nodeComparator) }.size
+            val support = sequences.count { pathUtil.pathContainsSequence(it, subSequence, nodeComparator) }
             if (support >= minimumSupport) current += SequenceTriple(subSequence, support)
         }
     }
