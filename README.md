@@ -19,8 +19,8 @@ usage: schaapi -o <arg> -l <arg> -u <arg> [--maven_dir <arg>]
        [--test_generator_enable_output] [--test_generator_timeout <arg>]
  -o,--output_dir <arg>                       The output directory.
  -l,--library_dir <arg>                      The library directory.
- -u,--user_dirs <arg>                        The user directories,
-                                             separated by semi-colons.
+ -u,--user_base_dir <arg>                    The directory containing user
+                                             project directories.
     --maven_dir <arg>                        The directory to run Maven
                                              from.
     --repair_maven                           Repairs the Maven
