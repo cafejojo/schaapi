@@ -49,7 +49,7 @@ usage: schaapi -o <arg> -l <arg> -u <arg> [--maven_dir <arg>]
 | ------------------ | ------------- |
 | Description        | Mine version control or library distribution platforms for projects using your software version |
 | Interface          | `org.cafejojo.schaapi.pipeline.ProjectMiner` |
-| Implementations    | **[GitHub Project Miner](https://github.com/cafejojo/schaapi/tree/master/modules/pipeline/github-project-miner)**<br>Mines projects from GitHub using its code search API. |
+| Implementations    | **[GitHub Project Miner](https://github.com/cafejojo/schaapi/tree/master/modules/pipeline/github-project-miner)**<br>Mines projects from GitHub using its code search API.<br>**[Directory Project Miner](https://github.com/cafejojo/schaapi/tree/master/modules/pipeline/directory-project-miner)**<br>'Mines' projects from the file system, finding all projects in one folder. |
 
 #### 1.2 Analyse Usage per Project
 | | |
