@@ -11,56 +11,62 @@ class FrequentSequenceFinder<N : Node>(
     private val comparator: GeneralizedNodeComparator<N>
 ) {
     private val pathUtil = PathUtil<N>()
-    private fun List<N>.post() = this.subList(1, this.size)
     private fun List<N>.pre() = this.subList(0, this.size - 1)
+    private fun List<N>.post() = this.subList(1, this.size)
 
     private val previous = mutableSetOf<SequenceTriple<N>>()
     private val current = mutableSetOf<SequenceTriple<N>>()
 
     fun findFrequentSequences(): List<Pattern<N>> {
-        val frequentClosedContiguousSequences = mutableListOf<List<N>>()
         initGen()
+        val frequentClosedContiguousSequences = mutableListOf<Pattern<N>>()
 
-        var k = 2
+        var subSequenceLength = 2
         while (previous.isNotEmpty()) {
             val checkedSequences = mutableListOf<List<N>>()
 
             userPaths
-                .filter { it.size >= k }
-                .forEach { path ->
-                    path.dropLast(k - 1).indices.forEach {
-                        val subSequence = path.subList(it, it + k)
-                        generateContiguousSequences(subSequence, checkedSequences)
-                    }
-                }
+                .filter { it.size >= subSequenceLength }
+                .forEach { generateAllContiguousSequences(it, subSequenceLength, checkedSequences) }
 
             generateClosedContiguousSequences()
-            frequentClosedContiguousSequences.addAll(
-                current
-                    .filter { it.isClosedSequence }
-                    .map { it.sequence }
-            )
+            frequentClosedContiguousSequences.addAll(current.filter { it.isClosedSequence }.map { it.sequence })
 
-            k++
-
-            previous.clear()
-            previous.addAll(current)
-            current.clear()
+            shiftCurrent()
+            subSequenceLength++
         }
 
         return frequentClosedContiguousSequences
     }
 
-    private fun initGen() {
-        val checkedSequences = mutableListOf<List<N>>()
+    private fun generateAllContiguousSequences(
+        path: List<N>,
+        subSequenceLength: Int,
+        checkedSequences: MutableList<List<N>>
+    ) {
+        path.dropLast(subSequenceLength - 1).indices.forEach {
+            val subSequence = path.subList(it, it + subSequenceLength)
+            generateContiguousSequences(path.subList(it, it + subSequenceLength), checkedSequences)
 
-        userPaths.forEach { path ->
-            path.forEach { element ->
-                if (!checkedSequences.contains(listOf(element))) {
-                    val support = userPaths.filter { pathUtil.pathContainsSequence(it, listOf(element), comparator) }.size
-                    if (support >= minimumCount) previous += SequenceTriple(listOf(element), support, true)
-                    checkedSequences += listOf(element)
-                }
+            checkedSequences += subSequence
+        }
+    }
+
+    private fun shiftCurrent() {
+        previous.clear()
+        previous.addAll(current)
+        current.clear()
+    }
+
+    private fun initGen() {
+        val checkedSequences = mutableListOf<N>()
+
+        userPaths.flatten().forEach { element ->
+            if (!checkedSequences.contains(element)) {
+                val support = userPaths.filter { pathUtil.pathContainsSequence(it, listOf(element), comparator) }.size
+                if (support >= minimumCount) previous += SequenceTriple(listOf(element), support)
+
+                checkedSequences += element
             }
         }
     }
@@ -70,23 +76,17 @@ class FrequentSequenceFinder<N : Node>(
 
         if (previous.any { it.sequence == subSequence.pre() } && previous.any { it.sequence == subSequence.post() }) {
             val support = userPaths.filter { pathUtil.pathContainsSequence(it, subSequence, comparator) }.size
-            if (support >= minimumCount) current += SequenceTriple(subSequence, support, true)
+            if (support >= minimumCount) current += SequenceTriple(subSequence, support)
         }
-
-        checkedSequences += subSequence
     }
 
     private fun generateClosedContiguousSequences() {
         current.forEach { (sequence, _, _) ->
             previous
-                .filter { it.isClosedSequence && it.sequence == sequence.pre() }
-                .forEach { it.isClosedSequence = false }
-
-            previous
-                .filter { it.isClosedSequence && it.sequence == sequence.post() }
+                .filter { it.isClosedSequence && (it.sequence == sequence.pre() || it.sequence == sequence.post() ) }
                 .forEach { it.isClosedSequence = false }
         }
     }
 }
 
-data class SequenceTriple<N>(val sequence: List<N>, val support: Int, var isClosedSequence: Boolean)
+data class SequenceTriple<N>(val sequence: List<N>, val support: Int, var isClosedSequence: Boolean = true)
