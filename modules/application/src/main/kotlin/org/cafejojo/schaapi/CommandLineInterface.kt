@@ -7,7 +7,6 @@ import org.apache.commons.cli.Option
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.cafejojo.schaapi.models.libraryusagegraph.jimple.GeneralizedNodeComparator
-import org.cafejojo.schaapi.models.project.JavaJarProject
 import org.cafejojo.schaapi.models.project.JavaMavenProject
 import org.cafejojo.schaapi.pipeline.PatternFilter
 import org.cafejojo.schaapi.pipeline.miner.directory.DirectorySearchOptions
@@ -19,7 +18,6 @@ import org.cafejojo.schaapi.pipeline.projectcompiler.javamaven.MavenInstaller
 import org.cafejojo.schaapi.pipeline.testgenerator.jimpleevosuite.TestGenerator
 import org.cafejojo.schaapi.pipeline.usagegraphgenerator.jimple.LibraryUsageGraphGenerator
 import java.io.File
-import org.cafejojo.schaapi.pipeline.projectcompiler.javajar.ProjectCompiler as JavaJarCompiler
 import org.cafejojo.schaapi.pipeline.projectcompiler.javamaven.ProjectCompiler as JavaMavenCompiler
 
 private const val DEFAULT_TEST_GENERATOR_TIMEOUT = "60"
@@ -47,10 +45,10 @@ fun main(args: Array<String>) {
     val testGeneratorEnableOutput = cmd.hasOption("test_generator_enable_output")
 
     Pipeline(
-        projectMiner = ProjectMiner(::JavaJarProject),
+        projectMiner = ProjectMiner { JavaMavenProject(it, mavenDir) },
         searchOptions = DirectorySearchOptions(userBaseDir),
         libraryProjectCompiler = JavaMavenCompiler(),
-        userProjectCompiler = JavaJarCompiler(),
+        userProjectCompiler = JavaMavenCompiler(),
         libraryUsageGraphGenerator = LibraryUsageGraphGenerator,
         patternDetector = PatternDetector(
             cmd.getOptionOrDefault("pattern_detector_minimum_count", DEFAULT_PATTERN_DETECTOR_MINIMUM_COUNT).toInt(),
