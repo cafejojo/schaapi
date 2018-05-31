@@ -19,7 +19,7 @@ import kotlin.streams.toList
  * @property outputDirectory the directory to store all the project directories
  * @property projectPacker packer which determines what type of [Project] to wrap the project directory in
  */
-class GitHubProjectDownloader<P : Project>(
+internal class GitHubProjectDownloader<P : Project>(
     private val projectNames: Collection<String>,
     private val outputDirectory: File,
     private val projectPacker: (File) -> P
