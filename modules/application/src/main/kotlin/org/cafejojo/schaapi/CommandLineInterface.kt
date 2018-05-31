@@ -88,7 +88,7 @@ private fun buildOptions(): Options =
             .build())
         .addOption(Option
             .builder("u")
-            .longOpt("user_dirs")
+            .longOpt("user_base_dir")
             .desc("The directory containing user project directories.")
             .hasArg()
             .required()
