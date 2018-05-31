@@ -19,11 +19,11 @@ class FrequentSequenceFinderTest : Spek({
             val sequence3 = listOf(node3, node1, node2, node3)
             val sequence4 = listOf(node1, node2, node2, node3, node1)
 
-            val frequentSequences = FrequentSequenceFinder(
+            val frequentSequences = CCSpan(
                 listOf(sequence1, sequence2, sequence3, sequence4),
                 2,
                 TestNodeComparator()
-            ).findFrequentSequences()
+            ).findFrequentPatterns()
 
             assertThat(frequentSequences).containsExactlyInAnyOrder(
                 listOf(node3, node1),

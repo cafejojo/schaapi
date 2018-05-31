@@ -7,14 +7,14 @@ import org.cafejojo.schaapi.pipeline.Pattern
 import org.cafejojo.schaapi.pipeline.PatternDetector
 
 /**
- * Represents a pattern detector.
+ * Finds closed sequential patterns using the CCSPan algorithm by Zhang et. al.
  */
 class PatternDetector<N : Node>(
     private val minimumCount: Int,
     private val comparator: GeneralizedNodeComparator<N>
 ) : PatternDetector<N> {
     override fun findPatterns(graphs: List<N>): List<Pattern<N>> {
-        val userPaths = graphs.flatMap { PathEnumerator(it).enumerate() }
-        return FrequentSequenceFinder(userPaths, minimumCount, comparator).findFrequentSequences()
+        val sequences = graphs.flatMap { PathEnumerator(it).enumerate() }
+        return CCSpan(sequences, minimumCount, comparator).findFrequentPatterns()
     }
 }
