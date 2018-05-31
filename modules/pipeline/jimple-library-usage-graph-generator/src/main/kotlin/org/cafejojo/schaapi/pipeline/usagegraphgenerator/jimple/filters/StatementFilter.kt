@@ -28,7 +28,7 @@ internal class StatementFilter(project: JavaProject) : Filter {
      * @param unit a statement.
      * @return whether or not the statement should be kept.
      */
-    internal fun retain(unit: Unit) = when (unit) {
+    fun retain(unit: Unit) = when (unit) {
         is ThrowStmt -> valueFilter.retain(unit.op)
         is DefinitionStmt -> valueFilter.retain(unit.rightOp)
         is IfStmt -> true // defer to BranchStatementFilter

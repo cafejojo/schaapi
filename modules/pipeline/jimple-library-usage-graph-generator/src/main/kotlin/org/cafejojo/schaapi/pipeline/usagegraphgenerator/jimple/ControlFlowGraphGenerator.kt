@@ -17,7 +17,7 @@ internal object ControlFlowGraphGenerator {
      * @param body a Soot method [Body]
      * @return the [Body]'s root [Stmt] wrapped in a [JimpleNode]
      */
-    internal fun create(body: Body): JimpleNode? =
+    fun create(body: Body): JimpleNode? =
         BriefUnitGraph(body).let { transform(it, HashMap(), it.rootUnitIfExists()) }
 
     /**

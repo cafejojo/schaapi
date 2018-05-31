@@ -42,13 +42,13 @@ internal class BranchStatementFilter(project: JavaProject) : Filter {
         branch.hasNonEmptyBranches || valueFilter.retain(getConditionValue(branch.statement))
 
     private companion object {
-        private fun isBranchStatement(statement: Unit) = when (statement) {
+        fun isBranchStatement(statement: Unit) = when (statement) {
             is IfStmt -> true
             is SwitchStmt -> true
             else -> false
         }
 
-        private fun getConditionValue(statement: Unit): Value = when (statement) {
+        fun getConditionValue(statement: Unit): Value = when (statement) {
             is IfStmt -> statement.condition
             is SwitchStmt -> statement.key
             else -> throw IllegalArgumentException("Cannot get value of unsupported statement.")

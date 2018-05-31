@@ -40,7 +40,7 @@ internal class ValueFilter(private val project: JavaProject) {
      * @param value a value.
      * @return whether or not the value should be kept.
      */
-    internal fun retain(value: Value): Boolean = when (value) {
+    fun retain(value: Value): Boolean = when (value) {
         is Expr -> retainExpr(value)
         is Ref -> retainRef(value)
         is Immediate -> retainImmediate(value)

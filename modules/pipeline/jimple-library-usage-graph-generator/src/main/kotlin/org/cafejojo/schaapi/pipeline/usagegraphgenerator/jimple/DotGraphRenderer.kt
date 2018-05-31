@@ -17,7 +17,7 @@ internal class DotGraphRenderer(private val name: String, private val cfg: Node)
      *
      * @return a control flow graph in DOT format.
      */
-    internal fun render(): String {
+    fun render(): String {
         result.append("digraph \"$name()\" {\n")
         render(cfg)
         result.append("}")
