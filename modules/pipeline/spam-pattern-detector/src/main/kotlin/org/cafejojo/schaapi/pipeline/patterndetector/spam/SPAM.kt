@@ -7,9 +7,9 @@ import org.cafejojo.schaapi.models.PathUtil
 import org.cafejojo.schaapi.pipeline.Pattern
 
 /**
- * Finds frequent sequences of [Node]s in the given collection of paths, using the SPAM algorithm by Ayres et al.
+ * Finds frequent sequences of [Node]s in the given collection of sequences, using the SPAM algorithm by Ayres et al.
  *
- * @property sequences all paths in which patterns should be detected. Each path is a list of [Node]s.
+ * @property sequences all sequences in which patterns should be detected. Each sequence is a list of [Node]s.
  * @property minimumSupport the minimum amount of times a node must appear in [sequences] for it to be considered a
  * frequent node.
  * @property nodeComparator the nodeComparator used to determine whether two [Node]s are equal
@@ -53,8 +53,8 @@ internal class SPAM<N : Node>(
 
         val frequentExtensions = extensions.mapNotNull { extension ->
             val extendedPattern: List<N> = (pattern + extension) as List<N>
-            val support = sequences.count { path ->
-                pathUtil.pathContainsSequence(path, extendedPattern, nodeComparator)
+            val support = sequences.count { sequence ->
+                pathUtil.pathContainsSequence(sequence, extendedPattern, nodeComparator)
             }
 
             if (support >= minimumSupport) extension
