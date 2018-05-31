@@ -3,17 +3,16 @@ package org.cafejojo.schaapi.pipeline.patterndetector.ccspan
 import org.cafejojo.schaapi.models.PathUtil
 
 class FrequentSequenceFinder<N : Any>(private val userPaths: List<List<N>>, private val minimumCount: Int) {
-    val frequentClosedContigiousSequences = mutableListOf<List<N>>()
-    val pathUtil = PathUtil<N>()
-    val frequentItems = pathUtil.findFrequentNodesInPaths(userPaths, minimumCount)
+    private val pathUtil = PathUtil<N>()
 
-    val previous = mutableListOf<Triple<List<N>, Int, MutableBoolean>>()
-    val current = mutableListOf<Triple<List<N>, Int, MutableBoolean>>()
+    private val previous = mutableSetOf<Triple<List<N>, Int, MutableBoolean>>()
+    private val current = mutableSetOf<Triple<List<N>, Int, MutableBoolean>>()
 
     fun findFrequentSequences(): List<List<N>> {
-        var k = 2
-
+        val frequentClosedContiguousSequences = mutableListOf<List<N>>()
         initGen()
+
+        var k = 2
         while (previous.isNotEmpty()) {
             val checkedSequences = mutableListOf<List<N>>()
 
@@ -27,7 +26,7 @@ class FrequentSequenceFinder<N : Any>(private val userPaths: List<List<N>>, priv
                 }
 
             generateClosedContiguousSequences()
-            frequentClosedContigiousSequences.addAll(previous.map { it.first })
+            frequentClosedContiguousSequences.addAll(previous.map { it.first })
 
             k++
 
@@ -36,17 +35,19 @@ class FrequentSequenceFinder<N : Any>(private val userPaths: List<List<N>>, priv
             current.clear()
         }
 
-        return frequentClosedContigiousSequences
+        frequentClosedContiguousSequences.addAll(previous.map { it.first })
+
+        return frequentClosedContiguousSequences
     }
 
     private fun initGen() {
-        val checkedSubsequences = mutableListOf<List<N>>()
+        val checkedSequences = mutableListOf<List<N>>()
 
         userPaths.forEach { path ->
             path.forEach { element ->
-                if (!checkedSubsequences.contains(listOf(element))) {
+                if (!checkedSequences.contains(listOf(element))) {
                     var support = 0
-                    userPaths.takeLastWhile { path !== it }.drop(1).forEach {
+                    userPaths.forEach {
                         if (pathUtil.pathContainsSequenceCool(it, listOf(element))) {
                             support++
                         }
@@ -54,21 +55,22 @@ class FrequentSequenceFinder<N : Any>(private val userPaths: List<List<N>>, priv
 
                     if (support >= minimumCount) {
                         previous += Triple(listOf(element), support, MutableBoolean(true))
-                    } else {
-                        checkedSubsequences += listOf(element)
                     }
+
+                    checkedSequences += listOf(element)
                 }
             }
         }
     }
 
     private fun generateContiguousSequences(
-        subSequence: List<N>, checkedSequences: MutableList<List<N>>, parentPath: List<N>) {
-        if (checkedSequences.contains(subSequence))
-        else if (previous.any { it.first == makePre(it.first) } && current.any { it.first == makePost(it.first) }) {
+        subSequence: List<N>, checkedSequences: MutableList<List<N>>, parentPath: List<N>
+    ) {
+        if (checkedSequences.contains(subSequence)) return
+        else if (previous.any { it.first == makePre(subSequence) } && previous.any { it.first == makePost(subSequence) }) {
             var support = 0
 
-            userPaths.takeLastWhile { parentPath !== it }.drop(1).forEach {
+            userPaths.forEach {
                 if (pathUtil.pathContainsSequenceCool(it, subSequence)) {
                     support++
                 }
@@ -76,16 +78,13 @@ class FrequentSequenceFinder<N : Any>(private val userPaths: List<List<N>>, priv
 
             if (support >= minimumCount) {
                 current += Triple(subSequence, support, MutableBoolean(true))
-            } else {
-                checkedSequences += subSequence
             }
+
+            checkedSequences += subSequence
         } else {
             checkedSequences += subSequence
         }
     }
-
-    private fun makePre(sequence: List<N>) = sequence.subList(0, sequence.size - 1)
-    private fun makePost(sequence: List<N>) = sequence.subList(1, sequence.size)
 
     private fun generateClosedContiguousSequences() {
         current.forEach { (sequence, _, _) ->
@@ -98,6 +97,10 @@ class FrequentSequenceFinder<N : Any>(private val userPaths: List<List<N>>, priv
                 .forEach { it.third.bool = false }
         }
     }
+
+    private fun makePre(sequence: List<N>) = sequence.subList(0, sequence.size - 1)
+
+    private fun makePost(sequence: List<N>) = sequence.subList(1, sequence.size)
 }
 
 data class MutableBoolean(var bool: Boolean)
