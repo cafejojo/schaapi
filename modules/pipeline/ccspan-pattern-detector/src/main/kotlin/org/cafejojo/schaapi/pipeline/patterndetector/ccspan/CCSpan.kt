@@ -6,7 +6,7 @@ import org.cafejojo.schaapi.models.PathUtil
 import org.cafejojo.schaapi.pipeline.Pattern
 
 /**
- * Finds closed sequential patterns using the CCSPan algorithm by Zhang et. al.
+ * Finds closed sequential patterns using the CCSpan algorithm by Zhang et. al.
  *
  * @property sequences the collection of all sequences
  * @property minimumSupport the minimum amount of times a [Node] must appear in [sequences] for it to be considered

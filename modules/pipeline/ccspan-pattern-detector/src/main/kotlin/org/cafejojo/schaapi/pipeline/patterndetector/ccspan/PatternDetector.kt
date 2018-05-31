@@ -7,7 +7,7 @@ import org.cafejojo.schaapi.pipeline.Pattern
 import org.cafejojo.schaapi.pipeline.PatternDetector
 
 /**
- * Finds closed sequential patterns using the CCSPan algorithm by Zhang et. al.
+ * Finds closed sequential patterns using the CCSpan algorithm by Zhang et. al.
  */
 class PatternDetector<N : Node>(
     private val minimumCount: Int,
