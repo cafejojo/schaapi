@@ -21,12 +21,16 @@ class FrequentSequenceFinder<N : Any>(private val userPaths: List<List<N>>, priv
                 .forEach { path ->
                     path.dropLast(k - 1).indices.forEach {
                         val subSequence = path.subList(it, it + k)
-                        generateContiguousSequences(subSequence, checkedSequences, path)
+                        generateContiguousSequences(subSequence, checkedSequences)
                     }
                 }
 
             generateClosedContiguousSequences()
-            frequentClosedContiguousSequences.addAll(previous.map { it.first })
+            frequentClosedContiguousSequences.addAll(
+                current
+                    .filter { it.third.bool }
+                    .map { it.first }
+            )
 
             k++
 
@@ -34,8 +38,6 @@ class FrequentSequenceFinder<N : Any>(private val userPaths: List<List<N>>, priv
             previous.addAll(current)
             current.clear()
         }
-
-        frequentClosedContiguousSequences.addAll(previous.map { it.first })
 
         return frequentClosedContiguousSequences
     }
@@ -64,7 +66,7 @@ class FrequentSequenceFinder<N : Any>(private val userPaths: List<List<N>>, priv
     }
 
     private fun generateContiguousSequences(
-        subSequence: List<N>, checkedSequences: MutableList<List<N>>, parentPath: List<N>
+        subSequence: List<N>, checkedSequences: MutableList<List<N>>
     ) {
         if (checkedSequences.contains(subSequence)) return
         else if (previous.any { it.first == makePre(subSequence) } && previous.any { it.first == makePost(subSequence) }) {

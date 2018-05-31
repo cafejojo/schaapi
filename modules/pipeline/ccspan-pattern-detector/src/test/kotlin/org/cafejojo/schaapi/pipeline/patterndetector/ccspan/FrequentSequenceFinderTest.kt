@@ -18,7 +18,7 @@ class FrequentSequenceFinderTest : Spek({
                 2
             ).findFrequentSequences()
 
-            assertThat(frequentSequences).containsExactly(
+            assertThat(frequentSequences).containsExactlyInAnyOrder(
                 listOf(3, 1),
                 listOf(1, 2),
                 listOf(2, 3),
