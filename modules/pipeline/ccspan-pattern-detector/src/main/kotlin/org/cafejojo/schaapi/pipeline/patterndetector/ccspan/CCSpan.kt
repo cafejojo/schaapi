@@ -31,7 +31,7 @@ internal class CCSpan<N : Node>(
      * @return list of frequent sequential patterns
      */
     internal fun findFrequentPatterns(): List<Pattern<N>> {
-        initGen()
+        generateSingletonSequences()
         val frequentClosedContiguousSequences = mutableListOf<Pattern<N>>()
 
         var subSequenceLength = 2
@@ -71,7 +71,7 @@ internal class CCSpan<N : Node>(
         current.clear()
     }
 
-    private fun initGen() {
+    private fun generateSingletonSequences() {
         val checkedSequences = mutableListOf<N>()
 
         sequences.flatten().forEach { element ->
