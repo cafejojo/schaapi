@@ -14,8 +14,7 @@ class PatternDetector<N : Node>(
     private val comparator: GeneralizedNodeComparator<N>
 ) : PatternDetector<N> {
     override fun findPatterns(graphs: List<N>): List<Pattern<N>> {
-        val userPaths = graphs.flatMap { PathEnumerator(it).enumerate() }
-
-        return FrequentSequenceFinder(userPaths, minimumCount, comparator).findFrequentSequences()
+        val sequences = graphs.flatMap { PathEnumerator(it).enumerate() }
+        return SPAM(sequences, minimumCount, comparator).findFrequentSequences()
     }
 }
