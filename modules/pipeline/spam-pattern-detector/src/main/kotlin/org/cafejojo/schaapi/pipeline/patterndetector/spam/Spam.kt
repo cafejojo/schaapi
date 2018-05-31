@@ -14,13 +14,13 @@ import org.cafejojo.schaapi.pipeline.Pattern
  * frequent node.
  * @property nodeComparator the nodeComparator used to determine whether two [Node]s are equal
  */
-internal class SPAM<N : Node>(
+internal class Spam<N : Node>(
     private val sequences: Collection<List<N>>,
     private val minimumSupport: Int,
     private val nodeComparator: GeneralizedNodeComparator<N>
 ) {
     private val pathUtil = PathUtil<N>()
-    private val frequentSequences = mutableListOf<List<N>>()
+    private val frequentPatterns = mutableListOf<Pattern<N>>()
     private val frequentItems = CustomEqualsHashSet<N>(Node.Companion::equiv, Node::equivHashCode)
 
     /**
@@ -28,28 +28,28 @@ internal class SPAM<N : Node>(
      *
      * @return frequent sequences in [sequences]
      */
-    internal fun findFrequentSequences(): List<Pattern<N>> {
+    internal fun findFrequentPatterns(): List<Pattern<N>> {
         frequentItems.addAll(pathUtil.findFrequentNodesInPaths(sequences, minimumSupport))
         frequentItems.forEach { runAlgorithm(listOf(it), frequentItems) }
 
-        return frequentSequences
+        return frequentPatterns
     }
 
     /**
      * Creates a mapping from the found frequent [Pattern]s to [sequences] which contain said sequence.
      *
-     * If [findFrequentSequences] has not been run before, the resulting map will not contain any keys.
+     * If [findFrequentPatterns] has not been run before, the resulting map will not contain any keys.
      *
      * @return a mapping from the frequent patterns to sequences which contain said sequence
      */
     internal fun mapFrequentPatternsToSequences(): Map<Pattern<N>, List<List<N>>> =
-        frequentSequences.map { sequence ->
+        frequentPatterns.map { sequence ->
             Pair(sequence, sequences.filter { pathUtil.pathContainsSequence(it, sequence, nodeComparator) })
         }.toMap()
 
     @Suppress("UnsafeCast") // pattern: List<N> + extension: N is always a List<N>
     private fun runAlgorithm(pattern: List<N>, extensions: Set<N>) {
-        frequentSequences.add(pattern)
+        frequentPatterns.add(pattern)
 
         val frequentExtensions = extensions.mapNotNull { extension ->
             val extendedPattern: List<N> = (pattern + extension) as List<N>

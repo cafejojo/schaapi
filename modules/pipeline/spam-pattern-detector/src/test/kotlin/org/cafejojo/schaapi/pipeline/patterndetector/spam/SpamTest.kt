@@ -6,7 +6,7 @@ import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 
-internal class SPAMTest : Spek({
+internal class SpamTest : Spek({
     describe("detecting patterns in a set of sequences") {
         it("should not find a pattern in a set of random nodes with support 2") {
             val node1 = SimpleNode()
@@ -25,7 +25,7 @@ internal class SPAMTest : Spek({
             val sequence3 = listOf(node7, node8, node9, node10)
 
             val sequences = listOf(sequence1, sequence2, sequence3)
-            val frequent = SPAM(sequences, 2, TestNodeComparator()).findFrequentSequences()
+            val frequent = Spam(sequences, 2, TestNodeComparator()).findFrequentPatterns()
 
             assertThat(frequent).isEmpty()
         }
@@ -46,7 +46,7 @@ internal class SPAMTest : Spek({
             val sequence3 = listOf(node6, node7, node8, node9, node1, node2, node2)
 
             val sequences = listOf(sequence1, sequence2, sequence3)
-            val frequent = SPAM(sequences, 2, TestNodeComparator()).findFrequentSequences()
+            val frequent = Spam(sequences, 2, TestNodeComparator()).findFrequentPatterns()
 
             assertThat(frequent).contains(sequence1)
         }
@@ -63,9 +63,9 @@ internal class SPAMTest : Spek({
             val sequence2 = listOf(node2, node1, node2)
 
             val sequences = listOf(sequence1, sequence2)
-            val patternDetector = SPAM(sequences, 2, TestNodeComparator())
+            val patternDetector = Spam(sequences, 2, TestNodeComparator())
 
-            patternDetector.findFrequentSequences()
+            patternDetector.findFrequentPatterns()
             val patterns = patternDetector.mapFrequentPatternsToSequences()
 
             assertThat(patterns[listOf(node1, node2)]).isEqualTo(listOf(sequence1, sequence2))
