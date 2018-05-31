@@ -15,7 +15,7 @@ import org.cafejojo.schaapi.pipeline.Pattern
  * frequent node. This node will then be used by the Prefix Space algorithm to find frequent sequences of [Node]s.
  * @property nodeComparator the nodeComparator used to determine whether two [Node]s are equal
  */
-class PrefixSpan<N : Node>(
+internal class PrefixSpan<N : Node>(
     private val sequences: Collection<List<N>>,
     private val minimumSupport: Int,
     private val nodeComparator: GeneralizedNodeComparator<N>
@@ -70,7 +70,7 @@ class PrefixSpan<N : Node>(
      *
      * @return the list of sequences, each a list of nodes, that are common within [sequences]
      */
-    fun findFrequentPatterns(): List<Pattern<N>> {
+    internal fun findFrequentPatterns(): List<Pattern<N>> {
         frequentItems.addAll(pathUtil.findFrequentNodesInPaths(sequences, minimumSupport))
         runAlgorithm()
 
@@ -84,7 +84,7 @@ class PrefixSpan<N : Node>(
      *
      * @return a mapping from the frequent patterns to sequences which contain said sequence
      */
-    fun mapFrequentPatternsToSequences(): Map<Pattern<N>, List<List<N>>> =
+    internal fun mapFrequentPatternsToSequences(): Map<Pattern<N>, List<List<N>>> =
         frequentPatterns
             .map { sequence ->
                 Pair(sequence, sequences.filter { pathUtil.pathContainsSequence(it, sequence, nodeComparator) })
