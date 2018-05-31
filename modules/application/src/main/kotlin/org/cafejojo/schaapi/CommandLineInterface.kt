@@ -143,11 +143,11 @@ private fun printHelpMessage(options: Options) {
 }
 
 /**
- * Returns [CommandLine::getOptionValue], unless this is null, in which case [default] is returned.
+ * Returns [CommandLine.getOptionValue], unless this is null, in which case [default] is returned.
  *
  * @param option the name of the option
  * @param default the value to return if the option's value is null
- * @return [CommandLine::getOptionValue], unless this is null, in which case [default] is returned
+ * @return [CommandLine.getOptionValue], unless this is null, in which case [default] is returned
  */
 fun CommandLine.getOptionOrDefault(option: String, default: String) =
     getOptionValue(option) ?: default
