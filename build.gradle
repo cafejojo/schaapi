@@ -37,6 +37,7 @@ allprojects {
     dependencies {
         compile group: "org.jetbrains.kotlin", name: "kotlin-stdlib-jdk8", version: kotlinVersion
         compile group: "org.jetbrains.kotlin", name: "kotlin-reflect", version: kotlinVersion
+        implementation group: "io.github.microutils", name: "kotlin-logging", version: kotlinLoggingVersion
 
         testCompile group: "org.assertj", name: "assertj-core", version: assertjVersion
         testCompile group: "org.jetbrains.spek", name: "spek-api", version: spekVersion
