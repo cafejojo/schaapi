@@ -29,8 +29,9 @@ class Pipeline<SO : SearchOptions, UP : Project, LP : Project, N : Node>(
     fun run(libraryProject: LP) {
         libraryProjectCompiler.compile(libraryProject)
 
-        projectMiner.mine(searchOptions)
-            .map { userProjectCompiler.compile(it) }
+        searchOptions
+            .next(projectMiner::mine)
+            .next(userProjectCompiler::compile)
             .flatMap { libraryUsageGraphGenerator.generate(libraryProject, it) }
             .next(patternDetector::findPatterns)
             .next(patternFilter::filter)
@@ -42,3 +43,8 @@ class Pipeline<SO : SearchOptions, UP : Project, LP : Project, N : Node>(
  * Calls the specified function [map] with `this` value as its argument and returns its result.
  */
 fun <T, R> T.next(map: (T) -> R): R = map(this)
+
+/**
+ * Calls the specified function [map] on each element in `this` and returns the result as an iterable.
+ */
+fun <T, R> Iterable<T>.next(map: (T) -> R): Iterable<R> = this.map { map(it) }
