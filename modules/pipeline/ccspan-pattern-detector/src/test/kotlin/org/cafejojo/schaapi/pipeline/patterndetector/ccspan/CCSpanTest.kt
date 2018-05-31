@@ -20,7 +20,7 @@ class CCSpanTest : Spek({
 
             val frequentSequences = CCSpan(sequences, 2, TestNodeComparator()).findFrequentPatterns()
 
-            assertThat(frequentSequences).containsExactlyInAnyOrder(*nodeConverter.convertToArray(
+            assertThat(frequentSequences).containsExactlyInAnyOrderElementsOf(nodeConverter.convertToList(
                 listOf(3, 1),
                 listOf(1, 2),
                 listOf(2, 3),
@@ -36,7 +36,7 @@ class CCSpanTest : Spek({
 
             val frequentSequences = CCSpan(sequences, 1, TestNodeComparator()).findFrequentPatterns()
 
-            assertThat(frequentSequences).containsExactlyInAnyOrder(*nodeConverter.convertToArray(
+            assertThat(frequentSequences).containsExactlyInAnyOrderElementsOf(nodeConverter.convertToList(
                 listOf(1, 2, 3)
             ))
         }
@@ -74,6 +74,4 @@ class NodeConverter {
                 nodes[nodeId] ?: SimpleNode().also { nodes[nodeId] = it }
             }
         }
-
-    fun convertToArray(vararg sequences: List<Int>) = convertToList(*sequences).toTypedArray()
 }
