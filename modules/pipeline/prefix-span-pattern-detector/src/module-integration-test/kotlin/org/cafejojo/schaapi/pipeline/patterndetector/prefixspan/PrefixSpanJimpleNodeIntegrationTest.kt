@@ -60,7 +60,7 @@ class PrefixSpanJimpleNodeIntegrationTest : Spek({
             val path2 = listOf(node7, node8, node9, node10, node4, node5, node6)
 
             val paths = listOf(path1, path2)
-            val frequent = FrequentSequenceFinder(paths, 2, GeneralizedNodeComparator()).findFrequentSequences()
+            val frequent = PrefixSpan(paths, 2, GeneralizedNodeComparator()).findFrequentPatterns()
 
             assertThat(frequent).contains(listOf(node1, node2, node3))
         }
@@ -86,7 +86,7 @@ class PrefixSpanJimpleNodeIntegrationTest : Spek({
             val path2 = listOf(node11, node12, node6, node7, node8, node9, node10)
 
             val paths = listOf(path1, path2)
-            val frequent = FrequentSequenceFinder(paths, 2, GeneralizedNodeComparator()).findFrequentSequences()
+            val frequent = PrefixSpan(paths, 2, GeneralizedNodeComparator()).findFrequentPatterns()
 
             assertThat(frequent).hasSize(amountOfPossibleSubSequences(5))
         }
@@ -109,7 +109,7 @@ class PrefixSpanJimpleNodeIntegrationTest : Spek({
             val path2 = listOf(node9, node10, node5, node6, node7, node8)
 
             val paths = listOf(path1, path2)
-            val frequent = FrequentSequenceFinder(paths, 2, GeneralizedNodeComparator()).findFrequentSequences()
+            val frequent = PrefixSpan(paths, 2, GeneralizedNodeComparator()).findFrequentPatterns()
 
             assertThat(frequent).contains(listOf(node1, node2, node3, node4))
         }
@@ -127,7 +127,7 @@ class PrefixSpanJimpleNodeIntegrationTest : Spek({
             val path2 = listOf(node7, node8, node9, node10, node1, node2, node3)
 
             val paths = listOf(path1, path2)
-            val frequent = FrequentSequenceFinder(paths, 2, GeneralizedNodeComparator()).findFrequentSequences()
+            val frequent = PrefixSpan(paths, 2, GeneralizedNodeComparator()).findFrequentPatterns()
 
             assertThat(frequent).contains(listOf(node1, node2, node3))
         }
@@ -148,7 +148,7 @@ class PrefixSpanJimpleNodeIntegrationTest : Spek({
             val path2 = listOf(node7, node8, node9, node10, node4, node5, node6)
 
             val paths = listOf(path1, path2)
-            val frequent = FrequentSequenceFinder(paths, 2, GeneralizedNodeComparator()).findFrequentSequences()
+            val frequent = PrefixSpan(paths, 2, GeneralizedNodeComparator()).findFrequentPatterns()
 
             assertThat(frequent).isEmpty()
         }
@@ -172,7 +172,7 @@ class PrefixSpanJimpleNodeIntegrationTest : Spek({
             val path2 = listOf(node9, node10, node5, node6, node7, node8)
 
             val paths = listOf(path1, path2)
-            val frequent = FrequentSequenceFinder(paths, 2, GeneralizedNodeComparator()).findFrequentSequences()
+            val frequent = PrefixSpan(paths, 2, GeneralizedNodeComparator()).findFrequentPatterns()
 
             assertThat(frequent).hasSize(4)
         }
