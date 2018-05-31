@@ -33,14 +33,14 @@ import soot.shimple.ShimpleExpr
  *
  * @property project library project
  */
-class ValueFilter(private val project: JavaProject) {
+internal class ValueFilter(private val project: JavaProject) {
     /**
      * Filters out non library-using values.
      *
      * @param value a value.
      * @return whether or not the value should be kept.
      */
-    fun retain(value: Value): Boolean = when (value) {
+    internal fun retain(value: Value): Boolean = when (value) {
         is Expr -> retainExpr(value)
         is Ref -> retainRef(value)
         is Immediate -> retainImmediate(value)
@@ -100,4 +100,4 @@ class ValueFilter(private val project: JavaProject) {
 /**
  * Exception for encountered values that are not supported by the [ValueFilter].
  */
-class UnsupportedValueException(message: String) : Exception(message)
+internal class UnsupportedValueException(message: String) : Exception(message)

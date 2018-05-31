@@ -18,7 +18,7 @@ import soot.toolkits.graph.UnitGraph
  *
  * @param project library project
  */
-class BranchStatementFilter(project: JavaProject) : Filter {
+internal class BranchStatementFilter(project: JavaProject) : Filter {
     internal val valueFilter = ValueFilter(project)
 
     override fun apply(body: Body) {
@@ -41,14 +41,14 @@ class BranchStatementFilter(project: JavaProject) : Filter {
     private fun retain(branch: BranchStatement) =
         branch.hasNonEmptyBranches || valueFilter.retain(getConditionValue(branch.statement))
 
-    companion object {
-        internal fun isBranchStatement(statement: Unit) = when (statement) {
+    private companion object {
+        private fun isBranchStatement(statement: Unit) = when (statement) {
             is IfStmt -> true
             is SwitchStmt -> true
             else -> false
         }
 
-        internal fun getConditionValue(statement: Unit): Value = when (statement) {
+        private fun getConditionValue(statement: Unit): Value = when (statement) {
             is IfStmt -> statement.condition
             is SwitchStmt -> statement.key
             else -> throw IllegalArgumentException("Cannot get value of unsupported statement.")

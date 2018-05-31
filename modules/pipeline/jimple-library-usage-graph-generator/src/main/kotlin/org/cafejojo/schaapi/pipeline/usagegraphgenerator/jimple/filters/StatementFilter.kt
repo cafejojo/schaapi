@@ -17,7 +17,7 @@ import soot.jimple.ThrowStmt
  *
  * @param project library project
  */
-class StatementFilter(project: JavaProject) : Filter {
+internal class StatementFilter(project: JavaProject) : Filter {
     private val valueFilter = ValueFilter(project)
 
     override fun apply(body: Body) = body.units.snapshotIterator().forEach { if (!retain(it)) body.units.remove(it) }
@@ -28,7 +28,7 @@ class StatementFilter(project: JavaProject) : Filter {
      * @param unit a statement.
      * @return whether or not the statement should be kept.
      */
-    fun retain(unit: Unit) = when (unit) {
+    internal fun retain(unit: Unit) = when (unit) {
         is ThrowStmt -> valueFilter.retain(unit.op)
         is DefinitionStmt -> valueFilter.retain(unit.rightOp)
         is IfStmt -> true // defer to BranchStatementFilter

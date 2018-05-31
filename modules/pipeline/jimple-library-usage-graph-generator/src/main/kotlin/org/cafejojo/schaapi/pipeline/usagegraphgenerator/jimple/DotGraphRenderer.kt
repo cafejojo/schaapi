@@ -8,7 +8,7 @@ import org.cafejojo.schaapi.models.Node
  * @property name name of the graph.
  * @property cfg control flow graph.
  */
-class DotGraphRenderer(private val name: String, private val cfg: Node) {
+internal class DotGraphRenderer(private val name: String, private val cfg: Node) {
     private val result = StringBuilder()
     private val visited = HashSet<Node>()
 
@@ -17,7 +17,7 @@ class DotGraphRenderer(private val name: String, private val cfg: Node) {
      *
      * @return a control flow graph in DOT format.
      */
-    fun render(): String {
+    internal fun render(): String {
         result.append("digraph \"$name()\" {\n")
         render(cfg)
         result.append("}")
