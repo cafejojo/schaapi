@@ -1,5 +1,6 @@
 package org.cafejojo.schaapi.pipeline.projectcompiler.javamaven
 
+import mu.KLogging
 import org.apache.maven.shared.invoker.DefaultInvocationRequest
 import org.apache.maven.shared.invoker.DefaultInvoker
 import org.cafejojo.schaapi.models.project.JavaMavenProject
@@ -10,6 +11,8 @@ import java.io.File
  * Compiles a Java project using Maven.
  */
 class ProjectCompiler : ProjectCompiler<JavaMavenProject> {
+    companion object : KLogging()
+
     override fun compile(project: JavaMavenProject): JavaMavenProject {
         runMaven(project)
 
@@ -25,6 +28,10 @@ class ProjectCompiler : ProjectCompiler<JavaMavenProject> {
                 project.classDir.absolutePath + File.pathSeparator +
                     project.dependencies.joinToString(File.pathSeparator) { it.absolutePath }
             }
+
+        if (project.classes.isEmpty()) {
+            logger.warn("Maven project at ${project.projectDir.path} does not contain any classes.")
+        }
 
         return project
     }
