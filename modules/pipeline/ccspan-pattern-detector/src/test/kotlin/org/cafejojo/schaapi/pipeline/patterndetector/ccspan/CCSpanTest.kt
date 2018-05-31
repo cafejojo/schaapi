@@ -11,14 +11,14 @@ class CCSpanTest : Spek({
     describe("mining of frequent closed contiguous sequences") {
         it("finds all frequent closed contiguous sequences") {
             val nodeConverter = NodeConverter()
-            val paths = nodeConverter.convertToList(
+            val sequences = nodeConverter.convertToList(
                 listOf(3, 1, 1, 2, 3),
                 listOf(1, 2, 3, 2),
                 listOf(3, 1, 2, 3),
                 listOf(1, 2, 2, 3, 1)
             )
 
-            val frequentSequences = CCSpan(paths, 2, TestNodeComparator()).findFrequentPatterns()
+            val frequentSequences = CCSpan(sequences, 2, TestNodeComparator()).findFrequentPatterns()
 
             assertThat(frequentSequences).containsExactlyInAnyOrder(*nodeConverter.convertToArray(
                 listOf(3, 1),
@@ -28,37 +28,37 @@ class CCSpanTest : Spek({
             ))
         }
 
-        it("finds only one closed contiguous sequence in a single path with support 1") {
+        it("finds only one closed contiguous sequence in a single sequence with support 1") {
             val nodeConverter = NodeConverter()
-            val paths = nodeConverter.convertToList(
-                listOf(3, 1, 1, 2, 3)
+            val sequences = nodeConverter.convertToList(
+                listOf(1, 2, 3)
             )
 
-            val frequentSequences = CCSpan(paths, 1, TestNodeComparator()).findFrequentPatterns()
+            val frequentSequences = CCSpan(sequences, 1, TestNodeComparator()).findFrequentPatterns()
 
             assertThat(frequentSequences).containsExactlyInAnyOrder(*nodeConverter.convertToArray(
-                listOf(3, 1, 1, 2, 3)
+                listOf(1, 2, 3)
             ))
         }
 
-        it("finds no frequent patterns in an empty list of paths") {
-            val paths = listOf<List<Node>>()
+        it("finds no frequent patterns in an empty list of sequences") {
+            val sequences = listOf<List<Node>>()
 
-            val frequentSequences = CCSpan(paths, 2, TestNodeComparator()).findFrequentPatterns()
+            val frequentSequences = CCSpan(sequences, 2, TestNodeComparator()).findFrequentPatterns()
 
             assertThat(frequentSequences).isEmpty()
         }
 
         it("finds no patterns with a high support") {
             val nodeConverter = NodeConverter()
-            val paths = nodeConverter.convertToList(
+            val sequences = nodeConverter.convertToList(
                 listOf(3, 1, 1, 2, 3),
                 listOf(1, 2, 3, 2),
                 listOf(3, 1, 2, 3),
                 listOf(1, 2, 2, 3, 1)
             )
 
-            val frequentSequences = CCSpan(paths, 5, TestNodeComparator()).findFrequentPatterns()
+            val frequentSequences = CCSpan(sequences, 5, TestNodeComparator()).findFrequentPatterns()
 
             assertThat(frequentSequences).isEmpty()
         }
@@ -68,12 +68,12 @@ class CCSpanTest : Spek({
 class NodeConverter {
     private val nodes = mutableMapOf<Int, Node>()
 
-    fun convertToList(vararg paths: List<Int>) =
-        paths.map { path ->
-            path.map { nodeId ->
+    fun convertToList(vararg sequences: List<Int>) =
+        sequences.map { sequence ->
+            sequence.map { nodeId ->
                 nodes[nodeId] ?: SimpleNode().also { nodes[nodeId] = it }
             }
         }
 
-    fun convertToArray(vararg paths: List<Int>) = convertToList(*paths).toTypedArray()
+    fun convertToArray(vararg sequences: List<Int>) = convertToList(*sequences).toTypedArray()
 }
