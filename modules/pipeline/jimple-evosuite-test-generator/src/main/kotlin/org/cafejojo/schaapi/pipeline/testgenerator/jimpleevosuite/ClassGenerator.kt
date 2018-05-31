@@ -24,7 +24,7 @@ import soot.jimple.internal.JReturnVoidStmt
  *
  * @param className name of [SootClass] to be generated
  */
-class ClassGenerator(className: String) {
+internal class ClassGenerator(className: String) {
     init {
         Scene.v().addBasicClass("java.lang.Object")
     }
@@ -133,4 +133,4 @@ class ClassGenerator(className: String) {
 /**
  * Exception to denote that a value cannot be stored as a local.
  */
-class ValueIsNotLocalException(value: Value) : RuntimeException("$value cannot be stored as a local.")
+internal class ValueIsNotLocalException(value: Value) : RuntimeException("$value cannot be stored as a local.")

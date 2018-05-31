@@ -18,7 +18,7 @@ import java.nio.charset.Charset
  * @property processStandardStream a stream to output EvoSuite's standard messages to
  * @property processErrorStream a stream to output EvoSuite's error messages to
  */
-class EvoSuiteRunner(
+internal class EvoSuiteRunner(
     private val fullyQualifiedClassName: String,
     private val classpath: String,
     private val outputDirectory: String,
@@ -78,4 +78,4 @@ class EvoSuiteRunner(
 /**
  * A [RuntimeException] occurring during the execution of the EvoSuite test generation tool.
  */
-class EvoSuiteRuntimeException(message: String? = null) : RuntimeException(message)
+internal class EvoSuiteRuntimeException(message: String? = null) : RuntimeException(message)
