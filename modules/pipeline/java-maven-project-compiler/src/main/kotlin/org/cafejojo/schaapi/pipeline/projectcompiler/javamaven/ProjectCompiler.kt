@@ -11,7 +11,7 @@ import java.io.File
  * Compiles a Java project using Maven.
  */
 class ProjectCompiler : ProjectCompiler<JavaMavenProject> {
-    companion object : KLogging()
+    private companion object : KLogging()
 
     override fun compile(project: JavaMavenProject): JavaMavenProject {
         runMaven(project)
