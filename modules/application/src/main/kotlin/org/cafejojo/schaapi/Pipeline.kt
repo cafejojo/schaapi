@@ -2,13 +2,13 @@ package org.cafejojo.schaapi
 
 import org.cafejojo.schaapi.models.Node
 import org.cafejojo.schaapi.models.Project
-import org.cafejojo.schaapi.pipeline.LibraryUsageGraphGenerator
-import org.cafejojo.schaapi.pipeline.PatternDetector
-import org.cafejojo.schaapi.pipeline.PatternFilter
-import org.cafejojo.schaapi.pipeline.ProjectCompiler
-import org.cafejojo.schaapi.pipeline.ProjectMiner
-import org.cafejojo.schaapi.pipeline.SearchOptions
-import org.cafejojo.schaapi.pipeline.TestGenerator
+import org.cafejojo.schaapi.miningpipeline.LibraryUsageGraphGenerator
+import org.cafejojo.schaapi.miningpipeline.PatternDetector
+import org.cafejojo.schaapi.miningpipeline.PatternFilter
+import org.cafejojo.schaapi.miningpipeline.ProjectCompiler
+import org.cafejojo.schaapi.miningpipeline.ProjectMiner
+import org.cafejojo.schaapi.miningpipeline.SearchOptions
+import org.cafejojo.schaapi.miningpipeline.TestGenerator
 
 /**
  * Represents the complete Schaapi pipeline.
