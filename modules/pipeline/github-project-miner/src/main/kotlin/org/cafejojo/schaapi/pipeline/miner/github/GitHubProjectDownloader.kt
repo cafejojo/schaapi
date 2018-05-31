@@ -1,5 +1,6 @@
 package org.cafejojo.schaapi.pipeline.miner.github
 
+import mu.KLogging
 import org.cafejojo.schaapi.models.Project
 import org.zeroturnaround.zip.ZipException
 import org.zeroturnaround.zip.ZipUtil
@@ -18,12 +19,13 @@ import kotlin.streams.toList
  * @property outputDirectory the directory to store all the project directories
  * @property projectPacker packer which determines what type of [Project] to wrap the project directory in
  */
-@Suppress("PrintStackTrace") // TODO use searchContent logger
 class GitHubProjectDownloader<P : Project>(
     private val projectNames: Collection<String>,
     private val outputDirectory: File,
     private val projectPacker: (File) -> P
 ) {
+    companion object : KLogging()
+
     /**
      * Starts downloading repositories.
      *
@@ -63,12 +65,17 @@ class GitHubProjectDownloader<P : Project>(
         )
 
         try {
-            // TODO logo if output file existed and had to be deleted
-            if (outputFile.exists()) outputFile.delete()
-            // TODO log if creation of new file returns false
-            if (outputFile.createNewFile()) input.copyTo(FileOutputStream(outputFile))
+            if (outputFile.exists()) {
+                logger.info("Output file ${outputFile.path} already exists and will be deleted.")
+                outputFile.delete()
+            }
+            if (outputFile.createNewFile()) {
+                input.copyTo(FileOutputStream(outputFile))
+            } else {
+                logger.warn("Output file ${outputFile.path} could not be created.")
+            }
         } catch (e: IOException) {
-            e.printStackTrace() // TODO use logger
+            logger.warn("Could not save project to ${outputFile.path}.", e)
             return null
         }
 
@@ -82,10 +89,10 @@ class GitHubProjectDownloader<P : Project>(
         try {
             ZipUtil.unpack(zipFile, output)
         } catch (e: IOException) {
-            e.printStackTrace() // TODO use logger
+            logger.warn("Could not unzip ${zipFile.name}.", e)
             return null
         } catch (e: ZipException) {
-            e.printStackTrace() // TODO use logger
+            logger.warn("Could not unzip ${zipFile.name}.", e)
             return null
         } finally {
             if (zipFile.exists()) zipFile.delete()
@@ -101,7 +108,7 @@ class GitHubProjectDownloader<P : Project>(
             val connection = url.openConnection() as? HttpURLConnection ?: return null
             return connection.apply { requestMethod = "GET" }
         } catch (e: IOException) {
-            e.printStackTrace() // TODO use logger
+            logger.warn("Could not connect to project $projectName.", e)
             return null
         }
     }

@@ -19,7 +19,6 @@ import java.io.File
  * is created
  * @property projectPacker packer which determines what type of [Project] to wrap the project directory in
  */
-@Suppress("PrintStackTrace") // TODO use searchContent logger
 class ProjectMiner<P : Project>(
     private val username: String, private val password: String,
     private val outputDirectory: File,
