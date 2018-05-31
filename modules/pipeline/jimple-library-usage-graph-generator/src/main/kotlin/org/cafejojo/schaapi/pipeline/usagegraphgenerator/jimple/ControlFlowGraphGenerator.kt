@@ -10,7 +10,7 @@ import soot.Unit as SootUnit
 /**
  * Creates the control flow graph of a method body.
  */
-object ControlFlowGraphGenerator {
+internal object ControlFlowGraphGenerator {
     /**
      * Creates the control flow graph of a method body.
      *
@@ -58,10 +58,10 @@ object ControlFlowGraphGenerator {
  *
  * @return the root of the control flow graph.
  */
-fun UnitGraph.rootUnitIfExists(): SootUnit =
+private fun UnitGraph.rootUnitIfExists(): SootUnit =
     if (heads.isEmpty()) throw NoRootInControlFlowGraphException() else heads[0]
 
 /**
  * Exception for control flow graphs that have no root [SootUnit].
  */
-class NoRootInControlFlowGraphException : Exception("The control flow graph does not contain a root unit.")
+private class NoRootInControlFlowGraphException : Exception("The control flow graph does not contain a root unit.")

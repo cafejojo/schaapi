@@ -17,7 +17,7 @@ import soot.jimple.ThrowStmt
  *
  * @param project library project
  */
-class StatementFilter(project: JavaProject) : Filter {
+internal class StatementFilter(project: JavaProject) : Filter {
     private val valueFilter = ValueFilter(project)
 
     override fun apply(body: Body) = body.units.snapshotIterator().forEach { if (!retain(it)) body.units.remove(it) }

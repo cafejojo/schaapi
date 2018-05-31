@@ -33,7 +33,7 @@ import soot.shimple.ShimpleExpr
  *
  * @property project library project
  */
-class ValueFilter(private val project: JavaProject) {
+internal class ValueFilter(private val project: JavaProject) {
     /**
      * Filters out non library-using values.
      *
@@ -100,4 +100,4 @@ class ValueFilter(private val project: JavaProject) {
 /**
  * Exception for encountered values that are not supported by the [ValueFilter].
  */
-class UnsupportedValueException(message: String) : Exception(message)
+internal class UnsupportedValueException(message: String) : Exception(message)
