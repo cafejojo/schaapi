@@ -11,9 +11,9 @@ init:
 
 # Build
 build_script:
-- cmd: gradlew assemble
+- cmd: gradlew assemble --no-parallel
 test_script:
-- cmd: gradlew detektCheck --project-cache-dir=../schaapi-cache check
+- cmd: gradlew detektCheck --project-cache-dir=../schaapi-cache check --no-parallel
 
 
 # Caching
