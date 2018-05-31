@@ -115,6 +115,11 @@ Please see [releases](../../releases) for more information on what has changed r
 $ ./gradlew check
 ```
 
+## Documentation
+``` bash
+$ ./gradlew dokka
+```
+
 ## Contributing
 Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
 
