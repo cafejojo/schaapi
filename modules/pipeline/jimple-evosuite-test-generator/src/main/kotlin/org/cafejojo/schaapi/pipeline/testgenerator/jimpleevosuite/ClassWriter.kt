@@ -12,7 +12,7 @@ import java.nio.file.Paths
 /**
  * Functionality for serializing a [SootClass] to JVM bytecode.
  */
-object ClassWriter {
+internal object ClassWriter {
     /**
      * Writes the given [sootClass] to a class file.
      *
@@ -22,7 +22,7 @@ object ClassWriter {
      * @param sootClass the class to write to file
      * @param targetDirectory the path to the base directory in which to place the class file structure
      */
-    fun writeToFile(sootClass: SootClass, targetDirectory: String) {
+    internal fun writeToFile(sootClass: SootClass, targetDirectory: String) {
         val outputFile = Paths.get(targetDirectory, generateClassFilePath(sootClass.name)).toFile()
         outputFile.parentFile.mkdirs()
         FileOutputStream(outputFile).use {
@@ -36,7 +36,7 @@ object ClassWriter {
      * @param sootClass the class to write to a file
      * @param outputStream the [OutputStream] to write the bytecode to
      */
-    fun writeToOutputStream(sootClass: SootClass, outputStream: OutputStream) {
+    internal fun writeToOutputStream(sootClass: SootClass, outputStream: OutputStream) {
         val jasminOutputStream = JasminOutputStream(outputStream)
         val outputWriter = PrintWriter(OutputStreamWriter(jasminOutputStream))
 
