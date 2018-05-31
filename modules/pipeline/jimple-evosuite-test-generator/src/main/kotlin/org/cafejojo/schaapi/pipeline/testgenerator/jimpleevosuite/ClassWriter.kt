@@ -22,7 +22,7 @@ internal object ClassWriter {
      * @param sootClass the class to write to file
      * @param targetDirectory the path to the base directory in which to place the class file structure
      */
-    internal fun writeToFile(sootClass: SootClass, targetDirectory: String) {
+    fun writeToFile(sootClass: SootClass, targetDirectory: String) {
         val outputFile = Paths.get(targetDirectory, generateClassFilePath(sootClass.name)).toFile()
         outputFile.parentFile.mkdirs()
         FileOutputStream(outputFile).use {
@@ -36,7 +36,7 @@ internal object ClassWriter {
      * @param sootClass the class to write to a file
      * @param outputStream the [OutputStream] to write the bytecode to
      */
-    internal fun writeToOutputStream(sootClass: SootClass, outputStream: OutputStream) {
+    fun writeToOutputStream(sootClass: SootClass, outputStream: OutputStream) {
         val jasminOutputStream = JasminOutputStream(outputStream)
         val outputWriter = PrintWriter(OutputStreamWriter(jasminOutputStream))
 

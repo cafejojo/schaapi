@@ -49,7 +49,7 @@ internal class ClassGenerator(className: String) {
      * @param methodName the name the method should have
      * @param nodes a list of [Node]s which should be converted into a method
      */
-    internal fun generateMethod(methodName: String, nodes: List<JimpleNode>) {
+    fun generateMethod(methodName: String, nodes: List<JimpleNode>) {
         val statements = nodes.map { it.statement }
         val methodParams = findUnboundVariables(statements)
         val sootMethod = SootMethod(methodName, methodParams.map { it.type }, VoidType.v())
@@ -69,7 +69,7 @@ internal class ClassGenerator(className: String) {
      *
      * @param targetDirectory the path to the base directory in which to place the class file structure
      */
-    internal fun writeToFile(targetDirectory: String) = ClassWriter.writeToFile(sootClass, targetDirectory)
+    fun writeToFile(targetDirectory: String) = ClassWriter.writeToFile(sootClass, targetDirectory)
 
     private fun addParameterAssignmentsToBody(jimpleBody: Body, methodParams: Set<Value>) {
         methodParams.forEachIndexed { paramIndex, param ->

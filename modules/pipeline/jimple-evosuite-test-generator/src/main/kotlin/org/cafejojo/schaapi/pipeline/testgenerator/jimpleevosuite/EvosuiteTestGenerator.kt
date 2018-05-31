@@ -29,7 +29,7 @@ internal class EvoSuiteRunner(
     /**
      * Runs the EvoSuite test generator in a new process.
      */
-    internal fun run() = receiveProcessOutput(buildProcess())
+    fun run() = receiveProcessOutput(buildProcess())
 
     private fun buildProcess() = ProcessBuilder(
         "java",
