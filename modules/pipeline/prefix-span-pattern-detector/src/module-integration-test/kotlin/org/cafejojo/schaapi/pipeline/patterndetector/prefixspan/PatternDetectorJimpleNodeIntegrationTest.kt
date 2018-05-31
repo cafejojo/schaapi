@@ -12,7 +12,7 @@ import org.jetbrains.spek.api.dsl.xit
 import soot.jimple.DefinitionStmt
 import soot.jimple.IfStmt
 
-class PrefixSpanJimpleNodeIntegrationTest : Spek({
+class PatternDetectorJimpleNodeIntegrationTest : Spek({
     /**
      * Calculates how many sub-sequences a given sequence may have.
      */
@@ -23,8 +23,17 @@ class PrefixSpanJimpleNodeIntegrationTest : Spek({
      */
     fun createJimpleNode(): JimpleNode {
         val condition = mockUniqueValue()
-
         return JimpleNode(mock<IfStmt> { on { it.condition } doReturn condition })
+    }
+
+    /**
+     * Create a graph where each node is the successor of the predecessor.
+     */
+    fun makeGraph(vararg nodes: JimpleNode): JimpleNode {
+        nodes.forEachIndexed { index, node ->
+            node.successors.addAll(nodes.getOrNull(index + 1)?.toMutableList() ?: emptyList())
+        }
+        return nodes.first()
     }
 
     /**
@@ -56,11 +65,13 @@ class PrefixSpanJimpleNodeIntegrationTest : Spek({
             val node9 = createJimpleNode()
             val node10 = createJimpleNode()
 
-            val path1 = listOf(node1, node2, node3)
-            val path2 = listOf(node7, node8, node9, node10, node4, node5, node6)
+            val graphs = listOf(
+                makeGraph(node1, node2, node3),
+                makeGraph(node7, node8, node9, node10, node4, node5, node6)
+            )
 
-            val paths = listOf(path1, path2)
-            val frequent = PrefixSpan(paths, 2, GeneralizedNodeComparator()).findFrequentPatterns()
+            val frequent = PatternDetector(2, GeneralizedNodeComparator())
+                .findPatterns(graphs)
 
             assertThat(frequent).contains(listOf(node1, node2, node3))
         }
@@ -82,11 +93,13 @@ class PrefixSpanJimpleNodeIntegrationTest : Spek({
             val node11 = createJimpleNode()
             val node12 = createJimpleNode()
 
-            val path1 = listOf(node1, node2, node3, node4, node5)
-            val path2 = listOf(node11, node12, node6, node7, node8, node9, node10)
+            val graphs = listOf(
+                makeGraph(node1, node2, node3, node4, node5),
+                makeGraph(node11, node12, node6, node7, node8, node9, node10)
+            )
 
-            val paths = listOf(path1, path2)
-            val frequent = PrefixSpan(paths, 2, GeneralizedNodeComparator()).findFrequentPatterns()
+            val frequent = PatternDetector(2, GeneralizedNodeComparator())
+                .findPatterns(graphs)
 
             assertThat(frequent).hasSize(amountOfPossibleSubSequences(5))
         }
@@ -105,11 +118,13 @@ class PrefixSpanJimpleNodeIntegrationTest : Spek({
             val node9 = createJimpleNode()
             val node10 = createJimpleNode()
 
-            val path1 = listOf(node1, node2, node3, node4)
-            val path2 = listOf(node9, node10, node5, node6, node7, node8)
+            val graphs = listOf(
+                makeGraph(node1, node2, node3, node4),
+                makeGraph(node9, node10, node5, node6, node7, node8)
+            )
 
-            val paths = listOf(path1, path2)
-            val frequent = PrefixSpan(paths, 2, GeneralizedNodeComparator()).findFrequentPatterns()
+            val frequent = PatternDetector(2, GeneralizedNodeComparator())
+                .findPatterns(graphs)
 
             assertThat(frequent).contains(listOf(node1, node2, node3, node4))
         }
@@ -123,11 +138,13 @@ class PrefixSpanJimpleNodeIntegrationTest : Spek({
             val node9 = createJimpleNode()
             val node10 = createJimpleNode()
 
-            val path1 = listOf(node1, node2, node3)
-            val path2 = listOf(node7, node8, node9, node10, node1, node2, node3)
+            val graphs = listOf(
+                makeGraph(node1, node2, node3),
+                makeGraph(node7, node8, node9, node10, node1, node2, node3)
+            )
 
-            val paths = listOf(path1, path2)
-            val frequent = PrefixSpan(paths, 2, GeneralizedNodeComparator()).findFrequentPatterns()
+            val frequent = PatternDetector(2, GeneralizedNodeComparator())
+                .findPatterns(graphs)
 
             assertThat(frequent).contains(listOf(node1, node2, node3))
         }
@@ -144,11 +161,13 @@ class PrefixSpanJimpleNodeIntegrationTest : Spek({
             val node9 = createJimpleNode()
             val node10 = createJimpleNode()
 
-            val path1 = listOf(node1, node2, node3)
-            val path2 = listOf(node7, node8, node9, node10, node4, node5, node6)
+            val graps = listOf(
+                makeGraph(node1, node2, node3),
+                makeGraph(node7, node8, node9, node10, node4, node5, node6)
+            )
 
-            val paths = listOf(path1, path2)
-            val frequent = PrefixSpan(paths, 2, GeneralizedNodeComparator()).findFrequentPatterns()
+            val frequent = PatternDetector(2, GeneralizedNodeComparator())
+                .findPatterns(graps)
 
             assertThat(frequent).isEmpty()
         }
@@ -168,11 +187,13 @@ class PrefixSpanJimpleNodeIntegrationTest : Spek({
             val node9 = createJimpleNode()
             val node10 = createJimpleNode()
 
-            val path1 = listOf(node4, node2, node3, node1)
-            val path2 = listOf(node9, node10, node5, node6, node7, node8)
+            val graphs = listOf(
+                makeGraph(node4, node2, node3, node1),
+                makeGraph(node9, node10, node5, node6, node7, node8)
+            )
 
-            val paths = listOf(path1, path2)
-            val frequent = PrefixSpan(paths, 2, GeneralizedNodeComparator()).findFrequentPatterns()
+            val frequent = PatternDetector(2, GeneralizedNodeComparator())
+                .findPatterns(graphs)
 
             assertThat(frequent).hasSize(4)
         }
