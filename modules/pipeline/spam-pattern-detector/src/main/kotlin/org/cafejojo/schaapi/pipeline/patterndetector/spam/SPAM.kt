@@ -53,7 +53,9 @@ internal class SPAM<N : Node>(
 
         val frequentExtensions = extensions.mapNotNull { extension ->
             val extendedPattern: List<N> = (pattern + extension) as List<N>
-            val support = sequences.count { path -> pathUtil.pathContainsSequence(path, extendedPattern, nodeComparator) }
+            val support = sequences.count { path ->
+                pathUtil.pathContainsSequence(path, extendedPattern, nodeComparator)
+            }
 
             if (support >= minimumSupport) extension
             else null
