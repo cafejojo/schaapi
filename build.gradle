@@ -65,6 +65,11 @@ allprojects {
         }
     }
 
+    // Dokka
+    dokka {
+        outputFormat = "javadoc"
+    }
+
     // Spotless
     spotless {
         kotlin {
