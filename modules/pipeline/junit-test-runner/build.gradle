@@ -1,5 +1,0 @@
-dependencies {
-    compile project(":pipeline")
-
-    compile group: "junit", name: "junit", version: junit4Version
-}

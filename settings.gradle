@@ -26,8 +26,10 @@ includeModule "pipeline", "java-maven-project-compiler"
 includeModule "pipeline", "jimple-evosuite-test-generator"
 includeModule "pipeline", "jimple-library-usage-graph-generator"
 includeModule "pipeline", "jimple-pattern-filter"
-includeModule "pipeline", "junit-test-runner"
 includeModule "pipeline", "prefix-span-pattern-detector"
 includeModule "pipeline", "spam-pattern-detector"
+
+includeModule "validation-pipeline"
+includeModule "validation-pipeline", "junit-test-runner"
 
 includeModule "web"
