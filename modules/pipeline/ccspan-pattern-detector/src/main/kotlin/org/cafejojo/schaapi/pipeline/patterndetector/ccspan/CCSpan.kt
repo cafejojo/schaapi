@@ -43,7 +43,7 @@ internal class CCSpan<N : Node>(
                 .forEach { generateAllContiguousSequences(it, subSequenceLength, checkedSequences) }
 
             generateClosedContiguousSequences()
-            frequentClosedContiguousSequences.addAll(current.filter { it.isClosedSequence }.map { it.sequence })
+            frequentClosedContiguousSequences.addAll(previous.filter { it.isClosedSequence }.map { it.sequence })
 
             shiftCurrent()
             subSequenceLength++
@@ -94,9 +94,13 @@ internal class CCSpan<N : Node>(
     }
 
     private fun generateClosedContiguousSequences() {
-        current.forEach { (sequence, _, _) ->
+        current.forEach { (sequence, sequenceSupport, _) ->
             previous
-                .filter { it.isClosedSequence && (it.sequence == sequence.pre() || it.sequence == sequence.post()) }
+                .filter {
+                    it.isClosedSequence
+                        && (it.sequence == sequence.pre() || it.sequence == sequence.post())
+                        && sequenceSupport >= it.support
+                }
                 .forEach { it.isClosedSequence = false }
         }
     }
