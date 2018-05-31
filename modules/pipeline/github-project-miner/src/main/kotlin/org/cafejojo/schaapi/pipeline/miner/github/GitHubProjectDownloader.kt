@@ -24,7 +24,7 @@ internal class GitHubProjectDownloader<P : Project>(
     private val outputDirectory: File,
     private val projectPacker: (File) -> P
 ) {
-    companion object : KLogging()
+    private companion object : KLogging()
 
     /**
      * Starts downloading repositories.

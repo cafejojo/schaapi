@@ -10,7 +10,7 @@ import java.util.jar.JarInputStream
  * Finds all classes in a Java project consisting of a single JAR.
  */
 class ProjectCompiler : ProjectCompiler<JavaJarProject> {
-    companion object : KLogging()
+    private companion object : KLogging()
 
     override fun compile(project: JavaJarProject): JavaJarProject {
         val classNames = mutableListOf<String>()
