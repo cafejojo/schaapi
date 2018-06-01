@@ -6,7 +6,7 @@ import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 
-class LengthPatternFilterRuleTest : Spek({
+internal object LengthPatternFilterRuleTest : Spek({
     describe("when filtering a pattern") {
         it("should return true for a pattern equal to the default length") {
             assertThat(LengthPatternFilterRule().retain(listOf(mock {}, mock {}))).isTrue()
