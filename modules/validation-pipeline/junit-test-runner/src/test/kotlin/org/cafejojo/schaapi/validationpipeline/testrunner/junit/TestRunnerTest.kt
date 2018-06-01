@@ -8,7 +8,7 @@ import org.jetbrains.spek.api.dsl.it
 import java.io.File
 import java.net.URLDecoder
 
-internal class TestRunnerTest : Spek({
+internal object TestRunnerTest : Spek({
     val testPackage = "org.cafejojo.schaapi.validationpipeline.testrunner.junit.test"
     val testDirectory = testPackage.replace(Regex("[.]"), "/")
 
