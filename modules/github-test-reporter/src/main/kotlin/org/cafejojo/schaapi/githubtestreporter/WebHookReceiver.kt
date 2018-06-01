@@ -21,7 +21,7 @@ class WebHookReceiver {
         .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
 
     /**
-     * Processes a GitHub Web Hook.
+     * Processes a GitHub web hook.
      *
      * @param eventType the type of event, see <a href="https://developer.github.com/webhooks/#events">GitHub docs</a>
      * @param body the request body
