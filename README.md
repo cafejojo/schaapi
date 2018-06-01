@@ -35,7 +35,7 @@ usage: schaapi -o <arg> -l <arg> -u <arg> [--maven_dir <arg>]
 ```
 
 ## Pipeline Stages
-### 1 Periodic Project Mining
+### 1 Mining Pipeline
 | Stage                                         | Description |
 | --------------------------------------------- | --- |
 | **1.1 Project Mining**                            | Mine version control or library distribution platforms for projects using your software version |
@@ -79,7 +79,7 @@ usage: schaapi -o <arg> -l <arg> -u <arg> [--maven_dir <arg>]
 | Interface          | `org.cafejojo.schaapi.pipeline.TestGenerator` |
 | Implementations    | **[Jimple EvoSuite Test Generator](https://github.com/cafejojo/schaapi/tree/master/modules/pipeline/jimple-evosuite-test-generator)**<br>Generates testable classes based on [Soot](https://github.com/Sable/soot) Jimple based patterns, and generates tests for those using [EvoSuite](http://www.evosuite.org/). |
 
-### 2 Continuous Integration
+### 2 Validation Pipeline
 | Stage                      | Description |
 | -------------------------- | --- |
 | **2.1 Execute Tests**      | Run generated tests against a new library version |
@@ -90,8 +90,8 @@ usage: schaapi -o <arg> -l <arg> -u <arg> [--maven_dir <arg>]
 | | |
 | ------------------ | ------------- |
 | Description        | Run generated tests against a new library version |
-| Interface          | `--` |
-| Implementations    | |
+| Interface          | `org.cafejojo.schaapi.validationpipeline.TestRunner` |
+| Implementations    | **[JUnit Test Runner](https://github.com/cafejojo/schaapi/tree/master/modules/validation-pipeline/junit-test-runner)**<br>Executes a JUnit test suite and reports on the results |
 
 #### 2.2 Notify Developers
 | | |
