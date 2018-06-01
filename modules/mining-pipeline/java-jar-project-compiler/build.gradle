@@ -1,0 +1,5 @@
+dependencies {
+    compile project(":mining-pipeline")
+
+    compile project(":models:java-project")
+}

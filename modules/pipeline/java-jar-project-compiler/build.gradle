@@ -1,5 +1,0 @@
-dependencies {
-    compile project(":pipeline")
-
-    compile project(":models:java-project")
-}

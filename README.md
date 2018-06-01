@@ -48,36 +48,36 @@ usage: schaapi -o <arg> -l <arg> -u <arg> [--maven_dir <arg>]
 | | |
 | ------------------ | ------------- |
 | Description        | Mine version control or library distribution platforms for projects using your software version |
-| Interface          | `org.cafejojo.schaapi.pipeline.ProjectMiner` |
-| Implementations    | **[GitHub Project Miner](https://github.com/cafejojo/schaapi/tree/master/modules/pipeline/github-project-miner)**<br>Mines projects from GitHub using its code search API.<br>**[Directory Project Miner](https://github.com/cafejojo/schaapi/tree/master/modules/pipeline/directory-project-miner)**<br>'Mines' projects from the file system, finding all projects in one folder. |
+| Interface          | `org.cafejojo.schaapi.miningpipeline.ProjectMiner` |
+| Implementations    | **[GitHub Project Miner](https://github.com/cafejojo/schaapi/tree/master/modules/mining-pipeline/github-project-miner)**<br>Mines projects from GitHub using its code search API.<br>**[Directory Project Miner](https://github.com/cafejojo/schaapi/tree/master/modules/mining-pipeline/directory-project-miner)**<br>'Mines' projects from the file system, finding all projects in one folder. |
 
 #### 1.2 Analyse Usage per Project
 | | |
 | ------------------ | ------------- |
 | Description        | Create library usage graphs of user projects |
-| Interface          | `org.cafejojo.schaapi.pipeline.LibraryUsageGraphGenerator` |
-| Implementations    | **[Jimple Library Usage Graph Generator](https://github.com/cafejojo/schaapi/tree/master/modules/pipeline/jimple-library-usage-graph-generator)**<br>Generates library usage graphs for Java using [Soot](https://github.com/Sable/soot) Jimple control flow graphs. |
+| Interface          | `org.cafejojo.schaapi.miningpipeline.LibraryUsageGraphGenerator` |
+| Implementations    | **[Jimple Library Usage Graph Generator](https://github.com/cafejojo/schaapi/tree/master/modules/mining-pipeline/jimple-library-usage-graph-generator)**<br>Generates library usage graphs for Java using [Soot](https://github.com/Sable/soot) Jimple control flow graphs. |
 
 #### 1.3 Find Usage Patterns across all Projects
 | | |
 | ------------------ | ------------- |
 | Description        | Find common library usage patterns across usage graphs |
-| Interface          | `org.cafejojo.schaapi.pipeline.PatternDetector` |
-| Implementations    | **[PrefixSpan Pattern Detector](https://github.com/cafejojo/schaapi/tree/master/modules/pipeline/prefix-span-pattern-detector)**<br>Identifies frequent sequential patterns in graphs, with the [PrefixSpan](https://ieeexplore.ieee.org/abstract/document/1339268/) algorithm. |
+| Interface          | `org.cafejojo.schaapi.miningpipeline.PatternDetector` |
+| Implementations    | **[PrefixSpan Pattern Detector](https://github.com/cafejojo/schaapi/tree/master/modules/mining-pipeline/prefix-span-pattern-detector)**<br>Identifies frequent sequential patterns in graphs, with the [PrefixSpan](https://ieeexplore.ieee.org/abstract/document/1339268/) algorithm. |
 
 #### 1.4 Filter Found Patterns
 | | |
 | ------------------ | ------------- |
 | Description        | Filter relevant library usage patterns |
-| Interface          | `org.cafejojo.schaapi.pipeline.PatternFilterRule` |
-| Implementations    | **[Jimple Pattern Filters](https://github.com/cafejojo/schaapi/tree/master/modules/pipeline/jimple-pattern-filter)**<br>Collection of filters that work with [Soot](https://github.com/Sable/soot) Jimple based library usage graphs. |
+| Interface          | `org.cafejojo.schaapi.miningpipeline.PatternFilterRule` |
+| Implementations    | **[Jimple Pattern Filters](https://github.com/cafejojo/schaapi/tree/master/modules/mining-pipeline/jimple-pattern-filter)**<br>Collection of filters that work with [Soot](https://github.com/Sable/soot) Jimple based library usage graphs. |
 
 #### 1.5 Generate Tests
 | | |
 | ------------------ | ------------- |
 | Description        | Generate regression tests for library usage patterns |
-| Interface          | `org.cafejojo.schaapi.pipeline.TestGenerator` |
-| Implementations    | **[Jimple EvoSuite Test Generator](https://github.com/cafejojo/schaapi/tree/master/modules/pipeline/jimple-evosuite-test-generator)**<br>Generates testable classes based on [Soot](https://github.com/Sable/soot) Jimple based patterns, and generates tests for those using [EvoSuite](http://www.evosuite.org/). |
+| Interface          | `org.cafejojo.schaapi.miningpipeline.TestGenerator` |
+| Implementations    | **[Jimple EvoSuite Test Generator](https://github.com/cafejojo/schaapi/tree/master/modules/mining-pipeline/jimple-evosuite-test-generator)**<br>Generates testable classes based on [Soot](https://github.com/Sable/soot) Jimple based patterns, and generates tests for those using [EvoSuite](http://www.evosuite.org/). |
 
 ### 2 Continuous Integration
 | Stage                      | Description |

@@ -1,0 +1,16 @@
+apply from: "$rootDir/gradle/tests/module-integration.gradle"
+
+repositories {
+    maven { url "https://soot-build.cs.uni-paderborn.de/nexus/repository/soot-release/" }
+}
+
+dependencies {
+    compile project(":mining-pipeline")
+
+    testCompile group: "com.nhaarman", name: "mockito-kotlin", version: mockitoKotlinVersion
+
+    moduleIntegrationTestCompile project(":models:jimple-library-usage-graph")
+    moduleIntegrationTestCompile group: "ca.mcgill.sable", name: "soot", version: sootVersion, {
+        exclude group: "org.slf4j", module: "slf4j-simple"
+    }
+}

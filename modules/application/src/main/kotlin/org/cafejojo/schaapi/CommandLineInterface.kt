@@ -8,17 +8,17 @@ import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.cafejojo.schaapi.models.libraryusagegraph.jimple.GeneralizedNodeComparator
 import org.cafejojo.schaapi.models.project.JavaMavenProject
-import org.cafejojo.schaapi.pipeline.PatternFilter
-import org.cafejojo.schaapi.pipeline.miner.directory.DirectorySearchOptions
-import org.cafejojo.schaapi.pipeline.miner.directory.ProjectMiner
-import org.cafejojo.schaapi.pipeline.patterndetector.prefixspan.PatternDetector
-import org.cafejojo.schaapi.pipeline.patternfilter.jimple.IncompleteInitPatternFilterRule
-import org.cafejojo.schaapi.pipeline.patternfilter.jimple.LengthPatternFilterRule
-import org.cafejojo.schaapi.pipeline.projectcompiler.javamaven.MavenInstaller
-import org.cafejojo.schaapi.pipeline.testgenerator.jimpleevosuite.TestGenerator
-import org.cafejojo.schaapi.pipeline.usagegraphgenerator.jimple.LibraryUsageGraphGenerator
+import org.cafejojo.schaapi.miningpipeline.PatternFilter
+import org.cafejojo.schaapi.miningpipeline.miner.directory.DirectorySearchOptions
+import org.cafejojo.schaapi.miningpipeline.miner.directory.ProjectMiner
+import org.cafejojo.schaapi.miningpipeline.patterndetector.prefixspan.PatternDetector
+import org.cafejojo.schaapi.miningpipeline.patternfilter.jimple.IncompleteInitPatternFilterRule
+import org.cafejojo.schaapi.miningpipeline.patternfilter.jimple.LengthPatternFilterRule
+import org.cafejojo.schaapi.miningpipeline.projectcompiler.javamaven.MavenInstaller
+import org.cafejojo.schaapi.miningpipeline.testgenerator.jimpleevosuite.TestGenerator
+import org.cafejojo.schaapi.miningpipeline.usagegraphgenerator.jimple.LibraryUsageGraphGenerator
 import java.io.File
-import org.cafejojo.schaapi.pipeline.projectcompiler.javamaven.ProjectCompiler as JavaMavenCompiler
+import org.cafejojo.schaapi.miningpipeline.projectcompiler.javamaven.ProjectCompiler as JavaMavenCompiler
 
 private const val DEFAULT_TEST_GENERATOR_TIMEOUT = "60"
 private const val DEFAULT_PATTERN_DETECTOR_MINIMUM_COUNT = "3"

@@ -1,6 +1,0 @@
-dependencies {
-    compile project(":pipeline")
-
-    testCompile project(":models:java-project")
-    testCompile group: "com.nhaarman", name: "mockito-kotlin", version: mockitoKotlinVersion
-}
