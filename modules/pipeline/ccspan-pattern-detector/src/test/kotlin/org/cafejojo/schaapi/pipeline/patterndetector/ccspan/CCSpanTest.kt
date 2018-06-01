@@ -7,7 +7,7 @@ import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 
-class CCSpanTest : Spek({
+internal class CCSpanTest : Spek({
     describe("mining of frequent closed contiguous sequences") {
         it("finds all frequent closed contiguous sequences") {
             val nodeConverter = NodeConverter()
@@ -65,7 +65,7 @@ class CCSpanTest : Spek({
     }
 })
 
-class NodeConverter {
+private class NodeConverter {
     private val nodes = mutableMapOf<Int, Node>()
 
     fun convertToList(vararg sequences: List<Int>) =
