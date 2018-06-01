@@ -1,5 +1,6 @@
 package org.cafejojo.schaapi.miningpipeline.miner.github
 
+import mu.KLogging
 import org.cafejojo.schaapi.miningpipeline.SearchOptions
 import org.kohsuke.github.GitHub
 
@@ -27,8 +28,14 @@ class MavenProjectSearchOptions(
     private val artifactId: String,
     private val version: String
 ) : GitHubSearchOptions {
-    override fun searchContent(gitHub: GitHub): List<String> =
-        gitHub.searchContent()
+    private companion object : KLogging()
+
+    override fun searchContent(gitHub: GitHub): List<String> {
+        logger.info {
+            "Will mine github maven projects using: group id: $groupId, artifact id: $artifactId, version: $version."
+        }
+
+        return gitHub.searchContent()
             .apply {
                 q("dependency $groupId $artifactId $version")
                 `in`("file")
@@ -37,4 +44,5 @@ class MavenProjectSearchOptions(
             }
             .list()
             .map { it.owner.fullName }
+    }
 }

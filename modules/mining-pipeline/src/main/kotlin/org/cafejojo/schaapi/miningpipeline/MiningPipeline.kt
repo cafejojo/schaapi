@@ -1,5 +1,6 @@
 package org.cafejojo.schaapi.miningpipeline
 
+import mu.KLogging
 import org.cafejojo.schaapi.models.Node
 import org.cafejojo.schaapi.models.Project
 
@@ -16,11 +17,15 @@ class MiningPipeline<SO : SearchOptions, UP : Project, LP : Project, N : Node>(
     private val patternFilter: PatternFilter<N>,
     private val testGenerator: TestGenerator<N>
 ) {
+    private companion object : KLogging()
+
     /**
      * Executes all steps in the pipeline.
      */
     fun run(libraryProject: LP) {
         libraryProjectCompiler.compile(libraryProject)
+
+        logger.info { "mining has started" }
 
         searchOptions
             .next(projectMiner::mine)
@@ -29,6 +34,9 @@ class MiningPipeline<SO : SearchOptions, UP : Project, LP : Project, N : Node>(
             .next(patternDetector::findPatterns)
             .next(patternFilter::filter)
             .next(testGenerator::generate)
+
+
+        logger.info { "tests have been generated" }
     }
 }
 

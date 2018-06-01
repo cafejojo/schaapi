@@ -24,10 +24,12 @@ class JavaMavenProject(
     override lateinit var classpath: String
 
     init {
-        require(projectDir.isDirectory) { "Given project directory is not a directory." }
-        require(projectDir.canRead()) { "Cannot read project directory." }
-        require(pomFile.isFile) { "Given project directory is not a Maven project." }
-        require(pomFile.canRead()) { "Cannot read POM file." }
+        require(projectDir.isDirectory) {
+            "Given project directory is not a directory: '$projectDir' is not a directory."
+        }
+        require(projectDir.canRead()) { "Cannot read project directory: '$projectDir'." }
+        require(pomFile.isFile) { "Given project directory is not a Maven project, '$pomFile' does not exist." }
+        require(pomFile.canRead()) { "Cannot read POM file: '$pomFile'." }
 
         classDir.mkdirs()
         dependencyDir.mkdirs()

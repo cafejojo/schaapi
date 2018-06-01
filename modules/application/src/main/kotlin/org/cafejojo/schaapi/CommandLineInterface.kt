@@ -6,18 +6,23 @@ import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Option
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
-import org.cafejojo.schaapi.models.libraryusagegraph.jimple.GeneralizedNodeComparator
-import org.cafejojo.schaapi.models.project.JavaMavenProject
-import org.cafejojo.schaapi.miningpipeline.PatternFilter
 import org.cafejojo.schaapi.miningpipeline.MiningPipeline
+import org.cafejojo.schaapi.miningpipeline.PatternFilter
+import org.cafejojo.schaapi.miningpipeline.miner.github.MavenProjectSearchOptions
+import org.cafejojo.schaapi.miningpipeline.miner.github.ProjectMiner
+import org.cafejojo.schaapi.miningpipeline.patterndetector.prefixspan.PatternDetector
 import org.cafejojo.schaapi.miningpipeline.miner.directory.DirectorySearchOptions
 import org.cafejojo.schaapi.miningpipeline.miner.directory.ProjectMiner
 import org.cafejojo.schaapi.miningpipeline.patterndetector.ccspan.PatternDetector
 import org.cafejojo.schaapi.miningpipeline.patternfilter.jimple.IncompleteInitPatternFilterRule
 import org.cafejojo.schaapi.miningpipeline.patternfilter.jimple.LengthPatternFilterRule
+import org.cafejojo.schaapi.miningpipeline.projectcompiler.javajar.ProjectCompiler
 import org.cafejojo.schaapi.miningpipeline.projectcompiler.javamaven.MavenInstaller
 import org.cafejojo.schaapi.miningpipeline.testgenerator.jimpleevosuite.TestGenerator
 import org.cafejojo.schaapi.miningpipeline.usagegraphgenerator.jimple.LibraryUsageGraphGenerator
+import org.cafejojo.schaapi.models.libraryusagegraph.jimple.GeneralizedNodeComparator
+import org.cafejojo.schaapi.models.project.JavaJarProject
+import org.cafejojo.schaapi.models.project.JavaMavenProject
 import java.io.File
 import org.cafejojo.schaapi.miningpipeline.projectcompiler.javamaven.ProjectCompiler as JavaMavenCompiler
 
@@ -36,8 +41,13 @@ fun main(args: Array<String>) {
 
     val mavenDir = File(cmd.getOptionValue("maven_dir") ?: JavaMavenProject.DEFAULT_MAVEN_HOME.absolutePath)
     val output = File(cmd.getOptionValue('o')).apply { mkdirs() }
-    val library = JavaMavenProject(File(cmd.getOptionValue('l')), mavenDir)
-    val userBaseDir = File(cmd.getOptionValue('u'))
+    val library = JavaJarProject(File(cmd.getOptionValue('l')))
+    val token = cmd.getOptionValue('t')
+    val cap = cmd.getOptionValue('m')?.toInt() ?: Int.MAX_VALUE
+
+    val groupId = cmd.getOptionValue('g')
+    val artifactId = cmd.getOptionValue('a')
+    val version = cmd.getOptionValue('v')
 
     if (!mavenDir.resolve("bin/mvn").exists() || cmd.hasOption("repair_maven")) {
         MavenInstaller().installMaven(mavenDir)
@@ -47,9 +57,17 @@ fun main(args: Array<String>) {
     val testGeneratorEnableOutput = cmd.hasOption("test_generator_enable_output")
 
     MiningPipeline(
-        projectMiner = ProjectMiner { JavaMavenProject(it, mavenDir) },
-        searchOptions = DirectorySearchOptions(userBaseDir),
-        libraryProjectCompiler = JavaMavenCompiler(),
+        projectMiner = ProjectMiner(
+            outputDirectory = output,
+            token = token,
+            maxDownloadedProjects = cap
+        ) { JavaMavenProject(it, mavenDir) },
+        searchOptions = MavenProjectSearchOptions(
+            groupId = groupId,
+            artifactId = artifactId,
+            version = version
+        ),
+        libraryProjectCompiler = ProjectCompiler(),
         userProjectCompiler = JavaMavenCompiler(),
         libraryUsageGraphGenerator = LibraryUsageGraphGenerator,
         patternDetector = PatternDetector(
@@ -91,6 +109,35 @@ private fun buildOptions(): Options =
             .builder("u")
             .longOpt("user_base_dir")
             .desc("The directory containing user project directories.")
+            .hasArg()
+            .build())
+        .addOption(Option
+            .builder("t")
+            .longOpt("github_oauth_token")
+            .desc("Token of github account used for searching.")
+            .hasArg()
+            .required()
+            .build())
+        .addOption(Option
+            .builder("m")
+            .longOpt("max_projects")
+            .hasArg()
+            .build())
+        .addOption(Option
+            .builder("g")
+            .longOpt("group_id")
+            .hasArg()
+            .required()
+            .build())
+        .addOption(Option
+            .builder("a")
+            .longOpt("artifact_id")
+            .hasArg()
+            .required()
+            .build())
+        .addOption(Option
+            .builder("v")
+            .longOpt("version")
             .hasArg()
             .required()
             .build())

@@ -10,6 +10,7 @@ import java.io.IOException
 import java.io.InputStream
 import java.net.HttpURLConnection
 import java.net.URL
+import java.util.concurrent.atomic.AtomicInteger
 import kotlin.streams.toList
 
 /**
@@ -22,8 +23,12 @@ import kotlin.streams.toList
 internal class GitHubProjectDownloader<P : Project>(
     private val projectNames: Collection<String>,
     private val outputDirectory: File,
-    private val projectPacker: (File) -> P
+    private val projectPacker: (File) -> P,
+    private val maxProjectDownloads: Int
 ) {
+    private val outputProject = outputDirectory.resolve("projects/").apply { mkdirs() }
+    private var downloaded: AtomicInteger = AtomicInteger(0)
+
     private companion object : KLogging()
 
     /**
@@ -42,16 +47,31 @@ internal class GitHubProjectDownloader<P : Project>(
             .parallelStream()
             .map { downloadAndSaveProject(it) }
             .toList()
+            .also { logger.info { "Tried to extract ${it.size} projects in total from github." } }
             .filterNotNull()
+            .also { logger.info { "Of which ${it.size} extractions were successful" } }
 
     private fun downloadAndSaveProject(projectName: String): P? {
+        if (downloaded.getAndIncrement() >= maxProjectDownloads) return null
+
         val connection = getConnection(projectName) ?: return null
 
         try {
             val zipFile = saveToFile(connection.inputStream, projectName) ?: return null
             val unzippedFile = unzip(zipFile) ?: return null
 
-            return if (unzippedFile.exists()) projectPacker(unzippedFile) else null
+            return if (unzippedFile.exists()) {
+                try {
+                    projectPacker(unzippedFile.listFiles().first())
+                        .also { logger.info { "Created project of $unzippedFile." } }
+                } catch (e: RuntimeException) {
+                    logger.warn("Unable to pack $unzippedFile in project.", e)
+                    unzippedFile.deleteRecursively()
+                    null
+                }
+            } else {
+                null
+            }
         } finally {
             connection.disconnect()
         }
@@ -60,8 +80,8 @@ internal class GitHubProjectDownloader<P : Project>(
     internal fun saveToFile(input: InputStream, projectName: String): File? {
         val alphaNumericRegex = Regex("[^A-Za-z0-9]")
         val outputFile = File(
-            outputDirectory,
-            "${alphaNumericRegex.replace(projectName, "")}${projectNames.indexOf(projectName)}-project.zip"
+            outputProject,
+            "${alphaNumericRegex.replace(projectName, "")}${projectNames.indexOf(projectName)}.zip"
         )
 
         try {
@@ -84,10 +104,14 @@ internal class GitHubProjectDownloader<P : Project>(
 
     internal fun unzip(zipFile: File): File? {
         val output = File(zipFile.parent, zipFile.nameWithoutExtension)
-        if (output.exists()) output.deleteRecursively()
+        if (output.exists()) {
+            logger.info { "File $output existed and will be overwritten by $output." }
+            output.deleteRecursively()
+        }
 
         try {
             ZipUtil.unpack(zipFile, output)
+            logger.info { "Successfully unzipped file ${zipFile.name}." }
         } catch (e: IOException) {
             logger.warn("Could not unzip ${zipFile.name}.", e)
             return null
@@ -95,7 +119,10 @@ internal class GitHubProjectDownloader<P : Project>(
             logger.warn("Could not unzip ${zipFile.name}.", e)
             return null
         } finally {
-            if (zipFile.exists()) zipFile.delete()
+            if (zipFile.exists()) {
+                logger.info { "Deleting $zipFile." }
+                zipFile.delete()
+            }
         }
 
         return output
@@ -106,6 +133,8 @@ internal class GitHubProjectDownloader<P : Project>(
 
         try {
             val connection = url.openConnection() as? HttpURLConnection ?: return null
+            logger.info { "Established a connection with '$url'." }
+
             return connection.apply { requestMethod = "GET" }
         } catch (e: IOException) {
             logger.warn("Could not connect to project $projectName.", e)

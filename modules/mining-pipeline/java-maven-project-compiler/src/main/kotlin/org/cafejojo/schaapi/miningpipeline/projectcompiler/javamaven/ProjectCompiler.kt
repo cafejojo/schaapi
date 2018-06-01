@@ -3,8 +3,8 @@ package org.cafejojo.schaapi.miningpipeline.projectcompiler.javamaven
 import mu.KLogging
 import org.apache.maven.shared.invoker.DefaultInvocationRequest
 import org.apache.maven.shared.invoker.DefaultInvoker
-import org.cafejojo.schaapi.models.project.JavaMavenProject
 import org.cafejojo.schaapi.miningpipeline.ProjectCompiler
+import org.cafejojo.schaapi.models.project.JavaMavenProject
 import java.io.File
 
 /**
@@ -54,7 +54,8 @@ class ProjectCompiler : ProjectCompiler<JavaMavenProject> {
 
         val result = invoker.execute(request)
         if (result.exitCode != 0) {
-            throw ProjectCompilationException("`maven install` executed unsuccessfully: " + result.executionException)
+            logger.warn("`maven install` executed unsuccessfully: ", result.executionException)
+//            throw ProjectCompilationException("`maven install` executed unsuccessfully: " + result.executionException)
         }
     }
 }
