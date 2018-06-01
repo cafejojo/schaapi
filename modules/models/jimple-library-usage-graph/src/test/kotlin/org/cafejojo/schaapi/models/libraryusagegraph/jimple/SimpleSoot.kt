@@ -17,7 +17,7 @@ import soot.util.Switch
 /**
  * A [Value] that does not contain other values, and that implements only functionality related to equivalence.
  */
-fun mockValue(type: String): Value = mock {
+internal fun mockValue(type: String): Value = mock {
     on { it.type } doReturn RefType.v(type)
     on { it.useBoxes } doReturn emptyList<ValueBox>()
     on { it.equivTo(any()) } doAnswer { answer ->
@@ -31,7 +31,7 @@ fun mockValue(type: String): Value = mock {
 /**
  * An [InvokeExpr] that does not contain other values, and that implements only functionality related to equivalence.
  */
-fun mockInvokeExpr(type: String): InvokeExpr = mock {
+internal fun mockInvokeExpr(type: String): InvokeExpr = mock {
     on { it.type } doReturn RefType.v(type)
     on { it.useBoxes } doReturn emptyList<ValueBox>()
     on { it.equivTo(any()) } doAnswer { answer ->
@@ -45,13 +45,13 @@ fun mockInvokeExpr(type: String): InvokeExpr = mock {
 /**
  * A simple implementation of [SootMethod].
  */
-class SimpleSootMethod(name: String, parameterTypes: List<String>, returnType: String) :
+internal class SimpleSootMethod(name: String, parameterTypes: List<String>, returnType: String) :
     SootMethod(name, parameterTypes.map { RefType.v(it) }, RefType.v(returnType))
 
 /**
  * A simple implementation of [soot.jimple.internal.AbstractUnopExpr].
  */
-class SimpleUnopExpr(value: Value) : AbstractNegExpr(mockValueBox(value)) {
+internal class SimpleUnopExpr(value: Value) : AbstractNegExpr(mockValueBox(value)) {
     /**
      * Creates a [SimpleUnopExpr] containing a [Value] of the given type.
      */
@@ -63,7 +63,7 @@ class SimpleUnopExpr(value: Value) : AbstractNegExpr(mockValueBox(value)) {
 /**
  * A simple implementation of [soot.jimple.internal.AbstractBinopExpr].
  */
-class SimpleBinopExpr(leftValue: Value, rightValue: Value) : AbstractBinopExpr() {
+internal class SimpleBinopExpr(leftValue: Value, rightValue: Value) : AbstractBinopExpr() {
     init {
         op1Box = mockValueBox(leftValue)
         op2Box = mockValueBox(rightValue)
@@ -88,7 +88,7 @@ class SimpleBinopExpr(leftValue: Value, rightValue: Value) : AbstractBinopExpr()
  * A simple implementation of [soot.jimple.internal.AbstractInvokeExpr].
  */
 @SuppressWarnings("SpreadOperator") // No clean alternative
-class SimpleInvokeExpr(base: Value, sootMethod: SootMethod, vararg arguments: Value) :
+internal class SimpleInvokeExpr(base: Value, sootMethod: SootMethod, vararg arguments: Value) :
     AbstractSpecialInvokeExpr(
         mockValueBox(base),
         mockSootMethodRef(sootMethod),

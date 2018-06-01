@@ -17,28 +17,28 @@ import soot.jimple.Stmt
 import soot.jimple.SwitchStmt
 import soot.jimple.ThrowStmt
 
-fun mockStmt() = mock<Stmt> {}
+internal fun mockStmt() = mock<Stmt> {}
 
-fun mockThrowStmt(op: Value) = mock<ThrowStmt> { on { it.op } doReturn op }
+internal fun mockThrowStmt(op: Value) = mock<ThrowStmt> { on { it.op } doReturn op }
 
-fun mockDefinitionStmt(leftOp: Value, rightOp: Value) =
+internal fun mockDefinitionStmt(leftOp: Value, rightOp: Value) =
     mock<DefinitionStmt> {
         on { it.leftOp } doReturn leftOp
         on { it.rightOp } doReturn rightOp
     }
 
-fun mockIfStmt(condition: Value) = mock<IfStmt> { on { it.condition } doReturn condition }
+internal fun mockIfStmt(condition: Value) = mock<IfStmt> { on { it.condition } doReturn condition }
 
-fun mockSwitchStmt(key: Value) = mock<SwitchStmt> { on { it.key } doReturn key }
+internal fun mockSwitchStmt(key: Value) = mock<SwitchStmt> { on { it.key } doReturn key }
 
-fun mockInvokeStmt(invokeExpr: InvokeExpr) = mock<InvokeStmt> { on { it.invokeExpr } doReturn invokeExpr }
+internal fun mockInvokeStmt(invokeExpr: InvokeExpr) = mock<InvokeStmt> { on { it.invokeExpr } doReturn invokeExpr }
 
-fun mockReturnStmt(op: Value) = mock<ReturnStmt> { on { it.op } doReturn op }
+internal fun mockReturnStmt(op: Value) = mock<ReturnStmt> { on { it.op } doReturn op }
 
-fun mockGotoStmt() = mock<GotoStmt> {}
+internal fun mockGotoStmt() = mock<GotoStmt> {}
 
-fun mockReturnVoidStmt() = mock<ReturnVoidStmt> {}
+internal fun mockReturnVoidStmt() = mock<ReturnVoidStmt> {}
 
-fun mockValueBox(value: Value) = mock<ValueBox> { on { it.value } doReturn value }
+internal fun mockValueBox(value: Value) = mock<ValueBox> { on { it.value } doReturn value }
 
-fun mockSootMethodRef(sootMethod: SootMethod) = mock<SootMethodRef> { on { it.resolve() } doReturn sootMethod }
+internal fun mockSootMethodRef(sootMethod: SootMethod) = mock<SootMethodRef> { on { it.resolve() } doReturn sootMethod }

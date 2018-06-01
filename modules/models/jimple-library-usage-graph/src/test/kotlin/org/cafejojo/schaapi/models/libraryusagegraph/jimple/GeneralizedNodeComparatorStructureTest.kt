@@ -13,7 +13,7 @@ import soot.jimple.ReturnStmt
 /**
  * Unit tests for [GeneralizedNodeComparator.structuresAreEqual].
  */
-internal class GeneralizedNodeComparatorStructureTest : Spek({
+internal object GeneralizedNodeComparatorStructureTest : Spek({
     lateinit var comparator: GeneralizedNodeComparator
 
     beforeEachTest {
