@@ -23,5 +23,5 @@ cache: C:\Users\appveyor\.gradle
 # Skip commits
 skip_commits:
   files:
-  - *.md
+  - '*.md'
   - .gitignore
