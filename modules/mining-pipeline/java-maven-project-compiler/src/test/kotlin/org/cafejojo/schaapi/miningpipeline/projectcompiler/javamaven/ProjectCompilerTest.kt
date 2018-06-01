@@ -10,7 +10,7 @@ import java.io.File
 import java.io.FileNotFoundException
 import java.nio.file.Files
 
-internal class ProjectCompilerTest : Spek({
+internal object ProjectCompilerTest : Spek({
     lateinit var mavenHome: File
     lateinit var target: File
 

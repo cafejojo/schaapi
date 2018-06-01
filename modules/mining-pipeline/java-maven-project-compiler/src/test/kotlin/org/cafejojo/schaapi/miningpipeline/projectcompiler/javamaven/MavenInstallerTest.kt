@@ -7,7 +7,7 @@ import org.jetbrains.spek.api.dsl.it
 import java.io.File
 import java.nio.file.Files
 
-internal class MavenInstallerTest : Spek({
+internal object MavenInstallerTest : Spek({
     lateinit var target: File
 
     beforeEachTest {
