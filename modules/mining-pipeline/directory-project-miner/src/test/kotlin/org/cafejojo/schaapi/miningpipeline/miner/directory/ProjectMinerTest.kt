@@ -12,7 +12,7 @@ import org.jetbrains.spek.api.dsl.it
 import java.io.File
 import java.net.URLDecoder
 
-internal class ProjectMinerTest : Spek({
+internal object ProjectMinerTest : Spek({
     fun getResourceAsFile(path: String) =
         File(URLDecoder.decode(ProjectMinerTest::class.java.getResource(path).path, "UTF-8"))
 
