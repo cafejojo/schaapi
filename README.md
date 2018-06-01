@@ -63,7 +63,7 @@ usage: schaapi -o <arg> -l <arg> -u <arg> [--maven_dir <arg>]
 | ------------------ | ------------- |
 | Description        | Find common library usage patterns across usage graphs |
 | Interface          | `org.cafejojo.schaapi.miningpipeline.PatternDetector` |
-| Implementations    | **[PrefixSpan Pattern Detector](https://github.com/cafejojo/schaapi/tree/master/modules/mining-pipeline/prefix-span-pattern-detector)**<br>Identifies frequent sequential patterns in graphs, with the [PrefixSpan](https://ieeexplore.ieee.org/abstract/document/1339268/) algorithm. |
+| Implementations    | **[PrefixSpan Pattern Detector](https://github.com/cafejojo/schaapi/tree/master/modules/mining-pipeline/prefix-span-pattern-detector)**<br>Identifies frequent sequential patterns in graphs, using the [PrefixSpan](https://ieeexplore.ieee.org/abstract/document/1339268/) algorithm.<br>**[SPAM Pattern Detector](https://github.com/cafejojo/schaapi/tree/master/modules/mining-pipeline/spam-pattern-detector)**<br>Identifies frequent sequential patterns in graphs, using the [SPAM](https://dl.acm.org/citation.cfm?id=775109) algorithm. |
 
 #### 1.4 Filter Found Patterns
 | | |
