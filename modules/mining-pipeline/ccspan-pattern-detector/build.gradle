@@ -1,0 +1,5 @@
+dependencies {
+    compile project(":mining-pipeline")
+
+    testCompile group: "com.nhaarman", name: "mockito-kotlin", version: mockitoKotlinVersion
+}
