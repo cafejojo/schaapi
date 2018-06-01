@@ -9,6 +9,7 @@ import org.apache.commons.cli.ParseException
 import org.cafejojo.schaapi.models.libraryusagegraph.jimple.GeneralizedNodeComparator
 import org.cafejojo.schaapi.models.project.JavaMavenProject
 import org.cafejojo.schaapi.miningpipeline.PatternFilter
+import org.cafejojo.schaapi.miningpipeline.MiningPipeline
 import org.cafejojo.schaapi.miningpipeline.miner.directory.DirectorySearchOptions
 import org.cafejojo.schaapi.miningpipeline.miner.directory.ProjectMiner
 import org.cafejojo.schaapi.miningpipeline.patterndetector.prefixspan.PatternDetector
@@ -44,7 +45,7 @@ fun main(args: Array<String>) {
     val testGeneratorTimeout = cmd.getOptionOrDefault("test_generator_timeout", DEFAULT_TEST_GENERATOR_TIMEOUT).toInt()
     val testGeneratorEnableOutput = cmd.hasOption("test_generator_enable_output")
 
-    Pipeline(
+    MiningPipeline(
         projectMiner = ProjectMiner { JavaMavenProject(it, mavenDir) },
         searchOptions = DirectorySearchOptions(userBaseDir),
         libraryProjectCompiler = JavaMavenCompiler(),

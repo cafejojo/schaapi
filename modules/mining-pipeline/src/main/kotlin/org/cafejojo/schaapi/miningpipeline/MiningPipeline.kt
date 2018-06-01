@@ -1,19 +1,12 @@
-package org.cafejojo.schaapi
+package org.cafejojo.schaapi.miningpipeline
 
 import org.cafejojo.schaapi.models.Node
 import org.cafejojo.schaapi.models.Project
-import org.cafejojo.schaapi.miningpipeline.LibraryUsageGraphGenerator
-import org.cafejojo.schaapi.miningpipeline.PatternDetector
-import org.cafejojo.schaapi.miningpipeline.PatternFilter
-import org.cafejojo.schaapi.miningpipeline.ProjectCompiler
-import org.cafejojo.schaapi.miningpipeline.ProjectMiner
-import org.cafejojo.schaapi.miningpipeline.SearchOptions
-import org.cafejojo.schaapi.miningpipeline.TestGenerator
 
 /**
  * Represents the complete Schaapi pipeline.
  */
-class Pipeline<SO : SearchOptions, UP : Project, LP : Project, N : Node>(
+class MiningPipeline<SO : SearchOptions, UP : Project, LP : Project, N : Node>(
     private val projectMiner: ProjectMiner<SO, UP>,
     private val searchOptions: SO,
     private val libraryProjectCompiler: ProjectCompiler<LP>,
