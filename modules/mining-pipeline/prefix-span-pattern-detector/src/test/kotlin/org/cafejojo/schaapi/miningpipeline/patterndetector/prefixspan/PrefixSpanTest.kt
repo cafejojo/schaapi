@@ -7,7 +7,7 @@ import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.xit
 
-internal class PrefixSpanTest : Spek({
+internal object PrefixSpanTest : Spek({
     describe("when extracting suffixes from sequences") {
         it("should not return any suffixes if no sequence has prefix") {
             val prefix = listOf(SimpleNode(), SimpleNode())

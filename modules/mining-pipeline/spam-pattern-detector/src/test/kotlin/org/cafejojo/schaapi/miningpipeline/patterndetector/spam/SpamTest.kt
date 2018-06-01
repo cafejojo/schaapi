@@ -6,7 +6,7 @@ import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 
-internal class SpamTest : Spek({
+internal object SpamTest : Spek({
     describe("detecting patterns in a set of sequences") {
         it("should not find a pattern in a set of random nodes with support 2") {
             val node1 = SimpleNode()
