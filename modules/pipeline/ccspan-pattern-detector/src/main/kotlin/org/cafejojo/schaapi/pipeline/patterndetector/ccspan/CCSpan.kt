@@ -19,19 +19,20 @@ internal class CCSpan<N : Node>(
     private val nodeComparator: GeneralizedNodeComparator<N>
 ) {
     private val pathUtil = PathUtil<N>()
-    private fun List<N>.pre() = this.subList(0, this.size - 1)
-    private fun List<N>.post() = this.subList(1, this.size)
 
     private val previous = mutableSetOf<SequenceTriple<N>>()
     private val current = mutableSetOf<SequenceTriple<N>>()
 
+    private fun List<N>.pre() = this.subList(0, this.size - 1)
+    private fun List<N>.post() = this.subList(1, this.size)
+
     /**
-     * Generates a list of frequent patterns which are all closed sequential frequent sequences.
+     * Generates a list of frequent patterns which are all closed contiguous frequent sequences.
      *
      * @return list of frequent sequential patterns
      */
     internal fun findFrequentPatterns(): List<Pattern<N>> {
-        generateSingletonSequences()
+        findFrequentSingletonSequences()
         val frequentClosedContiguousSequences = mutableListOf<Pattern<N>>()
 
         var subSequenceLength = 2
@@ -42,7 +43,7 @@ internal class CCSpan<N : Node>(
                 .filter { it.size >= subSequenceLength }
                 .forEach { generateAllContiguousSequences(it, subSequenceLength, checkedSequences) }
 
-            generateClosedContiguousSequences()
+            findFrequentClosedContiguousSequences()
             frequentClosedContiguousSequences.addAll(previous.filter { it.isClosedSequence }.map { it.sequence })
 
             shiftCurrent()
@@ -59,7 +60,7 @@ internal class CCSpan<N : Node>(
     ) {
         sequence.dropLast(subSequenceLength - 1).indices.forEach {
             val subSequence = sequence.subList(it, it + subSequenceLength)
-            generateContiguousSequences(sequence.subList(it, it + subSequenceLength), checkedSequences)
+            findFrequentContiguousSequences(sequence.subList(it, it + subSequenceLength), checkedSequences)
 
             checkedSequences += subSequence
         }
@@ -71,29 +72,29 @@ internal class CCSpan<N : Node>(
         current.clear()
     }
 
-    private fun generateSingletonSequences() {
-        val checkedSequences = mutableListOf<N>()
+    private fun findFrequentSingletonSequences() {
+        val checkedElements = mutableListOf<N>()
 
         sequences.flatten().forEach { element ->
-            if (!checkedSequences.contains(element)) {
-                val support = sequences.count { pathUtil.pathContainsSequence(it, listOf(element), nodeComparator) }
+            if (!checkedElements.contains(element)) {
+                val support = calculateSupport(listOf(element))
                 if (support >= minimumSupport) previous += SequenceTriple(listOf(element), support)
 
-                checkedSequences += element
+                checkedElements += element
             }
         }
     }
 
-    private fun generateContiguousSequences(subSequence: List<N>, checkedSequences: MutableList<List<N>>) {
+    private fun findFrequentContiguousSequences(subSequence: List<N>, checkedSequences: MutableList<List<N>>) {
         if (checkedSequences.contains(subSequence)) return
 
         if (previous.any { it.sequence == subSequence.pre() } && previous.any { it.sequence == subSequence.post() }) {
-            val support = sequences.count { pathUtil.pathContainsSequence(it, subSequence, nodeComparator) }
+            val support = calculateSupport(subSequence)
             if (support >= minimumSupport) current += SequenceTriple(subSequence, support)
         }
     }
 
-    private fun generateClosedContiguousSequences() {
+    private fun findFrequentClosedContiguousSequences() {
         current.forEach { (sequence, sequenceSupport, _) ->
             previous
                 .filter {
@@ -104,6 +105,9 @@ internal class CCSpan<N : Node>(
                 .forEach { it.isClosedSequence = false }
         }
     }
+
+    private fun calculateSupport(sequence: List<N>) =
+        sequences.count { pathUtil.pathContainsSequence(it, sequence, nodeComparator) }
 }
 
 private data class SequenceTriple<N>(val sequence: List<N>, val support: Int, var isClosedSequence: Boolean = true)
