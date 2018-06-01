@@ -1,9 +1,9 @@
-package org.cafejojo.schaapi.pipeline.patterndetector.ccspan
+package org.cafejojo.schaapi.miningpipeline.patterndetector.ccspan
 
+import org.cafejojo.schaapi.miningpipeline.Pattern
 import org.cafejojo.schaapi.models.GeneralizedNodeComparator
 import org.cafejojo.schaapi.models.Node
 import org.cafejojo.schaapi.models.PathUtil
-import org.cafejojo.schaapi.pipeline.Pattern
 
 /**
  * Finds closed sequential patterns using the CCSpan algorithm by Zhang et. al.

@@ -1,4 +1,4 @@
-package org.cafejojo.schaapi.pipeline.patterndetector.ccspan
+package org.cafejojo.schaapi.miningpipeline.patterndetector.ccspan
 
 import org.assertj.core.api.Assertions.assertThat
 import org.cafejojo.schaapi.models.Node
