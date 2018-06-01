@@ -26,9 +26,11 @@ import javax.net.ssl.HttpsURLConnection
  * This class is a copy of [com.github.kittinunf.fuel.toolbox.HttpClient], with the check/replace for PATCH requests
  * removed.
  */
+@Suppress("TooGenericExceptionCaught")
 internal class CustomHttpClient(private val proxy: Proxy? = null) : Client {
     override fun executeRequest(request: Request): Response {
-        val connection = establishConnection(request) as HttpURLConnection
+        val connection = establishConnection(request) as? HttpURLConnection
+            ?: throw IllegalStateException("Connection invalid.")
 
         allowMethods("PATCH")
 
@@ -61,10 +63,7 @@ internal class CustomHttpClient(private val proxy: Proxy? = null) : Client {
                     val stream = connection.errorStream ?: connection.inputStream
                     if (contentEncoding.compareTo("gzip", true) == 0) GZIPInputStream(stream) else stream
                 } catch (exception: IOException) {
-                    try {
-                        connection.errorStream ?: connection.inputStream?.close()
-                    } catch (exception: IOException) {
-                    }
+                    connection.errorStream ?: connection.inputStream?.close()
                     ByteArrayInputStream(ByteArray(0))
                 }
             )
@@ -110,7 +109,7 @@ private fun allowMethods(vararg methods: String) {
         setInt(methodsField, methodsField.modifiers and Modifier.FINAL.inv())
     }
 
-    val newMethods = (methodsField.get(null) as Array<*>).filterIsInstance<String>().toTypedArray() + methods
+    val newMethods = (methodsField.get(null) as? Array<*>)?.filterIsInstance<String>()?.toTypedArray()?.plus(methods)
 
     methodsField.set(null, newMethods)
 }
