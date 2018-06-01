@@ -20,8 +20,8 @@ internal class CCSpan<N : Node>(
 ) {
     private val pathUtil = PathUtil<N>()
 
-    private val previous = mutableSetOf<SequenceTriple<N>>()
-    private val current = mutableSetOf<SequenceTriple<N>>()
+    private val sequencesOfPreviousLength = mutableSetOf<SequenceTriple<N>>()
+    private val sequencesOfCurrentLength = mutableSetOf<SequenceTriple<N>>()
 
     private fun List<N>.pre() = this.subList(0, this.size - 1)
     private fun List<N>.post() = this.subList(1, this.size)
@@ -36,15 +36,15 @@ internal class CCSpan<N : Node>(
         val frequentClosedContiguousSequences = mutableListOf<Pattern<N>>()
 
         var subSequenceLength = 2
-        while (previous.isNotEmpty()) {
+        while (sequencesOfPreviousLength.isNotEmpty()) {
             val checkedSequences = mutableListOf<List<N>>()
 
             sequences
                 .filter { it.size >= subSequenceLength }
-                .forEach { generateAllContiguousSequences(it, subSequenceLength, checkedSequences) }
+                .forEach { findAllContiguousSequencesOfLength(it, subSequenceLength, checkedSequences) }
 
-            findFrequentClosedContiguousSequences()
-            frequentClosedContiguousSequences.addAll(previous.filter { it.isClosedSequence }.map { it.sequence })
+            identifyNonClosedSequences()
+            frequentClosedContiguousSequences.addAll(sequencesOfPreviousLength.filter { it.isClosedSequence }.map { it.sequence })
 
             shiftCurrent()
             subSequenceLength++
@@ -53,50 +53,45 @@ internal class CCSpan<N : Node>(
         return frequentClosedContiguousSequences
     }
 
-    private fun generateAllContiguousSequences(
-        sequence: List<N>,
-        subSequenceLength: Int,
-        checkedSequences: MutableList<List<N>>
-    ) {
-        sequence.dropLast(subSequenceLength - 1).indices.forEach {
-            val subSequence = sequence.subList(it, it + subSequenceLength)
-            findFrequentContiguousSequences(sequence.subList(it, it + subSequenceLength), checkedSequences)
-
-            checkedSequences += subSequence
-        }
-    }
-
-    private fun shiftCurrent() {
-        previous.clear()
-        previous.addAll(current)
-        current.clear()
-    }
-
     private fun findFrequentSingletonSequences() {
         val checkedElements = mutableListOf<N>()
 
         sequences.flatten().forEach { element ->
             if (!checkedElements.contains(element)) {
                 val support = calculateSupport(listOf(element))
-                if (support >= minimumSupport) previous += SequenceTriple(listOf(element), support)
+                if (support >= minimumSupport) sequencesOfPreviousLength += SequenceTriple(listOf(element), support)
 
                 checkedElements += element
             }
         }
     }
 
-    private fun findFrequentContiguousSequences(subSequence: List<N>, checkedSequences: MutableList<List<N>>) {
-        if (checkedSequences.contains(subSequence)) return
+    private fun findAllContiguousSequencesOfLength(
+        sequence: List<N>,
+        subSequenceLength: Int,
+        checkedSequences: MutableList<List<N>>
+    ) {
+        sequence.dropLast(subSequenceLength - 1).indices.forEach {
+            val subSequence = sequence.subList(it, it + subSequenceLength)
+            checkSupportOfSubSequence(sequence.subList(it, it + subSequenceLength), checkedSequences)
 
-        if (previous.any { it.sequence == subSequence.pre() } && previous.any { it.sequence == subSequence.post() }) {
-            val support = calculateSupport(subSequence)
-            if (support >= minimumSupport) current += SequenceTriple(subSequence, support)
+            checkedSequences += subSequence
         }
     }
 
-    private fun findFrequentClosedContiguousSequences() {
-        current.forEach { (sequence, sequenceSupport, _) ->
-            previous
+    private fun checkSupportOfSubSequence(subSequence: List<N>, checkedSequences: MutableList<List<N>>) {
+        if (checkedSequences.contains(subSequence)) return
+
+        if (sequencesOfPreviousLength.any { it.sequence == subSequence.pre() }
+            && sequencesOfPreviousLength.any { it.sequence == subSequence.post() }) {
+            val support = calculateSupport(subSequence)
+            if (support >= minimumSupport) sequencesOfCurrentLength += SequenceTriple(subSequence, support)
+        }
+    }
+
+    private fun identifyNonClosedSequences() {
+        sequencesOfCurrentLength.forEach { (sequence, sequenceSupport, _) ->
+            sequencesOfPreviousLength
                 .filter {
                     it.isClosedSequence
                         && (it.sequence == sequence.pre() || it.sequence == sequence.post())
@@ -108,6 +103,12 @@ internal class CCSpan<N : Node>(
 
     private fun calculateSupport(sequence: List<N>) =
         sequences.count { pathUtil.pathContainsSequence(it, sequence, nodeComparator) }
+
+    private fun shiftCurrent() {
+        sequencesOfPreviousLength.clear()
+        sequencesOfPreviousLength.addAll(sequencesOfCurrentLength)
+        sequencesOfCurrentLength.clear()
+    }
 }
 
 private data class SequenceTriple<N>(val sequence: List<N>, val support: Int, var isClosedSequence: Boolean = true)
