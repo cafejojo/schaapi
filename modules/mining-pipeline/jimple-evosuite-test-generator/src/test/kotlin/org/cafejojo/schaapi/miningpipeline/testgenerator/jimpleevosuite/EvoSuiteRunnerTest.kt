@@ -7,7 +7,7 @@ import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 import java.io.File
 
-internal class EvoSuiteRunnerTest : Spek({
+internal object EvoSuiteRunnerTest : Spek({
     val classPath = EvoSuiteRunnerTest::class.java.getResource("../../../../../../").toURI().path
     val evoSuiteTestOutput = File("$classPath/evosuite-tests/")
 

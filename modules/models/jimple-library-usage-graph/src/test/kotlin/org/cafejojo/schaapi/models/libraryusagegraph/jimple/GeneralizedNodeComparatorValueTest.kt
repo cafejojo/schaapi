@@ -9,7 +9,7 @@ import org.jetbrains.spek.api.dsl.it
 /**
  * Unit tests for [GeneralizedNodeComparator.generalizedValuesAreEqual].
  */
-internal class GeneralizedNodeComparatorValueTest : Spek({
+internal object GeneralizedNodeComparatorValueTest : Spek({
     lateinit var comparator: GeneralizedNodeComparator
 
     beforeEachTest {

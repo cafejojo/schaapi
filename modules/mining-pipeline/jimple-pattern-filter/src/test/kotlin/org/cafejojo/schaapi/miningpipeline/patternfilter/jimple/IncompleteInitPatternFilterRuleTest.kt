@@ -13,7 +13,7 @@ import soot.jimple.InvokeStmt
 import soot.jimple.ReturnVoidStmt
 import soot.jimple.internal.JSpecialInvokeExpr
 
-internal class IncompleteInitPatternFilterRuleTest : Spek({
+internal object IncompleteInitPatternFilterRuleTest : Spek({
     describe("filtering of init calls without new") {
         it("rejects patterns starting with init calls") {
             val initMethod = mock<SootMethod> {

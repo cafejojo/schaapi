@@ -9,7 +9,7 @@ import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 import soot.jimple.DefinitionStmt
 
-internal class JimpleNodeTest : Spek({
+internal object JimpleNodeTest : Spek({
     describe("contained values") {
         context("non-recursive statements") {
             it("returns the operator of a throw statement") {

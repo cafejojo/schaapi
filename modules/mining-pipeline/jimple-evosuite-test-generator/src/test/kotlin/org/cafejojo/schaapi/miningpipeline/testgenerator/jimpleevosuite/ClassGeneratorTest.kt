@@ -18,7 +18,7 @@ import soot.jimple.StringConstant
 import soot.options.Options
 import java.io.File
 
-internal class ClassGeneratorTest : Spek({
+internal object ClassGeneratorTest : Spek({
     beforeGroup {
         Options.v().set_soot_classpath(
             arrayOf(

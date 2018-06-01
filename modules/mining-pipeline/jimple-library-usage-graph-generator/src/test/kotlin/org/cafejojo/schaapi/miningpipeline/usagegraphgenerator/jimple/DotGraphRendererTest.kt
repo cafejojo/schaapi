@@ -7,7 +7,7 @@ import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 
-internal class DotGraphRendererTest : Spek({
+internal object DotGraphRendererTest : Spek({
     describe("rendering of statement control flow graphs to dot graph files") {
         it("renders a simple graph") {
             val exitNode = TestNode(id = 5)

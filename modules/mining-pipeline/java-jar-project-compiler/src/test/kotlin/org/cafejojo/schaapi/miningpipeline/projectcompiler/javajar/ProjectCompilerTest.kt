@@ -9,7 +9,7 @@ import java.io.File
 import java.io.FileNotFoundException
 import java.net.URLDecoder
 
-internal class ProjectCompilerTest : Spek({
+internal object ProjectCompilerTest : Spek({
     describe("Java JAR project compilation") {
         it("compiles simple projects") {
             val projectFile = File(URLDecoder.decode(

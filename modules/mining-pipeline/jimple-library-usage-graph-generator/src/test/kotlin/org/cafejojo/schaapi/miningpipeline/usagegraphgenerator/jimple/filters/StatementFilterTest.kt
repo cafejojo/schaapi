@@ -17,7 +17,7 @@ import soot.jimple.ReturnVoidStmt
 import soot.jimple.SwitchStmt
 import soot.jimple.ThrowStmt
 
-internal class StatementFilterTest : Spek({
+internal object StatementFilterTest : Spek({
     describe("filters statements based on library usage") {
         val libraryValue = constructInvokeExprMock(LIBRARY_CLASS)
         val nonLibraryValue = constructInvokeExprMock(NON_LIBRARY_CLASS)

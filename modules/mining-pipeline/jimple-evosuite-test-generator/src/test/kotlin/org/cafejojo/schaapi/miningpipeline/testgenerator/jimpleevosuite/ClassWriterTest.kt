@@ -9,7 +9,7 @@ import soot.Scene
 import java.nio.file.Paths
 import javax.xml.bind.DatatypeConverter
 
-internal class ClassWriterTest : Spek({
+internal object ClassWriterTest : Spek({
     val classPath = Paths.get(ClassWriterTest::class.java.getResource("../../../../").toURI()).toString()
     val classOutputDirectory = Paths.get(classPath, "class-writer-test/").toFile()
 

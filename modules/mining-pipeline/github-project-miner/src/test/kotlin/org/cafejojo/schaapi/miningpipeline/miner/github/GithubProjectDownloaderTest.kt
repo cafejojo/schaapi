@@ -14,7 +14,7 @@ import java.net.HttpURLConnection
 import java.net.URL
 import java.nio.file.Files
 
-class GitHubProjectDownloaderTest : Spek({
+internal object GitHubProjectDownloaderTest : Spek({
     var output = Files.createTempDirectory("project-downloader").toFile()
 
     // Create zip file with given dir name (+ zip extension) in output with searchContent single text file with given

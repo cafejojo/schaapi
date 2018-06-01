@@ -34,7 +34,7 @@ import soot.jimple.toolkits.thread.synchronization.NewStaticLock
 import soot.shimple.PhiExpr
 import soot.shimple.ShimpleExpr
 
-internal class ValueFilterTest : Spek({
+internal object ValueFilterTest : Spek({
     val libraryInvokeExpr = constructInvokeExprMock(LIBRARY_CLASS)
     val nonLibraryInvokeExpr = constructInvokeExprMock(NON_LIBRARY_CLASS)
 
