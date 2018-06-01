@@ -40,11 +40,23 @@ class WebHookReceiver {
                         Installation id is ${checkSuiteEvent.installation.id}
                         For commit ${checkSuiteEvent.checkSuite.headSha}
                         On branch ${checkSuiteEvent.checkSuite.headBranch}
+                        For repository ${checkSuiteEvent.repository.owner.login}/${checkSuiteEvent.repository.name}
+
                         with status `in_progress` and started_at set to the current time
 
                     - Start a run of the regression tests
                     """.trimIndent()
                 )
+
+                with(checkSuiteEvent) {
+                    CheckReporter().reportStarted(
+                        installation.id,
+                        repository.owner.login,
+                        repository.name,
+                        checkSuite.headBranch,
+                        checkSuite.headSha
+                    )
+                }
             }
             else -> throw IllegalStateException("Cannot process webhooks for events of type $eventType.")
         }
