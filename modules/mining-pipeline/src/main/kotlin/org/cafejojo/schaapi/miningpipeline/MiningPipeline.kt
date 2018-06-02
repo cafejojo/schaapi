@@ -25,18 +25,25 @@ class MiningPipeline<SO : SearchOptions, UP : Project, LP : Project, N : Node>(
     fun run(libraryProject: LP) {
         libraryProjectCompiler.compile(libraryProject)
 
-        logger.info { "mining has started" }
+        logger.info { "Mining has started." }
 
-        searchOptions
-            .next(projectMiner::mine)
-            .next(userProjectCompiler::compile)
-            .flatMap { libraryUsageGraphGenerator.generate(libraryProject, it) }
-            .next(patternDetector::findPatterns)
-            .next(patternFilter::filter)
-            .next(testGenerator::generate)
+        try {
+            searchOptions
+                .next(projectMiner::mine)
+                .next(userProjectCompiler::compile)
+                .flatMap { libraryUsageGraphGenerator.generate(libraryProject, it) }
+                .next(patternDetector::findPatterns)
+                .next(patternFilter::filter)
+                .next(testGenerator::generate)
 
-
-        logger.info { "tests have been generated" }
+            logger.info { "Tests have been successfully generated." }
+        } catch (e: IllegalArgumentException) {
+            logger.error("A critical error occurred during the mining process causing it to be aborted.", e)
+        } catch (e: IllegalStateException) {
+            logger.error("A critical error occurred during the mining process causing it to be aborted.", e)
+        } finally {
+            logger.info { "Mining has finished." }
+        }
     }
 }
 
