@@ -8,10 +8,13 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
+import java.lang.Integer.min
 import java.net.HttpURLConnection
 import java.net.URL
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.streams.toList
+
+typealias GitHubProject = File
 
 /**
  * Downloads the zip files of the given GitHub repositories and returns searchContent list of Java projects.
@@ -26,10 +29,15 @@ internal class GitHubProjectDownloader<P : Project>(
     private val projectPacker: (File) -> P,
     private val maxProjectDownloads: Int
 ) {
+    private companion object : KLogging()
+
     private val outputProject = outputDirectory.resolve("projects/").apply { mkdirs() }
     private var downloaded: AtomicInteger = AtomicInteger(0)
 
-    private companion object : KLogging()
+    private fun GitHubProject.getMasterFile(): File {
+        require(this.listFiles().isNotEmpty()) { "GitHub Project must contain files" }
+        return this.listFiles().first()
+    }
 
     /**
      * Starts downloading repositories.
@@ -44,29 +52,28 @@ internal class GitHubProjectDownloader<P : Project>(
      */
     fun download(): List<P> =
         projectNames
+            .also { logger.info { "Will extract ${min(it.size, maxProjectDownloads)} projects from GitHub." } }
             .parallelStream()
+            .filter { downloaded.getAndIncrement() <= maxProjectDownloads }
             .map { downloadAndSaveProject(it) }
             .toList()
-            .also { logger.info { "Tried to extract ${it.size} projects in total from github." } }
             .filterNotNull()
-            .also { logger.info { "Of which ${it.size} extractions were successful" } }
+            .also { logger.info { "${it.size} extractions of projects from GitHub were successful." } }
 
     private fun downloadAndSaveProject(projectName: String): P? {
-        if (downloaded.getAndIncrement() >= maxProjectDownloads) return null
-
         val connection = getConnection(projectName) ?: return null
 
         try {
-            val zipFile = saveToFile(connection.inputStream, projectName) ?: return null
-            val unzippedFile = unzip(zipFile) ?: return null
+            val githubProjectZip = saveZipToFile(connection.inputStream, projectName) ?: return null
+            val gitHubProject = unzip(githubProjectZip) ?: return null
 
-            return if (unzippedFile.exists()) {
+            return if (gitHubProject.exists()) {
                 try {
-                    projectPacker(unzippedFile.listFiles().first())
-                        .also { logger.info { "Created project of $unzippedFile." } }
-                } catch (e: RuntimeException) {
-                    logger.warn("Unable to pack $unzippedFile in project.", e)
-                    unzippedFile.deleteRecursively()
+                    val masterDir = gitHubProject.getMasterFile()
+                    projectPacker(masterDir).also { logger.info { "Created project of $masterDir." } }
+                } catch (e: IllegalArgumentException) {
+                    logger.warn("Unable to pack $gitHubProject in project.", e)
+                    gitHubProject.deleteRecursively()
                     null
                 }
             } else {
@@ -77,7 +84,7 @@ internal class GitHubProjectDownloader<P : Project>(
         }
     }
 
-    internal fun saveToFile(input: InputStream, projectName: String): File? {
+    internal fun saveZipToFile(input: InputStream, projectName: String): File? {
         val alphaNumericRegex = Regex("[^A-Za-z0-9]")
         val outputFile = File(
             outputProject,
@@ -89,6 +96,7 @@ internal class GitHubProjectDownloader<P : Project>(
                 logger.info("Output file ${outputFile.path} already exists and will be deleted.")
                 outputFile.delete()
             }
+
             if (outputFile.createNewFile()) {
                 input.copyTo(FileOutputStream(outputFile))
             } else {
@@ -102,30 +110,30 @@ internal class GitHubProjectDownloader<P : Project>(
         return outputFile
     }
 
-    internal fun unzip(zipFile: File): File? {
-        val output = File(zipFile.parent, zipFile.nameWithoutExtension)
-        if (output.exists()) {
-            logger.info { "File $output existed and will be overwritten by $output." }
-            output.deleteRecursively()
+    internal fun unzip(projectZipFile: File): GitHubProject? {
+        val githubProject = File(projectZipFile.parent, projectZipFile.nameWithoutExtension)
+        if (githubProject.exists()) {
+            logger.info { "File $githubProject already exists and will be overwritten by $githubProject." }
+            githubProject.deleteRecursively()
         }
 
         try {
-            ZipUtil.unpack(zipFile, output)
-            logger.info { "Successfully unzipped file ${zipFile.name}." }
+            ZipUtil.unpack(projectZipFile, githubProject)
+            logger.info { "Successfully unzipped file ${projectZipFile.name}." }
         } catch (e: IOException) {
-            logger.warn("Could not unzip ${zipFile.name}.", e)
+            logger.warn("Could not unzip ${projectZipFile.name}.", e)
             return null
         } catch (e: ZipException) {
-            logger.warn("Could not unzip ${zipFile.name}.", e)
+            logger.warn("Could not unzip ${projectZipFile.name}.", e)
             return null
         } finally {
-            if (zipFile.exists()) {
-                logger.info { "Deleting $zipFile." }
-                zipFile.delete()
+            if (projectZipFile.exists()) {
+                logger.info { "Deleting $projectZipFile." }
+                projectZipFile.delete()
             }
         }
 
-        return output
+        return githubProject
     }
 
     internal fun getConnection(projectName: String): HttpURLConnection? {

@@ -53,14 +53,11 @@ class ProjectCompiler : ProjectCompiler<JavaMavenProject> {
         }
 
         val result = invoker.execute(request)
+
         if (result.exitCode != 0) {
-            logger.warn("`maven install` executed unsuccessfully: ", result.executionException)
-//            throw ProjectCompilationException("`maven install` executed unsuccessfully: " + result.executionException)
+            logger.warn("`maven install` of ${project.projectDir} failed: ", result.executionException)
+        } else {
+            logger.warn("`maven install` of ${project.projectDir} was successful.")
         }
     }
 }
-
-/**
- * Indicates that the compilation of a project was unsuccessful.
- */
-class ProjectCompilationException(message: String? = null) : Exception(message)

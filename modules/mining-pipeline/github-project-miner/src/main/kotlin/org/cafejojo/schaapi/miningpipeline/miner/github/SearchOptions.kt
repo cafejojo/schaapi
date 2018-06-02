@@ -32,7 +32,8 @@ class MavenProjectSearchOptions(
 
     override fun searchContent(gitHub: GitHub): List<String> {
         logger.info {
-            "Will mine github maven projects using: group id: $groupId, artifact id: $artifactId, version: $version."
+            "Mining github maven projects which depend on: " +
+                "group id: $groupId, artifact id: $artifactId, version: $version."
         }
 
         return gitHub.searchContent()
@@ -44,5 +45,6 @@ class MavenProjectSearchOptions(
             }
             .list()
             .map { it.owner.fullName }
+            .also { logger.info { "Found ${it.size} projects using the Github v3 Search API." } }
     }
 }

@@ -52,7 +52,7 @@ internal object GitHubProjectDownloaderTest : Spek({
             val repoZipStream = zipStreamContent.byteInputStream()
 
             GitHubProjectDownloader(repoNames, output, ::testProjectPacker)
-                .saveToFile(repoZipStream, repoName)
+                .saveZipToFile(repoZipStream, repoName)
 
             assertThat(File(output, "${repoName}0-project.zip")).exists()
             assertThat(File(output, "${repoName}0-project.zip").readText()).isEqualTo(zipStreamContent)
@@ -65,7 +65,7 @@ internal object GitHubProjectDownloaderTest : Spek({
             val repoZipStream = zipStreamContent.byteInputStream()
 
             GitHubProjectDownloader(repoNames, output, ::testProjectPacker)
-                .saveToFile(repoZipStream, repoName)
+                .saveZipToFile(repoZipStream, repoName)
 
             assertThat(File(output, "0-project.zip")).exists()
         }
@@ -80,8 +80,8 @@ internal object GitHubProjectDownloaderTest : Spek({
 
             val repoNames = listOf(repoName1, repoName2)
             GitHubProjectDownloader(repoNames, output, ::testProjectPacker)
-                .apply { saveToFile(repo1ZipStream, repoName1) }
-                .apply { saveToFile(repo2ZipStream, repoName2) }
+                .apply { saveZipToFile(repo1ZipStream, repoName1) }
+                .apply { saveZipToFile(repo2ZipStream, repoName2) }
 
             assertThat(File(output, "${repoName1}0-project.zip")).exists()
             assertThat(File(output, "${repoName2}1-project.zip")).exists()
@@ -100,7 +100,7 @@ internal object GitHubProjectDownloaderTest : Spek({
             assertThat(output.listFiles().size).isEqualTo(1)
 
             GitHubProjectDownloader(repoNames, output, ::testProjectPacker)
-                .saveToFile(repoZipStream, repoName)
+                .saveZipToFile(repoZipStream, repoName)
 
             assertThat(output.listFiles().size).isEqualTo(1)
         }

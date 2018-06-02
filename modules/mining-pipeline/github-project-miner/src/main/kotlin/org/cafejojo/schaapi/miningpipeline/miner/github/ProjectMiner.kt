@@ -46,7 +46,7 @@ class ProjectMiner<P : Project>(
      * @see GitHubProjectDownloader.download
      */
     override fun mine(searchOptions: GitHubSearchOptions): List<P> {
-        require(!gitHub.isOffline) { "Unable to connect to GitHub." }
+        check(!gitHub.isOffline) { "Unable to connect to GitHub." }
         require(gitHub.isCredentialValid) { "Valid credentials are required to connect to GitHub." }
 
         val projectNames = searchOptions.searchContent(gitHub)
