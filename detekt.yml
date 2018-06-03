@@ -25,6 +25,8 @@ style:
     active: false
   UnusedPrivateMember:
     active: false
+  MandatoryBracesIfStatements:
+    active: false
 
 
 test-pattern:

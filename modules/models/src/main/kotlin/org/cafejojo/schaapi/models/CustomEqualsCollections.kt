@@ -39,7 +39,7 @@ class CustomEqualsHashMap<K, V>(
 
     override fun put(key: K, value: V) = innerMap.put(wrapKey(key), value)
 
-    override fun putAll(from: Map<out K, V>) = innerMap.putAll(from.map { (key, value) -> Pair(wrapKey(key), value) })
+    override fun putAll(from: Map<out K, V>) = innerMap.putAll(from.map { (key, value) -> wrapKey(key) to value })
 
     override fun remove(key: K) = innerMap.remove(wrapKey(key))
 

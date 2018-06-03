@@ -89,9 +89,9 @@ class CustomEqualsHashMapTest : Spek({
 
         it("can store multiple key-value pairs in one call") {
             val pairs = listOf(
-                Pair(EqualsWrapper(16445), Any()),
-                Pair(EqualsWrapper(91213), Any()),
-                Pair(EqualsWrapper(23669), Any())
+                EqualsWrapper(16445) to Any(),
+                EqualsWrapper(91213) to Any(),
+                EqualsWrapper(23669) to Any()
             ).toMap()
 
             map.putAll(pairs)
