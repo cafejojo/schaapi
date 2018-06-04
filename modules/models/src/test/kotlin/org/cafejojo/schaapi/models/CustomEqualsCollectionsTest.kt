@@ -5,7 +5,7 @@ import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 
-class EqualsWrapperTest : Spek({
+internal object EqualsWrapperTest : Spek({
     describe("value wrapper") {
         it("returns the inserted value") {
             val key = Any()
@@ -57,7 +57,7 @@ class EqualsWrapperTest : Spek({
     }
 })
 
-class CustomEqualsHashMapTest : Spek({
+internal object CustomEqualsHashMapTest : Spek({
     describe("custom hash map") {
         lateinit var map: CustomEqualsHashMap<Any, Any>
 
@@ -184,7 +184,7 @@ class CustomEqualsHashMapTest : Spek({
     }
 })
 
-class CustomEqualsHashSetTest : Spek({
+internal object CustomEqualsHashSetTest : Spek({
     describe("custom hash set") {
         lateinit var set: CustomEqualsHashSet<Any>
 
@@ -330,7 +330,7 @@ class CustomEqualsHashSetTest : Spek({
     }
 })
 
-class CustomEqualsListTest : Spek({
+internal object CustomEqualsListTest : Spek({
     describe("custom equals list") {
         lateinit var list: CustomEqualsList<Any>
 
