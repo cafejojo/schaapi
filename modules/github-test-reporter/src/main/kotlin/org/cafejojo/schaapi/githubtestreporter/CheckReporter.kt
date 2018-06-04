@@ -17,7 +17,7 @@ internal class CheckReporter {
             headBranch,
             headSha,
             checkName = "breaking change detection",
-            token = requestInstallationToken(installationId).token.also(::println)
+            token = requestInstallationToken(installationId).token
         ))
             .responseObject<CheckRun>()
             .getResultOrThrowException()
