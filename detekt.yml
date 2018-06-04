@@ -19,6 +19,8 @@ naming:
     active: false
 
 style:
+  MandatoryBracesIfStatements:
+    active: false
   ReturnCount:
     active: false
   UnnecessaryAbstractClass:

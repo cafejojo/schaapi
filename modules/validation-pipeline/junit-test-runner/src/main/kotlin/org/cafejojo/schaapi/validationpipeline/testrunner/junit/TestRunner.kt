@@ -30,9 +30,9 @@ class TestRunner : TestRunner {
                     val className = testFile.toRelativeString(rootDir)
                         .replace(Regex("[/\\\\]"), ".")
                         .removeSuffix(".class")
-                    Pair(className, JUnitCore.runClasses(this.javaClass.classLoader.loadClass(className)))
+                    className to JUnitCore.runClasses(this.javaClass.classLoader.loadClass(className))
                 }
-                .map { (name, results) -> Pair(name, gatherResults(results)) }
+                .map { (name, results) -> name to gatherResults(results) }
                 .toMap()
         )
     }

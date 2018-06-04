@@ -1,10 +1,10 @@
 package org.cafejojo.schaapi.miningpipeline.patterndetector.prefixspan
 
+import org.cafejojo.schaapi.miningpipeline.Pattern
 import org.cafejojo.schaapi.models.CustomEqualsHashSet
 import org.cafejojo.schaapi.models.GeneralizedNodeComparator
 import org.cafejojo.schaapi.models.Node
 import org.cafejojo.schaapi.models.PathUtil
-import org.cafejojo.schaapi.miningpipeline.Pattern
 
 /**
  * Finds all the frequent patterns of [Node]s in the given collection of sequences using the PrefixSpan algorithm by
@@ -87,7 +87,7 @@ internal class PrefixSpan<N : Node>(
     internal fun mapFrequentPatternsToSequences(): Map<Pattern<N>, List<List<N>>> =
         frequentPatterns
             .map { sequence ->
-                Pair(sequence, sequences.filter { pathUtil.pathContainsSequence(it, sequence, nodeComparator) })
+                sequence to sequences.filter { pathUtil.pathContainsSequence(it, sequence, nodeComparator) }
             }
             .toMap()
 

@@ -1,10 +1,10 @@
 package org.cafejojo.schaapi.miningpipeline.patterndetector.spam
 
+import org.cafejojo.schaapi.miningpipeline.Pattern
 import org.cafejojo.schaapi.models.CustomEqualsHashSet
 import org.cafejojo.schaapi.models.GeneralizedNodeComparator
 import org.cafejojo.schaapi.models.Node
 import org.cafejojo.schaapi.models.PathUtil
-import org.cafejojo.schaapi.miningpipeline.Pattern
 
 /**
  * Finds frequent sequences of [Node]s in the given collection of sequences, using the SPAM algorithm by Ayres et al.
@@ -44,7 +44,7 @@ internal class Spam<N : Node>(
      */
     internal fun mapFrequentPatternsToSequences(): Map<Pattern<N>, List<List<N>>> =
         frequentPatterns.map { sequence ->
-            Pair(sequence, sequences.filter { pathUtil.pathContainsSequence(it, sequence, nodeComparator) })
+            sequence to sequences.filter { pathUtil.pathContainsSequence(it, sequence, nodeComparator) }
         }.toMap()
 
     @Suppress("UnsafeCast") // pattern: List<N> + extension: N is always a List<N>
