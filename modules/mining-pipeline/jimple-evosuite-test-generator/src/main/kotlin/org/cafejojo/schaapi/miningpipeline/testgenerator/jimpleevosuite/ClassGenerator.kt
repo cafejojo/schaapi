@@ -142,15 +142,15 @@ internal class ClassGenerator(className: String) {
     private fun replaceInvalidTargets(statements: List<Unit>) {
         val targetReplacement = statements.last()
 
-        statements.forEach { stmt ->
-            when (stmt) {
-                is GotoStmt -> if (!statements.contains(stmt.target)) stmt.target = targetReplacement
-                is IfStmt -> if (!statements.contains(stmt.target)) stmt.setTarget(targetReplacement)
+        statements.forEach { statement ->
+            when (statement) {
+                is GotoStmt -> if (!statements.contains(statement.target)) statement.target = targetReplacement
+                is IfStmt -> if (!statements.contains(statement.target)) statement.setTarget(targetReplacement)
                 is SwitchStmt -> {
-                    if (!statements.contains(stmt.defaultTarget)) stmt.defaultTarget = targetReplacement
+                    if (!statements.contains(statement.defaultTarget)) statement.defaultTarget = targetReplacement
 
-                    stmt.targets.forEachIndexed { index, target ->
-                        if (!statements.contains(target)) stmt.setTarget(index, targetReplacement)
+                    statement.targets.forEachIndexed { index, target ->
+                        if (!statements.contains(target)) statement.setTarget(index, targetReplacement)
                     }
                 }
             }
