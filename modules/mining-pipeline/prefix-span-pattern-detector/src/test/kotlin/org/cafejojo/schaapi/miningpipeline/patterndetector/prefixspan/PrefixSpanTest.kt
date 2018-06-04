@@ -69,7 +69,7 @@ internal object PrefixSpanTest : Spek({
             assertThat(frequent).isEmpty()
         }
 
-        it("should find a pattern that occurs twice in the same sequence") {
+        it("should not find a pattern that occurs twice in the same sequence") {
             val node1 = SimpleNode()
             val node2 = SimpleNode()
             val node3 = SimpleNode()
@@ -77,7 +77,7 @@ internal object PrefixSpanTest : Spek({
             val sequence = listOf(node1, node2, node3, node1, node2, node3)
 
             val sequences = listOf(sequence)
-            val frequent = PrefixSpan(sequences, 2, TestNodeComparator()).findFrequentPatterns()
+            val frequent = PrefixSpan(sequences, 1, TestNodeComparator()).findFrequentPatterns()
 
             assertThat(frequent).contains(listOf(node1, node2, node3))
         }

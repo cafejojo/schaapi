@@ -37,11 +37,9 @@ internal class CCSpan<N : Node>(
 
         var subSequenceLength = 2
         while (sequencesOfPreviousLength.isNotEmpty()) {
-            val checkedSequences = mutableListOf<List<N>>()
-
             sequences
                 .filter { it.size >= subSequenceLength }
-                .forEach { findAllContiguousSequencesOfLength(it, subSequenceLength, checkedSequences) }
+                .forEach { findAllContiguousSequencesOfLength(it, subSequenceLength) }
 
             identifyNonClosedSequences()
             frequentClosedContiguousSequences.addAll(
@@ -56,34 +54,20 @@ internal class CCSpan<N : Node>(
     }
 
     private fun findFrequentSingletonSequences() {
-        val checkedElements = mutableListOf<N>()
-
-        sequences.flatten().forEach { element ->
-            if (!checkedElements.contains(element)) {
-                val support = calculateSupport(listOf(element))
-                if (support >= minimumSupport) sequencesOfPreviousLength += SequenceTriple(listOf(element), support)
-
-                checkedElements += element
-            }
-        }
+        sequencesOfPreviousLength += pathUtil.findFrequentNodesInPaths(sequences, minimumSupport)
+            .map { (node, support) -> SequenceTriple(listOf(node), support) }
     }
 
     private fun findAllContiguousSequencesOfLength(
         sequence: List<N>,
-        subSequenceLength: Int,
-        checkedSequences: MutableList<List<N>>
+        subSequenceLength: Int
     ) {
         sequence.dropLast(subSequenceLength - 1).indices.forEach {
-            val subSequence = sequence.subList(it, it + subSequenceLength)
-            checkSupportOfSubSequence(sequence.subList(it, it + subSequenceLength), checkedSequences)
-
-            checkedSequences += subSequence
+            checkSupportOfSubSequence(sequence.subList(it, it + subSequenceLength))
         }
     }
 
-    private fun checkSupportOfSubSequence(subSequence: List<N>, checkedSequences: MutableList<List<N>>) {
-        if (checkedSequences.contains(subSequence)) return
-
+    private fun checkSupportOfSubSequence(subSequence: List<N>) {
         if (sequencesOfPreviousLength.any { it.sequence == subSequence.pre() }
             && sequencesOfPreviousLength.any { it.sequence == subSequence.post() }) {
             val support = calculateSupport(subSequence)
@@ -104,7 +88,9 @@ internal class CCSpan<N : Node>(
     }
 
     private fun calculateSupport(sequence: List<N>) =
-        sequences.count { pathUtil.pathContainsSequence(it, sequence, nodeComparator) }
+        sequences
+            .filter { it.size >= sequence.size }
+            .count { pathUtil.pathContainsSequence(it, sequence, nodeComparator) }
 
     private fun shiftCurrent() {
         sequencesOfPreviousLength.clear()
