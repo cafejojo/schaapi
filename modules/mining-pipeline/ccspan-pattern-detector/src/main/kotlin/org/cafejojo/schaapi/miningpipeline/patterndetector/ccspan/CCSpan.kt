@@ -101,6 +101,7 @@ internal class CCSpan<N : Node>(
     private fun calculateSupport(sequence: List<N>) =
         sequenceSupportMap[sequence]
             ?: sequences
+                .filter { it.size >= sequence.size }
                 .count { pathUtil.pathContainsSequence(it, sequence, nodeComparator) }
                 .also { sequenceSupportMap[sequence] = it }
 
