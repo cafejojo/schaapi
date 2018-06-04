@@ -77,7 +77,7 @@ internal class CCSpan<N : Node>(
 
     private fun identifyNonClosedSequences() {
         sequencesOfCurrentLength.forEach { (sequence, sequenceSupport, _) ->
-            sequencesOfPreviousLength
+            sequencesOfPreviousLength.parallelStream()
                 .filter {
                     it.isClosedSequence
                         && (it.sequence == sequence.pre() || it.sequence == sequence.post())
@@ -88,9 +88,9 @@ internal class CCSpan<N : Node>(
     }
 
     private fun calculateSupport(sequence: List<N>) =
-        sequences
-            .filter { it.size >= sequence.size }
-            .count { pathUtil.pathContainsSequence(it, sequence, nodeComparator) }
+        sequences.parallelStream()
+            .filter { it.size >= sequence.size && pathUtil.pathContainsSequence(it, sequence, nodeComparator) }
+            .count()
 
     private fun shiftCurrent() {
         sequencesOfPreviousLength.clear()
@@ -99,4 +99,4 @@ internal class CCSpan<N : Node>(
     }
 }
 
-private data class SequenceTriple<N>(val sequence: List<N>, val support: Int, var isClosedSequence: Boolean = true)
+private data class SequenceTriple<N>(val sequence: List<N>, val support: Long, var isClosedSequence: Boolean = true)
