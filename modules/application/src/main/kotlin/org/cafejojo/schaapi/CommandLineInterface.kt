@@ -58,8 +58,10 @@ fun main(args: Array<String>) {
 
     val testGeneratorTimeout = cmd.getOptionOrDefault("test_generator_timeout", DEFAULT_TEST_GENERATOR_TIMEOUT).toInt()
     val testGeneratorEnableOutput = cmd.hasOption("test_generator_enable_output")
+
+    val date = SimpleDateFormat("yyyy-MM-dd-HH-mm").format(Calendar.getInstance().time)
     val reportOutput =
-        File(output, "${SimpleDateFormat("yyyy-MM-dd-HH:mm").format(Calendar.getInstance().time)}-report.log")
+        File(output, "$date-report.log")
             .apply { createNewFile() }
 
     val miningPipeline = MiningPipeline(

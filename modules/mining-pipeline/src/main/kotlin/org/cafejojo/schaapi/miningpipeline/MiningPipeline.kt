@@ -3,6 +3,7 @@ package org.cafejojo.schaapi.miningpipeline
 import mu.KLogging
 import org.cafejojo.schaapi.models.Node
 import org.cafejojo.schaapi.models.Project
+import java.text.SimpleDateFormat
 import java.util.Calendar
 
 /**
@@ -99,7 +100,8 @@ class MiningPipeline<SO : SearchOptions, UP : Project, LP : Project, N : Node>(
     }
 
     private fun logAndAppendToReport(message: String) {
-        report.appendln("${Calendar.getInstance()}: $message")
+        val date = SimpleDateFormat("yyyy-MM-dd-HH-mm").format(Calendar.getInstance().time)
+        report.appendln("$date: $message")
         logger.info { message }
     }
 }
