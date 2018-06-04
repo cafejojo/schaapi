@@ -4,7 +4,6 @@ import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.it
 import java.net.URLDecoder
-import java.nio.file.Paths
 
 object AppKeyGeneratorTest : Spek({
     it("generates a jwt token to authenticate as GitHub app") {
