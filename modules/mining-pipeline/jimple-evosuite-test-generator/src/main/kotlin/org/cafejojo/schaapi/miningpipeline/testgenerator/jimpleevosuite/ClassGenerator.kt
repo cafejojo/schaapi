@@ -12,7 +12,10 @@ import soot.Type
 import soot.Unit
 import soot.Value
 import soot.VoidType
+import soot.jimple.GotoStmt
+import soot.jimple.IfStmt
 import soot.jimple.Jimple
+import soot.jimple.SwitchStmt
 import soot.jimple.internal.JReturnStmt
 import soot.jimple.internal.JReturnVoidStmt
 
@@ -62,6 +65,8 @@ internal class ClassGenerator(className: String) {
         addParameterAssignmentsToBody(jimpleBody, methodParams)
         addStatementsToBody(jimpleBody, statements, methodParams)
         sootMethod.returnType = addReturnStatement(jimpleBody)
+
+        replaceInvalidTargets(statements)
     }
 
     /**
@@ -127,6 +132,29 @@ internal class ClassGenerator(className: String) {
         }
 
         return methodParams
+    }
+
+    /**
+     * Replaces invalid targets in [statements] with targets to the last statement.
+     *
+     * @param statements the statements to replace invalid targets in
+     */
+    private fun replaceInvalidTargets(statements: List<Unit>) {
+        val targetReplacement = statements.last()
+
+        statements.forEach { stmt ->
+            when (stmt) {
+                is GotoStmt -> if (!statements.contains(stmt.target)) stmt.target = targetReplacement
+                is IfStmt -> if (!statements.contains(stmt.target)) stmt.setTarget(targetReplacement)
+                is SwitchStmt -> {
+                    if (!statements.contains(stmt.defaultTarget)) stmt.defaultTarget = targetReplacement
+
+                    stmt.targets.forEachIndexed { index, target ->
+                        if (!statements.contains(target)) stmt.setTarget(index, targetReplacement)
+                    }
+                }
+            }
+        }
     }
 }
 
