@@ -16,3 +16,5 @@ interface ProjectCompiler<P : Project> {
      */
     fun compile(project: P): P
 }
+
+abstract class CompilationException(message: String? = null) : RuntimeException(message)

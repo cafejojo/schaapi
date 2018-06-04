@@ -30,7 +30,7 @@ class MiningPipeline<SO : SearchOptions, UP : Project, LP : Project, N : Node>(
         try {
             searchOptions
                 .next(projectMiner::mine)
-                .next(userProjectCompiler::compile)
+                .nextCatchException<UP, UP, CompilationException>(userProjectCompiler::compile)
                 .flatMap { libraryUsageGraphGenerator.generate(libraryProject, it) }
                 .next(patternDetector::findPatterns)
                 .next(patternFilter::filter)
@@ -45,14 +45,32 @@ class MiningPipeline<SO : SearchOptions, UP : Project, LP : Project, N : Node>(
             logger.info { "Mining has finished." }
         }
     }
+
+    /**
+     * Calls the specified function [map] with `this` value as its argument and returns its result.
+     */
+    private fun <T, R> T.next(map: (T) -> R): R = map(this)
+
+    /**
+     * Calls the specified function [map] on each element in `this` and returns the result as an iterable.
+     */
+    private fun <T, R> Iterable<T>.next(map: (T) -> R): Iterable<R> = this.map { map(it) }
+
+    /**
+     * Calls the specified function [map] on each element in `this` and returns the result as an iterable.
+     *
+     * Catches exceptions of type [E] and logs these. All other exceptions are thrown.
+     */
+    private inline fun <T, R: Any, reified E : RuntimeException> Iterable<T>.nextCatchException(map: (T) -> R)
+        : Iterable<R> =
+        this.mapNotNull {
+            try {
+                map(it)
+            } catch (e: RuntimeException) {
+                if (e is E) {
+                    logger.warn(e.message, e)
+                    null
+                } else throw e
+            }
+        }
 }
-
-/**
- * Calls the specified function [map] with `this` value as its argument and returns its result.
- */
-fun <T, R> T.next(map: (T) -> R): R = map(this)
-
-/**
- * Calls the specified function [map] on each element in `this` and returns the result as an iterable.
- */
-fun <T, R> Iterable<T>.next(map: (T) -> R): Iterable<R> = this.map { map(it) }

@@ -3,6 +3,7 @@ package org.cafejojo.schaapi.miningpipeline.projectcompiler.javamaven
 import mu.KLogging
 import org.apache.maven.shared.invoker.DefaultInvocationRequest
 import org.apache.maven.shared.invoker.DefaultInvoker
+import org.cafejojo.schaapi.miningpipeline.CompilationException
 import org.cafejojo.schaapi.miningpipeline.ProjectCompiler
 import org.cafejojo.schaapi.models.project.JavaMavenProject
 import java.io.File
@@ -33,6 +34,7 @@ class ProjectCompiler : ProjectCompiler<JavaMavenProject> {
             logger.warn("Maven project at ${project.projectDir.path} does not contain any classes.")
         }
 
+        logger.info("`maven install` of ${project.projectDir} was successful.")
         return project
     }
 
@@ -53,11 +55,12 @@ class ProjectCompiler : ProjectCompiler<JavaMavenProject> {
         }
 
         val result = invoker.execute(request)
-
-        if (result.exitCode != 0) {
-            logger.warn("`maven install` of ${project.projectDir} failed: ", result.executionException)
-        } else {
-            logger.warn("`maven install` of ${project.projectDir} was successful.")
-        }
+        if (result.exitCode != 0) throw ProjectCompilationException(
+            "`maven install` of ${project.projectDir} failed: ${result.executionException}")
     }
 }
+
+/**
+ * Indicates that the compilation of a project was unsuccessful.
+ */
+class ProjectCompilationException(message: String? = null) : CompilationException(message)
