@@ -14,7 +14,7 @@ class PathUtil<N : Node> {
     fun pathContainsSequence(path: List<N>, sequence: List<N>, comparator: GeneralizedNodeComparator<N>) =
         path.indices.any { pathIndex ->
             sequence.indices.all { sequenceIndex ->
-                pathIndex + sequenceIndex <= path.size &&
+                pathIndex + sequenceIndex < path.size &&
                     comparator.satisfies(path[pathIndex + sequenceIndex], sequence[sequenceIndex])
             }
         }
