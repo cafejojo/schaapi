@@ -1,7 +1,8 @@
 package org.cafejojo.schaapi.miningpipeline.patternfilter.jimple
 
-import org.cafejojo.schaapi.models.libraryusagegraph.jimple.JimpleNode
+import mu.KLogging
 import org.cafejojo.schaapi.miningpipeline.PatternFilterRule
+import org.cafejojo.schaapi.models.libraryusagegraph.jimple.JimpleNode
 
 private const val DEFAULT_MINIMUM_PATTERN_LENGTH = 2
 
@@ -13,5 +14,8 @@ private const val DEFAULT_MINIMUM_PATTERN_LENGTH = 2
  */
 class LengthPatternFilterRule(private val minimumLength: Int = DEFAULT_MINIMUM_PATTERN_LENGTH) :
     PatternFilterRule<JimpleNode> {
-    override fun retain(pattern: List<JimpleNode>): Boolean = pattern.size >= minimumLength
+    private companion object : KLogging()
+
+    override fun retain(pattern: List<JimpleNode>): Boolean =
+        (pattern.size >= minimumLength).also { if (it) logger.debug { "Short pattern was detected: $pattern" } }
 }
