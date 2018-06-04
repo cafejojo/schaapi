@@ -24,10 +24,13 @@ import org.cafejojo.schaapi.models.libraryusagegraph.jimple.GeneralizedNodeCompa
 import org.cafejojo.schaapi.models.project.JavaJarProject
 import org.cafejojo.schaapi.models.project.JavaMavenProject
 import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Calendar
 import org.cafejojo.schaapi.miningpipeline.projectcompiler.javamaven.ProjectCompiler as JavaMavenCompiler
 
 private const val DEFAULT_TEST_GENERATOR_TIMEOUT = "60"
 private const val DEFAULT_PATTERN_DETECTOR_MINIMUM_COUNT = "3"
+private const val DEFAULT_MAX_PROJECTS = 20
 private const val DEFAULT_MAXIMUM_SEQUENCE_LENGTH = "25"
 
 /**
@@ -43,7 +46,7 @@ fun main(args: Array<String>) {
     val output = File(cmd.getOptionValue('o')).apply { mkdirs() }
     val library = JavaJarProject(File(cmd.getOptionValue('l')))
     val token = cmd.getOptionValue('t')
-    val maxProjects = cmd.getOptionValue('m')?.toInt() ?: Int.MAX_VALUE
+    val maxProjects = cmd.getOptionValue('m')?.toInt() ?: DEFAULT_MAX_PROJECTS
 
     val groupId = cmd.getOptionValue('g')
     val artifactId = cmd.getOptionValue('a')
@@ -55,8 +58,10 @@ fun main(args: Array<String>) {
 
     val testGeneratorTimeout = cmd.getOptionOrDefault("test_generator_timeout", DEFAULT_TEST_GENERATOR_TIMEOUT).toInt()
     val testGeneratorEnableOutput = cmd.hasOption("test_generator_enable_output")
+    val reportOutput = File(output, "${SimpleDateFormat("yyyy-MM-dd-HH:mm").format(Calendar.getInstance().time)}-report.txt")
+        .apply { createNewFile() }
 
-    MiningPipeline(
+    val miningPipeline = MiningPipeline(
         projectMiner = ProjectMiner(
             outputDirectory = output,
             token = token
@@ -86,7 +91,9 @@ fun main(args: Array<String>) {
             processStandardStream = if (testGeneratorEnableOutput) System.out else null,
             processErrorStream = if (testGeneratorEnableOutput) System.out else null
         )
-    ).run(library)
+    )
+
+    reportOutput.writeText(miningPipeline.run(library))
 }
 
 private fun buildOptions(): Options =
