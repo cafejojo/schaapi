@@ -56,16 +56,8 @@ internal class CCSpan<N : Node>(
     }
 
     private fun findFrequentSingletonSequences() {
-        val checkedElements = mutableListOf<N>()
-
-        sequences.flatten().forEach { element ->
-            if (!checkedElements.contains(element)) {
-                val support = calculateSupport(listOf(element))
-                if (support >= minimumSupport) sequencesOfPreviousLength += SequenceTriple(listOf(element), support)
-
-                checkedElements += element
-            }
-        }
+        sequencesOfPreviousLength += pathUtil.findFrequentNodesInPaths(sequences, minimumSupport)
+            .map { (node, support) -> SequenceTriple(listOf(node), support) }
     }
 
     private fun findAllContiguousSequencesOfLength(
