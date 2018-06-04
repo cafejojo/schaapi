@@ -12,6 +12,8 @@ apply plugin: "org.springframework.boot"
 apply plugin: "io.spring.dependency-management"
 
 dependencies {
+    compile project(":github-test-reporter")
+
     compile group: "com.fasterxml.jackson.module", name: "jackson-module-kotlin"
     compile group: "org.springframework.boot", name: "spring-boot-starter-web"
 
