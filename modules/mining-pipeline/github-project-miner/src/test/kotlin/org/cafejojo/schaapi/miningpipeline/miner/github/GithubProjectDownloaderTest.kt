@@ -146,8 +146,7 @@ internal object GitHubProjectDownloaderTest : Spek({
         it("should return null if the zip file does not exist") {
             val invisibleFile = File(output, "invisibleFile")
 
-            assertThat(GitHubProjectDownloader(emptyList(), output, ::testProjectPacker).unzip(invisibleFile))
-                .isNull()
+            assertThat(GitHubProjectDownloader(emptyList(), output, ::testProjectPacker).unzip(invisibleFile)).isNull()
             assertThat(output.listFiles()).isEmpty()
         }
 
@@ -155,8 +154,7 @@ internal object GitHubProjectDownloaderTest : Spek({
             val notAZipFile = File(output, "notAZipFile")
             notAZipFile.createNewFile()
 
-            assertThat(GitHubProjectDownloader(emptyList(), output, ::testProjectPacker).unzip(notAZipFile))
-                .isNull()
+            assertThat(GitHubProjectDownloader(emptyList(), output, ::testProjectPacker).unzip(notAZipFile)).isNull()
             assertThat(output.listFiles()).isEmpty()
         }
     }
