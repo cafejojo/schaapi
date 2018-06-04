@@ -28,7 +28,11 @@ class PathUtil<N : Node> {
      */
     fun findFrequentNodesInPaths(paths: Collection<List<N>>, minimumCount: Int): Map<N, Int> {
         val nodeCounts = CustomEqualsHashMap<N, Int>(Node.Companion::equiv, Node::equivHashCode)
-        paths.forEach { it.forEach { node -> nodeCounts[node] = nodeCounts[node]?.inc() ?: 1 } }
+        val pathSets = paths.map { path ->
+            CustomEqualsHashSet<N>(Node.Companion::equiv, Node::equivHashCode).also { it.addAll(path) }
+        }
+
+        pathSets.forEach { pathSet -> pathSet.forEach { node -> nodeCounts[node] = nodeCounts[node]?.inc() ?: 1 } }
 
         return nodeCounts.filter { (_, amount) -> amount >= minimumCount }
     }
