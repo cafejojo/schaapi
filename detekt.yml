@@ -19,13 +19,13 @@ naming:
     active: false
 
 style:
+  MandatoryBracesIfStatements:
+    active: false
   ReturnCount:
     active: false
   UnnecessaryAbstractClass:
     active: false
   UnusedPrivateMember:
-    active: false
-  MandatoryBracesIfStatements:
     active: false
 
 
