@@ -84,7 +84,7 @@ internal class CCSpan<N : Node>(
 
     private fun identifyNonClosedSequences() {
         sequencesOfCurrentLength.forEach { (sequence, sequenceSupport, _) ->
-            sequencesOfPreviousLength
+            sequencesOfPreviousLength.parallelStream()
                 .filter {
                     it.isClosedSequence
                         && (it.sequence == sequence.pre() || it.sequence == sequence.post())
