@@ -5,6 +5,7 @@ import com.github.kittinunf.fuel.core.FuelError
 import com.github.kittinunf.fuel.core.Method
 import com.github.kittinunf.fuel.core.Request
 import com.github.kittinunf.fuel.core.Response
+import org.springframework.stereotype.Service
 import java.io.BufferedOutputStream
 import java.io.ByteArrayInputStream
 import java.io.IOException
@@ -26,6 +27,7 @@ import javax.net.ssl.HttpsURLConnection
  * This class is a copy of [com.github.kittinunf.fuel.toolbox.HttpClient], with the check/replace for PATCH requests
  * removed.
  */
+@Service
 @Suppress("TooGenericExceptionCaught")
 internal class CustomHttpClient(private val proxy: Proxy? = null) : Client {
     override fun executeRequest(request: Request): Response {

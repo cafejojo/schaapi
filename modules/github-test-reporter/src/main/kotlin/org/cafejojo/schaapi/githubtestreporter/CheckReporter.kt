@@ -4,8 +4,11 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategy
 import com.github.kittinunf.fuel.Fuel
 import com.github.kittinunf.fuel.jackson.mapper
 import com.github.kittinunf.fuel.jackson.responseObject
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Service
 
-internal class CheckReporter {
+@Service
+class CheckReporter(@Autowired private val appKeyGenerator: AppKeyGenerator) {
     init {
         mapper.propertyNamingStrategy = PropertyNamingStrategy.SNAKE_CASE
     }
@@ -57,9 +60,9 @@ internal class CheckReporter {
         ).let { Fuel.request(it).responseObject<CheckRun>().getResultOrThrowException() }
 
     private fun requestInstallationToken(installationId: Int) =
-        Fuel.request(GitHubApi.accessTokenFor(installationId, AppKeyGenerator.create()))
+        Fuel.request(GitHubApi.accessTokenFor(installationId, appKeyGenerator.create()))
             .responseObject<AccessToken>()
             .getResultOrThrowException()
 }
 
-internal data class CheckMessage(val title: String, val summary: String, val text: String)
+data class CheckMessage(val title: String, val summary: String, val text: String)

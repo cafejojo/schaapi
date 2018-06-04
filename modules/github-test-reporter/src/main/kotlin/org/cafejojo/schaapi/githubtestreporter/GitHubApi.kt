@@ -19,10 +19,6 @@ import java.time.format.DateTimeFormatter
 internal sealed class GitHubApi : FuelRouting {
     override val basePath = "https://api.github.com"
 
-    init {
-        FuelManager.instance.client = CustomHttpClient()
-    }
-
     internal class accessTokenFor(installationId: Int, appToken: String) : GitHubApi() {
         override val method = Method.POST
         override val path = "/installations/$installationId/access_tokens"
@@ -94,7 +90,7 @@ internal data class AccessToken(
     val expiresAt: String
 )
 
-internal data class CheckRun(
+data class CheckRun(
     val id: Int
 )
 

@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody
  */
 @Controller
 @EnableAutoConfiguration
-class WebHookReceiver {
+class WebHookReceiver(val checkReporter: CheckReporter) {
     private val mapper = jacksonObjectMapper()
         .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
         .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
@@ -49,7 +49,7 @@ class WebHookReceiver {
                 )
 
                 with(checkSuiteEvent) {
-                    CheckReporter().reportStarted(
+                    checkReporter.reportStarted(
                         installation.id,
                         repository.owner.login,
                         repository.name,
@@ -61,6 +61,6 @@ class WebHookReceiver {
             else -> throw IllegalStateException("Cannot process webhooks for events of type $eventType.")
         }
 
-        return "Webhook received."
+        return "Webhook received. $checkReporter"
     }
 }
