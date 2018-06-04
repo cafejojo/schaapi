@@ -143,10 +143,10 @@ internal class ClassGenerator(className: String) {
         val targetReplacement = statements.last()
 
         statements.forEach { statement ->
-            when (statement) {
-                is GotoStmt -> if (!statements.contains(statement.target)) statement.target = targetReplacement
-                is IfStmt -> if (!statements.contains(statement.target)) statement.setTarget(targetReplacement)
-                is SwitchStmt -> {
+            when {
+                statement is GotoStmt && !statements.contains(statement.target) -> statement.target = targetReplacement
+                statement is IfStmt && !statements.contains(statement.target) -> statement.setTarget(targetReplacement)
+                statement is SwitchStmt -> {
                     if (!statements.contains(statement.defaultTarget)) statement.defaultTarget = targetReplacement
 
                     statement.targets.forEachIndexed { index, target ->
