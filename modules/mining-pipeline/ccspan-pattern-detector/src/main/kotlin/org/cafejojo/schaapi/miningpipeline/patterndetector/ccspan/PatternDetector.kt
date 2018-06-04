@@ -11,10 +11,12 @@ import org.cafejojo.schaapi.models.PathEnumerator
  */
 class PatternDetector<N : Node>(
     private val minimumCount: Int,
+    private val maximumSequenceLength: Int,
     private val comparator: GeneralizedNodeComparator<N>
 ) : PatternDetector<N> {
     override fun findPatterns(graphs: List<N>): List<Pattern<N>> {
         val sequences = graphs.flatMap { PathEnumerator(it).enumerate() }
-        return CCSpan(sequences, minimumCount, comparator).findFrequentPatterns()
+        val filteredSequences = sequences.filter { it.size <= maximumSequenceLength }
+        return CCSpan(filteredSequences, minimumCount, comparator).findFrequentPatterns()
     }
 }

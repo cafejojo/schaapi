@@ -16,22 +16,34 @@ Execute `./gradlew :application:run` with the following command line options:
 ```
 usage: schaapi -o <arg> -l <arg> -u <arg> [--maven_dir <arg>]
        [--repair_maven] [--pattern_detector_minimum_count <arg>]
+       [--pattern_detector_maximum_sequence_length <arg>]
        [--test_generator_enable_output] [--test_generator_timeout <arg>]
- -o,--output_dir <arg>                       The output directory.
- -l,--library_dir <arg>                      The library directory.
- -u,--user_base_dir <arg>                    The directory containing user
-                                             project directories.
-    --maven_dir <arg>                        The directory to run Maven
-                                             from.
-    --repair_maven                           Repairs the Maven
-                                             installation.
-    --pattern_detector_minimum_count <arg>   The minimum number of
-                                             occurrences for a statement
-                                             to be considered frequent.
-    --test_generator_enable_output           True if test generator output
-                                             should be shown.
-    --test_generator_timeout <arg>           The time limit for the test
-                                             generator.
+ -o,--output_dir <arg>                                 The output
+                                                       directory.
+ -l,--library_dir <arg>                                The library
+                                                       directory.
+ -u,--user_base_dir <arg>                              The directory
+                                                       containing user
+                                                       project
+                                                       directories.
+    --maven_dir <arg>                                  The directory to
+                                                       run Maven from.
+    --repair_maven                                     Repairs the Maven
+                                                       installation.
+    --pattern_detector_minimum_count <arg>             The minimum number
+                                                       of occurrences for
+                                                       a statement to be
+                                                       considered
+                                                       frequent.
+    --pattern_detector_maximum_sequence_length <arg>   The maximum length
+                                                       of sequences to be
+                                                       considered for
+                                                       pattern detection.
+    --test_generator_enable_output                     True if test
+                                                       generator output
+                                                       should be shown.
+    --test_generator_timeout <arg>                     The time limit for
+                                                       the test generator.
 ```
 
 ## Pipeline Stages

@@ -17,7 +17,7 @@ dependencies {
     compile project(":mining-pipeline:jimple-evosuite-test-generator")
     compile project(":mining-pipeline:jimple-library-usage-graph-generator")
     compile project(":mining-pipeline:jimple-pattern-filter")
-    compile project(":mining-pipeline:prefix-span-pattern-detector")
+    compile project(":mining-pipeline:ccspan-pattern-detector")
 
     compile group: "commons-cli", name: "commons-cli", version: commonsCliVersion
 }
