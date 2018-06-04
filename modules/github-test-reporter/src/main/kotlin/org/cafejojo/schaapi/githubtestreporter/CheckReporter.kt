@@ -11,16 +11,14 @@ internal class CheckReporter {
     }
 
     fun reportStarted(installationId: Int, owner: String, repository: String, headBranch: String, headSha: String) =
-        Fuel.request(GitHubApi.reportCheckStarted(
+        GitHubApi.reportCheckStarted(
             owner,
             repository,
             headBranch,
             headSha,
             checkName = "breaking change detection",
             token = requestInstallationToken(installationId).token
-        ))
-            .responseObject<CheckRun>()
-            .getResultOrThrowException()
+        ).let { Fuel.request(it).responseObject<CheckRun>().getResultOrThrowException() }
 
     fun reportSuccess(
         installationId: Int,
@@ -29,7 +27,7 @@ internal class CheckReporter {
         checkRunId: Int,
         checkMessage: CheckMessage? = null
     ) =
-        Fuel.request(GitHubApi.reportCheckCompleted(
+        GitHubApi.reportCheckCompleted(
             owner,
             repository,
             checkRunId,
@@ -38,9 +36,7 @@ internal class CheckReporter {
             messageTitle = checkMessage?.title ?: "",
             messageSummary = checkMessage?.summary ?: "",
             messageText = checkMessage?.text ?: ""
-        ))
-            .responseObject<CheckRun>()
-            .getResultOrThrowException()
+        ).let { Fuel.request(it).responseObject<CheckRun>().getResultOrThrowException() }
 
     fun reportFailure(
         installationId: Int,
@@ -49,7 +45,7 @@ internal class CheckReporter {
         checkRunId: Int,
         checkMessage: CheckMessage? = null
     ) =
-        Fuel.request(GitHubApi.reportCheckCompleted(
+        GitHubApi.reportCheckCompleted(
             owner,
             repository,
             checkRunId,
@@ -58,9 +54,7 @@ internal class CheckReporter {
             messageTitle = checkMessage?.title ?: "",
             messageSummary = checkMessage?.summary ?: "",
             messageText = checkMessage?.text ?: ""
-        ))
-            .responseObject<CheckRun>()
-            .getResultOrThrowException()
+        ).let { Fuel.request(it).responseObject<CheckRun>().getResultOrThrowException() }
 
     private fun requestInstallationToken(installationId: Int) =
         Fuel.request(GitHubApi.accessTokenFor(installationId, AppKeyGenerator.create()))
