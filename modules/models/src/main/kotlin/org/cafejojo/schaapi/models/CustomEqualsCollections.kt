@@ -100,6 +100,7 @@ class CustomEqualsHashSet<K>(
 /**
  * A [MutableList] that allows one to use custom [equals] and [hashCode] functions.
  */
+@SuppressWarnings("TooManyFunctions") // All methods are overrides
 class CustomEqualsList<K>(
     private val customEquals: (K, Any?) -> Boolean,
     private val customHash: (K) -> Int
