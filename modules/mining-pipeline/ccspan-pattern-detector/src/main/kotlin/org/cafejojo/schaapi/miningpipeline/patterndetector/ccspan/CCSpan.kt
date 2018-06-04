@@ -94,12 +94,11 @@ internal class CCSpan<N : Node>(
         }
     }
 
-    private fun calculateSupport(sequence: List<N>): Long {
-        return sequenceSupportMap[sequence] ?: equalsSequences.parallelStream()
+    private fun calculateSupport(sequence: List<N>) =
+        sequenceSupportMap[sequence] ?: equalsSequences.parallelStream()
             .filter { it.size >= sequence.size && pathUtil.pathContainsSequence(it, sequence, nodeComparator) }
             .count()
             .also { sequenceSupportMap[sequence] = it }
-    }
 
     private fun shiftCurrent() {
         sequencesOfPreviousLength.clear()
