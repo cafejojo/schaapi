@@ -1,6 +1,8 @@
 package org.cafejojo.schaapi.miningpipeline.patterndetector.ccspan
 
 import org.cafejojo.schaapi.miningpipeline.Pattern
+import org.cafejojo.schaapi.models.CustomEqualsHashMap
+import org.cafejojo.schaapi.models.CustomEqualsList
 import org.cafejojo.schaapi.models.GeneralizedNodeComparator
 import org.cafejojo.schaapi.models.Node
 import org.cafejojo.schaapi.models.PathUtil
@@ -8,20 +10,25 @@ import org.cafejojo.schaapi.models.PathUtil
 /**
  * Finds closed sequential patterns using the CCSpan algorithm by Zhang et. al.
  *
- * @property sequences the collection of all sequences
- * @property minimumSupport the minimum amount of times a [Node] must appear in [sequences] for it to be considered
- * significant
+ * @property equalsSequences the collection of all sequences
+ * @property minimumSupport the minimum amount of times a [Node] must appear in [equalsSequences] for it to be
+ * considered significant
  * @property nodeComparator the comparator used to determine whether two [Node]s are equal
  */
 internal class CCSpan<N : Node>(
-    private val sequences: Collection<List<N>>,
+    sequences: Collection<List<N>>,
     private val minimumSupport: Int,
     private val nodeComparator: GeneralizedNodeComparator<N>
 ) {
+    private val equalsSequences = sequences.map { sequence ->
+        CustomEqualsList<N>(Node.Companion::equiv, Node::equivHashCode).also { it.addAll(sequence) }
+    }
     private val pathUtil = PathUtil<N>()
 
     private val sequencesOfPreviousLength = mutableSetOf<SequenceTriple<N>>()
     private val sequencesOfCurrentLength = mutableSetOf<SequenceTriple<N>>()
+
+    private val sequenceSupportMap = CustomEqualsHashMap<List<N>, Long>(List<N>::equals, List<N>::hashCode)
 
     private fun List<N>.pre() = this.subList(0, this.size - 1)
     private fun List<N>.post() = this.subList(1, this.size)
@@ -37,7 +44,7 @@ internal class CCSpan<N : Node>(
 
         var subSequenceLength = 2
         while (sequencesOfPreviousLength.isNotEmpty()) {
-            sequences
+            equalsSequences
                 .filter { it.size >= subSequenceLength }
                 .forEach { findAllContiguousSequencesOfLength(it, subSequenceLength) }
 
@@ -54,7 +61,7 @@ internal class CCSpan<N : Node>(
     }
 
     private fun findFrequentSingletonSequences() {
-        sequencesOfPreviousLength += pathUtil.findFrequentNodesInPaths(sequences, minimumSupport)
+        sequencesOfPreviousLength += pathUtil.findFrequentNodesInPaths(equalsSequences, minimumSupport)
             .map { (node, support) -> SequenceTriple(listOf(node), support) }
     }
 
@@ -88,9 +95,10 @@ internal class CCSpan<N : Node>(
     }
 
     private fun calculateSupport(sequence: List<N>) =
-        sequences.parallelStream()
+        sequenceSupportMap[sequence] ?: equalsSequences.parallelStream()
             .filter { it.size >= sequence.size && pathUtil.pathContainsSequence(it, sequence, nodeComparator) }
             .count()
+            .also { sequenceSupportMap[sequence] = it }
 
     private fun shiftCurrent() {
         sequencesOfPreviousLength.clear()
