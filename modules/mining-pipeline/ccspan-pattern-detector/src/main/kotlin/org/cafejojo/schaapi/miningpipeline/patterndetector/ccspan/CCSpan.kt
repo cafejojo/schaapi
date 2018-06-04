@@ -1,6 +1,7 @@
 package org.cafejojo.schaapi.miningpipeline.patterndetector.ccspan
 
 import org.cafejojo.schaapi.miningpipeline.Pattern
+import org.cafejojo.schaapi.models.CustomEqualsHashMap
 import org.cafejojo.schaapi.models.GeneralizedNodeComparator
 import org.cafejojo.schaapi.models.Node
 import org.cafejojo.schaapi.models.PathUtil
@@ -41,7 +42,7 @@ internal class CCSpan<N : Node>(
 
             sequences
                 .filter { it.size >= subSequenceLength }
-                .forEach { findAllContiguousSequencesOfLength(it, subSequenceLength, checkedSequences) }
+                .forEach { findAllContiguousSequencesOfLength(it, subSequenceLength) }
 
             identifyNonClosedSequences()
             frequentClosedContiguousSequences.addAll(
@@ -62,20 +63,14 @@ internal class CCSpan<N : Node>(
 
     private fun findAllContiguousSequencesOfLength(
         sequence: List<N>,
-        subSequenceLength: Int,
-        checkedSequences: MutableList<List<N>>
+        subSequenceLength: Int
     ) {
         sequence.dropLast(subSequenceLength - 1).indices.forEach {
-            val subSequence = sequence.subList(it, it + subSequenceLength)
-            checkSupportOfSubSequence(sequence.subList(it, it + subSequenceLength), checkedSequences)
-
-            checkedSequences += subSequence
+            checkSupportOfSubSequence(sequence.subList(it, it + subSequenceLength))
         }
     }
 
-    private fun checkSupportOfSubSequence(subSequence: List<N>, checkedSequences: MutableList<List<N>>) {
-        if (checkedSequences.contains(subSequence)) return
-
+    private fun checkSupportOfSubSequence(subSequence: List<N>) {
         if (sequencesOfPreviousLength.any { it.sequence == subSequence.pre() }
             && sequencesOfPreviousLength.any { it.sequence == subSequence.post() }) {
             val support = calculateSupport(subSequence)
@@ -95,8 +90,19 @@ internal class CCSpan<N : Node>(
         }
     }
 
+    private val sequenceSupportMap = CustomEqualsHashMap<List<N>, Int>(
+        { self, other ->
+            other is List<*> && self.size == other.size
+                && self.zip(other).all { it.first.equivTo(it.second as N) }
+        },
+        { self -> self.sumBy { it.equivHashCode() } }
+    )
+
     private fun calculateSupport(sequence: List<N>) =
-        sequences.count { pathUtil.pathContainsSequence(it, sequence, nodeComparator) }
+        sequenceSupportMap[sequence]
+            ?: sequences
+                .count { pathUtil.pathContainsSequence(it, sequence, nodeComparator) }
+                .also { sequenceSupportMap[sequence] = it }
 
     private fun shiftCurrent() {
         sequencesOfPreviousLength.clear()
