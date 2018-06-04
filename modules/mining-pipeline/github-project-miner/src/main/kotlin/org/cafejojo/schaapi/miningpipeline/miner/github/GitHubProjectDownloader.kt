@@ -8,33 +8,25 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
-import java.lang.Integer.min
 import java.net.HttpURLConnection
 import java.net.URL
-import java.util.concurrent.atomic.AtomicInteger
 import kotlin.streams.toList
-
-typealias GitHubProject = File
 
 /**
  * Downloads the zip files of the given GitHub repositories and returns searchContent list of Java projects.
  *
  * @property projectNames the names of all repositories to be downloaded
- * @property outputDirectory the directory to store all the project directories
+ * @property outProjects the directory to store all the project directories
  * @property projectPacker packer which determines what type of [Project] to wrap the project directory in
  */
 internal class GitHubProjectDownloader<P : Project>(
     private val projectNames: Collection<String>,
-    private val outputDirectory: File,
-    private val projectPacker: (File) -> P,
-    private val maxProjectDownloads: Int
+    private val outProjects: File,
+    private val projectPacker: (File) -> P
 ) {
     private companion object : KLogging()
 
-    private val outputProject = outputDirectory.resolve("projects/").apply { mkdirs() }
-    private var downloaded: AtomicInteger = AtomicInteger(0)
-
-    private fun GitHubProject.getMasterFile(): File {
+    private fun File.getMasterFile(): File {
         require(this.listFiles().isNotEmpty()) { "GitHub Project must contain files" }
         return this.listFiles().first()
     }
@@ -52,9 +44,7 @@ internal class GitHubProjectDownloader<P : Project>(
      */
     fun download(): List<P> =
         projectNames
-            .also { logger.info { "Will extract ${min(it.size, maxProjectDownloads)} projects from GitHub." } }
             .parallelStream()
-            .filter { downloaded.getAndIncrement() <= maxProjectDownloads }
             .map { downloadAndSaveProject(it) }
             .toList()
             .filterNotNull()
@@ -87,7 +77,7 @@ internal class GitHubProjectDownloader<P : Project>(
     internal fun saveZipToFile(input: InputStream, projectName: String): File? {
         val alphaNumericRegex = Regex("[^A-Za-z0-9]")
         val outputFile = File(
-            outputProject,
+            outProjects,
             "${alphaNumericRegex.replace(projectName, "")}${projectNames.indexOf(projectName)}.zip"
         )
 
@@ -110,10 +100,10 @@ internal class GitHubProjectDownloader<P : Project>(
         return outputFile
     }
 
-    internal fun unzip(projectZipFile: File): GitHubProject? {
+    internal fun unzip(projectZipFile: File): File? {
         val githubProject = File(projectZipFile.parent, projectZipFile.nameWithoutExtension)
         if (githubProject.exists()) {
-            logger.info { "File $githubProject already exists and will be overwritten by $githubProject." }
+            logger.info { "File ${githubProject.path} already exists and will be overwritten." }
             githubProject.deleteRecursively()
         }
 

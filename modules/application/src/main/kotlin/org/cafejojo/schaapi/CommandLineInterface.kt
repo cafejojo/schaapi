@@ -43,7 +43,7 @@ fun main(args: Array<String>) {
     val output = File(cmd.getOptionValue('o')).apply { mkdirs() }
     val library = JavaJarProject(File(cmd.getOptionValue('l')))
     val token = cmd.getOptionValue('t')
-    val cap = cmd.getOptionValue('m')?.toInt() ?: Int.MAX_VALUE
+    val maxProjects = cmd.getOptionValue('m')?.toInt() ?: Int.MAX_VALUE
 
     val groupId = cmd.getOptionValue('g')
     val artifactId = cmd.getOptionValue('a')
@@ -59,13 +59,13 @@ fun main(args: Array<String>) {
     MiningPipeline(
         projectMiner = ProjectMiner(
             outputDirectory = output,
-            token = token,
-            maxDownloadedProjects = cap
+            token = token
         ) { JavaMavenProject(it, mavenDir) },
         searchOptions = MavenProjectSearchOptions(
             groupId = groupId,
             artifactId = artifactId,
-            version = version
+            version = version,
+            maxProjects = maxProjects
         ),
         libraryProjectCompiler = ProjectCompiler(),
         userProjectCompiler = JavaMavenCompiler(),

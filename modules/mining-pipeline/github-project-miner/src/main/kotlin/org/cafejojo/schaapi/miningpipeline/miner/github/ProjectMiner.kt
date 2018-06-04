@@ -17,13 +17,11 @@ import java.io.File
  * @property token gitub token
  * @property outputDirectory directory to store all the project directories. If directory doesn't exit new directory
  * is created
- * @property maxDownloadedProjects amount of projects that may be downloaded from github
  * @property projectPacker packer which determines what type of [Project] to wrap the project directory in
  */
 class ProjectMiner<P : Project>(
     private var token: String,
     private val outputDirectory: File,
-    private val maxDownloadedProjects: Int,
     private val projectPacker: (File) -> P
 ) : ProjectMiner<GitHubSearchOptions, P> {
     private companion object : KLogging()
@@ -49,7 +47,9 @@ class ProjectMiner<P : Project>(
         check(!gitHub.isOffline) { "Unable to connect to GitHub." }
         require(gitHub.isCredentialValid) { "Valid credentials are required to connect to GitHub." }
 
+        val outProjects = outputDirectory.resolve("projects/").apply { mkdirs() }
+
         val projectNames = searchOptions.searchContent(gitHub)
-        return GitHubProjectDownloader(projectNames, outputDirectory, projectPacker, maxDownloadedProjects).download()
+        return GitHubProjectDownloader(projectNames, outProjects, projectPacker).download()
     }
 }

@@ -22,17 +22,19 @@ interface GitHubSearchOptions : SearchOptions {
  * @property groupId group id of library maven project should depend on
  * @property artifactId artifact id of library maven project should depend on
  * @property version version of library maven project should depend on
+ * @property maxProjects maximum amount of project names it should return
  */
 class MavenProjectSearchOptions(
     private val groupId: String,
     private val artifactId: String,
-    private val version: String
+    private val version: String,
+    private val maxProjects: Int
 ) : GitHubSearchOptions {
     private companion object : KLogging()
 
     override fun searchContent(gitHub: GitHub): List<String> {
         logger.info {
-            "Mining github maven projects which depend on: " +
+            "Mining a maximum of ${maxProjects}github maven projects which depend on: " +
                 "group id: $groupId, artifact id: $artifactId, version: $version."
         }
 
@@ -44,7 +46,10 @@ class MavenProjectSearchOptions(
                 extension("xml")
             }
             .list()
+            .also { logger.info { "Found ${it.totalCount} project." } }
+            .also { if (maxProjects > it.totalCount) logger.info { "Will be capped at $maxProjects." } }
+            .take(maxProjects)
             .map { it.owner.fullName }
-            .also { logger.info { "Found ${it.size} projects using the Github v3 Search API." } }
+            .also { logger.info { "Found ${it.size} projects names using the Github v3 Search API." } }
     }
 }
