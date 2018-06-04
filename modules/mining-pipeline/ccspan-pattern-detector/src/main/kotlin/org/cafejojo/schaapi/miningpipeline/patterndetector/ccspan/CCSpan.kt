@@ -1,6 +1,8 @@
 package org.cafejojo.schaapi.miningpipeline.patterndetector.ccspan
 
 import org.cafejojo.schaapi.miningpipeline.Pattern
+import org.cafejojo.schaapi.models.CustomEqualsHashMap
+import org.cafejojo.schaapi.models.CustomEqualsList
 import org.cafejojo.schaapi.models.GeneralizedNodeComparator
 import org.cafejojo.schaapi.models.Node
 import org.cafejojo.schaapi.models.PathUtil
@@ -22,6 +24,11 @@ internal class CCSpan<N : Node>(
 
     private val sequencesOfPreviousLength = mutableSetOf<SequenceTriple<N>>()
     private val sequencesOfCurrentLength = mutableSetOf<SequenceTriple<N>>()
+
+    private val sequenceSupportMap = CustomEqualsHashMap<CustomEqualsList<N>, Long>(
+        CustomEqualsList<N>::equals,
+        CustomEqualsList<N>::hashCode
+    )
 
     private fun List<N>.pre() = this.subList(0, this.size - 1)
     private fun List<N>.post() = this.subList(1, this.size)
@@ -87,10 +94,14 @@ internal class CCSpan<N : Node>(
         }
     }
 
-    private fun calculateSupport(sequence: List<N>) =
-        sequences.parallelStream()
+    private fun calculateSupport(sequence: List<N>): Long {
+        val equalsSequence = CustomEqualsList<N>(Node.Companion::equiv, Node::equivHashCode).apply { addAll(sequence) }
+
+        return sequenceSupportMap[equalsSequence] ?: sequences.parallelStream()
             .filter { it.size >= sequence.size && pathUtil.pathContainsSequence(it, sequence, nodeComparator) }
             .count()
+            .also { sequenceSupportMap[equalsSequence] = it }
+    }
 
     private fun shiftCurrent() {
         sequencesOfPreviousLength.clear()
