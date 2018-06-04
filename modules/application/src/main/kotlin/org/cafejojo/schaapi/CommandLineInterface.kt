@@ -46,8 +46,8 @@ fun main(args: Array<String>) {
     val output = File(cmd.getOptionValue('o')).apply { mkdirs() }
     val library = JavaJarProject(File(cmd.getOptionValue('l')))
     val token = cmd.getOptionValue('t')
-    val maxProjects = cmd.getOptionValue('m')?.toInt() ?: DEFAULT_MAX_PROJECTS
 
+    val maxProjects = cmd.getOptionValue('m')?.toInt() ?: DEFAULT_MAX_PROJECTS
     val groupId = cmd.getOptionValue('g')
     val artifactId = cmd.getOptionValue('a')
     val version = cmd.getOptionValue('v')
@@ -59,22 +59,12 @@ fun main(args: Array<String>) {
     val testGeneratorTimeout = cmd.getOptionOrDefault("test_generator_timeout", DEFAULT_TEST_GENERATOR_TIMEOUT).toInt()
     val testGeneratorEnableOutput = cmd.hasOption("test_generator_enable_output")
 
-    val date = SimpleDateFormat("yyyy-MM-dd-HH-mm").format(Calendar.getInstance().time)
-    val reportOutput =
-        File(output, "$date-report.log")
-            .apply { createNewFile() }
+    val dateString = SimpleDateFormat("yyyy-MM-dd-HH-mm").format(Calendar.getInstance().time)
+    val reportOutput = File(output, "$dateString-report.log").apply { createNewFile() }
 
     val miningPipeline = MiningPipeline(
-        projectMiner = ProjectMiner(
-            outputDirectory = output,
-            token = token
-        ) { JavaMavenProject(it, mavenDir) },
-        searchOptions = MavenProjectSearchOptions(
-            groupId = groupId,
-            artifactId = artifactId,
-            version = version,
-            maxProjects = maxProjects
-        ),
+        projectMiner = ProjectMiner(token, output) { JavaMavenProject(it, mavenDir) },
+        searchOptions = MavenProjectSearchOptions(groupId, artifactId, version, maxProjects),
         libraryProjectCompiler = ProjectCompiler(),
         userProjectCompiler = JavaMavenCompiler(),
         libraryUsageGraphGenerator = LibraryUsageGraphGenerator,
@@ -113,7 +103,6 @@ private fun buildOptions(): Options =
             .longOpt("library_dir")
             .desc("The library directory.")
             .hasArg()
-            .required()
             .build())
         .addOption(Option
             .builder("u")
@@ -124,34 +113,33 @@ private fun buildOptions(): Options =
         .addOption(Option
             .builder("t")
             .longOpt("github_oauth_token")
-            .desc("Token of github account used for searching.")
+            .desc("Token of GitHub account used for searching.")
             .hasArg()
-            .required()
             .build())
         .addOption(Option
-            .builder("m")
+            .builder()
             .longOpt("max_projects")
             .desc("Maximum amount of projects to download from GitHub.")
             .hasArg()
             .build())
         .addOption(Option
-            .builder("g")
+            .builder()
             .longOpt("library_group_id")
-            .desc("Group id of library projects should have dependency on.")
+            .desc("Group id of library mined projects should have a dependency on.")
             .hasArg()
             .required()
             .build())
         .addOption(Option
-            .builder("a")
+            .builder()
             .longOpt("library_artifact_id")
-            .desc("Artifact id of library projects should have dependency on.")
+            .desc("Artifact id of library mined projects should have a dependency on.")
             .hasArg()
             .required()
             .build())
         .addOption(Option
-            .builder("v")
+            .builder()
             .longOpt("library_version")
-            .desc("Version of library projects should have a dependency on.")
+            .desc("Version of library mined projects should have a dependency on.")
             .hasArg()
             .required()
             .build())

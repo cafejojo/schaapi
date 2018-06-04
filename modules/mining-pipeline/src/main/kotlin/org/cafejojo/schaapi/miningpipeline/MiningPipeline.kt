@@ -43,7 +43,7 @@ class MiningPipeline<SO : SearchOptions, UP : Project, LP : Project, N : Node>(
 
                 .also { logAndAppendToReport("Start generating library usage graphs for ${it.count()} projects.") }
                 .flatMap { libraryUsageGraphGenerator.generate(libraryProject, it) }
-                .also { logAndAppendToReport("Successfully generated library usage graph for ${it.count()} projects.") }
+                .also { logAndAppendToReport("Successfully generated ${it.count()} library usage graphs.") }
 
                 .also { logAndAppendToReport("Start finding patterns in ${it.size} library usage graphs.") }
                 .next(patternDetector::findPatterns)
