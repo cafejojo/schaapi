@@ -1,7 +1,6 @@
 package org.cafejojo.schaapi.miningpipeline.patterndetector.ccspan
 
 import org.cafejojo.schaapi.miningpipeline.Pattern
-import org.cafejojo.schaapi.models.CustomEqualsHashMap
 import org.cafejojo.schaapi.models.GeneralizedNodeComparator
 import org.cafejojo.schaapi.models.Node
 import org.cafejojo.schaapi.models.PathUtil
@@ -38,8 +37,6 @@ internal class CCSpan<N : Node>(
 
         var subSequenceLength = 2
         while (sequencesOfPreviousLength.isNotEmpty()) {
-            val checkedSequences = mutableListOf<List<N>>()
-
             sequences
                 .filter { it.size >= subSequenceLength }
                 .forEach { findAllContiguousSequencesOfLength(it, subSequenceLength) }
@@ -90,20 +87,10 @@ internal class CCSpan<N : Node>(
         }
     }
 
-    private val sequenceSupportMap = CustomEqualsHashMap<List<N>, Int>(
-        { self, other ->
-            other is List<*> && self.size == other.size
-                && self.zip(other).all { it.first.equivTo(it.second as N) }
-        },
-        { self -> self.sumBy { it.equivHashCode() } }
-    )
-
     private fun calculateSupport(sequence: List<N>) =
-        sequenceSupportMap[sequence]
-            ?: sequences
-                .filter { it.size >= sequence.size }
-                .count { pathUtil.pathContainsSequence(it, sequence, nodeComparator) }
-                .also { sequenceSupportMap[sequence] = it }
+        sequences
+            .filter { it.size >= sequence.size }
+            .count { pathUtil.pathContainsSequence(it, sequence, nodeComparator) }
 
     private fun shiftCurrent() {
         sequencesOfPreviousLength.clear()
