@@ -98,7 +98,7 @@ class CustomEqualsHashSet<K>(
 }
 
 /**
- * A [MutableList] that allows one to use custom [equals] and [hashCode] function.
+ * A [MutableList] that allows one to use custom [equals] and [hashCode] functions.
  */
 class CustomEqualsList<K>(
     private val customEquals: (K, Any?) -> Boolean,
