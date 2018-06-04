@@ -71,7 +71,7 @@ internal class PrefixSpan<N : Node>(
      * @return the list of sequences, each a list of nodes, that are common within [sequences]
      */
     internal fun findFrequentPatterns(): List<Pattern<N>> {
-        frequentItems.addAll(pathUtil.findFrequentNodesInPaths(sequences, minimumSupport))
+        frequentItems.addAll(pathUtil.findFrequentNodesInPaths(sequences, minimumSupport).keys)
         runAlgorithm()
 
         return frequentPatterns

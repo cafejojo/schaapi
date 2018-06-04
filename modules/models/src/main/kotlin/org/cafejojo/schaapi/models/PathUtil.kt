@@ -26,10 +26,10 @@ class PathUtil<N : Node> {
      * @param minimumCount the minimum number of times a node needs to occur
      * @return the set of nodes occurring at least [minimumCount] times
      */
-    fun findFrequentNodesInPaths(paths: Collection<List<N>>, minimumCount: Int): Set<N> {
+    fun findFrequentNodesInPaths(paths: Collection<List<N>>, minimumCount: Int): Map<N, Int> {
         val nodeCounts = CustomEqualsHashMap<N, Int>(Node.Companion::equiv, Node::equivHashCode)
         paths.forEach { it.forEach { node -> nodeCounts[node] = nodeCounts[node]?.inc() ?: 1 } }
 
-        return nodeCounts.filter { (_, amount) -> amount >= minimumCount }.keys
+        return nodeCounts.filter { (_, amount) -> amount >= minimumCount }
     }
 }

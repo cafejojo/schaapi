@@ -29,7 +29,7 @@ internal class Spam<N : Node>(
      * @return frequent sequences in [sequences]
      */
     internal fun findFrequentPatterns(): List<Pattern<N>> {
-        frequentItems.addAll(pathUtil.findFrequentNodesInPaths(sequences, minimumSupport))
+        frequentItems.addAll(pathUtil.findFrequentNodesInPaths(sequences, minimumSupport).keys)
         frequentItems.forEach { runAlgorithm(listOf(it), frequentItems) }
 
         return frequentPatterns
