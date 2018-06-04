@@ -34,7 +34,7 @@ class ProjectCompiler : ProjectCompiler<JavaMavenProject> {
             logger.warn("Maven project at ${project.projectDir.path} does not contain any classes.")
         }
 
-        logger.info("`maven install` of ${project.projectDir} was successful.")
+        logger.debug { "`maven install` of ${project.projectDir} was successful." }
         return project
     }
 
@@ -56,7 +56,7 @@ class ProjectCompiler : ProjectCompiler<JavaMavenProject> {
 
         val result = invoker.execute(request)
         if (result.exitCode != 0)
-            throw ProjectCompilationException("`maven install` of ${project.projectDir} failed: " +
+            throw ProjectCompilationException("`maven install` of ${project.projectDir} failed:\n" +
                 "${result.executionException}")
     }
 }
