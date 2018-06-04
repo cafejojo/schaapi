@@ -2,6 +2,7 @@ buildscript {
     repositories {
         mavenCentral()
     }
+
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
     }
@@ -12,6 +13,7 @@ apply plugin: "io.spring.dependency-management"
 
 dependencies {
     compile group: "com.auth0", name: "java-jwt", version: javaJwtVersion
+
     compile("com.fasterxml.jackson.module:jackson-module-kotlin")
     compile("org.springframework.boot:spring-boot-starter-web")
 }
