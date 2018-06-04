@@ -46,7 +46,12 @@ class MavenProjectSearchOptions(
                 extension("xml")
             }
             .list()
-            .also { logger.info { "Found ${it.totalCount} project." } }
+            .also {
+                logger.info {
+                    "Found ${it.totalCount} projects which depend on:" +
+                        " group id: $groupId, artifact id: $artifactId, version: $version."
+                }
+            }
             .also { if (maxProjects > it.totalCount) logger.info { "Will be capped at $maxProjects." } }
             .take(maxProjects)
             .map { it.owner.fullName }
