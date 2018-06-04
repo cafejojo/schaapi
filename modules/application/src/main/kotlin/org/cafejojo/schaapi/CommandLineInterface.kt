@@ -24,8 +24,6 @@ import org.cafejojo.schaapi.models.libraryusagegraph.jimple.GeneralizedNodeCompa
 import org.cafejojo.schaapi.models.project.JavaJarProject
 import org.cafejojo.schaapi.models.project.JavaMavenProject
 import java.io.File
-import java.text.SimpleDateFormat
-import java.util.Calendar
 import org.cafejojo.schaapi.miningpipeline.projectcompiler.javamaven.ProjectCompiler as JavaMavenCompiler
 
 private const val DEFAULT_TEST_GENERATOR_TIMEOUT = "60"
@@ -45,12 +43,12 @@ fun main(args: Array<String>) {
     val mavenDir = File(cmd.getOptionValue("maven_dir") ?: JavaMavenProject.DEFAULT_MAVEN_HOME.absolutePath)
     val output = File(cmd.getOptionValue('o')).apply { mkdirs() }
     val library = JavaJarProject(File(cmd.getOptionValue('l')))
-    val token = cmd.getOptionValue('t')
 
-    val maxProjects = cmd.getOptionValue('m')?.toInt() ?: DEFAULT_MAX_PROJECTS
-    val groupId = cmd.getOptionValue('g')
-    val artifactId = cmd.getOptionValue('a')
-    val version = cmd.getOptionValue('v')
+    val token = cmd.getOptionValue("github_oauth_token") ?: return
+    val maxProjects = cmd.getOptionValue("max_projects")?.toInt() ?: DEFAULT_MAX_PROJECTS
+    val groupId = cmd.getOptionValue("library_group_id") ?: return
+    val artifactId = cmd.getOptionValue("library_artifact_id") ?: return
+    val version = cmd.getOptionValue("library_version") ?: return
 
     if (!mavenDir.resolve("bin/mvn").exists() || cmd.hasOption("repair_maven")) {
         MavenInstaller().installMaven(mavenDir)
@@ -59,10 +57,8 @@ fun main(args: Array<String>) {
     val testGeneratorTimeout = cmd.getOptionOrDefault("test_generator_timeout", DEFAULT_TEST_GENERATOR_TIMEOUT).toInt()
     val testGeneratorEnableOutput = cmd.hasOption("test_generator_enable_output")
 
-    val dateString = SimpleDateFormat("yyyy-MM-dd-HH-mm").format(Calendar.getInstance().time)
-    val reportOutput = File(output, "$dateString-report.log").apply { createNewFile() }
-
-    val miningPipeline = MiningPipeline(
+    MiningPipeline(
+        outputDirectory = output,
         projectMiner = ProjectMiner(token, output) { JavaMavenProject(it, mavenDir) },
         searchOptions = MavenProjectSearchOptions(groupId, artifactId, version, maxProjects),
         libraryProjectCompiler = ProjectCompiler(),
@@ -84,9 +80,7 @@ fun main(args: Array<String>) {
             processStandardStream = if (testGeneratorEnableOutput) System.out else null,
             processErrorStream = if (testGeneratorEnableOutput) System.out else null
         )
-    )
-
-    reportOutput.writeText(miningPipeline.run(library))
+    ).run(library)
 }
 
 private fun buildOptions(): Options =

@@ -55,8 +55,9 @@ class ProjectCompiler : ProjectCompiler<JavaMavenProject> {
         }
 
         val result = invoker.execute(request)
-        if (result.exitCode != 0) throw ProjectCompilationException(
-            "`maven install` of ${project.projectDir} failed: ${result.executionException}")
+        if (result.exitCode != 0)
+            throw ProjectCompilationException("`maven install` of ${project.projectDir} failed: " +
+                "${result.executionException}")
     }
 }
 

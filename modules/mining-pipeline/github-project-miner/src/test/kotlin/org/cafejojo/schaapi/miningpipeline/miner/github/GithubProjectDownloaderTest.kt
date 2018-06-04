@@ -109,8 +109,7 @@ internal object GitHubProjectDownloaderTest : Spek({
     describe("when unzipping searchContent file") {
         it("should create searchContent new directory and remove the old") {
             val zipFile = addZipFile("testZipDirectory", "")
-            val unzippedFile = GitHubProjectDownloader(emptyList(), output, ::testProjectPacker)
-                .unzip(zipFile)
+            val unzippedFile = GitHubProjectDownloader(emptyList(), output, ::testProjectPacker).unzip(zipFile)
 
             assertThat(output.listFiles()).doesNotContain(zipFile)
             assertThat(output.listFiles()).contains(unzippedFile)
@@ -118,8 +117,7 @@ internal object GitHubProjectDownloaderTest : Spek({
 
         it("should create searchContent new directory which has searchContent file with the expected content") {
             val zipFile = addZipFile("testZipDirectory", "test text")
-            val unzippedFile = GitHubProjectDownloader(emptyList(), output, ::testProjectPacker)
-                .unzip(zipFile)
+            val unzippedFile = GitHubProjectDownloader(emptyList(), output, ::testProjectPacker).unzip(zipFile)
 
             assertThat(unzippedFile?.listFiles()?.first()?.readText()).isEqualTo("test text")
         }
@@ -129,11 +127,7 @@ internal object GitHubProjectDownloaderTest : Spek({
 
             assertThat(output.listFiles()).containsExactly(zipFile)
 
-            val unzippedFile = GitHubProjectDownloader(
-                emptyList(),
-                output,
-                ::testProjectPacker
-            ).unzip(zipFile)
+            val unzippedFile = GitHubProjectDownloader(emptyList(), output, ::testProjectPacker).unzip(zipFile)
 
             assertThat(output.listFiles()).containsExactly(unzippedFile)
         }

@@ -16,16 +16,20 @@ import kotlin.streams.toList
  * Downloads the zip files of the given GitHub repositories and returns searchContent list of Java projects.
  *
  * @property projectNames the names of all repositories to be downloaded
- * @property outProjects the directory to store all the project directories
+ * @property outputDirectory the directory to store all the project directories
  * @property projectPacker packer which determines what type of [Project] to wrap the project directory in
  */
 internal class GitHubProjectDownloader<P : Project>(
     private val projectNames: Collection<String>,
-    private val outProjects: File,
+    private val outputDirectory: File,
     private val projectPacker: (File) -> P
 ) {
     private companion object : KLogging()
 
+    /**
+     * A GitHub project downloaded from GitHub should contain a single file, which is a directory which denotes the
+     * master branch.
+     */
     private fun File.getMasterFile(): File {
         require(this.listFiles().isNotEmpty()) { "GitHub Project must contain files" }
         return this.listFiles().first()
@@ -60,9 +64,9 @@ internal class GitHubProjectDownloader<P : Project>(
             return if (gitHubProject.exists()) {
                 try {
                     val masterDir = gitHubProject.getMasterFile()
-                    projectPacker(masterDir).also { logger.info { "Created project of $masterDir." } }
+                    projectPacker(masterDir).also { logger.debug { "Created project of $masterDir." } }
                 } catch (e: IllegalArgumentException) {
-                    logger.warn("Unable to pack $gitHubProject in project.", e)
+                    logger.warn("Unable to pack $gitHubProject into project.", e)
                     gitHubProject.deleteRecursively()
                     null
                 }
@@ -77,7 +81,7 @@ internal class GitHubProjectDownloader<P : Project>(
     internal fun saveZipToFile(input: InputStream, projectName: String): File? {
         val alphaNumericRegex = Regex("[^A-Za-z0-9]")
         val outputFile = File(
-            outProjects,
+            outputDirectory,
             "${alphaNumericRegex.replace(projectName, "")}${projectNames.indexOf(projectName)}.zip"
         )
 
@@ -109,7 +113,7 @@ internal class GitHubProjectDownloader<P : Project>(
 
         try {
             ZipUtil.unpack(projectZipFile, githubProject)
-            logger.info { "Successfully unzipped file ${projectZipFile.name}." }
+            logger.debug { "Successfully unzipped file ${projectZipFile.name}." }
         } catch (e: IOException) {
             logger.warn("Could not unzip ${projectZipFile.name}.", e)
             return null
@@ -118,7 +122,7 @@ internal class GitHubProjectDownloader<P : Project>(
             return null
         } finally {
             if (projectZipFile.exists()) {
-                logger.info { "Deleting $projectZipFile." }
+                logger.debug { "Deleting $projectZipFile." }
                 projectZipFile.delete()
             }
         }

@@ -34,7 +34,7 @@ class MavenProjectSearchOptions(
 
     override fun searchContent(gitHub: GitHub): List<String> {
         logger.info {
-            "Mining a maximum of $maxProjects GitHub maven projects which depend on: " +
+            "Mining a maximum of $maxProjects GitHub maven projects which depend on " +
                 "group id: $groupId, artifact id: $artifactId, version: $version."
         }
 
@@ -48,8 +48,8 @@ class MavenProjectSearchOptions(
             .list()
             .also {
                 logger.info {
-                    "Found ${it.totalCount} projects which depend on:" +
-                        " group id: $groupId, artifact id: $artifactId, version: $version."
+                    "Found ${it.totalCount} projects which depend on " +
+                        "group id: $groupId, artifact id: $artifactId, version: $version."
                 }
             }
             .also { if (maxProjects > it.totalCount) logger.info { "Will be capped at $maxProjects." } }

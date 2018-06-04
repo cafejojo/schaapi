@@ -3,13 +3,13 @@ package org.cafejojo.schaapi.miningpipeline
 import mu.KLogging
 import org.cafejojo.schaapi.models.Node
 import org.cafejojo.schaapi.models.Project
-import java.text.SimpleDateFormat
-import java.util.Calendar
+import java.io.File
 
 /**
  * Represents the complete Schaapi pipeline.
  */
 class MiningPipeline<SO : SearchOptions, UP : Project, LP : Project, N : Node>(
+    private val outputDirectory: File,
     private val projectMiner: ProjectMiner<SO, UP>,
     private val searchOptions: SO,
     private val libraryProjectCompiler: ProjectCompiler<LP>,
@@ -21,54 +21,49 @@ class MiningPipeline<SO : SearchOptions, UP : Project, LP : Project, N : Node>(
 ) {
     private companion object : KLogging()
 
-    private val report = StringBuilder()
-
     /**
      * Executes all steps in the pipeline.
      */
-    fun run(libraryProject: LP): String {
+    fun run(libraryProject: LP) {
         libraryProjectCompiler.compile(libraryProject)
 
-        logAndAppendToReport("Mining has started")
+        logger.info { "Mining has started." }
+        logger.info { "Output directory is ${outputDirectory.absolutePath}." }
 
         try {
             searchOptions
-                .also { logAndAppendToReport("Start mining projects.") }
+                .also { logger.info { "Start mining projects." } }
                 .next(projectMiner::mine)
-                .also { logAndAppendToReport("Successfully mined ${it.size} projects.") }
+                .also { logger.info { "Successfully mined ${it.size} projects." } }
 
-                .also { logAndAppendToReport("Start compiling ${it.size} projects.") }
+                .also { logger.info { "Start compiling ${it.size} projects." } }
                 .nextCatchExceptions<CompilationException, UP, UP>(userProjectCompiler::compile)
-                .also { logAndAppendToReport("Successfully compiled ${it.count()} projects.") }
+                .also { logger.info { "Successfully compiled ${it.count()} projects." } }
 
-                .also { logAndAppendToReport("Start generating library usage graphs for ${it.count()} projects.") }
+                .also { logger.info { "Start generating library usage graphs for ${it.count()} projects." } }
                 .flatMap { libraryUsageGraphGenerator.generate(libraryProject, it) }
-                .also { logAndAppendToReport("Successfully generated ${it.count()} library usage graphs.") }
+                .also { logger.info { "Successfully generated ${it.count()} library usage graphs." } }
 
-                .also { logAndAppendToReport("Start finding patterns in ${it.size} library usage graphs.") }
+                .also { logger.info { "Start finding patterns in ${it.size} library usage graphs." } }
                 .next(patternDetector::findPatterns)
-                .also { logAndAppendToReport("Successfully found ${it.size} patterns.") }
+                .also { logger.info { "Successfully found ${it.size} patterns." } }
 
-                .also { logAndAppendToReport("Start filtering ${it.size} patterns.") }
+                .also { logger.info { "Start filtering ${it.size} patterns." } }
                 .next(patternFilter::filter)
-                .also { logAndAppendToReport("${it.size} patterns remain after filtering.") }
+                .also { logger.info { "${it.size} patterns remain after filtering." } }
 
-                .also { logAndAppendToReport("Start generating test for ${it.size} usage patterns.") }
+                .also { logger.info { "Start generating test for ${it.size} usage patterns." } }
                 .next(testGenerator::generate)
-                .also { logAndAppendToReport("Test generation has finished.") }
+                .also { logger.info { "Test generation has finished." } }
 
             logger.info { "Tests have been successfully generated." }
         } catch (e: IllegalArgumentException) {
             logger.error("A critical error occurred during the mining process causing it to be aborted.", e)
-            report.append("A critical error occurred during the mining process causing it to be aborted.", e)
         } catch (e: IllegalStateException) {
             logger.error("A critical error occurred during the mining process causing it to be aborted.", e)
-            report.append("A critical error occurred during the mining process causing it to be aborted.", e)
         } finally {
             logger.info { "Mining has finished." }
         }
-
-        return report.toString()
     }
 
     /**
@@ -97,11 +92,5 @@ class MiningPipeline<SO : SearchOptions, UP : Project, LP : Project, N : Node>(
                 null
             } else throw e
         }
-    }
-
-    private fun logAndAppendToReport(message: String) {
-        val date = SimpleDateFormat("yyyy-MM-dd-HH-mm").format(Calendar.getInstance().time)
-        report.appendln("$date: $message")
-        logger.info { message }
     }
 }
