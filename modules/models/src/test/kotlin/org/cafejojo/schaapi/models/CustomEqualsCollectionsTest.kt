@@ -329,3 +329,202 @@ class CustomEqualsHashSetTest : Spek({
         }
     }
 })
+
+class CustomEqualsListTest : Spek({
+    describe("custom equals list") {
+        lateinit var list: CustomEqualsList<Any>
+
+        beforeEachTest {
+            list = CustomEqualsList(Any::equals, Any::hashCode)
+        }
+
+        it("knows which elements it contains by value") {
+            val elements = Array(3, { Any() })
+
+            list.addAll(elements)
+
+            assertThat(list.contains(elements[0])).isTrue()
+        }
+
+        it("knows which elements it contains") {
+            val elements = Array(3, { Any() })
+
+            list.addAll(elements)
+
+            assertThat(list.containsAll(elements.toList())).isTrue()
+        }
+
+        it("can contain elements multiple times") {
+            val element = Any()
+
+            list.add(element)
+            list.add(element)
+
+            assertThat(list).containsExactly(element, element)
+        }
+
+        it("can find the index of a given value") {
+            val elements = Array(3, { Any() })
+
+            list.addAll(elements)
+
+            assertThat(list.indexOf(elements[2])).isEqualTo(2)
+        }
+
+        it("can find the last index of a given value") {
+            val elements = Array(3, { Any() })
+
+            list.addAll(elements)
+            list.addAll(elements)
+            list.addAll(elements)
+
+            assertThat(list.lastIndexOf(elements[2])).isEqualTo(8)
+        }
+
+        it("can have an element inserted at an index") {
+            val elements = Array(3, { Any() })
+
+            list.addAll(elements)
+            list.add(2, elements[0])
+
+            assertThat(list[2]).isEqualTo(elements[0])
+        }
+
+        it("can have elements inserted at an index") {
+            val elements = Array(3, { Any() })
+
+            list.addAll(elements)
+            list.addAll(2, elements.toList())
+
+            assertThat(list[2]).isEqualTo(elements[0])
+        }
+
+        it("can be cleared") {
+            val elements = Array(3, { Any() })
+
+            list.addAll(elements)
+            list.clear()
+
+            assertThat(list).isEmpty()
+        }
+
+        it("can have an element removed by index") {
+            val elements = Array(3, { Any() })
+
+            list.addAll(elements)
+            list.removeAt(1)
+
+            assertThat(list).containsExactly(elements[0], elements[2])
+        }
+
+        it("can have an element removed by value") {
+            val elements = Array(3, { Any() })
+
+            list.addAll(elements)
+            list.remove(elements[1])
+
+            assertThat(list).containsExactly(elements[0], elements[2])
+        }
+
+        it("can have elements removed") {
+            val elements = Array(3, { Any() })
+
+            list.addAll(elements)
+            list.removeAll(listOf(elements[0], elements[2]))
+
+            assertThat(list).containsExactly(elements[1])
+        }
+
+        it("can retain elements") {
+            val elements = Array(3, { Any() })
+
+            list.addAll(elements)
+            list.retainAll(listOf(elements[0], elements[2]))
+
+            assertThat(list).containsExactly(elements[0], elements[2])
+        }
+
+        it("can have an element changed") {
+            val elements = Array(3, { Any() })
+
+            list.addAll(elements)
+            list[1] = elements[0]
+
+            assertThat(list[1]).isEqualTo(elements[0])
+        }
+
+        it("can create a sublist") {
+            val elements = Array(3, { Any() })
+
+            list.addAll(elements)
+
+            assertThat(list.subList(1, 3)).containsExactly(elements[1], elements[2])
+        }
+
+        it("can be iterated over forwards") {
+            val elements = Array(3, { Any() })
+            list.addAll(elements)
+
+            val iterator = list.iterator()
+            iterator.next()
+            val previous = iterator.previous()
+
+            assertThat(iterator.hasNext()).isTrue()
+            assertThat(iterator.nextIndex()).isEqualTo(0)
+            assertThat(iterator.next()).isEqualTo(elements[0])
+            assertThat(iterator.previous()).isEqualTo(previous)
+        }
+
+        it("can be iterated over backwards") {
+            val elements = Array(3, { Any() })
+            list.addAll(elements)
+
+            val iterator = list.iterator()
+            val next = iterator.next()
+
+            assertThat(iterator.hasPrevious()).isTrue()
+            assertThat(iterator.previousIndex()).isEqualTo(0)
+            assertThat(iterator.previous()).isEqualTo(elements[0])
+            assertThat(iterator.next()).isEqualTo(next)
+        }
+
+        it("can have elements removed while iterating") {
+            val elements = Array(3, { Any() })
+            list.addAll(elements)
+
+            val iterator = list.iterator()
+            iterator.next()
+            iterator.remove()
+
+            assertThat(list).containsExactly(elements[1], elements[2])
+        }
+
+        it("can have elements changed while iterating") {
+            val elements = Array(3, { Any() })
+            list.addAll(elements)
+
+            val iterator = list.iterator()
+            iterator.next()
+            iterator.set(elements[1])
+
+            assertThat(list[0]).isEqualTo(elements[1])
+        }
+
+        it("can have elements added while iterating") {
+            val elements = Array(3, { Any() })
+            list.addAll(elements)
+
+            val iterator = list.iterator()
+            iterator.next()
+            iterator.add(elements[2])
+
+            assertThat(list).containsExactly(elements[0], elements[2], elements[1], elements[2])
+        }
+
+        it("starts out empty") {
+            assertThat(list)
+                .hasSize(0)
+                .isEmpty()
+        }
+    }
+})
