@@ -30,7 +30,7 @@ class MiningPipeline<SO : SearchOptions, UP : Project, LP : Project, N : Node>(
         try {
             searchOptions
                 .next(projectMiner::mine)
-                .nextCatchException<UP, UP, CompilationException>(userProjectCompiler::compile)
+                .nextCatchException<CompilationException, UP, UP>(userProjectCompiler::compile)
                 .flatMap { libraryUsageGraphGenerator.generate(libraryProject, it) }
                 .next(patternDetector::findPatterns)
                 .next(patternFilter::filter)
@@ -61,16 +61,16 @@ class MiningPipeline<SO : SearchOptions, UP : Project, LP : Project, N : Node>(
      *
      * Catches exceptions of type [E] and logs these. All other exceptions are thrown.
      */
-    private inline fun <T, R: Any, reified E : RuntimeException> Iterable<T>.nextCatchException(map: (T) -> R)
-        : Iterable<R> =
-        this.mapNotNull {
-            try {
-                map(it)
-            } catch (e: RuntimeException) {
-                if (e is E) {
-                    logger.warn(e.message, e)
-                    null
-                } else throw e
-            }
+    @Suppress("TooGenericExceptionCaught", "InstanceOfCheckForException") // This is intended behaviour
+    private inline fun <reified E : RuntimeException, T, R : Any>
+        Iterable<T>.nextCatchException(map: (T) -> R): Iterable<R> = this.mapNotNull {
+        try {
+            map(it)
+        } catch (e: RuntimeException) {
+            if (e is E) {
+                logger.warn(e.message, e)
+                null
+            } else throw e
         }
+    }
 }
