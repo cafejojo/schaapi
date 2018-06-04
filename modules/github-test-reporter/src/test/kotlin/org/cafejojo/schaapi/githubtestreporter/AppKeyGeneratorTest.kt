@@ -18,4 +18,4 @@ object AppKeyGeneratorTest : Spek({
 })
 
 private fun getResourcePath(path: String) =
-    URLDecoder.decode(Paths.get(AppKeyGeneratorTest::class.java.getResource(path).toURI()).toString(), "UTF-8")
+    URLDecoder.decode(AppKeyGeneratorTest::class.java.getResource(path).path, "UTF-8")

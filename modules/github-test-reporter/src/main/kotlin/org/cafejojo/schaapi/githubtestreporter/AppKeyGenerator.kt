@@ -2,6 +2,7 @@ package org.cafejojo.schaapi.githubtestreporter
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
+import java.io.File
 import java.nio.file.Files
 import java.security.spec.PKCS8EncodedKeySpec
 import java.nio.file.Paths
@@ -37,7 +38,7 @@ object AppKeyGenerator {
     }
 
     private fun getPrivateKey(filename: String): RSAPrivateKey =
-        Files.readAllBytes(Paths.get(filename))
+        File(filename).readBytes()
             .let { keyBytes -> PKCS8EncodedKeySpec(keyBytes) }
             .let { spec -> KeyFactory.getInstance("RSA").generatePrivate(spec) }
             .let { it as? RSAPrivateKey ?: throw IllegalStateException("Key `$filename` is not a valid key.") }
