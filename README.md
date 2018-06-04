@@ -23,13 +23,13 @@ usage: schaapi -o <arg> -l <arg> -u <arg> [--maven_dir <arg>]
  -l,--library_dir <arg>                                The library
                                                        directory.
  -u,--user_base_dir <arg>                              The directory
- -g,--library_group_id                                 Group id of library projects 
+ -g,--library_group_id <arg>                           Group id of library projects 
                                                        should have dependency on.
-  -a,--library_artifact_id                             Artifact id of library projects 
+ -a,--library_artifact_id <arg>                        Artifact id of library projects 
                                                        should have dependency on.
-  -v,--library_version                                 Version of library projects 
+ -v,--library_version <arg>                            Version of library projects 
                                                        should have a dependency on.
-  -m,--max_projects                                    Maximum amount of projects to 
+ -m,--max_projects <arg>                               Maximum amount of projects to 
                                                        download from GitHub.
                                                        project directories.                                                      containing user
                                                        project
