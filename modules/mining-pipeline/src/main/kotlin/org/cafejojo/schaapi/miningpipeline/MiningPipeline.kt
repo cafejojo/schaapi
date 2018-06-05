@@ -32,27 +32,27 @@ class MiningPipeline<SO : SearchOptions, UP : Project, LP : Project, N : Node>(
 
         try {
             searchOptions
-                .also { logger.info { "Start mining projects." } }
+                .also { logger.info { "Started mining projects." } }
                 .next(projectMiner::mine)
                 .also { logger.info { "Successfully mined ${it.size} projects." } }
 
-                .also { logger.info { "Start compiling ${it.size} projects." } }
+                .also { logger.info { "Started compiling ${it.size} projects." } }
                 .nextCatchExceptions<CompilationException, UP, UP>(userProjectCompiler::compile)
                 .also { logger.info { "Successfully compiled ${it.count()} projects." } }
 
-                .also { logger.info { "Start generating library usage graphs for ${it.count()} projects." } }
+                .also { logger.info { "Started generating library usage graphs for ${it.count()} projects." } }
                 .flatMap { libraryUsageGraphGenerator.generate(libraryProject, it) }
                 .also { logger.info { "Successfully generated ${it.count()} library usage graphs." } }
 
-                .also { logger.info { "Start finding patterns in ${it.size} library usage graphs." } }
+                .also { logger.info { "Started finding patterns in ${it.size} library usage graphs." } }
                 .next(patternDetector::findPatterns)
                 .also { logger.info { "Successfully found ${it.size} patterns." } }
 
-                .also { logger.info { "Start filtering ${it.size} patterns." } }
+                .also { logger.info { "Started filtering ${it.size} patterns." } }
                 .next(patternFilter::filter)
                 .also { logger.info { "${it.size} patterns remain after filtering." } }
 
-                .also { logger.info { "Start generating test for ${it.size} usage patterns." } }
+                .also { logger.info { "Started generating test for ${it.size} usage patterns." } }
                 .next(testGenerator::generate)
                 .also { logger.info { "Test generation has finished." } }
 
