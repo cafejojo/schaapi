@@ -13,11 +13,10 @@ internal class JsonObjectBuilder {
         return deque.pop()
     }
 
+    @Suppress("FunctionMinLength") // Provides expressive 'DSL'
     infix fun <T> String.to(value: T) {
         deque.peek().put(this, value)
     }
 }
 
-internal fun json(of: String = "", build: JsonObjectBuilder.() -> Unit): JSONObject {
-    return JsonObjectBuilder().json(build)
-}
+internal fun json(of: String = "", build: JsonObjectBuilder.() -> Unit) = JsonObjectBuilder().json(build)
