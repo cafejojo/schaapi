@@ -7,12 +7,20 @@ import com.github.kittinunf.fuel.jackson.responseObject
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
+/**
+ * Reports information about checks to GitHub.
+ */
 @Service
 class CheckReporter(@Autowired private val appKeyGenerator: AppKeyGenerator) {
     init {
         mapper.propertyNamingStrategy = PropertyNamingStrategy.SNAKE_CASE
     }
 
+    /**
+     * Reports a started check to GitHub.
+     *
+     * When successful, a CheckRun object containing the ID needed for future check requests is returned.
+     */
     fun reportStarted(installationId: Int, owner: String, repository: String, headBranch: String, headSha: String) =
         GitHubApi.reportCheckStarted(
             owner,
@@ -23,6 +31,9 @@ class CheckReporter(@Autowired private val appKeyGenerator: AppKeyGenerator) {
             token = requestInstallationToken(installationId).token
         ).let { Fuel.request(it).responseObject<CheckRun>().getResultOrThrowException() }
 
+    /**
+     * Reports a finishe successful check to GitHub.
+     */
     fun reportSuccess(
         installationId: Int,
         owner: String,
@@ -41,6 +52,9 @@ class CheckReporter(@Autowired private val appKeyGenerator: AppKeyGenerator) {
             messageText = checkMessage?.text ?: ""
         ).let { Fuel.request(it).responseObject<CheckRun>().getResultOrThrowException() }
 
+    /**
+     * Reports a finished failing check to GitHub.
+     */
     fun reportFailure(
         installationId: Int,
         owner: String,
@@ -61,8 +75,27 @@ class CheckReporter(@Autowired private val appKeyGenerator: AppKeyGenerator) {
 
     internal fun requestInstallationToken(installationId: Int) =
         Fuel.request(GitHubApi.accessTokenFor(installationId, appKeyGenerator.create()))
-            .responseObject<AccessToken>()
+            .responseObject<InstallationToken>()
             .getResultOrThrowException()
 }
 
+/**
+ * A message to be displayed on the checks page containing the results of a check run.
+ */
 data class CheckMessage(val title: String, val summary: String, val text: String)
+
+/**
+ * A check run.
+ */
+data class CheckRun(
+    val id: Int
+)
+
+/**
+ * An access token for a specific installation.
+ */
+internal data class InstallationToken(
+    val token: String,
+    val expiresAt: String
+)
+

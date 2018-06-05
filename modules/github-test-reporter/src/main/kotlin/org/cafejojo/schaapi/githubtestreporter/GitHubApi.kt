@@ -80,15 +80,6 @@ internal sealed class GitHubApi : FuelRouting {
     }
 }
 
-internal data class AccessToken(
-    val token: String,
-    val expiresAt: String
-)
-
-data class CheckRun(
-    val id: Int
-)
-
 internal fun <T : Any> Triple<Request, Response, Result<T, FuelError>>.getResultOrThrowException() =
     third.let { result ->
         when (result) {
