@@ -10,9 +10,6 @@ import org.cafejojo.schaapi.miningpipeline.MiningPipeline
 import org.cafejojo.schaapi.miningpipeline.PatternFilter
 import org.cafejojo.schaapi.miningpipeline.miner.github.MavenProjectSearchOptions
 import org.cafejojo.schaapi.miningpipeline.miner.github.ProjectMiner
-import org.cafejojo.schaapi.miningpipeline.patterndetector.prefixspan.PatternDetector
-import org.cafejojo.schaapi.miningpipeline.miner.directory.DirectorySearchOptions
-import org.cafejojo.schaapi.miningpipeline.miner.directory.ProjectMiner
 import org.cafejojo.schaapi.miningpipeline.patterndetector.ccspan.PatternDetector
 import org.cafejojo.schaapi.miningpipeline.patternfilter.jimple.IncompleteInitPatternFilterRule
 import org.cafejojo.schaapi.miningpipeline.patternfilter.jimple.LengthPatternFilterRule
