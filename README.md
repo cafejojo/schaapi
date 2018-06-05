@@ -22,7 +22,8 @@ usage: schaapi -o <arg> -l <arg> -u <arg> [--maven_dir <arg>]
                                                        directory.
  -l,--library_dir <arg>                                The library
                                                        directory.
- -u,--user_base_dir <arg>                              The directory
+ -u,--user_base_dir <arg>                              The directory containing user
+                                                       project directories.
  -g,--library_group_id <arg>                           Group id of library projects 
                                                        should have dependency on.
  -a,--library_artifact_id <arg>                        Artifact id of library projects 
@@ -31,9 +32,7 @@ usage: schaapi -o <arg> -l <arg> -u <arg> [--maven_dir <arg>]
                                                        should have a dependency on.
  -m,--max_projects <arg>                               Maximum amount of projects to 
                                                        download from GitHub.
-                                                       project directories.                                                      containing user
-                                                       project
-                                                       directories.
+                                                       project directories.    
     --maven_dir <arg>                                  The directory to
                                                        run Maven from.
     --repair_maven                                     Repairs the Maven
