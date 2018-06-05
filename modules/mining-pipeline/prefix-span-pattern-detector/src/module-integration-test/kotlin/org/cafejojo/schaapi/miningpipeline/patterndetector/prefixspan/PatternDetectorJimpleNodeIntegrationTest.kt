@@ -70,7 +70,7 @@ class PatternDetectorJimpleNodeIntegrationTest : Spek({
                 makeGraph(node7, node8, node9, node10, node4, node5, node6)
             )
 
-            val frequent = PatternDetector(2, GeneralizedNodeComparator())
+            val frequent = PatternDetector(2, 100, GeneralizedNodeComparator())
                 .findPatterns(graphs)
 
             assertThat(frequent).contains(listOf(node1, node2, node3))
@@ -98,7 +98,7 @@ class PatternDetectorJimpleNodeIntegrationTest : Spek({
                 makeGraph(node11, node12, node6, node7, node8, node9, node10)
             )
 
-            val frequent = PatternDetector(2, GeneralizedNodeComparator())
+            val frequent = PatternDetector(2, 100, GeneralizedNodeComparator())
                 .findPatterns(graphs)
 
             assertThat(frequent).hasSize(amountOfPossibleSubSequences(5))
@@ -123,7 +123,7 @@ class PatternDetectorJimpleNodeIntegrationTest : Spek({
                 makeGraph(node9, node10, node5, node6, node7, node8)
             )
 
-            val frequent = PatternDetector(2, GeneralizedNodeComparator())
+            val frequent = PatternDetector(2, 100, GeneralizedNodeComparator())
                 .findPatterns(graphs)
 
             assertThat(frequent).contains(listOf(node1, node2, node3, node4))
@@ -143,7 +143,7 @@ class PatternDetectorJimpleNodeIntegrationTest : Spek({
                 makeGraph(node7, node8, node9, node10, node1, node2, node3)
             )
 
-            val frequent = PatternDetector(2, GeneralizedNodeComparator())
+            val frequent = PatternDetector(2, 100, GeneralizedNodeComparator())
                 .findPatterns(graphs)
 
             assertThat(frequent).contains(listOf(node1, node2, node3))
@@ -166,7 +166,7 @@ class PatternDetectorJimpleNodeIntegrationTest : Spek({
                 makeGraph(node7, node8, node9, node10, node4, node5, node6)
             )
 
-            val frequent = PatternDetector(2, GeneralizedNodeComparator())
+            val frequent = PatternDetector(2, 100, GeneralizedNodeComparator())
                 .findPatterns(graps)
 
             assertThat(frequent).isEmpty()
@@ -192,7 +192,7 @@ class PatternDetectorJimpleNodeIntegrationTest : Spek({
                 makeGraph(node9, node10, node5, node6, node7, node8)
             )
 
-            val frequent = PatternDetector(2, GeneralizedNodeComparator())
+            val frequent = PatternDetector(2, 100, GeneralizedNodeComparator())
                 .findPatterns(graphs)
 
             assertThat(frequent).hasSize(4)

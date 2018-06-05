@@ -12,7 +12,7 @@ import org.cafejojo.schaapi.miningpipeline.PatternFilter
 import org.cafejojo.schaapi.miningpipeline.MiningPipeline
 import org.cafejojo.schaapi.miningpipeline.miner.directory.DirectorySearchOptions
 import org.cafejojo.schaapi.miningpipeline.miner.directory.ProjectMiner
-import org.cafejojo.schaapi.miningpipeline.patterndetector.prefixspan.PatternDetector
+import org.cafejojo.schaapi.miningpipeline.patterndetector.ccspan.PatternDetector
 import org.cafejojo.schaapi.miningpipeline.patternfilter.jimple.IncompleteInitPatternFilterRule
 import org.cafejojo.schaapi.miningpipeline.patternfilter.jimple.LengthPatternFilterRule
 import org.cafejojo.schaapi.miningpipeline.projectcompiler.javamaven.MavenInstaller
@@ -23,6 +23,7 @@ import org.cafejojo.schaapi.miningpipeline.projectcompiler.javamaven.ProjectComp
 
 private const val DEFAULT_TEST_GENERATOR_TIMEOUT = "60"
 private const val DEFAULT_PATTERN_DETECTOR_MINIMUM_COUNT = "3"
+private const val DEFAULT_MAXIMUM_SEQUENCE_LENGTH = "25"
 
 /**
  * Runs the complete first phase of the Schaapi pipeline.
@@ -53,6 +54,7 @@ fun main(args: Array<String>) {
         libraryUsageGraphGenerator = LibraryUsageGraphGenerator,
         patternDetector = PatternDetector(
             cmd.getOptionOrDefault("pattern_detector_minimum_count", DEFAULT_PATTERN_DETECTOR_MINIMUM_COUNT).toInt(),
+            cmd.getOptionOrDefault("pattern_detector_maximum_sequence_length", DEFAULT_MAXIMUM_SEQUENCE_LENGTH).toInt(),
             GeneralizedNodeComparator()
         ),
         patternFilter = PatternFilter(
@@ -107,6 +109,13 @@ private fun buildOptions(): Options =
             .builder()
             .longOpt("pattern_detector_minimum_count")
             .desc("The minimum number of occurrences for a statement to be considered frequent.")
+            .type(Int::class.java)
+            .hasArg()
+            .build())
+        .addOption(Option
+            .builder()
+            .longOpt("pattern_detector_maximum_sequence_length")
+            .desc("The maximum length of sequences to be considered for pattern detection.")
             .type(Int::class.java)
             .hasArg()
             .build())

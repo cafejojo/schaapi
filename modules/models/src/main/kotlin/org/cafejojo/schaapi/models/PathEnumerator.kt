@@ -9,9 +9,13 @@ import java.util.Stack
  * identified in a recursive manner. Additionally, all paths that have at most two occurrences of each node are found
  * (such paths are not necessarily simple paths), to execute loop bodies once and twice.
  *
- * @property entryNode the entry node of the method graph.
+ * @property entryNode the entry node of the method graph
+ * @property maximumPathLength the maximum length a path output by this enumerator should have
  */
-class PathEnumerator<N : Node>(private val entryNode: N) {
+class PathEnumerator<N : Node>(
+    private val entryNode: N,
+    private val maximumPathLength: Int
+) {
     private val allPaths = mutableListOf<List<Node>>()
     private val visited = Stack<Node>()
     private val exitNode = entryNode.connectLeavesToExitNode()
@@ -47,9 +51,11 @@ class PathEnumerator<N : Node>(private val entryNode: N) {
         node.successors
             .filter { hasBeenVisitedAtMostOnce(it) && it != exitNode }
             .forEach {
-                visited.push(it)
-                recursivelyEnumerate(visited.peek())
-                visited.pop()
+                if (visited.size < maximumPathLength) {
+                    visited.push(it)
+                    recursivelyEnumerate(visited.peek())
+                    visited.pop()
+                }
             }
 
     private fun hasBeenVisitedAtMostOnce(node: Node) = visited.count { it == node } <= 1
