@@ -17,7 +17,7 @@ class CheckReporter(@Autowired private val appKeyGenerator: AppKeyGenerator) {
     }
 
     /**
-     * Reports a started check to GitHub.
+     * Reports a 'started' check to GitHub.
      *
      * When successful, a CheckRun object containing the ID needed for future check requests is returned.
      */
@@ -32,7 +32,7 @@ class CheckReporter(@Autowired private val appKeyGenerator: AppKeyGenerator) {
         ).let { Fuel.request(it).responseObject<CheckRun>().getResultOrThrowException() }
 
     /**
-     * Reports a finish successful check to GitHub.
+     * Reports a 'finish successful' check to GitHub.
      */
     fun reportSuccess(
         installationId: Int,
@@ -53,7 +53,7 @@ class CheckReporter(@Autowired private val appKeyGenerator: AppKeyGenerator) {
         ).let { Fuel.request(it).responseObject<CheckRun>().getResultOrThrowException() }
 
     /**
-     * Reports a finished failing check to GitHub.
+     * Reports a 'finished failing' check to GitHub.
      */
     fun reportFailure(
         installationId: Int,
