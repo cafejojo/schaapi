@@ -8,6 +8,7 @@ import org.jetbrains.spek.api.dsl.context
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 import soot.jimple.DefinitionStmt
+import soot.jimple.Jimple
 
 internal object JimpleNodeTest : Spek({
     describe("contained values") {
@@ -255,6 +256,38 @@ internal object JimpleNodeTest : Spek({
             val node2 = mockDefinitionStmt("right", "left")
 
             assertThat(node1.equivHashCode()).isNotEqualTo(node2.equivHashCode())
+        }
+    }
+
+    describe("Jimple node copy") {
+        it("does not equal the old node") {
+            val stmt = Jimple.v().newBreakpointStmt()
+            val node = JimpleNode(stmt, mutableListOf())
+            val copy = node.copy()
+
+            assertThat(copy).isNotSameAs(stmt)
+            assertThat(copy).isNotEqualTo(stmt)
+        }
+
+        it("is equivalent to the old node") {
+            val stmt = Jimple.v().newBreakpointStmt()
+            val node = JimpleNode(stmt, mutableListOf())
+            val copy = node.copy()
+
+            assertThat(copy.equivTo(node))
+            assertThat(copy.equivHashCode()).isEqualTo(node.equivHashCode())
+        }
+
+        it("uses a different list for the successors") {
+            val stmt = Jimple.v().newBreakpointStmt()
+            val successors = Array(3, { JimpleNode(Jimple.v().newBreakpointStmt()) })
+            val node = JimpleNode(stmt, successors.toMutableList())
+            val copy = node.copy()
+
+            node.successors.removeAt(0)
+
+            assertThat(node.successors).hasSize(2)
+            assertThat(copy.successors).hasSize(3)
         }
     }
 })
