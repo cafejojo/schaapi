@@ -98,4 +98,3 @@ internal data class InstallationToken(
     val token: String,
     val expiresAt: String
 )
-
