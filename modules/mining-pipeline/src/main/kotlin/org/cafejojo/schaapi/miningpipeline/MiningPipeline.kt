@@ -24,6 +24,7 @@ class MiningPipeline<SO : SearchOptions, UP : Project, LP : Project, N : Node>(
     /**
      * Executes all steps in the pipeline.
      */
+    @Suppress("TooGenericExceptionCaught") // In this case it is relevant to catch and log a RuntimeException
     fun run(libraryProject: LP) {
         libraryProjectCompiler.compile(libraryProject)
 
@@ -57,9 +58,7 @@ class MiningPipeline<SO : SearchOptions, UP : Project, LP : Project, N : Node>(
                 .also { logger.info { "Test generation has finished." } }
 
             logger.info { "Tests have been successfully generated." }
-        } catch (e: IllegalArgumentException) {
-            logger.error("A critical error occurred during the mining process causing it to be aborted.", e)
-        } catch (e: IllegalStateException) {
+        } catch (e: RuntimeException) {
             logger.error("A critical error occurred during the mining process causing it to be aborted.", e)
         } finally {
             logger.info { "Mining has finished." }

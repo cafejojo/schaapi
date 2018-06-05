@@ -25,7 +25,7 @@ import org.cafejojo.schaapi.miningpipeline.projectcompiler.javamaven.ProjectComp
 
 private const val DEFAULT_TEST_GENERATOR_TIMEOUT = "60"
 private const val DEFAULT_PATTERN_DETECTOR_MINIMUM_COUNT = "3"
-private const val DEFAULT_MAX_PROJECTS = 20
+private const val DEFAULT_MAX_PROJECTS = "20"
 private const val DEFAULT_MAXIMUM_SEQUENCE_LENGTH = "25"
 
 /**
@@ -42,7 +42,7 @@ fun main(args: Array<String>) {
     val library = JavaJarProject(File(cmd.getOptionValue('l')))
 
     val token = cmd.getOptionValue("github_oauth_token") ?: return
-    val maxProjects = cmd.getOptionValue("max_projects")?.toInt() ?: DEFAULT_MAX_PROJECTS
+    val maxProjects = cmd.getOptionOrDefault("max_projects", DEFAULT_MAX_PROJECTS).toInt()
     val groupId = cmd.getOptionValue("library_group_id") ?: return
     val artifactId = cmd.getOptionValue("library_artifact_id") ?: return
     val version = cmd.getOptionValue("library_version") ?: return
