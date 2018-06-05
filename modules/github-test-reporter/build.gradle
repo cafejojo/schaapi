@@ -19,8 +19,10 @@ dependencies {
     compile group: "org.json", name: "json", version: jsonVersion
     compile group: "org.springframework.boot", name: "spring-boot-starter-web"
 
+    testCompile project(":web")
     testCompile group: "com.nhaarman", name: "mockito-kotlin", version: mockitoKotlinVersion
     testCompile group: "net.javacrumbs.json-unit", name: "json-unit-fluent", version: jsonUnitVersion
+    testCompile group: "org.springframework.boot", name: "spring-boot-starter-test"
 }
 
 bootJar.enabled = false

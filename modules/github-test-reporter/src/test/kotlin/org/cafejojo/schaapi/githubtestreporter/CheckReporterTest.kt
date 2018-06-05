@@ -1,9 +1,5 @@
 package org.cafejojo.schaapi.githubtestreporter
 
-import com.github.kittinunf.fuel.core.Request
-import com.github.kittinunf.fuel.core.Response
-import com.nhaarman.mockito_kotlin.any
-import com.nhaarman.mockito_kotlin.doAnswer
 import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.mock
 import net.javacrumbs.jsonunit.fluent.JsonFluentAssert.assertThatJson
@@ -11,13 +7,6 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.entry
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.it
-import org.json.JSONObject
-import java.io.ByteArrayInputStream
-import java.io.ByteArrayOutputStream
-import java.nio.charset.StandardCharsets.UTF_8
-import java.util.Stack
-import java.util.concurrent.CompletableFuture
-import java.util.concurrent.Future
 import java.util.concurrent.TimeUnit
 
 object CheckReporterTest : Spek({
@@ -169,34 +158,3 @@ object CheckReporterTest : Spek({
         assertThat(checkRun.id).isEqualTo(87575775)
     }
 })
-
-private fun mockHttpClient(vararg jsonResponses: JSONObject, code: Int = 200): List<Pair<Future<Request>, Response>> {
-    val responses = jsonResponses.map { json ->
-        mock<Response> {
-            on { statusCode } doReturn code
-            on { dataStream } doReturn ByteArrayInputStream(json.toString().toByteArray())
-        }
-    }
-
-    val requestsAndResponses = responses.map { CompletableFuture<Request>() to it }
-    val requestsAndResponsesStack = Stack<Pair<CompletableFuture<Request>, Response>>().apply {
-        addAll(requestsAndResponses.asReversed())
-    }
-
-    FuelConfiguration(mock {
-        on { executeRequest(any()) } doAnswer { answer ->
-            val (request, response) = requestsAndResponsesStack.pop()
-
-            request.complete(answer.getArgument(0))
-            response
-        }
-    })
-
-    return requestsAndResponses
-}
-
-private fun Request.bodyContents() = ByteArrayOutputStream().let { outputStream ->
-    bodyCallback?.invoke(request, outputStream, 0)
-
-    String(outputStream.toByteArray(), UTF_8)
-}

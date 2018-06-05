@@ -61,6 +61,6 @@ class WebHookReceiver(val checkReporter: CheckReporter) {
             else -> throw IllegalStateException("Cannot process webhooks for events of type $eventType.")
         }
 
-        return "Webhook received. $checkReporter"
+        return "Webhook received."
     }
 }
