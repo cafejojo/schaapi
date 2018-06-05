@@ -64,4 +64,9 @@ class JimpleNode(val statement: Stmt, override val successors: MutableList<Node>
         getTopLevelValues().forEachIndexed { index, value -> hash += (index + 1) * value.equivHashCode() }
         return hash
     }
+
+    override fun copy() = JimpleNode(
+        statement.clone() as? Stmt ?: throw IllegalStateException("Stmt::clone did not return a Stmt."),
+        successors.toMutableList()
+    )
 }

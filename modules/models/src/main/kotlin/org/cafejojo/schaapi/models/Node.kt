@@ -25,6 +25,13 @@ interface Node : Iterable<Node> {
      */
     fun equivHashCode(): Int
 
+    /**
+     * Constructs an identical copy of this [Node] such that it is [equivTo] this.
+     *
+     * @return an identical copy of this [Node] such that it is [equivTo] this
+     */
+    fun copy(): Node
+
     companion object {
         /**
          * Returns true iff [left] and [right] are [Node]s and [equivTo] returns true.
@@ -44,4 +51,6 @@ open class SimpleNode(override val successors: MutableList<Node> = mutableListOf
     override fun equivTo(other: Node?) = this === other
 
     override fun equivHashCode() = super.hashCode()
+
+    override fun copy() = SimpleNode(successors.toMutableList())
 }
