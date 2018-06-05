@@ -30,11 +30,13 @@ import javax.net.ssl.HttpsURLConnection
 @Service
 @Suppress("TooGenericExceptionCaught")
 internal class CustomHttpClient(private val proxy: Proxy? = null) : Client {
+    init {
+        allowMethods("PATCH")
+    }
+
     override fun executeRequest(request: Request): Response {
         val connection = establishConnection(request) as? HttpURLConnection
             ?: throw IllegalStateException("Connection invalid.")
-
-        allowMethods("PATCH")
 
         try {
             connection.apply {
@@ -72,9 +74,9 @@ internal class CustomHttpClient(private val proxy: Proxy? = null) : Client {
         } catch (exception: Exception) {
             throw FuelError(exception, ByteArray(0), Response(request.url))
         } finally {
-            //As per Android documentation, a connection that is not explicitly disconnected
-            //will be pooled and reused!  So, don't close it as we need inputStream later!
-            //connection.disconnect()
+            // As per Android documentation, a connection that is not explicitly disconnected
+            // will be pooled and reused!  So, don't close it as we need inputStream later!
+            // connection.disconnect()
         }
     }
 
@@ -99,19 +101,20 @@ internal class CustomHttpClient(private val proxy: Proxy? = null) : Client {
         Method.GET, Method.DELETE, Method.HEAD -> connection.doOutput = false
         Method.POST, Method.PUT, Method.PATCH -> connection.doOutput = true
     }
-}
 
-private fun allowMethods(vararg methods: String) {
-    val methodsField = HttpURLConnection::class.java.getDeclaredField("methods").apply {
-        isAccessible = true
+    private fun allowMethods(vararg methods: String) {
+        val methodsField = HttpURLConnection::class.java.getDeclaredField("methods").apply {
+            isAccessible = true
+        }
+
+        Field::class.java.getDeclaredField("modifiers").apply {
+            isAccessible = true
+            setInt(methodsField, methodsField.modifiers and Modifier.FINAL.inv())
+        }
+
+        val newMethods =
+            (methodsField.get(null) as? Array<*>)?.filterIsInstance<String>()?.toTypedArray()?.plus(methods)
+
+        methodsField.set(null, newMethods)
     }
-
-    Field::class.java.getDeclaredField("modifiers").apply {
-        isAccessible = true
-        setInt(methodsField, methodsField.modifiers and Modifier.FINAL.inv())
-    }
-
-    val newMethods = (methodsField.get(null) as? Array<*>)?.filterIsInstance<String>()?.toTypedArray()?.plus(methods)
-
-    methodsField.set(null, newMethods)
 }
