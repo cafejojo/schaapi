@@ -178,7 +178,7 @@ private fun mockHttpClient(vararg jsonResponses: JSONObject, code: Int = 200): L
         }
     }
 
-    val requestsAndResponses = responses.map { Pair(CompletableFuture<Request>(), it) }
+    val requestsAndResponses = responses.map { CompletableFuture<Request>() to it }
     val requestsAndResponsesStack = Stack<Pair<CompletableFuture<Request>, Response>>().apply {
         addAll(requestsAndResponses.asReversed())
     }
