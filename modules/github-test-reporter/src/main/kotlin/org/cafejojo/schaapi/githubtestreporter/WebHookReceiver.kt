@@ -28,7 +28,7 @@ class WebHookReceiver(val checkReporter: CheckReporter) {
      */
     @RequestMapping("/process-webhook")
     @ResponseBody
-    fun processWebhook(@RequestHeader("X-GitHub-Event") eventType: String, @RequestBody body: String): String {
+    fun processWebHook(@RequestHeader("X-GitHub-Event") eventType: String, @RequestBody body: String): String {
         when (eventType) {
             "check_suite" -> {
                 val checkSuiteEvent = mapper.readValue(body, CheckSuiteEvent::class.java)
