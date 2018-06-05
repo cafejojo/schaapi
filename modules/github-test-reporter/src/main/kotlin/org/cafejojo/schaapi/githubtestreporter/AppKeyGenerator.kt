@@ -13,7 +13,6 @@ import java.util.Date
 private const val EXPIRE_AFTER_MINUTES = 10
 
 /**
- *
  * JWT token generator used for authentication as GitHub app.
  */
 @Service
