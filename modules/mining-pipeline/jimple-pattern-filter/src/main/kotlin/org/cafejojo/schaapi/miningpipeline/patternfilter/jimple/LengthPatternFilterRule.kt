@@ -1,7 +1,7 @@
 package org.cafejojo.schaapi.miningpipeline.patternfilter.jimple
 
-import org.cafejojo.schaapi.models.libraryusagegraph.jimple.JimpleNode
 import org.cafejojo.schaapi.miningpipeline.PatternFilterRule
+import org.cafejojo.schaapi.models.libraryusagegraph.jimple.JimpleNode
 
 private const val DEFAULT_MINIMUM_PATTERN_LENGTH = 2
 
