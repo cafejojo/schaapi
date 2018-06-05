@@ -5,7 +5,6 @@ import com.nhaarman.mockito_kotlin.mock
 import net.javacrumbs.jsonunit.fluent.JsonFluentAssert.assertThatJson
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.entry
-import org.cafejojo.schaapi.web.WebApplication
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -13,7 +12,6 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.context.annotation.Import
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
@@ -23,14 +21,13 @@ import java.util.concurrent.TimeUnit
 @ExtendWith(SpringExtension::class)
 @SpringBootTest(
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-    classes = [IntegrationTest.TestConfig::class]
+    classes = [org.cafejojo.schaapi.githubtestreporter.IntegrationTest.TestConfig::class]
 )
 class IntegrationTest {
     @Autowired
     private lateinit var restTemplate: TestRestTemplate
 
     @Configuration
-    @Import(WebApplication::class)
     internal open class TestConfig {
         @Bean
         open fun appKeyGenerator(): AppKeyGenerator = mock {
