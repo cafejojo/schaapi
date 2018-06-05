@@ -14,8 +14,8 @@ apply plugin: "io.spring.dependency-management"
 dependencies {
     compile group: "com.auth0", name: "java-jwt", version: javaJwtVersion
     compile group: "com.fasterxml.jackson.module", name: "jackson-module-kotlin"
-    compile group: "com.github.kittinunf.fuel", name: "fuel", version: fuelVersion //for JVM
-    compile group: "com.github.kittinunf.fuel", name: "fuel-jackson", version: fuelVersion //for Jackson support
+    compile group: "com.github.kittinunf.fuel", name: "fuel", version: fuelVersion // for JVM
+    compile group: "com.github.kittinunf.fuel", name: "fuel-jackson", version: fuelVersion // for Jackson support
     compile group: "org.json", name: "json", version: jsonVersion
     compile group: "org.springframework.boot", name: "spring-boot-starter-web"
 
