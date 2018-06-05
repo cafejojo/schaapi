@@ -14,13 +14,17 @@ internal class RecursiveGotoFilter : Filter {
      * @param body a body
      */
     override fun apply(body: Body) {
-        body.units.reversed().forEach {
-            if (!retain(it)) body.units.remove(it)
-        }
+        var repeat = true
 
-        if (body.units.size > 0) {
-            val first = body.units.first
-            if (!retain(first)) body.units.remove(first)
+        while (repeat) {
+            repeat = false
+
+            body.units.snapshotIterator().forEach {
+                if (!retain(it)) {
+                    body.units.remove(it)
+                    repeat = true
+                }
+            }
         }
     }
 
