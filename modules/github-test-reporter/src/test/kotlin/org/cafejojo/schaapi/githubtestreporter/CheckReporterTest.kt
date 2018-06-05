@@ -78,6 +78,96 @@ object CheckReporterTest : Spek({
 
         assertThat(checkRun.id).isEqualTo(87575775)
     }
+
+    it("can successfully report the end of a successful check to GitHub") {
+        val (futureRequest, _) = mockHttpClient(
+            json("installation token request response") {
+                "token" to "this-is-the-installation-token"
+                "expires_at" to "end date"
+            },
+            json("report finished response") {
+                "id" to 87575775
+            }
+        )[1]
+
+        val appKeyGenerator = mock<AppKeyGenerator> {
+            on { create() } doReturn "this-is-the-app-key"
+        }
+
+        val checkRun = CheckReporter(appKeyGenerator).reportSuccess(
+            installationId = 123456,
+            owner = "cafejojo",
+            repository = "schaapi",
+            checkRunId = 87575775,
+            checkMessage = CheckMessage(
+                title = "Mandatory title of the message",
+                summary = "Mandatory summary of the message",
+                text = "Optional text of the message"
+            )
+        )
+
+        with(futureRequest.get(0, TimeUnit.SECONDS)) {
+            assertThat(url.toString()).contains("cafejojo/schaapi")
+            assertThat(url.toString()).contains("87575775")
+            assertThat(headers).contains(entry("Authorization", "Token this-is-the-installation-token"))
+
+            assertThatJson(bodyContents()).apply {
+                node("status").isEqualTo("completed")
+                node("conclusion").isEqualTo("success")
+                node("completed_at").isPresent
+                node("output.title").isEqualTo("Mandatory title of the message")
+                node("output.summary").isEqualTo("Mandatory summary of the message")
+                node("output.text").isEqualTo("Optional text of the message")
+            }
+        }
+
+        assertThat(checkRun.id).isEqualTo(87575775)
+    }
+
+    it("can successfully report the end of a failing check to GitHub") {
+        val (futureRequest, _) = mockHttpClient(
+            json("installation token request response") {
+                "token" to "this-is-the-installation-token"
+                "expires_at" to "end date"
+            },
+            json("report finished response") {
+                "id" to 87575775
+            }
+        )[1]
+
+        val appKeyGenerator = mock<AppKeyGenerator> {
+            on { create() } doReturn "this-is-the-app-key"
+        }
+
+        val checkRun = CheckReporter(appKeyGenerator).reportFailure(
+            installationId = 123456,
+            owner = "cafejojo",
+            repository = "schaapi",
+            checkRunId = 87575775,
+            checkMessage = CheckMessage(
+                title = "Mandatory title of the message",
+                summary = "Mandatory summary of the message",
+                text = "Optional text of the message"
+            )
+        )
+
+        with(futureRequest.get(0, TimeUnit.SECONDS)) {
+            assertThat(url.toString()).contains("cafejojo/schaapi")
+            assertThat(url.toString()).contains("87575775")
+            assertThat(headers).contains(entry("Authorization", "Token this-is-the-installation-token"))
+
+            assertThatJson(bodyContents()).apply {
+                node("status").isEqualTo("completed")
+                node("conclusion").isEqualTo("failure")
+                node("completed_at").isPresent
+                node("output.title").isEqualTo("Mandatory title of the message")
+                node("output.summary").isEqualTo("Mandatory summary of the message")
+                node("output.text").isEqualTo("Optional text of the message")
+            }
+        }
+
+        assertThat(checkRun.id).isEqualTo(87575775)
+    }
 })
 
 private fun mockHttpClient(vararg jsonResponses: JSONObject, code: Int = 200): List<Pair<Future<Request>, Response>> {
