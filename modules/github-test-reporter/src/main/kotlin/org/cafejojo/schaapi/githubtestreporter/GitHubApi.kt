@@ -1,12 +1,6 @@
 package org.cafejojo.schaapi.githubtestreporter
 
-import com.fasterxml.jackson.core.JsonGenerator
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.SerializerProvider
-import com.fasterxml.jackson.databind.annotation.JsonSerialize
-import com.fasterxml.jackson.databind.ser.std.StdSerializer
 import com.github.kittinunf.fuel.core.FuelError
-import com.github.kittinunf.fuel.core.FuelManager
 import com.github.kittinunf.fuel.core.Method
 import com.github.kittinunf.fuel.core.Request
 import com.github.kittinunf.fuel.core.Response
@@ -45,13 +39,13 @@ internal sealed class GitHubApi : FuelRouting {
             "Accept" to "application/vnd.github.antiope-preview+json"
         )
         override val params: List<Pair<String, Any?>> = emptyList()
-        override val body = JSON.Object(
-            "name" to JSON.String(checkName),
-            "head_branch" to JSON.String(headBranch),
-            "head_sha" to JSON.String(headSha),
-            "started_at" to JSON.String(now()),
-            "status" to JSON.String("in_progress")
-        ).toJsonString()
+        override val body = json {
+            "name" to checkName
+            "head_branch" to headBranch
+            "head_sha" to headSha
+            "started_at" to now()
+            "status" to "in_progress"
+        }.toString()
     }
 
     internal class reportCheckCompleted(
@@ -72,16 +66,17 @@ internal sealed class GitHubApi : FuelRouting {
             "Content-Type" to "application/json"
         )
         override val params: List<Pair<String, Any?>> = emptyList()
-        override val body = JSON.Object(
-            "completed_at" to JSON.String(now()),
-            "status" to JSON.String("completed"),
-            "conclusion" to JSON.String(conclusion),
-            "output" to JSON.Object(
-                "title" to JSON.String(messageTitle),
-                "summary" to JSON.String(messageSummary),
-                "text" to JSON.String(messageText)
-            )
-        ).toJsonString()
+
+        override val body = json {
+            "completed_at" to now()
+            "status" to "completed"
+            "conclusion" to conclusion
+            "output" to json {
+                "title" to messageTitle
+                "summary" to messageSummary
+                "text" to messageText
+            }
+        }.toString()
     }
 }
 
@@ -103,27 +98,3 @@ internal fun <T : Any> Triple<Request, Response, Result<T, FuelError>>.getResult
     }
 
 private fun now() = OffsetDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
-
-private sealed class JSON {
-    @JsonSerialize(using = JSONStringSerializer::class)
-    internal class String(val string: kotlin.String) : JSON()
-
-    private class JSONStringSerializer(t: Class<JSON.String>? = null) : StdSerializer<JSON.String>(t) {
-        override fun serialize(value: JSON.String, jgen: JsonGenerator, provider: SerializerProvider) {
-            jgen.writeString(value.string)
-        }
-    }
-
-    @JsonSerialize(using = JSONObjectSerializer::class)
-    internal class Object(vararg pairs: Pair<kotlin.String, JSON>) : JSON() {
-        val map = pairs.toMap()
-    }
-
-    private class JSONObjectSerializer(t: Class<JSON.Object>? = null) : StdSerializer<JSON.Object>(t) {
-        override fun serialize(value: JSON.Object, jgen: JsonGenerator, provider: SerializerProvider) {
-            jgen.writeObject(value.map)
-        }
-    }
-
-    fun toJsonString() = ObjectMapper().writeValueAsString(this)
-}
