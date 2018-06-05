@@ -18,6 +18,6 @@ interface ProjectCompiler<P : Project> {
 }
 
 /**
- * Exception thrown when non-critical exception occured during compilation.
+ * Exception thrown when a non-critical exception occured during compilation.
  */
 abstract class CompilationException(message: String? = null) : RuntimeException(message)
