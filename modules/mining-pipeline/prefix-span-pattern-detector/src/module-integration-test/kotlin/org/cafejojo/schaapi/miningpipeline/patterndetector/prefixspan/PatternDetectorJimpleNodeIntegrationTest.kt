@@ -1,30 +1,24 @@
 package org.cafejojo.schaapi.miningpipeline.patterndetector.prefixspan
 
-import com.nhaarman.mockito_kotlin.doReturn
-import com.nhaarman.mockito_kotlin.mock
 import org.assertj.core.api.Assertions.assertThat
+import org.cafejojo.schaapi.models.Node
 import org.cafejojo.schaapi.models.libraryusagegraph.jimple.GeneralizedNodeComparator
 import org.cafejojo.schaapi.models.libraryusagegraph.jimple.JimpleNode
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.xit
-import soot.jimple.DefinitionStmt
-import soot.jimple.IfStmt
+import soot.ByteType
+import soot.Local
+import soot.RefType
+import soot.jimple.Jimple
+import soot.jimple.internal.JEqExpr
 
 class PatternDetectorJimpleNodeIntegrationTest : Spek({
     /**
      * Calculates how many sub-sequences a given sequence may have.
      */
     fun amountOfPossibleSubSequences(sequenceLength: Int): Int = (0..sequenceLength).sum()
-
-    /**
-     * Creates a [JimpleNode] without any [soot.Value]s.
-     */
-    fun createJimpleNode(): JimpleNode {
-        val condition = mockUniqueValue()
-        return JimpleNode(mock<IfStmt> { on { it.condition } doReturn condition })
-    }
 
     /**
      * Create a graph where each node is the successor of the predecessor.
@@ -37,29 +31,60 @@ class PatternDetectorJimpleNodeIntegrationTest : Spek({
     }
 
     /**
+     * Creates a local that has [type] as its name and type.
+     *
+     * @param type the type and name of the local to create
+     * @return a local that has [type] as its name and type
+     */
+    fun createLocal(type: String) = Jimple.v().newLocal(type, RefType.v(type))
+
+    /**
+     * Creates a [JimpleNode] without any [soot.Value]s.
+     */
+    fun createJimpleNode(): JimpleNode {
+        val local = Jimple.v().newLocal("local", ByteType.v())
+        val condition = Jimple.v().newConditionExprBox(JEqExpr(local, local)).value
+        val target = Jimple.v().newBreakpointStmt()
+
+        return JimpleNode(Jimple.v().newIfStmt(condition, target))
+    }
+
+    /**
      * Creates a [JimpleNode] with two [soot.Value]s.
      *
-     * @param leftType the [soot.Value.getType] of the first [soot.Value]
-     * @param rightType the [soot.Value.getType] of the second [soot.Value]
+     * @param leftVal the first local to use
+     * @param rightVal the second local to use
      */
-    fun createJimpleNode(leftType: String, rightType: String): JimpleNode {
-        val leftOp = mockValue(leftType)
-        val rightOp = mockValue(rightType)
+    fun createJimpleNode(leftVal: Local, rightVal: Local) = JimpleNode(Jimple.v().newAssignStmt(leftVal, rightVal))
 
-        return JimpleNode(mock<DefinitionStmt> {
-            on { it.leftOp } doReturn leftOp
-            on { it.rightOp } doReturn rightOp
-        })
-    }
+    /**
+     * Returns true iff the given paths have the same length and the contained nodes are equivalent.
+     *
+     * @param expected the expected path
+     * @param actual the actual path
+     */
+    fun pathsAreEquivalent(expected: List<Node>, actual: List<Node>) =
+        expected.size == actual.size && expected.zip(actual).all { it.first.equivTo(it.second) }
+
+    /**
+     * Returns true iff [expected] contains paths that are equivalent to those in [actual].
+     *
+     * @param expected the expected paths
+     * @param actual the actual paths
+     */
+    fun containsEquivalentPaths(expected: List<List<Node>>, actual: List<List<Node>>) =
+        actual.all { needle -> expected.any { candidate -> pathsAreEquivalent(needle, candidate) } }
 
     describe("when looking for common sequences in patterns of statements using the generalized soot comparator") {
         it("should find a pattern with multiple nodes which have different values with the same type") {
-            val node1 = createJimpleNode("A", "C")
-            val node2 = createJimpleNode("B", "B")
-            val node3 = createJimpleNode("C", "A")
-            val node4 = createJimpleNode("A", "C")
-            val node5 = createJimpleNode("B", "B")
-            val node6 = createJimpleNode("C", "A")
+            val locals = Array(3, { createLocal(it.toString()) })
+
+            val node1 = createJimpleNode(locals[0], locals[2])
+            val node2 = createJimpleNode(locals[1], locals[1])
+            val node3 = createJimpleNode(locals[2], locals[0])
+            val node4 = createJimpleNode(locals[0], locals[2])
+            val node5 = createJimpleNode(locals[1], locals[1])
+            val node6 = createJimpleNode(locals[2], locals[0])
             val node7 = createJimpleNode()
             val node8 = createJimpleNode()
             val node9 = createJimpleNode()
@@ -73,22 +98,29 @@ class PatternDetectorJimpleNodeIntegrationTest : Spek({
             val frequent = PatternDetector(2, 100, GeneralizedNodeComparator())
                 .findPatterns(graphs)
 
-            assertThat(frequent).contains(listOf(node1, node2, node3))
+            assertThat(containsEquivalentPaths(
+                frequent,
+                listOf(
+                    listOf(node1, node2, node3)
+                )
+            ))
         }
 
         // TODO make test pass
         xit("should not store duplicate patterns") {
-            val node1 = createJimpleNode("A", "C")
-            val node2 = createJimpleNode("B", "B")
-            val node3 = createJimpleNode("C", "A")
-            val node4 = createJimpleNode("B", "A")
-            val node5 = createJimpleNode("A", "B")
+            val locals = Array(3, { createLocal(it.toString()) })
 
-            val node6 = createJimpleNode("A", "C")
-            val node7 = createJimpleNode("B", "B")
-            val node8 = createJimpleNode("C", "A")
-            val node9 = createJimpleNode("B", "A")
-            val node10 = createJimpleNode("A", "B")
+            val node1 = createJimpleNode(locals[0], locals[2])
+            val node2 = createJimpleNode(locals[1], locals[1])
+            val node3 = createJimpleNode(locals[2], locals[0])
+            val node4 = createJimpleNode(locals[1], locals[0])
+            val node5 = createJimpleNode(locals[0], locals[1])
+
+            val node6 = createJimpleNode(locals[0], locals[2])
+            val node7 = createJimpleNode(locals[1], locals[1])
+            val node8 = createJimpleNode(locals[2], locals[0])
+            val node9 = createJimpleNode(locals[1], locals[0])
+            val node10 = createJimpleNode(locals[0], locals[1])
 
             val node11 = createJimpleNode()
             val node12 = createJimpleNode()
@@ -105,15 +137,17 @@ class PatternDetectorJimpleNodeIntegrationTest : Spek({
         }
 
         it("should find a pattern with multiple nodes which have the same value") {
-            val node1 = createJimpleNode("B", "B")
-            val node2 = createJimpleNode("C", "A")
-            val node3 = createJimpleNode("A", "C")
-            val node4 = createJimpleNode("B", "A")
+            val locals = Array(3, { createLocal(it.toString()) })
 
-            val node5 = createJimpleNode("B", "B")
-            val node6 = createJimpleNode("C", "A")
-            val node7 = createJimpleNode("A", "C")
-            val node8 = createJimpleNode("B", "A")
+            val node1 = createJimpleNode(locals[1], locals[1])
+            val node2 = createJimpleNode(locals[2], locals[0])
+            val node3 = createJimpleNode(locals[0], locals[2])
+            val node4 = createJimpleNode(locals[1], locals[0])
+
+            val node5 = createJimpleNode(locals[1], locals[1])
+            val node6 = createJimpleNode(locals[2], locals[0])
+            val node7 = createJimpleNode(locals[0], locals[2])
+            val node8 = createJimpleNode(locals[1], locals[0])
 
             val node9 = createJimpleNode()
             val node10 = createJimpleNode()
@@ -126,7 +160,12 @@ class PatternDetectorJimpleNodeIntegrationTest : Spek({
             val frequent = PatternDetector(2, 100, GeneralizedNodeComparator())
                 .findPatterns(graphs)
 
-            assertThat(frequent).contains(listOf(node1, node2, node3, node4))
+            assertThat(containsEquivalentPaths(
+                frequent,
+                listOf(
+                    listOf(node1, node2, node3, node4)
+                )
+            ))
         }
 
         it("should find a pattern when nodes don't have the same value but are the same node") {
@@ -146,7 +185,12 @@ class PatternDetectorJimpleNodeIntegrationTest : Spek({
             val frequent = PatternDetector(2, 100, GeneralizedNodeComparator())
                 .findPatterns(graphs)
 
-            assertThat(frequent).contains(listOf(node1, node2, node3))
+            assertThat(containsEquivalentPaths(
+                frequent,
+                listOf(
+                    listOf(node1, node2, node3)
+                )
+            ))
         }
 
         it("should not find a pattern when there are only unique nodes") {
@@ -174,15 +218,17 @@ class PatternDetectorJimpleNodeIntegrationTest : Spek({
 
         // TODO make test pass
         xit("should not find a pattern when multiple patterns use the same values") {
-            val node1 = createJimpleNode("B", "B")
-            val node2 = createJimpleNode("C", "A")
-            val node3 = createJimpleNode("A", "C")
-            val node4 = createJimpleNode("B", "A")
+            val locals = Array(3, { createLocal(it.toString()) })
 
-            val node5 = createJimpleNode("A", "C")
-            val node6 = createJimpleNode("B", "B")
-            val node7 = createJimpleNode("C", "A")
-            val node8 = createJimpleNode("B", "A")
+            val node1 = createJimpleNode(locals[1], locals[1])
+            val node2 = createJimpleNode(locals[2], locals[0])
+            val node3 = createJimpleNode(locals[0], locals[2])
+            val node4 = createJimpleNode(locals[1], locals[0])
+
+            val node5 = createJimpleNode(locals[0], locals[2])
+            val node6 = createJimpleNode(locals[1], locals[1])
+            val node7 = createJimpleNode(locals[2], locals[0])
+            val node8 = createJimpleNode(locals[1], locals[0])
 
             val node9 = createJimpleNode()
             val node10 = createJimpleNode()
