@@ -19,6 +19,6 @@ class IncompleteInitPatternFilterRule : PatternFilterRule<JimpleNode> {
         val firstUnit = firstStatement.statement as? InvokeStmt ?: return true
 
         return (firstUnit.invokeExpr !is JSpecialInvokeExpr || firstUnit.invokeExpr.method.name != "<init>")
-            .also { if (it) logger.debug { "Incomplete init pattern was detected: $pattern" } }
+            .also { if (!it) logger.debug { "Incomplete init pattern was detected: $pattern" } }
     }
 }
