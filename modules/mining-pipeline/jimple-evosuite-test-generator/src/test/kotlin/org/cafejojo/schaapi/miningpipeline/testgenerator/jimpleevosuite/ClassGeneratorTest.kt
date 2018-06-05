@@ -15,6 +15,7 @@ import soot.VoidType
 import soot.jimple.IntConstant
 import soot.jimple.Jimple
 import soot.jimple.StringConstant
+import soot.jimple.internal.JEqExpr
 import soot.options.Options
 import java.io.File
 
@@ -189,5 +190,56 @@ internal object ClassGeneratorTest : Spek({
         }.sootClass.methods.last()
 
         assertThat(jimpleMethod.activeBody.units).hasSize(2)
+    }
+
+    describe("replacing missing targets") {
+        it("should replace now-missing targets in goto statements") {
+            val value = Jimple.v().newLocal("value", RefType.v("myClass"))
+
+            val missingReturnStmt = Jimple.v().newReturnStmt(value)
+            val returnStmt = Jimple.v().newReturnStmt(value)
+            val gotoStmt = Jimple.v().newGotoStmt(missingReturnStmt)
+
+            ClassGenerator("test").apply {
+                generateMethod("method", listOf(gotoStmt, returnStmt).map { JimpleNode(it) })
+            }.sootClass.methods.last()
+
+            assertThat(gotoStmt.target).isEqualTo(returnStmt)
+        }
+
+        it("should replace now-missing targets in if statements") {
+            val value = Jimple.v().newLocal("value", RefType.v("myClass"))
+            val ifCondition = Jimple.v().newConditionExprBox(JEqExpr(value, value)).value
+
+            val missingReturnStmt = Jimple.v().newReturnStmt(value)
+            val returnStmt = Jimple.v().newReturnStmt(value)
+            val ifStmt = Jimple.v().newIfStmt(ifCondition, missingReturnStmt)
+
+            ClassGenerator("test").apply {
+                generateMethod("method", listOf(ifStmt, returnStmt).map { JimpleNode(it) })
+            }.sootClass.methods.last()
+
+            assertThat(ifStmt.target).isEqualTo(returnStmt)
+        }
+
+        it("should replace now-missing targets in switch statements") {
+            val value = Jimple.v().newLocal("value", RefType.v("myClass"))
+
+            val missingReturnStmt = Jimple.v().newReturnStmt(value)
+            val returnStmt = Jimple.v().newReturnStmt(value)
+            val switchStmt = Jimple.v().newLookupSwitchStmt(
+                value,
+                listOf(IntConstant.v(1), IntConstant.v(2)),
+                listOf(missingReturnStmt, returnStmt),
+                missingReturnStmt
+            )
+
+            ClassGenerator("test").apply {
+                generateMethod("method", listOf(switchStmt, returnStmt).map { JimpleNode(it) })
+            }.sootClass.methods.last()
+
+            assertThat(switchStmt.targets[0]).isEqualTo(returnStmt)
+            assertThat(switchStmt.defaultTarget).isEqualTo(returnStmt)
+        }
     }
 })
