@@ -43,7 +43,7 @@ class MiningPipeline<SO : SearchOptions, UP : Project, LP : Project, N : Node>(
 
                 .also { logger.info { "Started generating library usage graphs for ${it.count()} projects." } }
                 .flatMap { libraryUsageGraphGenerator.generate(libraryProject, it) }
-                .also { logger.info { "Successfully generated ${it.count()} library usage graphs." } }
+                .also { logger.info { "Successfully generated ${it.size} library usage graphs." } }
 
                 .also { logger.info { "Started finding patterns in ${it.size} library usage graphs." } }
                 .next(patternDetector::findPatterns)
@@ -58,7 +58,7 @@ class MiningPipeline<SO : SearchOptions, UP : Project, LP : Project, N : Node>(
                 .also { logger.info { "Test generation has finished." } }
 
             logger.info { "Tests have been successfully generated." }
-        } catch (e: RuntimeException) {
+        } catch (e: Exception) {
             logger.error("A critical error occurred during the mining process causing it to be aborted.", e)
         } finally {
             logger.info { "Mining has finished." }

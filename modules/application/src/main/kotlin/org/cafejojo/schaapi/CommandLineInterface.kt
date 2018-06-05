@@ -24,7 +24,7 @@ import java.io.File
 import org.cafejojo.schaapi.miningpipeline.projectcompiler.javamaven.ProjectCompiler as JavaMavenCompiler
 
 private const val DEFAULT_TEST_GENERATOR_TIMEOUT = "60"
-private const val DEFAULT_PATTERN_DETECTOR_MINIMUM_COUNT = "3"
+private const val DEFAULT_PATTERN_DETECTOR_MINIMUM_COUNT = "2"
 private const val DEFAULT_MAX_PROJECTS = "20"
 private const val DEFAULT_MAXIMUM_SEQUENCE_LENGTH = "25"
 
