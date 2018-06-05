@@ -16,7 +16,11 @@ dependencies {
     compile group: "com.fasterxml.jackson.module", name: "jackson-module-kotlin"
     compile group: "com.github.kittinunf.fuel", name: "fuel", version: fuelVersion //for JVM
     compile group: "com.github.kittinunf.fuel", name: "fuel-jackson", version: fuelVersion //for Jackson support
+    compile group: "org.json", name: "json", version: jsonVersion
     compile group: "org.springframework.boot", name: "spring-boot-starter-web"
+
+    testCompile group: "com.nhaarman", name: "mockito-kotlin", version: mockitoKotlinVersion
+    testCompile group: "net.javacrumbs.json-unit", name: "json-unit-fluent", version: jsonUnitVersion
 }
 
 bootJar.enabled = false
