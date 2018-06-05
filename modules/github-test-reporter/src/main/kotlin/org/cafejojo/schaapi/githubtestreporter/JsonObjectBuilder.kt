@@ -4,10 +4,6 @@ import java.util.ArrayDeque
 import java.util.Deque
 import org.json.JSONObject
 
-internal fun json(of: String = "", build: JsonObjectBuilder.() -> Unit): JSONObject {
-    return JsonObjectBuilder().json(build)
-}
-
 internal class JsonObjectBuilder {
     private val deque: Deque<JSONObject> = ArrayDeque()
 
@@ -20,4 +16,8 @@ internal class JsonObjectBuilder {
     infix fun <T> String.to(value: T) {
         deque.peek().put(this, value)
     }
+}
+
+internal fun json(of: String = "", build: JsonObjectBuilder.() -> Unit): JSONObject {
+    return JsonObjectBuilder().json(build)
 }
