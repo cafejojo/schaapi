@@ -4,7 +4,7 @@ import java.util.ArrayDeque
 import java.util.Deque
 import org.json.JSONObject
 
-internal fun json(build: JsonObjectBuilder.() -> Unit): JSONObject {
+internal fun json(of: String = "", build: JsonObjectBuilder.() -> Unit): JSONObject {
     return JsonObjectBuilder().json(build)
 }
 
