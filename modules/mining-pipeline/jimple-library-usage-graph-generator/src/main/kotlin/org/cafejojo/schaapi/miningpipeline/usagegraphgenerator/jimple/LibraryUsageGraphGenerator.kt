@@ -1,11 +1,12 @@
 package org.cafejojo.schaapi.miningpipeline.usagegraphgenerator.jimple
 
+import org.cafejojo.schaapi.miningpipeline.LibraryUsageGraphGenerator
+import org.cafejojo.schaapi.miningpipeline.usagegraphgenerator.jimple.filters.BranchStatementFilter
+import org.cafejojo.schaapi.miningpipeline.usagegraphgenerator.jimple.filters.RecursiveGotoFilter
+import org.cafejojo.schaapi.miningpipeline.usagegraphgenerator.jimple.filters.StatementFilter
 import org.cafejojo.schaapi.models.DfsIterator
 import org.cafejojo.schaapi.models.libraryusagegraph.jimple.JimpleNode
 import org.cafejojo.schaapi.models.project.JavaProject
-import org.cafejojo.schaapi.miningpipeline.LibraryUsageGraphGenerator
-import org.cafejojo.schaapi.miningpipeline.usagegraphgenerator.jimple.filters.BranchStatementFilter
-import org.cafejojo.schaapi.miningpipeline.usagegraphgenerator.jimple.filters.StatementFilter
 import soot.Scene
 import soot.SootClass
 import soot.SootMethod
@@ -66,7 +67,11 @@ object LibraryUsageGraphGenerator : LibraryUsageGraphGenerator<JavaProject, Java
      */
     private fun generateMethodGraph(libraryProject: JavaProject, method: SootMethod): JimpleNode {
         val methodBody = method.retrieveActiveBody()
-        val filters = listOf(StatementFilter(libraryProject), BranchStatementFilter(libraryProject))
+        val filters = listOf(
+            StatementFilter(libraryProject),
+            BranchStatementFilter(libraryProject),
+            RecursiveGotoFilter()
+        )
         filters.forEach { it.apply(methodBody) }
 
         if (methodBody.units.isEmpty()) methodBody.units.add(Jimple.v().newReturnVoidStmt())
