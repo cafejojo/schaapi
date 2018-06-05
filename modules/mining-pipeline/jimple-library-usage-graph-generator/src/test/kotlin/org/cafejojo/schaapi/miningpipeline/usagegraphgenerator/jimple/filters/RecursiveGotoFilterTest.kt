@@ -73,8 +73,8 @@ internal object RecursiveGotoFilterTest : Spek({
             assertThat(filter.retain(goto)).isFalse()
         }
 
-        it("retains a goto of which the target is the first statement which has been removed but there is a statement " +
-            "in between") {
+        it("retains a goto of which the target is the first statement which has been removed but there is a statement "
+            + "in between") {
             val stmtA = Jimple.v().newBreakpointStmt()
             val stmtB = Jimple.v().newBreakpointStmt()
             val goto = Jimple.v().newGotoStmt(stmtA)
