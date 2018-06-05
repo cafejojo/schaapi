@@ -26,10 +26,8 @@ class ProjectMiner<P : Project>(
 ) : ProjectMiner<GitHubSearchOptions, P> {
     private companion object : KLogging()
 
-    private val gitHub: GitHub = GitHub.connectUsingOAuth(token).also {
-        logger.info { "Successfully authenticated using token." }
-        token = ""
-    }
+    private val gitHub: GitHub = GitHub.connectUsingOAuth(token)
+        .also { logger.info { "Successfully authenticated using token." } }
 
     init {
         if (!outputDirectory.isDirectory) outputDirectory.mkdirs()
