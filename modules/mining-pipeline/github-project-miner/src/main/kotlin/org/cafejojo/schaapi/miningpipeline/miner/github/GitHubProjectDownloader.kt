@@ -52,7 +52,6 @@ internal class GitHubProjectDownloader<P : Project>(
             .map { downloadAndSaveProject(it) }
             .toList()
             .filterNotNull()
-            .also { logger.info { "${it.size} extractions of projects from GitHub were successful." } }
 
     private fun downloadAndSaveProject(projectName: String): P? {
         val connection = getConnection(projectName) ?: return null
@@ -87,7 +86,7 @@ internal class GitHubProjectDownloader<P : Project>(
 
         try {
             if (outputFile.exists()) {
-                logger.info("Output file ${outputFile.path} already exists and will be deleted.")
+                logger.debug { "Output file ${outputFile.path} already exists and will be deleted." }
                 outputFile.delete()
             }
 
@@ -107,7 +106,7 @@ internal class GitHubProjectDownloader<P : Project>(
     internal fun unzip(projectZipFile: File): File? {
         val githubProject = File(projectZipFile.parent, projectZipFile.nameWithoutExtension)
         if (githubProject.exists()) {
-            logger.info { "File ${githubProject.path} already exists and will be overwritten." }
+            logger.debug { "File ${githubProject.path} already exists and will be overwritten." }
             githubProject.deleteRecursively()
         }
 
@@ -135,7 +134,7 @@ internal class GitHubProjectDownloader<P : Project>(
 
         try {
             val connection = url.openConnection() as? HttpURLConnection ?: return null
-            logger.info { "Established a connection with '$url'." }
+            logger.debug { "Established a connection with '$url'." }
 
             return connection.apply { requestMethod = "GET" }
         } catch (e: IOException) {
