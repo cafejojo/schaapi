@@ -92,8 +92,7 @@ internal class PathEnumeratorTest : Spek({
             assertThat(paths)
                 .isEqualTo(
                     listOf(
-                        listOf(node1, node2, node3, node4),
-                        listOf(node1, node2, node3, node2, node3, node4)
+                        listOf(node1, node2, node3, node4)
                     )
                 )
         }
@@ -117,9 +116,7 @@ internal class PathEnumeratorTest : Spek({
             assertThat(paths)
                 .isEqualTo(
                     listOf(
-                        listOf(node1, node2, node3, node4, node5, node6),
-                        listOf(node1, node2, node3, node4, node5, node2, node3, node4, node5, node6),
-                        listOf(node1, node2, node3, node4, node3, node4, node5, node6)
+                        listOf(node1, node2, node3, node4, node5, node6)
                     )
                 )
         }

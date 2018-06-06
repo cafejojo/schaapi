@@ -43,13 +43,13 @@ class PathEnumerator<N : Node>(
     }
 
     private fun checkIfExitNodeIsReached(node: Node) =
-        node.successors.filter { hasBeenVisitedAtMostOnce(it) }
+        node.successors.filter { hasNotBeenVisited(it) }
             .find { it == exitNode }
             ?.let { allPaths.add(visited.toMutableList()) }
 
     private fun visitSuccessors(node: Node) =
         node.successors
-            .filter { hasBeenVisitedAtMostOnce(it) && it != exitNode }
+            .filter { hasNotBeenVisited(it) && it != exitNode }
             .forEach {
                 if (visited.size < maximumPathLength) {
                     visited.push(it)
@@ -58,7 +58,7 @@ class PathEnumerator<N : Node>(
                 }
             }
 
-    private fun hasBeenVisitedAtMostOnce(node: Node) = visited.count { it == node } <= 1
+    private fun hasNotBeenVisited(node: Node) = visited.none { it == node }
 }
 
 /**
