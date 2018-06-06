@@ -71,4 +71,4 @@ class WebHookReceiver(val checkReporter: CheckReporter) {
     }
 }
 
-class IncomingWebHookException(message: String) : Exception(message)
+internal class IncomingWebHookException(message: String) : Exception(message)

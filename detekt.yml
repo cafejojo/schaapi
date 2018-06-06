@@ -19,6 +19,8 @@ naming:
     active: false
 
 style:
+  DataClassContainsFunctions:
+    active: false
   MandatoryBracesIfStatements:
     active: false
   ReturnCount:

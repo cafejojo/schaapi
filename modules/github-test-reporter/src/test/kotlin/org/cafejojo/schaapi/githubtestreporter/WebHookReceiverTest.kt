@@ -54,7 +54,7 @@ object WebHookReceiverTest : Spek({
             }
         }.toString()
 
-        assertThatThrownBy({ webHookReceiver.processWebHook("check_suite", body) })
+        assertThatThrownBy { webHookReceiver.processWebHook("check_suite", body) }
             .isInstanceOf(IncomingWebHookException::class.java)
             .hasMessageContaining("general-action")
 
@@ -64,7 +64,7 @@ object WebHookReceiverTest : Spek({
     it("cannot process general GitHub web hooks") {
         val webHookReceiver = WebHookReceiver(mock())
 
-        assertThatThrownBy({ webHookReceiver.processWebHook("general_event", "") })
+        assertThatThrownBy { webHookReceiver.processWebHook("general_event", "") }
             .isInstanceOf(IncomingWebHookException::class.java)
             .hasMessageContaining("general_event")
     }
