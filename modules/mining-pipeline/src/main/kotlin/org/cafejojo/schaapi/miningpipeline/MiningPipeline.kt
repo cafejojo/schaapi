@@ -24,7 +24,7 @@ class MiningPipeline<SO : SearchOptions, UP : Project, LP : Project, N : Node>(
     /**
      * Executes all steps in the pipeline.
      */
-    @Suppress("TooGenericExceptionCaught") // In this case it is relevant to catch and log a RuntimeException
+    @Suppress("TooGenericExceptionCaught") // In this case it is relevant to catch and log an Exception
     fun run(libraryProject: LP) {
         libraryProjectCompiler.compile(libraryProject)
 

@@ -94,6 +94,7 @@ private fun buildOptions(): Options =
             .longOpt("library_dir")
             .desc("The library directory.")
             .hasArg()
+            .required()
             .build())
         .addOption(Option
             .builder("u")
