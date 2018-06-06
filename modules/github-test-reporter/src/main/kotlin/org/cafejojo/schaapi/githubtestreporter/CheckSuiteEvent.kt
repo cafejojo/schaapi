@@ -5,55 +5,14 @@ internal data class CheckSuiteEvent(
     val action: String = "",
     val checkSuite: CheckSuite,
     val repository: Repository
-)
+) {
+    fun isRequested() = action == "requested"
+}
 
 internal data class Installation(val id: Int = 0)
 
-internal data class App(
-    val externalUrl: String,
-    val updatedAt: Int,
-    val htmlUrl: String = "",
-    val name: String = "",
-    val description: String = "",
-    val createdAt: Int = 0,
-    val id: Int = 0
-)
+internal data class CheckSuite(val headBranch: String = "", val headSha: String = "")
 
-internal data class CheckSuite(
-    val app: App,
-    val headCommit: HeadCommit,
-    val headBranch: String = "",
-    val before: String = "",
-    val createdAt: String = "",
-    val headSha: String = "",
-    val url: String = "",
-    val conclusion: String?,
-    val updatedAt: String = "",
-    val uniqueCheckRunsCount: Int = 0,
-    val id: Int = 0,
-    val after: String = "",
-    val checkRunsUrl: String = "",
-    val status: String = ""
-)
+internal data class Repository(val name: String, val owner: Owner)
 
-internal data class Author(
-    val name: String = "",
-    val email: String = ""
-)
-
-internal data class HeadCommit(
-    val treeId: String = "",
-    val author: Author,
-    val id: String = "",
-    val message: String = "",
-    val timestamp: String = ""
-)
-
-internal data class Repository(
-    val name: String,
-    val owner: Owner
-)
-
-internal data class Owner(
-    val login: String
-)
+internal data class Owner(val login: String)
