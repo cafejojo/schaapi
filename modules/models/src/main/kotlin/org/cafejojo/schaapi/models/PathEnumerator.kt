@@ -45,7 +45,7 @@ class PathEnumerator<N : Node>(
     private fun checkIfExitNodeIsReached(node: Node) =
         node.successors.filter { hasNotBeenVisited(it) }
             .find { it == exitNode }
-            ?.let { allPaths.add(visited.toMutableList()) }
+            ?.let { allPaths.add(visited.map { it.copy() }) }
 
     private fun visitSuccessors(node: Node) =
         node.successors

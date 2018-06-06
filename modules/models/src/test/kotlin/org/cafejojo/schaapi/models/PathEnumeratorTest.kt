@@ -8,9 +8,9 @@ import org.jetbrains.spek.api.dsl.it
 internal class PathEnumeratorTest : Spek({
     describe("enumerating all paths in a control flow graph") {
         it("finds a single path in a linear graph") {
-            val node1 = SimpleNode()
-            val node2 = SimpleNode()
-            val node3 = SimpleNode()
+            val node1 = SimpleNodeWithId(1)
+            val node2 = SimpleNodeWithId(2)
+            val node3 = SimpleNodeWithId(3)
 
             node1.successors.addAll(listOf(node2))
             node2.successors.addAll(listOf(node3))
@@ -19,17 +19,17 @@ internal class PathEnumeratorTest : Spek({
             assertThat(paths)
                 .isEqualTo(
                     listOf(
-                        listOf(node1, node2, node3)
+                        listOf(SimpleNodeWithId(1), SimpleNodeWithId(2), SimpleNodeWithId(3))
                     )
                 )
         }
 
         it("finds the paths of a single if-branch") {
-            val node1 = SimpleNode()
-            val node2 = SimpleNode()
-            val node3 = SimpleNode()
-            val node4 = SimpleNode()
-            val node5 = SimpleNode()
+            val node1 = SimpleNodeWithId(1)
+            val node2 = SimpleNodeWithId(2)
+            val node3 = SimpleNodeWithId(3)
+            val node4 = SimpleNodeWithId(4)
+            val node5 = SimpleNodeWithId(5)
 
             node1.successors.addAll(listOf(node2))
             node2.successors.addAll(listOf(node3, node4))
@@ -41,21 +41,21 @@ internal class PathEnumeratorTest : Spek({
             assertThat(paths)
                 .isEqualTo(
                     listOf(
-                        listOf(node1, node2, node3, node5),
-                        listOf(node1, node2, node4, node5)
+                        listOf(SimpleNodeWithId(1), SimpleNodeWithId(2), SimpleNodeWithId(3), SimpleNodeWithId(5)),
+                        listOf(SimpleNodeWithId(1), SimpleNodeWithId(2), SimpleNodeWithId(4), SimpleNodeWithId(5))
                     )
                 )
         }
 
         it("finds the paths of a nested if-branch") {
-            val node1 = SimpleNode()
-            val node2 = SimpleNode()
-            val node3 = SimpleNode()
-            val node4 = SimpleNode()
-            val node5 = SimpleNode()
-            val node6 = SimpleNode()
-            val node7 = SimpleNode()
-            val node8 = SimpleNode()
+            val node1 = SimpleNodeWithId(1)
+            val node2 = SimpleNodeWithId(2)
+            val node3 = SimpleNodeWithId(3)
+            val node4 = SimpleNodeWithId(4)
+            val node5 = SimpleNodeWithId(5)
+            val node6 = SimpleNodeWithId(6)
+            val node7 = SimpleNodeWithId(7)
+            val node8 = SimpleNodeWithId(8)
 
             node1.successors.addAll(listOf(node2))
             node2.successors.addAll(listOf(node3, node4))
@@ -70,18 +70,27 @@ internal class PathEnumeratorTest : Spek({
             assertThat(paths)
                 .isEqualTo(
                     listOf(
-                        listOf(node1, node2, node3, node5, node7, node8),
-                        listOf(node1, node2, node3, node6, node7, node8),
-                        listOf(node1, node2, node4, node8)
+                        listOf(
+                            SimpleNodeWithId(1), SimpleNodeWithId(2), SimpleNodeWithId(3),
+                            SimpleNodeWithId(5), SimpleNodeWithId(7), SimpleNodeWithId(8)
+                        ),
+                        listOf(
+                            SimpleNodeWithId(1), SimpleNodeWithId(2), SimpleNodeWithId(3),
+                            SimpleNodeWithId(6), SimpleNodeWithId(7), SimpleNodeWithId(8)
+                        ),
+                        listOf(
+                            SimpleNodeWithId(1), SimpleNodeWithId(2), SimpleNodeWithId(4),
+                            SimpleNodeWithId(8)
+                        )
                     )
                 )
         }
 
         it("finds the simple path in a graph containing a cycle") {
-            val node1 = SimpleNode()
-            val node2 = SimpleNode()
-            val node3 = SimpleNode()
-            val node4 = SimpleNode()
+            val node1 = SimpleNodeWithId(1)
+            val node2 = SimpleNodeWithId(2)
+            val node3 = SimpleNodeWithId(3)
+            val node4 = SimpleNodeWithId(4)
 
             node1.successors.addAll(listOf(node2))
             node2.successors.addAll(listOf(node3))
@@ -92,18 +101,18 @@ internal class PathEnumeratorTest : Spek({
             assertThat(paths)
                 .isEqualTo(
                     listOf(
-                        listOf(node1, node2, node3, node4)
+                        listOf(SimpleNodeWithId(1), SimpleNodeWithId(2), SimpleNodeWithId(3), SimpleNodeWithId(4))
                     )
                 )
         }
 
         it("finds the simple path in a graph containing a nested cycle") {
-            val node1 = SimpleNode()
-            val node2 = SimpleNode()
-            val node3 = SimpleNode()
-            val node4 = SimpleNode()
-            val node5 = SimpleNode()
-            val node6 = SimpleNode()
+            val node1 = SimpleNodeWithId(1)
+            val node2 = SimpleNodeWithId(2)
+            val node3 = SimpleNodeWithId(3)
+            val node4 = SimpleNodeWithId(4)
+            val node5 = SimpleNodeWithId(5)
+            val node6 = SimpleNodeWithId(6)
 
             node1.successors.addAll(listOf(node2))
             node2.successors.addAll(listOf(node3))
@@ -116,7 +125,10 @@ internal class PathEnumeratorTest : Spek({
             assertThat(paths)
                 .isEqualTo(
                     listOf(
-                        listOf(node1, node2, node3, node4, node5, node6)
+                        listOf(
+                            SimpleNodeWithId(1), SimpleNodeWithId(2), SimpleNodeWithId(3),
+                            SimpleNodeWithId(4), SimpleNodeWithId(5), SimpleNodeWithId(6)
+                        )
                     )
                 )
         }
@@ -124,10 +136,10 @@ internal class PathEnumeratorTest : Spek({
 
     describe("addition of exit nodes to the graph") {
         it("adds an exit node as successor to two leaves") {
-            val node1 = SimpleNode()
-            val node2 = SimpleNode()
-            val node3 = SimpleNode()
-            val node4 = SimpleNode()
+            val node1 = SimpleNodeWithId(1)
+            val node2 = SimpleNodeWithId(2)
+            val node3 = SimpleNodeWithId(3)
+            val node4 = SimpleNodeWithId(4)
 
             node1.successors.addAll(listOf(node2))
             node2.successors.addAll(listOf(node3, node4))
@@ -141,9 +153,9 @@ internal class PathEnumeratorTest : Spek({
         }
 
         it("throws an exception when faced with a tree without leaves") {
-            val node1 = SimpleNode()
-            val node2 = SimpleNode()
-            val node3 = SimpleNode()
+            val node1 = SimpleNodeWithId(1)
+            val node2 = SimpleNodeWithId(2)
+            val node3 = SimpleNodeWithId(3)
 
             node1.successors.add(node2)
             node2.successors.add(node3)
@@ -156,9 +168,9 @@ internal class PathEnumeratorTest : Spek({
 
     describe("removal of exit nodes from the graph") {
         it("removes an exit node from two successor lists") {
-            val node1 = SimpleNode()
-            val node2 = SimpleNode()
-            val node3 = SimpleNode()
+            val node1 = SimpleNodeWithId(1)
+            val node2 = SimpleNodeWithId(2)
+            val node3 = SimpleNodeWithId(3)
 
             node1.successors.addAll(listOf(node2, node3))
 
@@ -171,24 +183,24 @@ internal class PathEnumeratorTest : Spek({
         }
 
         it("keeps the list intact if no exit nodes are present") {
-            val node1 = SimpleNode()
-            val node2 = SimpleNode()
-            val node3 = SimpleNode()
+            val node1 = SimpleNodeWithId(1)
+            val node2 = SimpleNodeWithId(2)
+            val node3 = SimpleNodeWithId(3)
 
             node1.successors.addAll(listOf(node2, node3))
             node1.removeExitNodes()
 
-            assertThat(node1.iterator()).containsExactly(node1, node2, node3)
+            assertThat(node1.iterator()).containsExactly(SimpleNodeWithId(1), SimpleNodeWithId(2), SimpleNodeWithId(3))
         }
     }
 
     describe("enumeration with maximum sequence length restriction") {
         it("should not find paths greater than the maximum length threshold") {
-            val node1 = SimpleNode()
-            val node2 = SimpleNode()
-            val node3 = SimpleNode()
-            val node4 = SimpleNode()
-            val node5 = SimpleNode()
+            val node1 = SimpleNodeWithId(1)
+            val node2 = SimpleNodeWithId(2)
+            val node3 = SimpleNodeWithId(3)
+            val node4 = SimpleNodeWithId(4)
+            val node5 = SimpleNodeWithId(5)
 
             node1.successors.addAll(listOf(node2))
             node2.successors.addAll(listOf(node3, node4))
@@ -199,9 +211,50 @@ internal class PathEnumeratorTest : Spek({
             assertThat(paths)
                 .isEqualTo(
                     listOf(
-                        listOf(node1, node2, node4)
+                        listOf(SimpleNodeWithId(1), SimpleNodeWithId(2), SimpleNodeWithId(4))
                     )
                 )
         }
     }
+
+    describe("duplication of node instances for output paths") {
+        it("does not use original instances for path lists") {
+            val node1 = SimpleNode()
+            val node2 = SimpleNode()
+
+            node1.successors.addAll(listOf(node2))
+
+            val paths = PathEnumerator(node1, 100).enumerate()
+
+            assertThat(paths).hasSize(1)
+            assertThat(paths.first())
+                .doesNotContainAnyElementsOf(listOf(node1, node2))
+        }
+    }
 })
+
+private class SimpleNodeWithId(
+    val id: Int,
+    override val successors: MutableList<Node> = mutableListOf()
+) : SimpleNode(successors) {
+    override fun equivTo(other: Node?) = other is SimpleNodeWithId && this.id == other.id
+
+    override fun equivHashCode() = id
+
+    override fun copy() = SimpleNodeWithId(id, successors.toMutableList())
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as SimpleNodeWithId
+
+        if (id != other.id) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return id
+    }
+}
