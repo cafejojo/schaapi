@@ -32,7 +32,7 @@ class CheckReporter(@Autowired private val appKeyGenerator: AppKeyGenerator) {
         ).let { Fuel.request(it).responseObject<CheckRun>().getResultOrThrowException() }
 
     /**
-     * Reports a 'finish successful' check to GitHub.
+     * Reports a 'finished successful' check to GitHub.
      */
     fun reportSuccess(
         installationId: Int,
