@@ -233,8 +233,10 @@ internal class PathEnumeratorTest : Spek({
     }
 })
 
-private class SimpleNodeWithId(val id: Int, override val successors: MutableList<Node> = mutableListOf()) :
-    SimpleNode(successors) {
+private class SimpleNodeWithId(
+    val id: Int,
+    override val successors: MutableList<Node> = mutableListOf()
+) : SimpleNode(successors) {
     override fun equivTo(other: Node?) = other is SimpleNodeWithId && this.id == other.id
 
     override fun equivHashCode() = id
