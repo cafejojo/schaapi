@@ -87,14 +87,9 @@ data class CheckMessage(val title: String, val summary: String, val text: String
 /**
  * A check run.
  */
-data class CheckRun(
-    val id: Int
-)
+data class CheckRun(val id: Int)
 
 /**
  * An access token for a specific installation.
  */
-internal data class InstallationToken(
-    val token: String,
-    val expiresAt: String
-)
+internal data class InstallationToken(val token: String, val expiresAt: String)
