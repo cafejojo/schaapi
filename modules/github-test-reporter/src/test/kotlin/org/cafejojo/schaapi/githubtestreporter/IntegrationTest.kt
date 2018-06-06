@@ -8,6 +8,7 @@ import org.assertj.core.api.Assertions.entry
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.context.annotation.Bean
@@ -28,6 +29,7 @@ class IntegrationTest {
     private lateinit var restTemplate: TestRestTemplate
 
     @Configuration
+    @SpringBootApplication
     internal open class TestConfig {
         @Bean
         open fun appKeyGenerator(): AppKeyGenerator = mock {

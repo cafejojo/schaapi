@@ -33,6 +33,12 @@ class WebHookReceiver(val checkReporter: CheckReporter) {
             "check_suite" -> {
                 val checkSuiteEvent = mapper.readValue(body, CheckSuiteEvent::class.java)
 
+                if (!checkSuiteEvent.isRequested()) {
+                    throw IncomingWebHookException(
+                        "Cannot process check suite web hooks for action ${checkSuiteEvent.action}."
+                    )
+                }
+
                 println("""
                     I received a check suite event. Here's what I should do next:
 
@@ -58,9 +64,11 @@ class WebHookReceiver(val checkReporter: CheckReporter) {
                     )
                 }
             }
-            else -> throw IllegalStateException("Cannot process webhooks for events of type $eventType.")
+            else -> throw IncomingWebHookException("Cannot process web hooks for events of type $eventType.")
         }
 
         return "Webhook received."
     }
 }
+
+class IncomingWebHookException(message: String) : Exception(message)
