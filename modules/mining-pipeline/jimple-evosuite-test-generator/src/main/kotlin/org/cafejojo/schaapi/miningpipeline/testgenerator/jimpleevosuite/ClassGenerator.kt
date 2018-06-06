@@ -12,8 +12,10 @@ import soot.Type
 import soot.Unit
 import soot.Value
 import soot.VoidType
+import soot.jimple.ArrayRef
 import soot.jimple.GotoStmt
 import soot.jimple.IfStmt
+import soot.jimple.InstanceFieldRef
 import soot.jimple.Jimple
 import soot.jimple.SwitchStmt
 import soot.jimple.internal.JReturnStmt
@@ -93,7 +95,7 @@ internal class ClassGenerator(className: String) {
             jimpleBody.units.add(statement)
             jimpleBody.locals.addAll(statement.defBoxes
                 .map { it.value }
-                .filter { !methodParams.contains(it) }
+                .filter { !methodParams.contains(it) && it !is InstanceFieldRef && it !is ArrayRef }
                 .map { it as? Local ?: throw ValueIsNotLocalException(it) }
             )
 
