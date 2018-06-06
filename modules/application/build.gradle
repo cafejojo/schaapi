@@ -12,6 +12,7 @@ dependencies {
     compile project(":models:jimple-library-usage-graph")
 
     compile project(":mining-pipeline:github-project-miner")
+    compile project(":mining-pipeline:directory-project-miner")
     compile project(":mining-pipeline:java-jar-project-compiler")
     compile project(":mining-pipeline:java-maven-project-compiler")
     compile project(":mining-pipeline:jimple-evosuite-test-generator")
