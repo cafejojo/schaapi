@@ -26,9 +26,6 @@ class ProjectMiner<P : Project>(
 ) : ProjectMiner<GitHubSearchOptions, P> {
     private companion object : KLogging()
 
-    private val gitHub: GitHub = GitHub.connectUsingOAuth(token)
-        .also { logger.info { "Successfully authenticated using token." } }
-
     init {
         if (!outputDirectory.isDirectory) outputDirectory.mkdirs()
     }
@@ -42,8 +39,8 @@ class ProjectMiner<P : Project>(
      * @see GitHubProjectDownloader.download
      */
     override fun mine(searchOptions: GitHubSearchOptions): List<P> {
-        check(!gitHub.isOffline) { "Unable to connect to GitHub." }
-        require(gitHub.isCredentialValid) { "Valid credentials are required to connect to GitHub." }
+        val gitHub: GitHub = GitHub.connectUsingOAuth(token)
+        logger.info { "Successfully authenticated using token." }
 
         val outProjects = outputDirectory.resolve("projects/").apply { mkdirs() }
 
