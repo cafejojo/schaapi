@@ -1,6 +1,8 @@
 package org.cafejojo.schaapi
 
 import org.apache.commons.cli.CommandLine
+import org.apache.commons.cli.Option
+import org.apache.commons.cli.Options
 import org.cafejojo.schaapi.miningpipeline.MiningPipeline
 import org.cafejojo.schaapi.miningpipeline.PatternFilter
 import org.cafejojo.schaapi.miningpipeline.miner.github.MavenProjectSearchOptions
@@ -24,6 +26,40 @@ private const val DEFAULT_MAX_PROJECTS = "20"
  * Assumes that the passed library is a java jar project.
  */
 internal class GithubMiningCommandLineInterface {
+    companion object {
+        internal fun addOptionsTo(options: Options) = options
+            .addOption(Option
+                .builder()
+                .longOpt("github_oauth_token")
+                .desc("Token of GitHub account used for searching.")
+                .hasArg()
+                .build())
+            .addOption(Option
+                .builder()
+                .longOpt("max_projects")
+                .desc("Maximum amount of projects to download from GitHub.")
+                .hasArg()
+                .build())
+            .addOption(Option
+                .builder()
+                .longOpt("library_group_id")
+                .desc("Group id of library mined projects should have a dependency on.")
+                .hasArg()
+                .build())
+            .addOption(Option
+                .builder()
+                .longOpt("library_artifact_id")
+                .desc("Artifact id of library mined projects should have a dependency on.")
+                .hasArg()
+                .build())
+            .addOption(Option
+                .builder()
+                .longOpt("library_version")
+                .desc("Version of library mined projects should have a dependency on.")
+                .hasArg()
+                .build())
+    }
+
     /**
      * Mine GitHub.
      *

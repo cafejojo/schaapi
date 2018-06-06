@@ -21,6 +21,9 @@ internal const val DEFAULT_MAX_SEQUENCE_LENGTH = "25"
  */
 fun main(args: Array<String>) {
     val options = buildOptions()
+        .apply { DirectoryMiningCommandLineInterface.addOptionsTo(this) }
+        .apply { GithubMiningCommandLineInterface.addOptionsTo(this) }
+
     val cmd = parseArgs(options, args) ?: return
 
     val mavenDir = File(cmd.getOptionValue("maven_dir") ?: JavaMavenProject.DEFAULT_MAVEN_HOME.absolutePath)
@@ -51,8 +54,7 @@ private fun buildOptions(): Options =
             .desc("The desired pipeline type")
             .hasArg()
             .required()
-            .build()
-        )
+            .build())
         .addOption(Option
             .builder("o")
             .longOpt("output_dir")
@@ -66,42 +68,6 @@ private fun buildOptions(): Options =
             .desc("The library directory.")
             .hasArg()
             .required()
-            .build())
-        .addOption(Option
-            .builder("u")
-            .longOpt("user_base_dir")
-            .desc("The directory containing user project directories.")
-            .hasArg()
-            .build())
-        .addOption(Option
-            .builder("t")
-            .longOpt("github_oauth_token")
-            .desc("Token of GitHub account used for searching.")
-            .hasArg()
-            .build())
-        .addOption(Option
-            .builder()
-            .longOpt("max_projects")
-            .desc("Maximum amount of projects to download from GitHub.")
-            .hasArg()
-            .build())
-        .addOption(Option
-            .builder()
-            .longOpt("library_group_id")
-            .desc("Group id of library mined projects should have a dependency on.")
-            .hasArg()
-            .build())
-        .addOption(Option
-            .builder()
-            .longOpt("library_artifact_id")
-            .desc("Artifact id of library mined projects should have a dependency on.")
-            .hasArg()
-            .build())
-        .addOption(Option
-            .builder()
-            .longOpt("library_version")
-            .desc("Version of library mined projects should have a dependency on.")
-            .hasArg()
             .build())
         .addOption(Option
             .builder()

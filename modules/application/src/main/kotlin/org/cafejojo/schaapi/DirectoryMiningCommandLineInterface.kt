@@ -1,6 +1,8 @@
 package org.cafejojo.schaapi
 
 import org.apache.commons.cli.CommandLine
+import org.apache.commons.cli.Option
+import org.apache.commons.cli.Options
 import org.cafejojo.schaapi.miningpipeline.MiningPipeline
 import org.cafejojo.schaapi.miningpipeline.PatternFilter
 import org.cafejojo.schaapi.miningpipeline.miner.directory.DirectorySearchOptions
@@ -21,6 +23,16 @@ import java.io.File
  * Assumes that the passed library is a java maven project.
  */
 internal class DirectoryMiningCommandLineInterface {
+    companion object {
+        internal fun addOptionsTo(options: Options) = options
+            .addOption(Option
+                .builder("u")
+                .longOpt("user_base_dir")
+                .desc("The directory containing user project directories.")
+                .hasArg()
+                .build())
+    }
+
     /**
      * Mines a Directory.
      *
