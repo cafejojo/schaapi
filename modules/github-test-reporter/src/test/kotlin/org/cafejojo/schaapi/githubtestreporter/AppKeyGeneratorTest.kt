@@ -10,7 +10,7 @@ object AppKeyGeneratorTest : Spek({
         System.setProperty("app_id", "12345")
         System.setProperty("app_private_key_location", getResourcePath("/pkcs8_key"))
 
-        val key = AppKeyGenerator.create()
+        val key = AppKeyGenerator().create()
 
         assertThat(key).isNotEmpty()
     }

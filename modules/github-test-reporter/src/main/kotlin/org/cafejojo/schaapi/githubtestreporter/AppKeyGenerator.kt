@@ -2,6 +2,7 @@ package org.cafejojo.schaapi.githubtestreporter
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
+import org.springframework.stereotype.Service
 import java.io.File
 import java.security.KeyFactory
 import java.security.interfaces.RSAPrivateKey
@@ -9,12 +10,13 @@ import java.security.spec.PKCS8EncodedKeySpec
 import java.util.Calendar
 import java.util.Date
 
+private const val EXPIRE_AFTER_MINUTES = 10
+
 /**
  * JWT token generator used for authentication as GitHub app.
  */
-object AppKeyGenerator {
-    private const val EXPIRE_AFTER_MINUTES = 10
-
+@Service
+class AppKeyGenerator {
     /**
      * Creates an app key.
      */
