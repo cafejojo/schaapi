@@ -14,8 +14,6 @@ rootProject.name = "schaapi"
 
 includeModule "application"
 
-includeModule "github-test-reporter"
-
 includeModule "models"
 includeModule "models", "jimple-library-usage-graph"
 includeModule "models", "java-project"
@@ -33,6 +31,7 @@ includeModule "mining-pipeline", "ccspan-pattern-detector"
 includeModule "mining-pipeline", "spam-pattern-detector"
 
 includeModule "validation-pipeline"
+includeModule "validation-pipeline", "github-test-reporter"
 includeModule "validation-pipeline", "junit-test-runner"
 
 includeModule "web"
