@@ -24,8 +24,8 @@ import java.io.File
  */
 internal class DirectoryMiningCommandLineInterface {
     internal companion object {
-        fun addOptionsTo(options: Options): Options = options
-            .addOption(Option
+        fun addOptionsTo(options: Options): Options =
+            options.addOption(Option
                 .builder("u")
                 .longOpt("user_base_dir")
                 .desc("The directory containing user project directories.")

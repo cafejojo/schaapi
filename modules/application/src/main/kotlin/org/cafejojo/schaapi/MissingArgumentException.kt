@@ -7,5 +7,5 @@ internal class MissingArgumentException(argument: String) : RuntimeException("Mi
     /**
      * Creates specific message for the desired pipeline flavor.
      */
-    fun messageForFlavor(flavor: String): String = "${this.message} Was required for pipeline flavor $flavor."
+    fun messageForFlavor(flavor: String): String = "${this.message} was required for pipeline flavor $flavor."
 }

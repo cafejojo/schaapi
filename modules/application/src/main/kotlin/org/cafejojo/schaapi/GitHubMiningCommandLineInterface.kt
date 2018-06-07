@@ -27,37 +27,38 @@ internal const val DEFAULT_MAX_PROJECTS = "20"
  */
 internal class GitHubMiningCommandLineInterface {
     internal companion object {
-        fun addOptionsTo(options: Options): Options = options
-            .addOption(Option
-                .builder()
-                .longOpt("github_oauth_token")
-                .desc("Token of GitHub account used for searching.")
-                .hasArg()
-                .build())
-            .addOption(Option
-                .builder()
-                .longOpt("max_projects")
-                .desc("Maximum amount of projects to download from GitHub.")
-                .hasArg()
-                .build())
-            .addOption(Option
-                .builder()
-                .longOpt("library_group_id")
-                .desc("Group id of library mined projects should have a dependency on.")
-                .hasArg()
-                .build())
-            .addOption(Option
-                .builder()
-                .longOpt("library_artifact_id")
-                .desc("Artifact id of library mined projects should have a dependency on.")
-                .hasArg()
-                .build())
-            .addOption(Option
-                .builder()
-                .longOpt("library_version")
-                .desc("Version of library mined projects should have a dependency on.")
-                .hasArg()
-                .build())
+        fun addOptionsTo(options: Options): Options =
+            options
+                .addOption(Option
+                    .builder()
+                    .longOpt("github_oauth_token")
+                    .desc("Token of GitHub account used for searching.")
+                    .hasArg()
+                    .build())
+                .addOption(Option
+                    .builder()
+                    .longOpt("max_projects")
+                    .desc("Maximum amount of projects to download from GitHub.")
+                    .hasArg()
+                    .build())
+                .addOption(Option
+                    .builder()
+                    .longOpt("library_group_id")
+                    .desc("Group id of library mined projects should have a dependency on.")
+                    .hasArg()
+                    .build())
+                .addOption(Option
+                    .builder()
+                    .longOpt("library_artifact_id")
+                    .desc("Artifact id of library mined projects should have a dependency on.")
+                    .hasArg()
+                    .build())
+                .addOption(Option
+                    .builder()
+                    .longOpt("library_version")
+                    .desc("Version of library mined projects should have a dependency on.")
+                    .hasArg()
+                    .build())
     }
 
     /**
@@ -65,7 +66,6 @@ internal class GitHubMiningCommandLineInterface {
      *
      * @throws [MissingArgumentException] if required arguments not set in [CommandLine].
      */
-    @Suppress("ThrowsCount") // No real reason to do it differently
     fun run(cmd: CommandLine, mavenDir: File, library: File, output: File) {
         val token = cmd.getOptionOrThrowException("github_oauth_token")
         val maxProjects = cmd.getOptionOrDefault("max_projects", DEFAULT_MAX_PROJECTS).toInt()

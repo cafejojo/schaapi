@@ -28,7 +28,7 @@ class MiningPipeline<SO : SearchOptions, UP : Project, LP : Project, N : Node>(
     fun run(libraryProject: LP) {
         logger.info { "Compiling library project." }
         libraryProjectCompiler.compile(libraryProject)
-        logger.info { "Compiled library project" }
+        logger.info { "Compiled library project." }
 
         logger.info { "Mining has started." }
         logger.info { "Output directory is ${outputDirectory.absolutePath}." }

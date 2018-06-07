@@ -1,5 +1,6 @@
 package org.cafejojo.schaapi
 
+import mu.KLogging
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
@@ -40,10 +41,10 @@ fun main(args: Array<String>) {
         when (flavor) {
             "directory" -> DirectoryMiningCommandLineInterface().run(cmd, mavenDir, library, output)
             "github" -> GitHubMiningCommandLineInterface().run(cmd, mavenDir, library, output)
-            else -> println("Given pipeline_type was not recognized.")
+            else -> KLogging().logger.error { "Given pipeline flavor was not recognized." }
         }
     } catch (e: MissingArgumentException) {
-        println(e.messageForFlavor(flavor))
+        KLogging().logger.error { e.messageForFlavor(flavor) }
     }
 }
 
