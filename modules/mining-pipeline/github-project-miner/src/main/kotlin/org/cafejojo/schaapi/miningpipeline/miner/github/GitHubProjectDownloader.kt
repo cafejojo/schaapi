@@ -79,28 +79,28 @@ internal class GitHubProjectDownloader<P : Project>(
 
     internal fun saveZipToFile(input: InputStream, projectName: String): File? {
         val alphaNumericRegex = Regex("[^A-Za-z0-9]")
-        val outputFile = File(
+        val zipFile = File(
             outputDirectory,
             "${alphaNumericRegex.replace(projectName, "")}${projectNames.indexOf(projectName)}.zip"
         )
 
         try {
-            if (outputFile.exists()) {
-                logger.debug { "Output file ${outputFile.path} already exists and will be deleted." }
-                outputFile.delete()
+            if (zipFile.exists()) {
+                logger.debug { "Output file ${zipFile.path} already exists and will be deleted." }
+                zipFile.delete()
             }
 
-            if (outputFile.createNewFile()) {
-                input.copyTo(FileOutputStream(outputFile))
+            if (zipFile.createNewFile()) {
+                input.copyTo(FileOutputStream(zipFile))
             } else {
-                logger.warn("Output file ${outputFile.path} could not be created.")
+                logger.warn("Output file ${zipFile.path} could not be created.")
             }
         } catch (e: IOException) {
-            logger.warn("Could not save project to ${outputFile.path}.", e)
+            logger.warn("Could not save project to ${zipFile.path}.", e)
             return null
         }
 
-        return outputFile
+        return zipFile
     }
 
     internal fun unzip(projectZipFile: File): File? {
@@ -112,16 +112,18 @@ internal class GitHubProjectDownloader<P : Project>(
 
         try {
             ZipUtil.unpack(projectZipFile, githubProject)
-            logger.debug { "Successfully unzipped file ${projectZipFile.name}." }
+            logger.debug { "Successfully unzipped file ${projectZipFile.absolutePath}." }
         } catch (e: IOException) {
-            logger.warn("Could not unzip ${projectZipFile.name}.", e)
+            logger.warn("Could not unzip ${projectZipFile.absolutePath}.", e)
             return null
         } catch (e: ZipException) {
-            logger.warn("Could not unzip ${projectZipFile.name}.", e)
+            logger.warn("Could not unzip ${projectZipFile.absolutePath}.", e)
             return null
         } finally {
+            projectZipFile.outputStream().close()
+
             if (projectZipFile.exists()) {
-                logger.debug { "Deleting $projectZipFile." }
+                logger.debug { "Deleting ${projectZipFile.absolutePath}." }
                 projectZipFile.delete()
             }
         }
