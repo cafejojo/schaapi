@@ -16,3 +16,8 @@ interface ProjectCompiler<P : Project> {
      */
     fun compile(project: P): P
 }
+
+/**
+ * Exception thrown when a non-critical exception occured during compilation.
+ */
+abstract class CompilationException(message: String? = null) : RuntimeException(message)

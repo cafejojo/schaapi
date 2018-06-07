@@ -6,23 +6,26 @@ import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Option
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
-import org.cafejojo.schaapi.models.libraryusagegraph.jimple.GeneralizedNodeComparator
-import org.cafejojo.schaapi.models.project.JavaMavenProject
-import org.cafejojo.schaapi.miningpipeline.PatternFilter
 import org.cafejojo.schaapi.miningpipeline.MiningPipeline
-import org.cafejojo.schaapi.miningpipeline.miner.directory.DirectorySearchOptions
-import org.cafejojo.schaapi.miningpipeline.miner.directory.ProjectMiner
+import org.cafejojo.schaapi.miningpipeline.PatternFilter
+import org.cafejojo.schaapi.miningpipeline.miner.github.MavenProjectSearchOptions
+import org.cafejojo.schaapi.miningpipeline.miner.github.ProjectMiner
 import org.cafejojo.schaapi.miningpipeline.patterndetector.ccspan.PatternDetector
 import org.cafejojo.schaapi.miningpipeline.patternfilter.jimple.IncompleteInitPatternFilterRule
 import org.cafejojo.schaapi.miningpipeline.patternfilter.jimple.LengthPatternFilterRule
+import org.cafejojo.schaapi.miningpipeline.projectcompiler.javajar.ProjectCompiler
 import org.cafejojo.schaapi.miningpipeline.projectcompiler.javamaven.MavenInstaller
 import org.cafejojo.schaapi.miningpipeline.testgenerator.jimpleevosuite.TestGenerator
 import org.cafejojo.schaapi.miningpipeline.usagegraphgenerator.jimple.LibraryUsageGraphGenerator
+import org.cafejojo.schaapi.models.libraryusagegraph.jimple.GeneralizedNodeComparator
+import org.cafejojo.schaapi.models.project.JavaJarProject
+import org.cafejojo.schaapi.models.project.JavaMavenProject
 import java.io.File
 import org.cafejojo.schaapi.miningpipeline.projectcompiler.javamaven.ProjectCompiler as JavaMavenCompiler
 
 private const val DEFAULT_TEST_GENERATOR_TIMEOUT = "60"
-private const val DEFAULT_PATTERN_DETECTOR_MINIMUM_COUNT = "3"
+private const val DEFAULT_PATTERN_DETECTOR_MINIMUM_COUNT = "2"
+private const val DEFAULT_MAX_PROJECTS = "20"
 private const val DEFAULT_MAXIMUM_SEQUENCE_LENGTH = "25"
 
 /**
@@ -36,8 +39,13 @@ fun main(args: Array<String>) {
 
     val mavenDir = File(cmd.getOptionValue("maven_dir") ?: JavaMavenProject.DEFAULT_MAVEN_HOME.absolutePath)
     val output = File(cmd.getOptionValue('o')).apply { mkdirs() }
-    val library = JavaMavenProject(File(cmd.getOptionValue('l')), mavenDir)
-    val userBaseDir = File(cmd.getOptionValue('u'))
+    val library = JavaJarProject(File(cmd.getOptionValue('l')))
+
+    val token = cmd.getOptionValue("github_oauth_token") ?: return
+    val maxProjects = cmd.getOptionOrDefault("max_projects", DEFAULT_MAX_PROJECTS).toInt()
+    val groupId = cmd.getOptionValue("library_group_id") ?: return
+    val artifactId = cmd.getOptionValue("library_artifact_id") ?: return
+    val version = cmd.getOptionValue("library_version") ?: return
 
     if (!mavenDir.resolve("bin/mvn").exists() || cmd.hasOption("repair_maven")) {
         MavenInstaller().installMaven(mavenDir)
@@ -47,9 +55,10 @@ fun main(args: Array<String>) {
     val testGeneratorEnableOutput = cmd.hasOption("test_generator_enable_output")
 
     MiningPipeline(
-        projectMiner = ProjectMiner { JavaMavenProject(it, mavenDir) },
-        searchOptions = DirectorySearchOptions(userBaseDir),
-        libraryProjectCompiler = JavaMavenCompiler(),
+        outputDirectory = output,
+        projectMiner = ProjectMiner(token, output) { JavaMavenProject(it, mavenDir) },
+        searchOptions = MavenProjectSearchOptions(groupId, artifactId, version, maxProjects),
+        libraryProjectCompiler = ProjectCompiler(),
         userProjectCompiler = JavaMavenCompiler(),
         libraryUsageGraphGenerator = LibraryUsageGraphGenerator,
         patternDetector = PatternDetector(
@@ -91,6 +100,38 @@ private fun buildOptions(): Options =
             .builder("u")
             .longOpt("user_base_dir")
             .desc("The directory containing user project directories.")
+            .hasArg()
+            .build())
+        .addOption(Option
+            .builder("t")
+            .longOpt("github_oauth_token")
+            .desc("Token of GitHub account used for searching.")
+            .hasArg()
+            .build())
+        .addOption(Option
+            .builder()
+            .longOpt("max_projects")
+            .desc("Maximum amount of projects to download from GitHub.")
+            .hasArg()
+            .build())
+        .addOption(Option
+            .builder()
+            .longOpt("library_group_id")
+            .desc("Group id of library mined projects should have a dependency on.")
+            .hasArg()
+            .required()
+            .build())
+        .addOption(Option
+            .builder()
+            .longOpt("library_artifact_id")
+            .desc("Artifact id of library mined projects should have a dependency on.")
+            .hasArg()
+            .required()
+            .build())
+        .addOption(Option
+            .builder()
+            .longOpt("library_version")
+            .desc("Version of library mined projects should have a dependency on.")
             .hasArg()
             .required()
             .build())

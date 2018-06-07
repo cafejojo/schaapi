@@ -1,7 +1,8 @@
 package org.cafejojo.schaapi.miningpipeline.miner.github
 
-import org.cafejojo.schaapi.models.Project
+import mu.KLogging
 import org.cafejojo.schaapi.miningpipeline.ProjectMiner
+import org.cafejojo.schaapi.models.Project
 import org.kohsuke.github.GitHub
 import java.io.File
 
@@ -13,17 +14,18 @@ import java.io.File
  * file which likely contain searchContent dependency on the desired library. No guarantees however are given, as GitHub
  * does not provide information on which projects have searchContent dependency on searchContent given library.
  *
- * @property username username of GitHub user
- * @property password password of GitHub user
+ * @property token gitub token
  * @property outputDirectory directory to store all the project directories. If directory doesn't exit new directory
  * is created
  * @property projectPacker packer which determines what type of [Project] to wrap the project directory in
  */
 class ProjectMiner<P : Project>(
-    private val username: String, private val password: String,
+    private var token: String,
     private val outputDirectory: File,
     private val projectPacker: (File) -> P
 ) : ProjectMiner<GitHubSearchOptions, P> {
+    private companion object : KLogging()
+
     init {
         if (!outputDirectory.isDirectory) outputDirectory.mkdirs()
     }
@@ -37,12 +39,12 @@ class ProjectMiner<P : Project>(
      * @see GitHubProjectDownloader.download
      */
     override fun mine(searchOptions: GitHubSearchOptions): List<P> {
-        val gitHub = GitHub.connectUsingPassword(username, password)
+        val gitHub: GitHub = GitHub.connectUsingOAuth(token)
+        logger.info { "Successfully authenticated using token." }
 
-        require(!gitHub.isOffline) { "Unable to connect to GitHub." }
-        require(gitHub.isCredentialValid) { "Valid credentials are required to connect to GitHub." }
+        val outProjects = outputDirectory.resolve("projects/").apply { mkdirs() }
 
         val projectNames = searchOptions.searchContent(gitHub)
-        return GitHubProjectDownloader(projectNames, outputDirectory, projectPacker).download()
+        return GitHubProjectDownloader(projectNames, outProjects, projectPacker).download()
     }
 }
