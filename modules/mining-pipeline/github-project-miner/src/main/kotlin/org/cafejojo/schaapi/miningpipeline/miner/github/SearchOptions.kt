@@ -16,6 +16,11 @@ abstract class GitHubSearchOptions(private val maxProjects: Int) : SearchOptions
     var sortByStargazers = false
     var sortByWatchers = false
 
+    private fun <T> Iterable<T>.averageOf(selector: (T) -> Int): Double {
+        val sum = this.map { selector(it) }.sum()
+        return if (this.count() > 0) sum.toDouble().div(this.count()) else 0.0
+    }
+
     /**
      * Search content on GitHub with the given options and return a list of the full names of the found repositories.
      *
@@ -46,23 +51,24 @@ abstract class GitHubSearchOptions(private val maxProjects: Int) : SearchOptions
 
         val max = githubRepositories.first().owner
         val min = githubRepositories.last().owner
+
         logger.info { "Maximum stargazers: ${max.stargazersCount}, repository: ${max.fullName}." }
         logger.info { "Minimum stargazers: ${min.stargazersCount}, repository: ${min.fullName}." }
-        logger.info { "Average stargazers: ${githubRepositories.sumBy { it.owner.stargazersCount }}." }
+        logger.info { "Average stargazers: ${githubRepositories.averageOf { it.owner.stargazersCount }}." }
 
         return githubRepositories
     }
 
     private fun sortByWatchers(githubRepositories: PagedSearchIterable<GHContent>): PagedSearchIterable<GHContent> {
         githubRepositories
-            .also { logger.info { "Sorting owners by watcher count count." } }
+            .also { logger.info { "Sorting owners by watcher count." } }
             .sortedByDescending { it.owner.watchers }
 
         val max = githubRepositories.first().owner
         val min = githubRepositories.last().owner
         logger.info { "Maximum watchers: ${max.watchers}, repository: ${max.watchers}." }
         logger.info { "Minimum watchers: ${min.watchers}, repository: ${min.watchers}." }
-        logger.info { "Average watchers: ${githubRepositories.sumBy { it.owner.watchers }}." }
+        logger.info { "Average watchers: ${githubRepositories.averageOf { it.owner.watchers }}." }
 
         return githubRepositories
     }
