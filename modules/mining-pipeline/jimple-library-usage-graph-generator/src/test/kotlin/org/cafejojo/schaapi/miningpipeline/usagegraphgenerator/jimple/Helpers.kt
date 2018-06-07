@@ -7,7 +7,7 @@ internal data class TestProject(
     override var classpath: String = "",
     override var classNames: List<String> = emptyList()
 ) : JavaProject {
-    override val classDir: File = File(".")
+    override val classDirs: List<File> = listOf(File("."))
     override val dependencyDir: File = File(".")
     override var dependencies: List<File> = emptyList()
     override val projectDir: File = File(".")
