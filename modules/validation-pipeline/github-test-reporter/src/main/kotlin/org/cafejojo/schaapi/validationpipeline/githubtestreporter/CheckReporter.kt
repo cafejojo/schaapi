@@ -74,8 +74,7 @@ class CheckReporter(@Autowired private val appKeyGenerator: AppKeyGenerator) {
         ).let { Fuel.request(it).responseObject<CheckRun>().getResultOrThrowException() }
 
     internal fun requestInstallationToken(installationId: Int) =
-        Fuel.request(GitHubApi.accessTokenFor(installationId,
-            appKeyGenerator.create()))
+        Fuel.request(GitHubApi.accessTokenFor(installationId, appKeyGenerator.create()))
             .responseObject<InstallationToken>()
             .getResultOrThrowException()
 }

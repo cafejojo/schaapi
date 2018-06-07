@@ -8,8 +8,7 @@ import java.net.URLDecoder
 object AppKeyGeneratorTest : Spek({
     it("generates a jwt token to authenticate as GitHub app") {
         System.setProperty("app_id", "12345")
-        System.setProperty("app_private_key_location",
-            getResourcePath("/pkcs8_key"))
+        System.setProperty("app_private_key_location", getResourcePath("/pkcs8_key"))
 
         val key = AppKeyGenerator().create()
 

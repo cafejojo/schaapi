@@ -15,14 +15,11 @@ object Properties {
             System.getProperties().load(FileInputStream("githubtestreporter.properties"))
         }
 
-        appId =
-            getProperty("app_id")
-        appPrivateKeyLocation =
-            getProperty("app_private_key_location")
+        appId = getProperty("app_id")
+        appPrivateKeyLocation = getProperty("app_private_key_location")
     }
 
-    private fun getProperty(name: String) = System.getProperty(name) ?: throw PropertyNotSetException(
-        name)
+    private fun getProperty(name: String) = System.getProperty(name) ?: throw PropertyNotSetException(name)
 }
 
 private class PropertyNotSetException(propertyName: String) : RuntimeException("Property `$propertyName` is not set.")
