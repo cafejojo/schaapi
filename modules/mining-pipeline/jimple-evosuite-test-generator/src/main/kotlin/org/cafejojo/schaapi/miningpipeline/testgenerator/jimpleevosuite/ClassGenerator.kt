@@ -95,7 +95,10 @@ internal class ClassGenerator(className: String) {
             jimpleBody.units.add(statement)
             jimpleBody.locals.addAll(statement.defBoxes
                 .map { it.value }
-                .filterNot { methodParams.contains(it) || it is InstanceFieldRef || it is ArrayRef }
+                .filterNot {
+                    methodParams.contains(it) || jimpleBody.locals.contains(it)
+                        || it is InstanceFieldRef || it is ArrayRef
+                }
                 .map { it as? Local ?: throw ValueIsNotLocalException(it) }
             )
 
