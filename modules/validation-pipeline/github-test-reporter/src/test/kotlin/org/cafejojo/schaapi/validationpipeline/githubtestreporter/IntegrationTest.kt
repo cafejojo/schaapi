@@ -61,7 +61,7 @@ class IntegrationTest {
     }
 
     @Test
-    fun `it can receive a check suite start web hook`() {
+    fun `it can receive a 'check suite started' web hook`() {
         val (futureRequest, _) = mockHttpClient(
             json("installation token request response") {
                 "token" to "this-is-the-installation-token"
@@ -97,7 +97,7 @@ class IntegrationTest {
     }
 
     @Test
-    fun `it can receive a installation created web hook`() {
+    fun `it can receive an 'installation created' web hook`() {
         val requestJson = IntegrationTest::class.java
             .getResourceAsStream("/fixtures/github/installation_created_webhook.resp").bufferedReader().readText()
 
@@ -117,7 +117,7 @@ class IntegrationTest {
     }
 
     @Test
-    fun `it can receive a installation deleted web hook`() {
+    fun `it can receive an 'installation deleted' web hook`() {
         val requestJson = IntegrationTest::class.java
             .getResourceAsStream("/fixtures/github/installation_deleted_webhook.resp").bufferedReader().readText()
 
