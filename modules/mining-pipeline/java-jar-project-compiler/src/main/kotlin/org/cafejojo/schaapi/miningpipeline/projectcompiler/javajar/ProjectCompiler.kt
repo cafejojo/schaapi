@@ -14,7 +14,7 @@ class ProjectCompiler : ProjectCompiler<JavaJarProject> {
 
     override fun compile(project: JavaJarProject): JavaJarProject {
         val classNames = mutableListOf<String>()
-        val jarInputStream = JarInputStream(FileInputStream(project.classDir))
+        val jarInputStream = JarInputStream(FileInputStream(project.classDirs.first()))
         var jarEntry = jarInputStream.nextJarEntry
 
         if (jarEntry == null) {

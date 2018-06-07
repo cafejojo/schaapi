@@ -17,16 +17,26 @@ class ProjectCompiler : ProjectCompiler<JavaMavenProject> {
     override fun compile(project: JavaMavenProject): JavaMavenProject {
         runMaven(project)
 
-        project.classes = project.classDir.walk().filter { it.isFile && it.extension == "class" }.toList()
-        project.classNames = project.classes.map {
-            it.relativeTo(project.classDir).toString().dropLast(".class".length).replace(File.separatorChar, '.')
+        val classes = mutableListOf<File>()
+        val classNames = mutableListOf<String>()
+        project.classDirs.forEach { classDir ->
+            val newClasses = classDir.walk().filter { it.isFile && it.extension == "class" }.toList()
+            classes.addAll(newClasses)
+            classNames.addAll(newClasses.map {
+                it.relativeTo(classDir).toString().dropLast(".class".length).replace(File.separatorChar, '.')
+            })
         }
+        project.classes = classes
+        project.classNames = classNames
+
         project.dependencies = project.dependencyDir.listFiles().orEmpty().toList()
+
+        val classDirClassPath = project.classDirs.joinToString(File.pathSeparator) { it.absolutePath }
         project.classpath =
             if (project.dependencies.isEmpty()) {
-                project.classDir.absolutePath
+                classDirClassPath
             } else {
-                project.classDir.absolutePath + File.pathSeparator +
+                classDirClassPath + File.pathSeparator +
                     project.dependencies.joinToString(File.pathSeparator) { it.absolutePath }
             }
 

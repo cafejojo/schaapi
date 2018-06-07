@@ -8,9 +8,9 @@ import java.io.File
  */
 interface JavaProject : Project {
     /**
-     * The directory containing the project's compiled class files.
+     * The directories containing the project's compiled class files.
      */
-    val classDir: File
+    val classDirs: List<File>
 
     /**
      * The directory containing the project's dependencies as JARs.
