@@ -102,6 +102,24 @@ internal object ClassGeneratorTest : Spek({
             assertThat(jimpleMethod.activeBody.parameterLocals.map { it.name }).containsExactly(b.name, a.name)
         }
 
+        it("should ignore unbound static field references") {
+            val classWithAField = SootClass("ClassWithAField", Modifier.PUBLIC)
+                .apply { addField(SootField("field", IntType.v(), Modifier.STATIC + Modifier.PUBLIC)) }
+
+            val a = Jimple.v().newLocal("a", IntType.v())
+            val b = Jimple.v().newLocal("b", classWithAField.type)
+            val c = Jimple.v().newStaticFieldRef(AbstractSootFieldRef(classWithAField, "field", IntType.v(), true))
+
+            val assignC = Jimple.v().newAssignStmt(c, a)
+
+            val jimpleMethod = ClassGenerator("class").apply {
+                generateMethod("method", listOf(assignC).map { JimpleNode(it) })
+            }.sootClass.methods.last()
+
+            assertThat(jimpleMethod.parameterTypes).containsExactly(IntType.v())
+            assertThat(jimpleMethod.activeBody.parameterLocals.map { it.name }).containsExactly(a.name)
+        }
+
         it("generates a class with the correct name") {
             val generator = ClassGenerator("ghjk")
             assertThat(generator.sootClass.name).isEqualTo("ghjk")
