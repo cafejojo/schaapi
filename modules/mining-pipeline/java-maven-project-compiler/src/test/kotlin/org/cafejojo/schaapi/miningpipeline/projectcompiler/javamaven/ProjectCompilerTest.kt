@@ -82,6 +82,28 @@ internal object ProjectCompilerTest : Spek({
             )
         }
 
+        it("compiles simple projects with a test class") {
+            setUpTestFiles("/ProjectCompiler/simple-with-tests", target)
+
+            val project = JavaMavenProject(target, mavenHome)
+            ProjectCompiler().compile(project)
+
+            assertThat(project.projectDir).isEqualTo(target)
+            assertThat(project.classes).containsExactlyInAnyOrder(
+                target.resolve("target/classes/org/cafejojo/schaapi/test/MyClass.class"),
+                target.resolve("target/test-classes/org/cafejojo/schaapi/test/MyTestClass.class")
+            )
+            assertThat(project.classNames).containsExactlyInAnyOrder(
+                "org.cafejojo.schaapi.test.MyClass",
+                "org.cafejojo.schaapi.test.MyTestClass"
+            )
+            assertThat(project.dependencies).isEmpty()
+            assertThat(project.classpath.split(File.pathSeparator)).containsExactlyInAnyOrder(
+                target.resolve("target/classes").absolutePath,
+                target.resolve("target/test-classes").absolutePath
+            )
+        }
+
         it("compiles projects with dependencies") {
             setUpTestFiles("/ProjectCompiler/dependencies", target)
 
