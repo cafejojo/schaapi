@@ -164,21 +164,21 @@ internal class ClassGenerator(className: String) {
 /**
  * Duplicates the list of [JimpleNode]s, restoring references between [Stmt]s.
  */
-internal fun List<JimpleNode>.duplicate(): List<JimpleNode> {
-    val oldToNewNodes = mutableMapOf<Stmt, Stmt>()
-    val newNodes = this.map { oldNode ->
-        oldNode.copy().also { oldToNewNodes[oldNode.statement] = it.statement }
-    }
+private fun List<JimpleNode>.duplicate(): List<JimpleNode> {
+    val newNodes = this.map { it.copy() }
+    val oldToNewStatements = newNodes.mapIndexed { index, newNode ->
+        get(index).statement to newNode.statement
+    }.toMap()
 
     newNodes.forEach {
         val statement = it.statement
         when (statement) {
-            is GotoStmt -> statement.target = oldToNewNodes[statement]
-            is IfStmt -> statement.setTarget(oldToNewNodes[statement])
+            is GotoStmt -> statement.target = oldToNewStatements[statement]
+            is IfStmt -> statement.setTarget(oldToNewStatements[statement])
             is SwitchStmt -> {
-                statement.defaultTarget = oldToNewNodes[statement]
+                statement.defaultTarget = oldToNewStatements[statement]
                 statement.targets.forEachIndexed { index, target ->
-                    statement.setTarget(index, oldToNewNodes[target])
+                    statement.setTarget(index, oldToNewStatements[target])
                 }
             }
         }
