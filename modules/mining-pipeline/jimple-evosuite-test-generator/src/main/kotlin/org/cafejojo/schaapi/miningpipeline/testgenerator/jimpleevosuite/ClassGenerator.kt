@@ -17,6 +17,7 @@ import soot.jimple.GotoStmt
 import soot.jimple.IfStmt
 import soot.jimple.InstanceFieldRef
 import soot.jimple.Jimple
+import soot.jimple.Stmt
 import soot.jimple.SwitchStmt
 import soot.jimple.internal.JReturnStmt
 import soot.jimple.internal.JReturnVoidStmt
@@ -55,7 +56,7 @@ internal class ClassGenerator(className: String) {
      * @param nodes a list of [Node]s which should be converted into a method
      */
     fun generateMethod(methodName: String, nodes: List<JimpleNode>) {
-        val statements = nodes.map { it.statement }
+        val statements = nodes.duplicate().map { it.statement }
         val methodParams = findUnboundVariables(statements)
         val sootMethod = SootMethod(methodName, methodParams.map { it.type }, VoidType.v())
         sootMethod.modifiers = Modifier.PUBLIC.or(Modifier.STATIC)
@@ -164,3 +165,32 @@ internal class ClassGenerator(className: String) {
  * Exception to denote that a value cannot be stored as a local.
  */
 internal class ValueIsNotLocalException(value: Value) : RuntimeException("$value cannot be stored as a local.")
+
+fun List<JimpleNode>.duplicate(): List<JimpleNode> {
+    val oldToNewNodes = mutableMapOf<Stmt, Stmt>()
+    val newNodes = this.map { oldNode ->
+        oldNode.copy().also { oldToNewNodes[oldNode.statement] = it.statement }
+    }
+
+    newNodes.forEach {
+        when (it.statement) {
+            is GotoStmt -> {
+                val statement = it.statement as GotoStmt
+                statement.target = oldToNewNodes[statement]
+            }
+            is IfStmt -> {
+                val statement = it.statement as IfStmt
+                statement.setTarget(oldToNewNodes[statement])
+            }
+            is SwitchStmt -> {
+                val statement = it.statement as SwitchStmt
+                statement.defaultTarget = oldToNewNodes[statement]
+                statement.targets.forEachIndexed { index, target ->
+                    statement.setTarget(index, oldToNewNodes[target])
+                }
+            }
+        }
+    }
+
+    return newNodes
+}

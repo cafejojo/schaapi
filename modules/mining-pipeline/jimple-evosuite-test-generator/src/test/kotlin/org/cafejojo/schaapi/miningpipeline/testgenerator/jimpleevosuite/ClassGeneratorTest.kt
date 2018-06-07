@@ -15,9 +15,11 @@ import soot.RefType
 import soot.Scene
 import soot.SootClass
 import soot.SootField
+import soot.Value
 import soot.VoidType
 import soot.jimple.IntConstant
 import soot.jimple.Jimple
+import soot.jimple.Stmt
 import soot.jimple.StringConstant
 import soot.jimple.internal.JEqExpr
 import soot.options.Options
@@ -46,7 +48,7 @@ internal object ClassGeneratorTest : Spek({
             val assignC = Jimple.v().newAssignStmt(c, Jimple.v().newAddExpr(a, b))
 
             val jimpleMethod = ClassGenerator("asdf").apply {
-                generateMethod("method", listOf(assignA, assignB, assignC).map { JimpleNode(it) })
+                generateMethod("method", listOf(assignA, assignB, assignC).map { JimpleNode(it!!) })
             }.sootClass.methods.last()
 
             assertThat(jimpleMethod.parameterCount).isZero()
@@ -243,7 +245,7 @@ internal object ClassGeneratorTest : Spek({
                 generateMethod("method", listOf(gotoStmt, returnStmt).map { JimpleNode(it) })
             }.sootClass.methods.last()
 
-            assertThat(gotoStmt.target).isEqualTo(returnStmt)
+            assertThat(JimpleNode(gotoStmt.target as Stmt).equivTo(JimpleNode(returnStmt))).isTrue()
         }
 
         it("should replace now-missing targets in if statements") {
@@ -258,7 +260,7 @@ internal object ClassGeneratorTest : Spek({
                 generateMethod("method", listOf(ifStmt, returnStmt).map { JimpleNode(it) })
             }.sootClass.methods.last()
 
-            assertThat(ifStmt.target).isEqualTo(returnStmt)
+            assertThat(JimpleNode(ifStmt.target as Stmt).equivTo(JimpleNode(returnStmt))).isTrue()
         }
 
         it("should replace now-missing targets in switch statements") {
@@ -277,8 +279,8 @@ internal object ClassGeneratorTest : Spek({
                 generateMethod("method", listOf(switchStmt, returnStmt).map { JimpleNode(it) })
             }.sootClass.methods.last()
 
-            assertThat(switchStmt.targets[0]).isEqualTo(returnStmt)
-            assertThat(switchStmt.defaultTarget).isEqualTo(returnStmt)
+            assertThat(JimpleNode(switchStmt.targets[0] as Stmt).equivTo(JimpleNode(returnStmt))).isTrue()
+            assertThat(JimpleNode(switchStmt.defaultTarget as Stmt).equivTo(JimpleNode(returnStmt))).isTrue()
         }
     }
 })
