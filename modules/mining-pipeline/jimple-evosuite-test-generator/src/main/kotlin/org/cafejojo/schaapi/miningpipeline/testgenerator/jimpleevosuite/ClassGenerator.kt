@@ -162,28 +162,20 @@ internal class ClassGenerator(className: String) {
 }
 
 /**
- * Exception to denote that a value cannot be stored as a local.
+ * Duplicates the list of [JimpleNode]s, restoring references between [Stmt]s.
  */
-internal class ValueIsNotLocalException(value: Value) : RuntimeException("$value cannot be stored as a local.")
-
-fun List<JimpleNode>.duplicate(): List<JimpleNode> {
+internal fun List<JimpleNode>.duplicate(): List<JimpleNode> {
     val oldToNewNodes = mutableMapOf<Stmt, Stmt>()
     val newNodes = this.map { oldNode ->
         oldNode.copy().also { oldToNewNodes[oldNode.statement] = it.statement }
     }
 
     newNodes.forEach {
-        when (it.statement) {
-            is GotoStmt -> {
-                val statement = it.statement as GotoStmt
-                statement.target = oldToNewNodes[statement]
-            }
-            is IfStmt -> {
-                val statement = it.statement as IfStmt
-                statement.setTarget(oldToNewNodes[statement])
-            }
+        val statement = it.statement
+        when (statement) {
+            is GotoStmt -> statement.target = oldToNewNodes[statement]
+            is IfStmt -> statement.setTarget(oldToNewNodes[statement])
             is SwitchStmt -> {
-                val statement = it.statement as SwitchStmt
                 statement.defaultTarget = oldToNewNodes[statement]
                 statement.targets.forEachIndexed { index, target ->
                     statement.setTarget(index, oldToNewNodes[target])
@@ -194,3 +186,8 @@ fun List<JimpleNode>.duplicate(): List<JimpleNode> {
 
     return newNodes
 }
+
+/**
+ * Exception to denote that a value cannot be stored as a local.
+ */
+internal class ValueIsNotLocalException(value: Value) : RuntimeException("$value cannot be stored as a local.")

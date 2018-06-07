@@ -25,6 +25,7 @@ import soot.jimple.internal.JEqExpr
 import soot.options.Options
 import java.io.File
 
+@Suppress("UnsafeCast") // Casting statement targets to [Stmt] instances
 internal object ClassGeneratorTest : Spek({
     beforeGroup {
         Options.v().set_soot_classpath(
@@ -48,7 +49,7 @@ internal object ClassGeneratorTest : Spek({
             val assignC = Jimple.v().newAssignStmt(c, Jimple.v().newAddExpr(a, b))
 
             val jimpleMethod = ClassGenerator("asdf").apply {
-                generateMethod("method", listOf(assignA, assignB, assignC).map { JimpleNode(it!!) })
+                generateMethod("method", listOf(assignA, assignB, assignC).map { JimpleNode(it) })
             }.sootClass.methods.last()
 
             assertThat(jimpleMethod.parameterCount).isZero()
