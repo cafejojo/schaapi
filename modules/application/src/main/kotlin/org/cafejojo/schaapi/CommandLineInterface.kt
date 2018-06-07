@@ -35,15 +35,15 @@ fun main(args: Array<String>) {
         MavenInstaller().installMaven(mavenDir)
     }
 
-    val type = cmd.getOptionOrDefault("pipeline_type", DEFAULT_PIPELINE_TYPE)
+    val flavor = cmd.getOptionOrDefault("flavor", DEFAULT_PIPELINE_TYPE)
     try {
-        when (type) {
+        when (flavor) {
             "directory" -> DirectoryMiningCommandLineInterface().run(cmd, mavenDir, library, output)
             "github" -> GitHubMiningCommandLineInterface().run(cmd, mavenDir, library, output)
             else -> println("Given pipeline_type was not recognized.")
         }
     } catch (e: MissingArgumentException) {
-        println(e.messageForFlavor(type))
+        println(e.messageForFlavor(flavor))
     }
 }
 
