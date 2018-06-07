@@ -22,7 +22,7 @@ internal const val DEFAULT_MAX_SEQUENCE_LENGTH = "25"
 fun main(args: Array<String>) {
     val options = buildOptions()
         .apply { DirectoryMiningCommandLineInterface.addOptionsTo(this) }
-        .apply { GithubMiningCommandLineInterface.addOptionsTo(this) }
+        .apply { GitHubMiningCommandLineInterface.addOptionsTo(this) }
 
     val cmd = parseArgs(options, args) ?: return
 
@@ -38,7 +38,7 @@ fun main(args: Array<String>) {
     try {
         when (type) {
             "directory" -> DirectoryMiningCommandLineInterface().run(cmd, mavenDir, library, output)
-            "github" -> GithubMiningCommandLineInterface().run(cmd, mavenDir, library, output)
+            "github" -> GitHubMiningCommandLineInterface().run(cmd, mavenDir, library, output)
             else -> println("Given pipeline_type was not recognized.")
         }
     } catch (e: MissingArgumentException) {

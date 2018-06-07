@@ -24,7 +24,7 @@ import java.io.File
  */
 internal class DirectoryMiningCommandLineInterface {
     companion object {
-        internal fun addOptionsTo(options: Options) = options
+        fun addOptionsTo(options: Options): Options = options
             .addOption(Option
                 .builder("u")
                 .longOpt("user_base_dir")

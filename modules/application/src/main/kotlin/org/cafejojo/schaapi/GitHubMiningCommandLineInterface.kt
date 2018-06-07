@@ -25,9 +25,9 @@ private const val DEFAULT_MAX_PROJECTS = "20"
  *
  * Assumes that the passed library is a java jar project.
  */
-internal class GithubMiningCommandLineInterface {
+internal class GitHubMiningCommandLineInterface {
     companion object {
-        internal fun addOptionsTo(options: Options) = options
+        fun addOptionsTo(options: Options): Options = options
             .addOption(Option
                 .builder()
                 .longOpt("github_oauth_token")
