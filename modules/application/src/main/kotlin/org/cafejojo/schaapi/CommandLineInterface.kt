@@ -14,7 +14,7 @@ import java.io.File
 import kotlin.system.exitProcess
 
 internal const val DEFAULT_PIPELINE_TYPE = "directory"
-internal const val DEFAULT_LIBRARY_FLAVOR = "maven"
+internal const val DEFAULT_LIBRARY_FLAVOR = "javamaven"
 internal const val DEFAULT_TEST_GENERATOR_TIMEOUT = "60"
 internal const val DEFAULT_PATTERN_DETECTOR_MINIMUM_COUNT = "2"
 internal const val DEFAULT_MAX_SEQUENCE_LENGTH = "25"
@@ -41,7 +41,7 @@ fun main(args: Array<String>) {
 
     val flavor = cmd.getOptionValue("flavor", DEFAULT_PIPELINE_TYPE)
     val library = when (libraryFlavor) {
-        "jar" -> JavaJarProject(libraryDirectory)
+        "javajar" -> JavaJarProject(libraryDirectory)
         else -> JavaMavenProject(libraryDirectory, mavenDir)
     }
 
