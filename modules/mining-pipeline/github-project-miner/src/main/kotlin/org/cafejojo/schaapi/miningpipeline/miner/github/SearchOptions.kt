@@ -2,7 +2,9 @@ package org.cafejojo.schaapi.miningpipeline.miner.github
 
 import mu.KLogging
 import org.cafejojo.schaapi.miningpipeline.SearchOptions
+import org.kohsuke.github.GHContent
 import org.kohsuke.github.GitHub
+import org.kohsuke.github.PagedSearchIterable
 
 /**
  * Represents options used to mine [GitHub].
@@ -32,6 +34,9 @@ class MavenProjectSearchOptions(
 ) : GitHubSearchOptions {
     private companion object : KLogging()
 
+    var sortByStargazersCount = false
+    var sortByWatchersCount = false
+
     override fun searchContent(gitHub: GitHub): List<String> {
         logger.info {
             "Mining a maximum of $maxProjects GitHub maven projects which depend on " +
@@ -51,22 +56,42 @@ class MavenProjectSearchOptions(
         if (maxProjects < searchResults.totalCount) logger.info { "Will be capped at $maxProjects." }
 
         val repositories = searchResults
-            .also { logger.info { "Sorting owners by stargazers count." } }
-            .sortedByDescending { it.owner.stargazersCount }
-            .also { logger.debug { "Sorted owners by stargazers count." } }
+            .apply { if (sortByStargazersCount) sortByStargazersCount(this) }
+            .apply { if (sortByWatchersCount) sortByWatchersCount(this) }
             .take(maxProjects)
             .map { it.owner }
 
-        val namesToStars = repositories.map { it.fullName to it.stargazersCount }
-        val maxStargazers = namesToStars.maxBy { it.second }
-        val minStargazers = namesToStars.minBy { it.second }
-        val meanStargazers = namesToStars.sumBy { it.second }.toDouble().div(repositories.size)
+        logger.info { "Found ${repositories.size} projects namesToStars using the Github v3 Search API." }
+        return repositories.map { it.fullName }
+    }
 
-        logger.info { "Max stargazer count: ${maxStargazers?.first}, repo: ${maxStargazers?.second}." }
-        logger.info { "Min stargazer count: ${minStargazers?.first}, repo: ${minStargazers?.second}." }
-        logger.info { "Mean stargazer count: $meanStargazers." }
+    private fun sortByStargazersCount(githubRepositories: PagedSearchIterable<GHContent>)
+        : PagedSearchIterable<GHContent> {
+        githubRepositories
+            .also { logger.info { "Sorting owners by stargazers count." } }
+            .sortedByDescending { it.owner.stargazersCount }
 
-        logger.info { "Found ${namesToStars.size} projects namesToStars using the Github v3 Search API." }
-        return namesToStars.map { it.first }
+        val max = githubRepositories.first().owner
+        val min = githubRepositories.last().owner
+        logger.info { "Maximum stargazers: ${max.stargazersCount}, repo: ${max.fullName}" }
+        logger.info { "Minimum stargazers: ${min.stargazersCount}, repo: ${min.fullName}" }
+        logger.info { "Average stargazers: ${githubRepositories.sumBy { it.owner.stargazersCount }}" }
+
+        return githubRepositories
+    }
+
+    private fun sortByWatchersCount(githubRepositories: PagedSearchIterable<GHContent>)
+        : PagedSearchIterable<GHContent> {
+        githubRepositories
+            .also { logger.info { "Sorting owners by watcher count count." } }
+            .sortedByDescending { it.owner.watchers }
+
+        val max = githubRepositories.first().owner
+        val min = githubRepositories.last().owner
+        logger.info { "Maximum watchers: ${max.watchers}, repo: ${max.watchers}" }
+        logger.info { "Minimum watchers: ${min.watchers}, repo: ${min.watchers}" }
+        logger.info { "Average watchers: ${githubRepositories.sumBy { it.owner.watchers }}" }
+
+        return githubRepositories
     }
 }
