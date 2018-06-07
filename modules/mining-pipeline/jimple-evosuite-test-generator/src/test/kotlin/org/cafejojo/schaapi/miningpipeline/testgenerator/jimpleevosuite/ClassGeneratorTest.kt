@@ -281,4 +281,16 @@ internal object ClassGeneratorTest : Spek({
             assertThat(switchStmt.defaultTarget).isEqualTo(returnStmt)
         }
     }
+
+    it("should not add a local twice if it is assigned twice") {
+        val local = Jimple.v().newLocal("local", IntType.v())
+        val userA = Jimple.v().newAssignStmt(local, IntConstant.v(48))
+        val userB = Jimple.v().newAssignStmt(local, IntConstant.v(86))
+
+        val method = ClassGenerator("test").apply {
+            generateMethod("method", listOf(userA, userB).map { JimpleNode(it) })
+        }.sootClass.methods.last()
+
+        assertThat(method.retrieveActiveBody().locals).containsExactly(local)
+    }
 })
