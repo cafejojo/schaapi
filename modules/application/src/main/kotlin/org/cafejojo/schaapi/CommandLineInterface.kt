@@ -10,6 +10,7 @@ import org.cafejojo.schaapi.miningpipeline.projectcompiler.javamaven.MavenInstal
 import org.cafejojo.schaapi.models.project.JavaMavenProject
 import java.io.File
 
+internal const val DEFAULT_PIPELINE_TYPE = "directory"
 internal const val DEFAULT_TEST_GENERATOR_TIMEOUT = "60"
 internal const val DEFAULT_PATTERN_DETECTOR_MINIMUM_COUNT = "2"
 internal const val DEFAULT_MAX_SEQUENCE_LENGTH = "25"
@@ -34,7 +35,7 @@ fun main(args: Array<String>) {
         MavenInstaller().installMaven(mavenDir)
     }
 
-    val type = cmd.getOptionOrDefault("pipeline_type", "")
+    val type = cmd.getOptionOrDefault("pipeline_type", DEFAULT_PIPELINE_TYPE)
     try {
         when (type) {
             "directory" -> DirectoryMiningCommandLineInterface().run(cmd, mavenDir, library, output)
@@ -53,7 +54,6 @@ private fun buildOptions(): Options =
             .longOpt("pipeline_type")
             .desc("The desired pipeline type")
             .hasArg()
-            .required()
             .build())
         .addOption(Option
             .builder("o")

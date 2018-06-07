@@ -23,7 +23,7 @@ import java.io.File
  * Assumes that the passed library is a java maven project.
  */
 internal class DirectoryMiningCommandLineInterface {
-    companion object {
+    internal companion object {
         fun addOptionsTo(options: Options): Options = options
             .addOption(Option
                 .builder("u")
