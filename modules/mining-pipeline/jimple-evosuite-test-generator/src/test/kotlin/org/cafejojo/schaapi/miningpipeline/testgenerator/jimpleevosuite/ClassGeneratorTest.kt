@@ -15,7 +15,6 @@ import soot.RefType
 import soot.Scene
 import soot.SootClass
 import soot.SootField
-import soot.Value
 import soot.VoidType
 import soot.jimple.IntConstant
 import soot.jimple.Jimple
