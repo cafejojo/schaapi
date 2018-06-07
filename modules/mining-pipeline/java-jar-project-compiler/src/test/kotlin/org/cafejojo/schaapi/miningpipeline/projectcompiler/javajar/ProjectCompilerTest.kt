@@ -39,6 +39,15 @@ internal object ProjectCompilerTest : Spek({
             assertThat(project.dependencies).isEmpty()
             assertThat(project.classpath).isEqualTo(projectFile.absolutePath)
         }
+
+        it("ignores class files in the META-INF directory") {
+            val projectFile = File(URLDecoder.decode(
+                getResourceURI("/schaapi.simple-project-in-meta-inf-1.0.0.jar").path, "UTF-8"))
+            val project = JavaJarProject(projectFile)
+            ProjectCompiler().compile(project)
+
+            assertThat(project.classNames).doesNotContain("META-INF.Test")
+        }
     }
 })
 

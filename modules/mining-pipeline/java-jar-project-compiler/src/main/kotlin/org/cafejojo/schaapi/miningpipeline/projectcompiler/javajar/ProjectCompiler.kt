@@ -1,8 +1,8 @@
 package org.cafejojo.schaapi.miningpipeline.projectcompiler.javajar
 
 import mu.KLogging
-import org.cafejojo.schaapi.models.project.JavaJarProject
 import org.cafejojo.schaapi.miningpipeline.ProjectCompiler
+import org.cafejojo.schaapi.models.project.JavaJarProject
 import java.io.FileInputStream
 import java.util.jar.JarInputStream
 
@@ -22,7 +22,7 @@ class ProjectCompiler : ProjectCompiler<JavaJarProject> {
         }
 
         while (jarEntry != null) {
-            if (jarEntry.name.endsWith(".class")) {
+            if (jarEntry.name.endsWith(".class") && !jarEntry.name.startsWith("META-INF")) {
                 classNames.add(jarEntry.name.dropLast(".class".length).replace('/', '.'))
             }
 
