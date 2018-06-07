@@ -5,6 +5,7 @@ import com.nhaarman.mockito_kotlin.mock
 import net.javacrumbs.jsonunit.fluent.JsonFluentAssert.assertThatJson
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.entry
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -19,6 +20,8 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import java.io.File
+import java.nio.file.Files
+import java.nio.file.Path
 import java.util.concurrent.TimeUnit
 
 @ExtendWith(SpringExtension::class)
@@ -27,6 +30,8 @@ import java.util.concurrent.TimeUnit
     classes = [IntegrationTest.TestConfig::class]
 )
 class IntegrationTest {
+    lateinit var testsStorageLocation: Path
+
     @Autowired
     private lateinit var restTemplate: TestRestTemplate
 
@@ -44,6 +49,15 @@ class IntegrationTest {
         System.getProperties().load(
             IntegrationTest::class.java.getResourceAsStream("/githubtestreporter.properties")
         )
+
+        testsStorageLocation = Files.createTempDirectory("schaapi-github")
+
+        System.setProperty("tests_storage_location", testsStorageLocation.toString())
+    }
+
+    @AfterEach
+    fun tearDown() {
+        testsStorageLocation.toFile().deleteRecursively()
     }
 
     @Test
@@ -84,8 +98,6 @@ class IntegrationTest {
 
     @Test
     fun `it can receive a installation created web hook`() {
-        System.setProperty("tests_storage_location", "/Development/tu/cafejojo/schaapi/output/")
-
         val requestJson = IntegrationTest::class.java
             .getResourceAsStream("/fixtures/github/installation_created_webhook.resp").bufferedReader().readText()
 
@@ -106,8 +118,6 @@ class IntegrationTest {
 
     @Test
     fun `it can receive a installation deleted web hook`() {
-        System.setProperty("tests_storage_location", "/Development/tu/cafejojo/schaapi/output/")
-
         val requestJson = IntegrationTest::class.java
             .getResourceAsStream("/fixtures/github/installation_deleted_webhook.resp").bufferedReader().readText()
 
