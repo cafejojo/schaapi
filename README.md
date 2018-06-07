@@ -32,6 +32,7 @@ usage: schaapi -o <arg> -l <arg> -u <arg> [--maven_dir <arg>]
                                                        should have a dependency on.
  -m,--max_projects <arg>                               Maximum amount of projects to 
                                                        download from GitHub. 
+    --flavor <arg>                                     The flavor of the desired pipeline.
     --maven_dir <arg>                                  The directory to
                                                        run Maven from.
     --repair_maven                                     Repairs the Maven

@@ -39,7 +39,7 @@ internal class DirectoryMiningCommandLineInterface {
      * @throws [MissingArgumentException] if required arguments not set in [CommandLine].
      */
     fun run(cmd: CommandLine, mavenDir: File, library: File, output: File) {
-        val userDirDirs = cmd.getOptionValue('u') ?: throw MissingArgumentException("u")
+        val userDirDirs = cmd.getOptionOrThrowException("u")
 
         val testGeneratorTimeout = cmd
             .getOptionOrDefault("test_generator_timeout", DEFAULT_TEST_GENERATOR_TIMEOUT).toInt()

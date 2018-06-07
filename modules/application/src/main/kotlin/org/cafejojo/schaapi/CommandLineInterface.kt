@@ -51,8 +51,8 @@ private fun buildOptions(): Options =
     Options()
         .addOption(Option
             .builder()
-            .longOpt("pipeline_type")
-            .desc("The desired pipeline type")
+            .longOpt("flavor")
+            .desc("The desired pipeline flavor")
             .hasArg()
             .build())
         .addOption(Option
@@ -133,4 +133,14 @@ private fun printHelpMessage(options: Options) {
  * @param default the value to return if the option's value is null
  * @return [CommandLine.getOptionValue], unless this is null, in which case [default] is returned
  */
-fun CommandLine.getOptionOrDefault(option: String, default: String) = getOptionValue(option) ?: default
+internal fun CommandLine.getOptionOrDefault(option: String, default: String) = getOptionValue(option) ?: default
+
+/**
+ * Returns [CommandLine.getOptionValue], unless this is null, in which case a [MissingArgumentException] is thrown.
+ *
+ * @param option the name of the option
+ * @return [CommandLine.getOptionValue], unless this is null, in which case a [MissingArgumentException] is thrown
+ * with the [option] in its message
+ */
+internal fun CommandLine.getOptionOrThrowException(option: String) =
+    getOptionValue(option) ?: throw MissingArgumentException(option)

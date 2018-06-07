@@ -67,12 +67,11 @@ internal class GitHubMiningCommandLineInterface {
      */
     @Suppress("ThrowsCount") // No real reason to do it differently
     fun run(cmd: CommandLine, mavenDir: File, library: File, output: File) {
-        val token = cmd.getOptionValue("github_oauth_token") ?: throw MissingArgumentException("github_oauth_token")
+        val token = cmd.getOptionOrThrowException("github_oauth_token")
         val maxProjects = cmd.getOptionOrDefault("max_projects", DEFAULT_MAX_PROJECTS).toInt()
-        val groupId = cmd.getOptionValue("library_group_id") ?: throw MissingArgumentException("library_group_id")
-        val artifactId = cmd.getOptionValue("library_artifact_id")
-            ?: throw MissingArgumentException("library_artifact_id")
-        val version = cmd.getOptionValue("library_version") ?: throw MissingArgumentException("library_version")
+        val groupId = cmd.getOptionOrThrowException("library_group_id")
+        val artifactId = cmd.getOptionOrThrowException("library_artifact_id")
+        val version = cmd.getOptionOrThrowException("library_version")
 
         val patternDetectorMinCount = cmd
             .getOptionOrDefault("pattern_detector_minimum_count", DEFAULT_PATTERN_DETECTOR_MINIMUM_COUNT).toInt()
