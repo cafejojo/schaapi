@@ -1,5 +1,11 @@
 package org.cafejojo.schaapi
 
+/**
+ * Thrown when a required argument on the command line is missing.
+ */
 internal class MissingArgumentException(argument: String) : RuntimeException("Missing the '$argument' argument.") {
-    fun messageForType(type: String): String = "${this.message} Was required for pipeline type $type."
+    /**
+     * Creates specific message for the desired pipeline flavor.
+     */
+    fun messageForFlavor(flavor: String): String = "${this.message} Was required for pipeline flavor $flavor."
 }

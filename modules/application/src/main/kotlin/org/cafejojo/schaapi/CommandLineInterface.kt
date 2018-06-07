@@ -43,7 +43,7 @@ fun main(args: Array<String>) {
             else -> println("Given pipeline_type was not recognized.")
         }
     } catch (e: MissingArgumentException) {
-        println(e.messageForType(type))
+        println(e.messageForFlavor(type))
     }
 }
 

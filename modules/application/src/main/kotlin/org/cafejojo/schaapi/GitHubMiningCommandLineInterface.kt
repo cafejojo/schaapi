@@ -18,7 +18,7 @@ import org.cafejojo.schaapi.models.project.JavaJarProject
 import org.cafejojo.schaapi.models.project.JavaMavenProject
 import java.io.File
 
-private const val DEFAULT_MAX_PROJECTS = "20"
+internal const val DEFAULT_MAX_PROJECTS = "20"
 
 /**
  * Mines GitHub for user projects and generates tests based on these projects.

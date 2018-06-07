@@ -50,7 +50,7 @@ internal class DirectoryMiningCommandLineInterface {
         val maxSequenceLength = cmd
             .getOptionOrDefault("pattern_detector_maximum_sequence_length", DEFAULT_MAX_SEQUENCE_LENGTH).toInt()
 
-        val libraryMaven = JavaMavenProject(library)
+        val libraryMaven = JavaMavenProject(library, mavenDir)
 
         MiningPipeline(
             outputDirectory = output,
