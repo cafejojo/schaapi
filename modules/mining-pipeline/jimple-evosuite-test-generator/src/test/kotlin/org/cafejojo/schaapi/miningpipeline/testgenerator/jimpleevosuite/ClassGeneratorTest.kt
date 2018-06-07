@@ -16,10 +16,13 @@ import soot.Scene
 import soot.SootClass
 import soot.SootField
 import soot.VoidType
+import soot.jimple.GotoStmt
+import soot.jimple.IfStmt
 import soot.jimple.IntConstant
 import soot.jimple.Jimple
 import soot.jimple.Stmt
 import soot.jimple.StringConstant
+import soot.jimple.SwitchStmt
 import soot.jimple.internal.JEqExpr
 import soot.options.Options
 import java.io.File
@@ -38,6 +41,22 @@ internal object ClassGeneratorTest : Spek({
     }
 
     describe("generation of a method based on a list of nodes") {
+        it("should not create parameters if all variables are bound") {
+            val a = Jimple.v().newLocal("a", CharType.v())
+            val b = Jimple.v().newLocal("b", CharType.v())
+            val c = Jimple.v().newLocal("c", CharType.v())
+
+            val assignA = Jimple.v().newAssignStmt(a, StringConstant.v("hello"))
+            val assignB = Jimple.v().newAssignStmt(b, StringConstant.v("world"))
+            val assignC = Jimple.v().newAssignStmt(c, Jimple.v().newAddExpr(a, b))
+
+            val jimpleMethod = ClassGenerator("asdf").apply {
+                generateMethod("method", listOf(assignA, assignB, assignC).map { JimpleNode(it) })
+            }.sootClass.methods.last()
+
+            assertThat(jimpleMethod.parameterCount).isZero()
+        }
+
         it("should not create parameters if all variables are bound") {
             val a = Jimple.v().newLocal("a", CharType.v())
             val b = Jimple.v().newLocal("b", CharType.v())
@@ -281,6 +300,75 @@ internal object ClassGeneratorTest : Spek({
 
             assertThat(JimpleNode(switchStmt.targets[0] as Stmt).equivTo(JimpleNode(returnStmt))).isTrue()
             assertThat(JimpleNode(switchStmt.defaultTarget as Stmt).equivTo(JimpleNode(returnStmt))).isTrue()
+        }
+    }
+
+    describe("duplication of statements") {
+        it("should replace all statements with new instances") {
+            val a = Jimple.v().newLocal("a", CharType.v())
+            val b = Jimple.v().newLocal("b", CharType.v())
+            val c = Jimple.v().newLocal("c", CharType.v())
+
+            val assignA = Jimple.v().newAssignStmt(a, StringConstant.v("hello"))
+            val assignB = Jimple.v().newAssignStmt(b, StringConstant.v("world"))
+            val assignC = Jimple.v().newAssignStmt(c, Jimple.v().newAddExpr(a, b))
+            val statements = listOf(assignA, assignB, assignC)
+
+            val jimpleMethod = ClassGenerator("asdf").apply {
+                generateMethod("method", statements.map { JimpleNode(it) })
+            }.sootClass.methods.last()
+
+            assertThat(jimpleMethod.activeBody.units).doesNotContainAnyElementsOf(statements)
+        }
+
+        it("should replace statement target instances in goto statements") {
+            val value = Jimple.v().newLocal("value", RefType.v("myClass"))
+
+            val returnStmt = Jimple.v().newReturnStmt(value)
+            val gotoStmt = Jimple.v().newGotoStmt(returnStmt)
+
+            val method = ClassGenerator("test").apply {
+                generateMethod("method", listOf(gotoStmt, returnStmt).map { JimpleNode(it) })
+            }.sootClass.methods.last()
+
+            assertThat((method.activeBody.units.iterator().asSequence().toList()[1] as GotoStmt).target)
+                .isNotEqualTo(returnStmt)
+        }
+
+        it("should replace statement target instances in if statements") {
+            val value = Jimple.v().newLocal("value", RefType.v("myClass"))
+            val ifCondition = Jimple.v().newConditionExprBox(JEqExpr(value, value)).value
+
+            val returnStmt = Jimple.v().newReturnStmt(value)
+            val ifStmt = Jimple.v().newIfStmt(ifCondition, returnStmt)
+
+            val method = ClassGenerator("test").apply {
+                generateMethod("method", listOf(ifStmt, returnStmt).map { JimpleNode(it) })
+            }.sootClass.methods.last()
+
+            assertThat((method.activeBody.units.iterator().asSequence().toList()[1] as IfStmt).target)
+                .isNotEqualTo(returnStmt)
+        }
+
+        it("should replace statement target instances in switch statements") {
+            val value = Jimple.v().newLocal("value", RefType.v("myClass"))
+
+            val returnStmt = Jimple.v().newReturnStmt(value)
+            val switchStmt = Jimple.v().newLookupSwitchStmt(
+                value,
+                listOf(IntConstant.v(1), IntConstant.v(2)),
+                listOf(returnStmt, returnStmt),
+                returnStmt
+            )
+
+            val method = ClassGenerator("test").apply {
+                generateMethod("method", listOf(switchStmt, returnStmt).map { JimpleNode(it) })
+            }.sootClass.methods.last()
+
+            assertThat((method.activeBody.units.iterator().asSequence().toList()[1] as SwitchStmt).targets[0])
+                .isNotEqualTo(returnStmt)
+            assertThat((method.activeBody.units.iterator().asSequence().toList()[1] as SwitchStmt).defaultTarget)
+                .isNotEqualTo(returnStmt)
         }
     }
 })
