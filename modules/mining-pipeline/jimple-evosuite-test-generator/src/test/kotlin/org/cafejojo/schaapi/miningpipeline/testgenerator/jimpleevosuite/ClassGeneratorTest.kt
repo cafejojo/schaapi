@@ -331,8 +331,9 @@ internal object ClassGeneratorTest : Spek({
                 generateMethod("method", listOf(gotoStmt, returnStmt).map { JimpleNode(it) })
             }.sootClass.methods.last()
 
-            assertThat((method.activeBody.units.iterator().asSequence().toList()[1] as GotoStmt).target)
-                .isNotEqualTo(returnStmt)
+            val newGotoStmt = method.activeBody.units.elementAt(1) as GotoStmt
+            assertThat(newGotoStmt.target).isNotEqualTo(returnStmt)
+            assertThat(newGotoStmt.target).isEqualToComparingFieldByFieldRecursively(returnStmt)
         }
 
         it("should replace statement target instances in if statements") {
@@ -346,8 +347,9 @@ internal object ClassGeneratorTest : Spek({
                 generateMethod("method", listOf(ifStmt, returnStmt).map { JimpleNode(it) })
             }.sootClass.methods.last()
 
-            assertThat((method.activeBody.units.iterator().asSequence().toList()[1] as IfStmt).target)
-                .isNotEqualTo(returnStmt)
+            val newIfStmt = method.activeBody.units.elementAt(1) as IfStmt
+            assertThat(newIfStmt.target).isNotEqualTo(returnStmt)
+            assertThat(newIfStmt.target).isEqualToComparingFieldByFieldRecursively(returnStmt)
         }
 
         it("should replace statement target instances in switch statements") {
@@ -365,10 +367,11 @@ internal object ClassGeneratorTest : Spek({
                 generateMethod("method", listOf(switchStmt, returnStmt).map { JimpleNode(it) })
             }.sootClass.methods.last()
 
-            assertThat((method.activeBody.units.iterator().asSequence().toList()[1] as SwitchStmt).targets[0])
-                .isNotEqualTo(returnStmt)
-            assertThat((method.activeBody.units.iterator().asSequence().toList()[1] as SwitchStmt).defaultTarget)
-                .isNotEqualTo(returnStmt)
+            val newSwitchStmt = method.activeBody.units.elementAt(1) as SwitchStmt
+            assertThat(newSwitchStmt.targets[0]).isNotEqualTo(returnStmt)
+            assertThat(newSwitchStmt.targets[0]).isEqualToComparingFieldByFieldRecursively(returnStmt)
+            assertThat(newSwitchStmt.defaultTarget).isNotEqualTo(returnStmt)
+            assertThat(newSwitchStmt.defaultTarget).isEqualToComparingFieldByFieldRecursively(returnStmt)
         }
     }
 })
