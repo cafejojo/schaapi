@@ -28,7 +28,7 @@ object LibraryUsageGraphGenerator : LibraryUsageGraphGenerator<JavaProject, Java
         Scene.v().sootClassPath = arrayOf(
             System.getProperty("java.home") + "${File.separator}lib${File.separator}rt.jar",
             System.getProperty("java.home") + "${File.separator}lib${File.separator}jce.jar",
-            libraryProject.classDir.absolutePath,
+            libraryProject.classDirs.joinToString(File.pathSeparator) { it.absolutePath },
             userProject.classpath
         ).joinToString(File.pathSeparator)
         Options.v().set_whole_program(true)

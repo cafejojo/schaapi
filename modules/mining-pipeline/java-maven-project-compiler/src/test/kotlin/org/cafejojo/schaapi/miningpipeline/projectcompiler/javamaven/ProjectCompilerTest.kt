@@ -57,7 +57,8 @@ internal object ProjectCompilerTest : Spek({
             assertThat(project.classNames).isEmpty()
             assertThat(project.dependencies).isEmpty()
             assertThat(project.classpath.split(File.pathSeparator)).containsExactlyInAnyOrder(
-                target.resolve("target/classes").absolutePath
+                target.resolve("target/classes").absolutePath,
+                target.resolve("target/test-classes").absolutePath
             )
         }
 
@@ -76,7 +77,8 @@ internal object ProjectCompilerTest : Spek({
             )
             assertThat(project.dependencies).isEmpty()
             assertThat(project.classpath.split(File.pathSeparator)).containsExactlyInAnyOrder(
-                target.resolve("target/classes").absolutePath
+                target.resolve("target/classes").absolutePath,
+                target.resolve("target/test-classes").absolutePath
             )
         }
 
@@ -98,6 +100,7 @@ internal object ProjectCompilerTest : Spek({
             )
             assertThat(project.classpath.split(File.pathSeparator)).containsExactlyInAnyOrder(
                 target.resolve("target/classes").absolutePath,
+                target.resolve("target/test-classes").absolutePath,
                 target.resolve("target/dependency").resolve("zip4j-1.3.2.jar").absolutePath
             )
         }

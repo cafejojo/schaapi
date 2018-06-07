@@ -15,7 +15,7 @@ class JavaMavenProject(
     }
 
     override val pomFile = File(projectDir, "pom.xml")
-    override val classDir = File(projectDir, "target/classes")
+    override val classDirs = listOf(File(projectDir, "target/classes"), File(projectDir, "target/test-classes"))
     override val dependencyDir = File(projectDir, "target/dependency")
 
     override lateinit var classes: List<File>
@@ -31,7 +31,7 @@ class JavaMavenProject(
         require(pomFile.isFile) { "Given project directory is not a Maven project, '$pomFile' does not exist." }
         require(pomFile.canRead()) { "Cannot read POM file: '$pomFile'." }
 
-        classDir.mkdirs()
+        classDirs.forEach { it.mkdirs() }
         dependencyDir.mkdirs()
     }
 }
