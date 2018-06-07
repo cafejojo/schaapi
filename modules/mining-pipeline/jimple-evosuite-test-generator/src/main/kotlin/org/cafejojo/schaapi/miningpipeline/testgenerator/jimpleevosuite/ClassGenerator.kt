@@ -166,9 +166,9 @@ internal class ClassGenerator(className: String) {
  */
 private fun List<JimpleNode>.duplicate(): List<JimpleNode> {
     val newNodes = this.map { it.copy() }
-    val oldToNewStatements = newNodes.mapIndexed { index, newNode ->
-        get(index).statement to newNode.statement
-    }.toMap()
+    val oldToNewStatements = newNodes
+        .mapIndexed { index, newNode -> get(index).statement to newNode.statement }
+        .toMap()
 
     newNodes.forEach {
         val statement = it.statement
