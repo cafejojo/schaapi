@@ -7,6 +7,8 @@ import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.context
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
+import soot.BooleanType
+import soot.IntType
 import soot.jimple.DefinitionStmt
 import soot.jimple.Jimple
 
@@ -221,6 +223,42 @@ internal object JimpleNodeTest : Spek({
                 on { it.leftOp } doReturn leftOp
                 on { it.rightOp } doReturn rightOp
             })
+        }
+
+        it("should be equal if it contains a local") {
+            val local1 = Jimple.v().newLocal("local1", IntType.v())
+            val local2 = Jimple.v().newLocal("local2", IntType.v())
+            val node1 = JimpleNode(Jimple.v().newReturnStmt(local1))
+            val node2 = JimpleNode(Jimple.v().newReturnStmt(local2))
+
+            assertThat(node1.equivTo(node2)).isTrue()
+        }
+
+        it("should have the same hash code if it contains a local") {
+            val local1 = Jimple.v().newLocal("local1", IntType.v())
+            val local2 = Jimple.v().newLocal("local2", IntType.v())
+            val node1 = JimpleNode(Jimple.v().newReturnStmt(local1))
+            val node2 = JimpleNode(Jimple.v().newReturnStmt(local2))
+
+            assertThat(node1.equivHashCode()).isEqualTo(node2.equivHashCode())
+        }
+
+        it("should not equal if it contains a local with a different type") {
+            val local1 = Jimple.v().newLocal("local", IntType.v())
+            val local2 = Jimple.v().newLocal("local", BooleanType.v())
+            val node1 = JimpleNode(Jimple.v().newReturnStmt(local1))
+            val node2 = JimpleNode(Jimple.v().newReturnStmt(local2))
+
+            assertThat(node1.equivTo(node2)).isFalse()
+        }
+
+        it("should have the same hash code if it contains a local") {
+            val local1 = Jimple.v().newLocal("local", IntType.v())
+            val local2 = Jimple.v().newLocal("local", BooleanType.v())
+            val node1 = JimpleNode(Jimple.v().newReturnStmt(local1))
+            val node2 = JimpleNode(Jimple.v().newReturnStmt(local2))
+
+            assertThat(node1.equivHashCode()).isNotEqualTo(node2.equivHashCode())
         }
 
         it("should be equal if the values are in the same order and of the same type") {
