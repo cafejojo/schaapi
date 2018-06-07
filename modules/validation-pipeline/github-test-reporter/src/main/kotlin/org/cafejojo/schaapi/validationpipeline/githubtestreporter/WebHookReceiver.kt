@@ -64,6 +64,9 @@ class WebHookReceiver(val checkReporter: CheckReporter) {
                     )
                 }
             }
+            "installation" -> {
+                println("SOOO COOL WE HAVE A NEW USER")
+            }
             else -> throw IncomingWebHookException("Cannot process web hooks for events of type $eventType.")
         }
 
