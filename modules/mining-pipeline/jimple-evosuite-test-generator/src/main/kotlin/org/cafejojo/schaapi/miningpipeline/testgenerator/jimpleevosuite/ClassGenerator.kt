@@ -17,6 +17,7 @@ import soot.jimple.FieldRef
 import soot.jimple.GotoStmt
 import soot.jimple.IfStmt
 import soot.jimple.Jimple
+import soot.jimple.Stmt
 import soot.jimple.SwitchStmt
 import soot.jimple.internal.JReturnStmt
 import soot.jimple.internal.JReturnVoidStmt
@@ -55,7 +56,7 @@ internal class ClassGenerator(className: String) {
      * @param nodes a list of [Node]s which should be converted into a method
      */
     fun generateMethod(methodName: String, nodes: List<JimpleNode>) {
-        val statements = nodes.map { it.statement }
+        val statements = nodes.duplicate().map { it.statement }
         val methodParams = findUnboundVariables(statements)
         val sootMethod = SootMethod(methodName, methodParams.map { it.type }, VoidType.v())
         sootMethod.modifiers = Modifier.PUBLIC.or(Modifier.STATIC)
@@ -161,6 +162,32 @@ internal class ClassGenerator(className: String) {
             }
         }
     }
+}
+
+/**
+ * Duplicates the list of [JimpleNode]s, restoring references between [Stmt]s.
+ */
+private fun List<JimpleNode>.duplicate(): List<JimpleNode> {
+    val newNodes = this.map { it.copy() }
+    val oldToNewStatements = newNodes
+        .mapIndexed { index, newNode -> get(index).statement to newNode.statement }
+        .toMap()
+
+    newNodes.forEach {
+        val statement = it.statement
+        when (statement) {
+            is GotoStmt -> statement.target = oldToNewStatements[statement]
+            is IfStmt -> statement.setTarget(oldToNewStatements[statement])
+            is SwitchStmt -> {
+                statement.defaultTarget = oldToNewStatements[statement]
+                statement.targets.forEachIndexed { index, target ->
+                    statement.setTarget(index, oldToNewStatements[target])
+                }
+            }
+        }
+    }
+
+    return newNodes
 }
 
 /**
