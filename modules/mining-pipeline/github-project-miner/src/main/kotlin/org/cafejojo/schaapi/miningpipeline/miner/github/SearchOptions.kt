@@ -13,8 +13,8 @@ import org.kohsuke.github.PagedSearchIterable
 abstract class GitHubSearchOptions(private val maxProjects: Int) : SearchOptions {
     private companion object : KLogging()
 
-    var sortByStargazersCount = false
-    var sortByWatchersCount = false
+    var sortByStargazers = false
+    var sortByWatchers = false
 
     /**
      * Search content on GitHub with the given options and return a list of the full names of the found repositories.
@@ -28,8 +28,8 @@ abstract class GitHubSearchOptions(private val maxProjects: Int) : SearchOptions
         if (maxProjects < searchResults.totalCount) logger.info { "Will be capped at $maxProjects." }
 
         val repositories = searchResults
-            .apply { if (sortByStargazersCount) sortByStargazersCount(this) }
-            .apply { if (sortByWatchersCount) sortByWatchersCount(this) }
+            .apply { if (sortByStargazers) sortByStargazers(this) }
+            .apply { if (sortByWatchers) sortByWatchers(this) }
             .take(maxProjects)
             .map { it.owner }
 
@@ -39,7 +39,7 @@ abstract class GitHubSearchOptions(private val maxProjects: Int) : SearchOptions
 
     abstract fun buildGitHubSearchContent(gitHub: GitHub): GHContentSearchBuilder
 
-    private fun sortByStargazersCount(githubRepositories: PagedSearchIterable<GHContent>)
+    private fun sortByStargazers(githubRepositories: PagedSearchIterable<GHContent>)
         : PagedSearchIterable<GHContent> {
         githubRepositories
             .also { logger.info { "Sorting owners by stargazers count." } }
@@ -47,14 +47,14 @@ abstract class GitHubSearchOptions(private val maxProjects: Int) : SearchOptions
 
         val max = githubRepositories.first().owner
         val min = githubRepositories.last().owner
-        logger.info { "Maximum stargazers: ${max.stargazersCount}, repo: ${max.fullName}." }
-        logger.info { "Minimum stargazers: ${min.stargazersCount}, repo: ${min.fullName}." }
+        logger.info { "Maximum stargazers: ${max.stargazersCount}, repository: ${max.fullName}." }
+        logger.info { "Minimum stargazers: ${min.stargazersCount}, repository: ${min.fullName}." }
         logger.info { "Average stargazers: ${githubRepositories.sumBy { it.owner.stargazersCount }}." }
 
         return githubRepositories
     }
 
-    private fun sortByWatchersCount(githubRepositories: PagedSearchIterable<GHContent>)
+    private fun sortByWatchers(githubRepositories: PagedSearchIterable<GHContent>)
         : PagedSearchIterable<GHContent> {
         githubRepositories
             .also { logger.info { "Sorting owners by watcher count count." } }
@@ -62,8 +62,8 @@ abstract class GitHubSearchOptions(private val maxProjects: Int) : SearchOptions
 
         val max = githubRepositories.first().owner
         val min = githubRepositories.last().owner
-        logger.info { "Maximum watchers: ${max.watchers}, repo: ${max.watchers}." }
-        logger.info { "Minimum watchers: ${min.watchers}, repo: ${min.watchers}." }
+        logger.info { "Maximum watchers: ${max.watchers}, repository: ${max.watchers}." }
+        logger.info { "Minimum watchers: ${min.watchers}, repository: ${min.watchers}." }
         logger.info { "Average watchers: ${githubRepositories.sumBy { it.owner.watchers }}." }
 
         return githubRepositories

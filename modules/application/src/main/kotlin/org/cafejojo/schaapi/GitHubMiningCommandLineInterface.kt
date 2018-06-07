@@ -59,6 +59,18 @@ internal class GitHubMiningCommandLineInterface {
                     .desc("Version of library mined projects should have a dependency on.")
                     .hasArg()
                     .build())
+                .addOption(Option
+                    .builder()
+                    .longOpt("sort_by_stargazers")
+                    .desc("True if GitHub projects should be sorted by stars.")
+                    .hasArg(false)
+                    .build())
+                .addOption(Option
+                    .builder()
+                    .longOpt("sort_by_watchers")
+                    .desc("True if GitHub projects should be sorted by watchers.")
+                    .hasArg(false)
+                    .build())
     }
 
     /**
@@ -87,7 +99,10 @@ internal class GitHubMiningCommandLineInterface {
         MiningPipeline(
             outputDirectory = output,
             projectMiner = ProjectMiner(token, output) { JavaMavenProject(it, mavenDir) },
-            searchOptions = MavenProjectSearchOptions(groupId, artifactId, version, maxProjects),
+            searchOptions = MavenProjectSearchOptions(groupId, artifactId, version, maxProjects).apply {
+                this.sortByStargazers = cmd.hasOption("sort_by_stargazers")
+                this.sortByWatchers = cmd.hasOption("sort_by_watchers")
+            },
             libraryProjectCompiler = ProjectCompiler(),
             userProjectCompiler = org.cafejojo.schaapi.miningpipeline.projectcompiler.javamaven.ProjectCompiler(),
             libraryUsageGraphGenerator = LibraryUsageGraphGenerator,
