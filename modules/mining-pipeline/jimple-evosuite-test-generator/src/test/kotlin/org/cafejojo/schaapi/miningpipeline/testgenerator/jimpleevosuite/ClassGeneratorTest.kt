@@ -6,11 +6,15 @@ import org.cafejojo.schaapi.models.libraryusagegraph.jimple.JimpleNode
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
+import soot.AbstractSootFieldRef
 import soot.BooleanType
 import soot.CharType
 import soot.IntType
+import soot.Modifier
 import soot.RefType
 import soot.Scene
+import soot.SootClass
+import soot.SootField
 import soot.VoidType
 import soot.jimple.IntConstant
 import soot.jimple.Jimple
@@ -61,6 +65,41 @@ internal object ClassGeneratorTest : Spek({
 
             assertThat(jimpleMethod.parameterTypes).containsExactly(IntType.v(), IntType.v())
             assertThat(jimpleMethod.activeBody.parameterLocals.map { it.name }).containsExactly(a.name, b.name)
+        }
+
+        it("should ignore unbound array references on the left-hand side of an assignment") {
+            val a = Jimple.v().newLocal("a", IntType.v())
+            val b = Jimple.v().newLocal("b", IntType.v())
+            val c = Jimple.v().newArrayRef(b, IntConstant.v(0))
+
+            val assignC = Jimple.v().newAssignStmt(c, a)
+
+            val jimpleMethod = ClassGenerator("class").apply {
+                generateMethod("method", listOf(assignC).map { JimpleNode(it) })
+            }.sootClass.methods.last()
+
+            assertThat(jimpleMethod.parameterTypes).containsExactly(IntType.v(), IntType.v())
+            assertThat(jimpleMethod.activeBody.parameterLocals.map { it.name }).containsExactly(b.name, a.name)
+        }
+
+        it("should ignore unbound instance field references") {
+            val classWithAField = SootClass("ClassWithAField", Modifier.PUBLIC)
+                .apply { addField(SootField("field", IntType.v(), Modifier.PUBLIC)) }
+
+            val a = Jimple.v().newLocal("a", IntType.v())
+            val b = Jimple.v().newLocal("b", classWithAField.type)
+            val c = Jimple.v().newInstanceFieldRef(
+                b, AbstractSootFieldRef(classWithAField, "field", IntType.v(), false)
+            )
+
+            val assignC = Jimple.v().newAssignStmt(c, a)
+
+            val jimpleMethod = ClassGenerator("class").apply {
+                generateMethod("method", listOf(assignC).map { JimpleNode(it) })
+            }.sootClass.methods.last()
+
+            assertThat(jimpleMethod.parameterTypes).containsExactly(classWithAField.type, IntType.v())
+            assertThat(jimpleMethod.activeBody.parameterLocals.map { it.name }).containsExactly(b.name, a.name)
         }
 
         it("generates a class with the correct name") {
