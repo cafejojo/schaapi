@@ -48,8 +48,7 @@ object CheckReporterTest : Spek({
 
         val checkRun = CheckReporter(appKeyGenerator).reportStarted(
             installationId = 123456,
-            owner = "cafejojo",
-            repository = "schaapi",
+            repositoryFullName = "cafejojo/schaapi",
             headBranch = "patch-1",
             headSha = "3c91f40ff5f92146e877488c1f3c7c1b3f9f252a"
         )

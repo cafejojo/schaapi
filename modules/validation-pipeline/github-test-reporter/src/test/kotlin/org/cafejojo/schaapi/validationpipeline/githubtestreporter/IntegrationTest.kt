@@ -5,6 +5,7 @@ import com.nhaarman.mockito_kotlin.mock
 import net.javacrumbs.jsonunit.fluent.JsonFluentAssert.assertThatJson
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.entry
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -17,6 +18,7 @@ import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.test.context.junit.jupiter.SpringExtension
+import java.io.File
 import java.util.concurrent.TimeUnit
 
 @ExtendWith(SpringExtension::class)
@@ -35,6 +37,13 @@ class IntegrationTest {
         open fun appKeyGenerator(): AppKeyGenerator = mock {
             on { create() } doReturn "this-is-the-app-key"
         }
+    }
+
+    @BeforeEach
+    fun setUp() {
+        System.getProperties().load(
+            IntegrationTest::class.java.getResourceAsStream("/githubtestreporter.properties")
+        )
     }
 
     @Test
@@ -71,5 +80,50 @@ class IntegrationTest {
         }
 
         assertThat(body).isEqualTo("Webhook received.")
+    }
+
+    @Test
+    fun `it can receive a installation created web hook`() {
+        System.setProperty("tests_storage_location", "/Development/tu/cafejojo/schaapi/output/")
+
+        val requestJson = IntegrationTest::class.java
+            .getResourceAsStream("/fixtures/github/installation_created_webhook.resp").bufferedReader().readText()
+
+        val entity = HttpEntity(
+            requestJson,
+            HttpHeaders().apply {
+                contentType = MediaType.APPLICATION_JSON
+                add("X-GitHub-Event", "installation")
+            }
+        )
+
+        val body = restTemplate.postForObject("/process-webhook", entity, String::class.java)
+
+        assertThat(body).isEqualTo("Webhook received.")
+
+        assertThat(File(Properties.testsStorageLocation, "cabotest/hello-world")).exists()
+    }
+
+    @Test
+    fun `it can receive a installation deleted web hook`() {
+        System.setProperty("tests_storage_location", "/Development/tu/cafejojo/schaapi/output/")
+
+        val requestJson = IntegrationTest::class.java
+            .getResourceAsStream("/fixtures/github/installation_deleted_webhook.resp").bufferedReader().readText()
+
+        val entity = HttpEntity(
+            requestJson,
+            HttpHeaders().apply {
+                contentType = MediaType.APPLICATION_JSON
+                add("X-GitHub-Event", "installation")
+            }
+        )
+
+        val body = restTemplate.postForObject("/process-webhook", entity, String::class.java)
+
+        assertThat(body).isEqualTo("Webhook received.")
+
+        assertThat(File(Properties.testsStorageLocation, "cabotest/hello-world")).doesNotExist()
+        assertThat(File(Properties.testsStorageLocation, "cabotest")).doesNotExist()
     }
 }

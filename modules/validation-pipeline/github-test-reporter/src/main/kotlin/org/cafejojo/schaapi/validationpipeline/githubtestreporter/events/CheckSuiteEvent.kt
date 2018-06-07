@@ -1,4 +1,4 @@
-package org.cafejojo.schaapi.validationpipeline.githubtestreporter
+package org.cafejojo.schaapi.validationpipeline.githubtestreporter.events
 
 internal data class CheckSuiteEvent(
     val installation: Installation,
@@ -9,10 +9,4 @@ internal data class CheckSuiteEvent(
     fun isRequested() = action == "requested"
 }
 
-internal data class Installation(val id: Int = 0)
-
 internal data class CheckSuite(val headBranch: String = "", val headSha: String = "")
-
-internal data class Repository(val name: String, val owner: Owner)
-
-internal data class Owner(val login: String)

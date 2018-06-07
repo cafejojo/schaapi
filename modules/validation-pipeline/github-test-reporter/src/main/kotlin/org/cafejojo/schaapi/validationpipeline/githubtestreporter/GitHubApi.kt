@@ -25,15 +25,14 @@ internal sealed class GitHubApi : FuelRouting {
     }
 
     internal class reportCheckStarted(
-        owner: String,
-        repository: String,
+        repositoryFullName: String,
         headBranch: String,
         headSha: String,
         checkName: String,
         token: String
     ) : GitHubApi() {
         override val method = Method.POST
-        override val path = "/repos/$owner/$repository/check-runs"
+        override val path = "/repos/$repositoryFullName/check-runs"
         override val headers = mapOf(
             "Authorization" to "Token $token",
             "Accept" to "application/vnd.github.antiope-preview+json"
