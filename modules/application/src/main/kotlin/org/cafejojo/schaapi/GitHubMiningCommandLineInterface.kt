@@ -71,18 +71,6 @@ internal class GitHubMiningCommandLineInterface {
                     .desc("True if GitHub projects should be sorted by watchers.")
                     .hasArg(false)
                     .build())
-                .addOption(Option
-                    .builder()
-                    .longOpt("sort_by_stargazers")
-                    .desc("True if GitHub projects with the most stars should be mined.")
-                    .hasArg(false)
-                    .build())
-                .addOption(Option
-                    .builder()
-                    .longOpt("sort_by_watchers")
-                    .desc("True if GitHub projects with the most watchers should be mined.")
-                    .hasArg(false)
-                    .build())
     }
 
     /**
