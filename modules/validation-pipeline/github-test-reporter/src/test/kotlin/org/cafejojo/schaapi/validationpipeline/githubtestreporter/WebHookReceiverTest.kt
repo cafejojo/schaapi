@@ -57,28 +57,6 @@ object WebHookReceiverTest : Spek({
         verify(checkReporter, never()).reportStarted(any(), any(), any(), any())
     }
 
-//    it("can receive GitHub installation created web hooks") {
-//        val checkReporter = mock<CheckReporter>()
-//        val webHookReceiver = WebHookReceiver(checkReporter)
-//
-//        webHookReceiver.processWebHook("installation", json {
-//            "action" to "created"
-//            "installation" to json {
-//                "id" to "12345"
-//            }
-//            "check_suite" to json {
-//                "head_branch" to "patch01"
-//                "head_sha" to "abc123"
-//            }
-//            "repository" to json {
-//                "name" to "schaapi"
-//                "full_name" to "cafejojo/schaapi"
-//            }
-//        }.toString())
-//
-//        verify(checkReporter).reportStarted(12345, "cafejojo/schaapi", "patch01", "abc123")
-//    }
-
     it("cannot process general GitHub web hooks") {
         val webHookReceiver = WebHookReceiver(mock())
 
