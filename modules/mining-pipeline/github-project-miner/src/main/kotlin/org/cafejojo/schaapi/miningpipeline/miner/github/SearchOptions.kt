@@ -37,10 +37,9 @@ abstract class GitHubSearchOptions(private val maxProjects: Int) : SearchOptions
         return repositories.map { it.fullName }
     }
 
-    abstract fun buildGitHubSearchContent(gitHub: GitHub): GHContentSearchBuilder
+    protected abstract fun buildGitHubSearchContent(gitHub: GitHub): GHContentSearchBuilder
 
-    private fun sortByStargazers(githubRepositories: PagedSearchIterable<GHContent>)
-        : PagedSearchIterable<GHContent> {
+    private fun sortByStargazers(githubRepositories: PagedSearchIterable<GHContent>): PagedSearchIterable<GHContent> {
         githubRepositories
             .also { logger.info { "Sorting owners by stargazers count." } }
             .sortedByDescending { it.owner.stargazersCount }
@@ -54,8 +53,7 @@ abstract class GitHubSearchOptions(private val maxProjects: Int) : SearchOptions
         return githubRepositories
     }
 
-    private fun sortByWatchers(githubRepositories: PagedSearchIterable<GHContent>)
-        : PagedSearchIterable<GHContent> {
+    private fun sortByWatchers(githubRepositories: PagedSearchIterable<GHContent>): PagedSearchIterable<GHContent> {
         githubRepositories
             .also { logger.info { "Sorting owners by watcher count count." } }
             .sortedByDescending { it.owner.watchers }
