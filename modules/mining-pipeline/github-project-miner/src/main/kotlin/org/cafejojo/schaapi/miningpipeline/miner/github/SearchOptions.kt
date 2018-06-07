@@ -27,14 +27,14 @@ abstract class GitHubSearchOptions(private val maxProjects: Int) : SearchOptions
         logger.info { "Found ${searchResults.totalCount} projects." }
         if (maxProjects < searchResults.totalCount) logger.info { "Will be capped at $maxProjects." }
 
-        val repositories = searchResults
+        val names = searchResults
             .apply { if (sortByStargazers) sortByStargazers(this) }
             .apply { if (sortByWatchers) sortByWatchers(this) }
             .take(maxProjects)
-            .map { it.owner }
+            .map { it.owner.fullName }
 
-        logger.info { "Found ${repositories.size} projects namesToStars using the Github v3 Search API." }
-        return repositories.map { it.fullName }
+        logger.info { "Found ${names.size} projects names using the Github v3 Search API." }
+        return names
     }
 
     protected abstract fun buildGitHubSearchContent(gitHub: GitHub): GHContentSearchBuilder
