@@ -8,11 +8,13 @@ import org.apache.commons.cli.Option
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.cafejojo.schaapi.miningpipeline.projectcompiler.javamaven.MavenInstaller
+import org.cafejojo.schaapi.models.project.JavaJarProject
 import org.cafejojo.schaapi.models.project.JavaMavenProject
 import java.io.File
 import kotlin.system.exitProcess
 
 internal const val DEFAULT_PIPELINE_TYPE = "directory"
+internal const val DEFAULT_LIBRARY_FLAVOR = "maven"
 internal const val DEFAULT_TEST_GENERATOR_TIMEOUT = "60"
 internal const val DEFAULT_PATTERN_DETECTOR_MINIMUM_COUNT = "2"
 internal const val DEFAULT_MAX_SEQUENCE_LENGTH = "25"
@@ -31,11 +33,18 @@ fun main(args: Array<String>) {
 
     val mavenDir = File(cmd.getOptionValue("maven_dir") ?: JavaMavenProject.DEFAULT_MAVEN_HOME.absolutePath)
     val output = File(cmd.getOptionValue('o')).apply { mkdirs() }
-    val library = File(cmd.getOptionValue('l'))
+    val libraryDirectory = File(cmd.getOptionValue('l'))
+    val libraryFlavor = cmd.getOptionValue("library_flavor", DEFAULT_LIBRARY_FLAVOR)
+
 
     MavenInstaller().installMaven(mavenDir, overwrite = cmd.hasOption("repair_maven"))
 
     val flavor = cmd.getOptionValue("flavor", DEFAULT_PIPELINE_TYPE)
+    val library = when (libraryFlavor) {
+        "jar" -> JavaJarProject(libraryDirectory)
+        else -> JavaMavenProject(libraryDirectory, mavenDir)
+    }
+
     try {
         when (flavor) {
             "directory" -> DirectoryMiningCommandLineInterface().run(cmd, mavenDir, library, output)
@@ -72,6 +81,12 @@ private fun buildOptions(): Options =
             .desc("The library directory.")
             .hasArg()
             .required()
+            .build())
+        .addOption(Option
+            .builder()
+            .longOpt("library_flavor")
+            .desc("The type of library.")
+            .hasArg()
             .build())
         .addOption(Option
             .builder()
