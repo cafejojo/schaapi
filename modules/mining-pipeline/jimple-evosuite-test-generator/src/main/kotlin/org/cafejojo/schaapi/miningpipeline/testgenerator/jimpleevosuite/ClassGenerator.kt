@@ -176,10 +176,10 @@ private fun List<JimpleNode>.duplicate(): List<JimpleNode> {
     newNodes.forEach {
         val statement = it.statement
         when (statement) {
-            is GotoStmt -> statement.target = oldToNewStatements[statement]
-            is IfStmt -> statement.setTarget(oldToNewStatements[statement])
+            is GotoStmt -> statement.target = oldToNewStatements[statement.target]
+            is IfStmt -> statement.setTarget(oldToNewStatements[statement.target])
             is SwitchStmt -> {
-                statement.defaultTarget = oldToNewStatements[statement]
+                statement.defaultTarget = oldToNewStatements[statement.defaultTarget]
                 statement.targets.forEachIndexed { index, target ->
                     statement.setTarget(index, oldToNewStatements[target])
                 }
