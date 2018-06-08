@@ -23,7 +23,7 @@ internal const val DEFAULT_MAX_PROJECTS = "20"
 /**
  * Mines GitHub for user projects and generates tests based on these projects.
  *
- * Assumes that the passed library is a java jar project.
+ * Assumes that the passed library is a Java JAR project.
  */
 internal class GitHubMiningCommandLineInterface {
     internal companion object {
