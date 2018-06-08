@@ -1,5 +1,6 @@
 package org.cafejojo.schaapi
 
+import mu.KLogging
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.Option
 import org.apache.commons.cli.Options
@@ -27,6 +28,8 @@ internal const val DEFAULT_MAX_PROJECTS = "20"
  */
 internal class GitHubMiningCommandLineInterface {
     internal companion object {
+        val logger = KLogging().logger
+
         fun addOptionsTo(options: Options): Options =
             options
                 .addOption(Option
@@ -93,6 +96,10 @@ internal class GitHubMiningCommandLineInterface {
         val testGeneratorTimeout = cmd
             .getOptionOrDefault("test_generator_timeout", DEFAULT_TEST_GENERATOR_TIMEOUT).toInt()
         val testGeneratorEnableOutput = cmd.hasOption("test_generator_enable_output")
+
+        if (cmd.hasOption("sort_by_stargazers") && cmd.hasOption("sort_by_watchers")) {
+            logger.error { "Cannot sort repositories on both stargazers and watchers." }
+        }
 
         val libraryJar = JavaJarProject(library)
 
