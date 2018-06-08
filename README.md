@@ -51,6 +51,10 @@ usage: schaapi -o <arg> -l <arg> -u <arg> [--maven_dir <arg>]
                                                        should be shown.
     --test_generator_timeout <arg>                     The time limit for
                                                        the test generator.
+    --sort_by_stargazers                               Mine projects on GitHub with
+                                                       the most stargazers.
+    --sort_by_watchers                                 Mine projects on GitHub with
+                                                       the most watchers.
 ```
 
 ## Pipeline Stages

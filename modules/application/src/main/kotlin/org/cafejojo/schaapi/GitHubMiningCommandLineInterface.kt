@@ -1,5 +1,6 @@
 package org.cafejojo.schaapi
 
+import mu.KLogging
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.Option
 import org.apache.commons.cli.Options
@@ -27,6 +28,8 @@ internal const val DEFAULT_MAX_PROJECTS = "20"
  */
 internal class GitHubMiningCommandLineInterface {
     internal companion object {
+        val logger = KLogging().logger
+
         fun addOptionsTo(options: Options): Options =
             options
                 .addOption(Option
@@ -59,6 +62,18 @@ internal class GitHubMiningCommandLineInterface {
                     .desc("Version of library mined projects should have a dependency on.")
                     .hasArg()
                     .build())
+                .addOption(Option
+                    .builder()
+                    .longOpt("sort_by_stargazers")
+                    .desc("True if GitHub projects should be sorted by stars.")
+                    .hasArg(false)
+                    .build())
+                .addOption(Option
+                    .builder()
+                    .longOpt("sort_by_watchers")
+                    .desc("True if GitHub projects should be sorted by watchers.")
+                    .hasArg(false)
+                    .build())
     }
 
     /**
@@ -82,12 +97,19 @@ internal class GitHubMiningCommandLineInterface {
             .getOptionOrDefault("test_generator_timeout", DEFAULT_TEST_GENERATOR_TIMEOUT).toInt()
         val testGeneratorEnableOutput = cmd.hasOption("test_generator_enable_output")
 
+        if (cmd.hasOption("sort_by_stargazers") && cmd.hasOption("sort_by_watchers")) {
+            logger.error { "Cannot sort repositories on both stargazers and watchers." }
+        }
+
         val libraryJar = JavaJarProject(library)
 
         MiningPipeline(
             outputDirectory = output,
             projectMiner = ProjectMiner(token, output) { JavaMavenProject(it, mavenDir) },
-            searchOptions = MavenProjectSearchOptions(groupId, artifactId, version, maxProjects),
+            searchOptions = MavenProjectSearchOptions(groupId, artifactId, version, maxProjects).apply {
+                this.sortByStargazers = cmd.hasOption("sort_by_stargazers")
+                this.sortByWatchers = cmd.hasOption("sort_by_watchers")
+            },
             libraryProjectCompiler = ProjectCompiler(),
             userProjectCompiler = org.cafejojo.schaapi.miningpipeline.projectcompiler.javamaven.ProjectCompiler(),
             libraryUsageGraphGenerator = LibraryUsageGraphGenerator,
