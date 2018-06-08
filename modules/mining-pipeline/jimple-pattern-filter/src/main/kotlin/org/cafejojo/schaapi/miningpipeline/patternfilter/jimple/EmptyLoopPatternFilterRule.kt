@@ -12,17 +12,12 @@ class EmptyLoopPatternFilterRule : PatternFilterRule<JimpleNode> {
     private companion object : KLogging()
 
     override fun retain(pattern: List<JimpleNode>) =
-        pattern.none { node ->
-            val statement = node.statement
-
-            if (statement is GotoStmt) {
-                val previousStatements = pattern.takeWhile { it.statement !== statement }
-
-                if (previousStatements.isNotEmpty() && statement.target === previousStatements.last().statement) {
-                    return@none true
-                        .also { if (!it) logger.debug { "Empty loop pattern was detected: $pattern" } }
-                }
+        pattern
+            .filter { it.statement is GotoStmt }
+            .all { node ->
+                if (pattern.getOrNull(pattern.indexOf(node) - 1)?.statement === (node.statement as? GotoStmt)?.target)
+                    false.also { if (!it) logger.debug { "Empty loop pattern was detected: $pattern" } }
+                else
+                    true
             }
-            false
-        }
 }
