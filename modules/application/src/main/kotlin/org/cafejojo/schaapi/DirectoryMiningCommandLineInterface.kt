@@ -20,7 +20,7 @@ import java.io.File
 /**
  * Mines a directory for user projects and generates tests based on these projects.
  *
- * Assumes that the passed library is a java maven project.
+ * Assumes that the passed library is a Java Maven project.
  */
 internal class DirectoryMiningCommandLineInterface {
     internal companion object {
