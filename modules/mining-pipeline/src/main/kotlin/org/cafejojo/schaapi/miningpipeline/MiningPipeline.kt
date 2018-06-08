@@ -26,7 +26,9 @@ class MiningPipeline<SO : SearchOptions, UP : Project, LP : Project, N : Node>(
      */
     @Suppress("TooGenericExceptionCaught") // In this case it is relevant to catch and log an Exception
     fun run(libraryProject: LP) {
+        logger.info { "Compiling library project." }
         libraryProjectCompiler.compile(libraryProject)
+        logger.info { "Compiled library project." }
 
         logger.info { "Mining has started." }
         logger.info { "Output directory is ${outputDirectory.absolutePath}." }

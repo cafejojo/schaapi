@@ -2,7 +2,7 @@ package org.cafejojo.schaapi
 
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.xit
+import org.jetbrains.spek.api.dsl.it
 import java.io.File
 import java.net.URLDecoder
 import java.nio.file.Files
@@ -24,8 +24,7 @@ internal class SchaapiSmokeTest : Spek({
         mavenDir.deleteRecursively()
     }
 
-    // TODO rewrite smoketest for new github mining interface
-    xit("generates a test class from the patterns in a project using a library") {
+    it("generates a test class from the patterns in a project using a library") {
         main(arrayOf(
             "-o", target.absolutePath,
             "-l", getResourcePath("/library/"),

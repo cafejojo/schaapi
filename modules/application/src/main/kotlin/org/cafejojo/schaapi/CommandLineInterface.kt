@@ -1,32 +1,20 @@
 package org.cafejojo.schaapi
 
+import mu.KLogging
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Option
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
-import org.cafejojo.schaapi.miningpipeline.MiningPipeline
-import org.cafejojo.schaapi.miningpipeline.PatternFilter
-import org.cafejojo.schaapi.miningpipeline.miner.github.MavenProjectSearchOptions
-import org.cafejojo.schaapi.miningpipeline.miner.github.ProjectMiner
-import org.cafejojo.schaapi.miningpipeline.patterndetector.ccspan.PatternDetector
-import org.cafejojo.schaapi.miningpipeline.patternfilter.jimple.IncompleteInitPatternFilterRule
-import org.cafejojo.schaapi.miningpipeline.patternfilter.jimple.LengthPatternFilterRule
-import org.cafejojo.schaapi.miningpipeline.projectcompiler.javajar.ProjectCompiler
 import org.cafejojo.schaapi.miningpipeline.projectcompiler.javamaven.MavenInstaller
-import org.cafejojo.schaapi.miningpipeline.testgenerator.jimpleevosuite.TestGenerator
-import org.cafejojo.schaapi.miningpipeline.usagegraphgenerator.jimple.LibraryUsageGraphGenerator
-import org.cafejojo.schaapi.models.libraryusagegraph.jimple.GeneralizedNodeComparator
-import org.cafejojo.schaapi.models.project.JavaJarProject
 import org.cafejojo.schaapi.models.project.JavaMavenProject
 import java.io.File
-import org.cafejojo.schaapi.miningpipeline.projectcompiler.javamaven.ProjectCompiler as JavaMavenCompiler
 
-private const val DEFAULT_TEST_GENERATOR_TIMEOUT = "60"
-private const val DEFAULT_PATTERN_DETECTOR_MINIMUM_COUNT = "2"
-private const val DEFAULT_MAX_PROJECTS = "20"
-private const val DEFAULT_MAXIMUM_SEQUENCE_LENGTH = "25"
+internal const val DEFAULT_PIPELINE_TYPE = "directory"
+internal const val DEFAULT_TEST_GENERATOR_TIMEOUT = "60"
+internal const val DEFAULT_PATTERN_DETECTOR_MINIMUM_COUNT = "2"
+internal const val DEFAULT_MAX_SEQUENCE_LENGTH = "25"
 
 /**
  * Runs the complete first phase of the Schaapi pipeline.
@@ -35,53 +23,39 @@ private const val DEFAULT_MAXIMUM_SEQUENCE_LENGTH = "25"
  */
 fun main(args: Array<String>) {
     val options = buildOptions()
+        .apply { DirectoryMiningCommandLineInterface.addOptionsTo(this) }
+        .apply { GitHubMiningCommandLineInterface.addOptionsTo(this) }
+
     val cmd = parseArgs(options, args) ?: return
 
     val mavenDir = File(cmd.getOptionValue("maven_dir") ?: JavaMavenProject.DEFAULT_MAVEN_HOME.absolutePath)
     val output = File(cmd.getOptionValue('o')).apply { mkdirs() }
-    val library = JavaJarProject(File(cmd.getOptionValue('l')))
-
-    val token = cmd.getOptionValue("github_oauth_token") ?: return
-    val maxProjects = cmd.getOptionOrDefault("max_projects", DEFAULT_MAX_PROJECTS).toInt()
-    val groupId = cmd.getOptionValue("library_group_id") ?: return
-    val artifactId = cmd.getOptionValue("library_artifact_id") ?: return
-    val version = cmd.getOptionValue("library_version") ?: return
+    val library = File(cmd.getOptionValue('l'))
 
     if (!mavenDir.resolve("bin/mvn").exists() || cmd.hasOption("repair_maven")) {
         MavenInstaller().installMaven(mavenDir)
     }
 
-    val testGeneratorTimeout = cmd.getOptionOrDefault("test_generator_timeout", DEFAULT_TEST_GENERATOR_TIMEOUT).toInt()
-    val testGeneratorEnableOutput = cmd.hasOption("test_generator_enable_output")
-
-    MiningPipeline(
-        outputDirectory = output,
-        projectMiner = ProjectMiner(token, output) { JavaMavenProject(it, mavenDir) },
-        searchOptions = MavenProjectSearchOptions(groupId, artifactId, version, maxProjects),
-        libraryProjectCompiler = ProjectCompiler(),
-        userProjectCompiler = JavaMavenCompiler(),
-        libraryUsageGraphGenerator = LibraryUsageGraphGenerator,
-        patternDetector = PatternDetector(
-            cmd.getOptionOrDefault("pattern_detector_minimum_count", DEFAULT_PATTERN_DETECTOR_MINIMUM_COUNT).toInt(),
-            cmd.getOptionOrDefault("pattern_detector_maximum_sequence_length", DEFAULT_MAXIMUM_SEQUENCE_LENGTH).toInt(),
-            GeneralizedNodeComparator()
-        ),
-        patternFilter = PatternFilter(
-            IncompleteInitPatternFilterRule(),
-            LengthPatternFilterRule()
-        ),
-        testGenerator = TestGenerator(
-            library = library,
-            outputDirectory = output,
-            timeout = testGeneratorTimeout,
-            processStandardStream = if (testGeneratorEnableOutput) System.out else null,
-            processErrorStream = if (testGeneratorEnableOutput) System.out else null
-        )
-    ).run(library)
+    val flavor = cmd.getOptionOrDefault("flavor", DEFAULT_PIPELINE_TYPE)
+    try {
+        when (flavor) {
+            "directory" -> DirectoryMiningCommandLineInterface().run(cmd, mavenDir, library, output)
+            "github" -> GitHubMiningCommandLineInterface().run(cmd, mavenDir, library, output)
+            else -> KLogging().logger.error { "Given pipeline flavor was not recognized." }
+        }
+    } catch (e: MissingArgumentException) {
+        KLogging().logger.error { e.messageForFlavor(flavor) }
+    }
 }
 
 private fun buildOptions(): Options =
     Options()
+        .addOption(Option
+            .builder()
+            .longOpt("flavor")
+            .desc("The desired pipeline flavor")
+            .hasArg()
+            .build())
         .addOption(Option
             .builder("o")
             .longOpt("output_dir")
@@ -93,45 +67,6 @@ private fun buildOptions(): Options =
             .builder("l")
             .longOpt("library_dir")
             .desc("The library directory.")
-            .hasArg()
-            .required()
-            .build())
-        .addOption(Option
-            .builder("u")
-            .longOpt("user_base_dir")
-            .desc("The directory containing user project directories.")
-            .hasArg()
-            .build())
-        .addOption(Option
-            .builder("t")
-            .longOpt("github_oauth_token")
-            .desc("Token of GitHub account used for searching.")
-            .hasArg()
-            .build())
-        .addOption(Option
-            .builder()
-            .longOpt("max_projects")
-            .desc("Maximum amount of projects to download from GitHub.")
-            .hasArg()
-            .build())
-        .addOption(Option
-            .builder()
-            .longOpt("library_group_id")
-            .desc("Group id of library mined projects should have a dependency on.")
-            .hasArg()
-            .required()
-            .build())
-        .addOption(Option
-            .builder()
-            .longOpt("library_artifact_id")
-            .desc("Artifact id of library mined projects should have a dependency on.")
-            .hasArg()
-            .required()
-            .build())
-        .addOption(Option
-            .builder()
-            .longOpt("library_version")
-            .desc("Version of library mined projects should have a dependency on.")
             .hasArg()
             .required()
             .build())
@@ -180,6 +115,7 @@ private fun parseArgs(options: Options, args: Array<String>): CommandLine? {
     return try {
         parser.parse(options, args)
     } catch (e: ParseException) {
+        println(e.message)
         printHelpMessage(options)
         null
     }
@@ -198,5 +134,14 @@ private fun printHelpMessage(options: Options) {
  * @param default the value to return if the option's value is null
  * @return [CommandLine.getOptionValue], unless this is null, in which case [default] is returned
  */
-fun CommandLine.getOptionOrDefault(option: String, default: String) =
-    getOptionValue(option) ?: default
+internal fun CommandLine.getOptionOrDefault(option: String, default: String) = getOptionValue(option) ?: default
+
+/**
+ * Returns [CommandLine.getOptionValue], unless this is null, in which case a [MissingArgumentException] is thrown.
+ *
+ * @param option the name of the option
+ * @return [CommandLine.getOptionValue], unless this is null, in which case a [MissingArgumentException] is thrown
+ * with the [option] in its message
+ */
+internal fun CommandLine.getOptionOrThrowException(option: String) =
+    getOptionValue(option) ?: throw MissingArgumentException(option)
