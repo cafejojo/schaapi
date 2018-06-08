@@ -62,7 +62,7 @@ internal class GitHubMiningCommandLineInterface {
     }
 
     /**
-     * Mine GitHub.
+     * Mines GitHub.
      *
      * @throws [MissingArgumentException] if required arguments not set in [CommandLine].
      */
