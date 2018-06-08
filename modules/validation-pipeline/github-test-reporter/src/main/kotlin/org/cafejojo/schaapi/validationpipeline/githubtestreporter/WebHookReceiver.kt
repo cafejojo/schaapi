@@ -3,12 +3,15 @@ package org.cafejojo.schaapi.validationpipeline.githubtestreporter
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.PropertyNamingStrategy
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import org.cafejojo.schaapi.validationpipeline.githubtestreporter.events.CheckSuiteEvent
+import org.cafejojo.schaapi.validationpipeline.githubtestreporter.events.InstallationEvent
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseBody
+import java.io.File
 
 /**
  * Receives GitHub web hooks.
@@ -46,7 +49,7 @@ class WebHookReceiver(val checkReporter: CheckReporter) {
                         Installation id is ${checkSuiteEvent.installation.id}
                         For commit ${checkSuiteEvent.checkSuite.headSha}
                         On branch ${checkSuiteEvent.checkSuite.headBranch}
-                        For repository ${checkSuiteEvent.repository.owner.login}/${checkSuiteEvent.repository.name}
+                        For repository ${checkSuiteEvent.repository.fullName}
 
                         with status `in_progress` and started_at set to the current time
 
@@ -57,11 +60,26 @@ class WebHookReceiver(val checkReporter: CheckReporter) {
                 with(checkSuiteEvent) {
                     checkReporter.reportStarted(
                         installation.id,
-                        repository.owner.login,
-                        repository.name,
+                        repository.fullName,
                         checkSuite.headBranch,
                         checkSuite.headSha
                     )
+                }
+            }
+            "installation" -> {
+                val installationEvent = mapper.readValue(body, InstallationEvent::class.java)
+
+                when {
+                    installationEvent.isCreated() -> {
+                        installationEvent.repositories?.forEach {
+                            File(Properties.testsStorageLocation, it.fullName).mkdirs()
+                        }
+                    }
+                    installationEvent.isDeleted() -> {
+                        installationEvent.installation.account?.let { account ->
+                            File(Properties.testsStorageLocation, account.login).deleteRecursively()
+                        }
+                    }
                 }
             }
             else -> throw IncomingWebHookException("Cannot process web hooks for events of type $eventType.")

@@ -21,10 +21,9 @@ class CheckReporter(@Autowired private val appKeyGenerator: AppKeyGenerator) {
      *
      * When successful, a CheckRun object containing the ID needed for future check requests is returned.
      */
-    fun reportStarted(installationId: Int, owner: String, repository: String, headBranch: String, headSha: String) =
+    fun reportStarted(installationId: Int, repositoryFullName: String, headBranch: String, headSha: String) =
         GitHubApi.reportCheckStarted(
-            owner,
-            repository,
+            repositoryFullName,
             headBranch,
             headSha,
             checkName = "breaking change detection",

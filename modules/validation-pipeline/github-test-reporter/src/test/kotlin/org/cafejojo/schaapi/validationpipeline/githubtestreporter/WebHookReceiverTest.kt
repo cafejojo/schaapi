@@ -24,13 +24,11 @@ object WebHookReceiverTest : Spek({
             }
             "repository" to json {
                 "name" to "schaapi"
-                "owner" to json {
-                    "login" to "cafejojo"
-                }
+                "full_name" to "cafejojo/schaapi"
             }
         }.toString())
 
-        verify(checkReporter).reportStarted(12345, "cafejojo", "schaapi", "patch01", "abc123")
+        verify(checkReporter).reportStarted(12345, "cafejojo/schaapi", "patch01", "abc123")
     }
 
     it("cannot process general GitHub check suite web hooks") {
@@ -48,9 +46,7 @@ object WebHookReceiverTest : Spek({
             }
             "repository" to json {
                 "name" to "schaapi"
-                "owner" to json {
-                    "login" to "cafejojo"
-                }
+                "full_name" to "cafejojo/schaapi"
             }
         }.toString()
 
@@ -58,7 +54,7 @@ object WebHookReceiverTest : Spek({
             .isInstanceOf(IncomingWebHookException::class.java)
             .hasMessageContaining("general-action")
 
-        verify(checkReporter, never()).reportStarted(any(), any(), any(), any(), any())
+        verify(checkReporter, never()).reportStarted(any(), any(), any(), any())
     }
 
     it("cannot process general GitHub web hooks") {
