@@ -1,7 +1,6 @@
 package org.cafejojo.schaapi.models.libraryusagegraph.jimple
 
 import org.cafejojo.schaapi.models.Node
-import soot.Local
 import soot.jimple.DefinitionStmt
 import soot.jimple.GotoStmt
 import soot.jimple.IfStmt
@@ -53,13 +52,7 @@ class JimpleNode(val statement: Stmt, override val successors: MutableList<Node>
      */
     override fun equivTo(other: Node?) =
         if (other !is JimpleNode || this.statement::class != other.statement::class) false
-        else this.getTopLevelValues().zip(other.getTopLevelValues()).all {
-            if (it.first is Local && it.second is Local) {
-                it.first.type == it.second.type
-            } else {
-                it.first.equivTo(it.second)
-            }
-        }
+        else this.getTopLevelValues().zip(other.getTopLevelValues()).all { it.first.equivTo(it.second) }
 
     /**
      * Generates a hash code based on the values of the contained [Stmt] and their order.
@@ -68,9 +61,7 @@ class JimpleNode(val statement: Stmt, override val successors: MutableList<Node>
      */
     override fun equivHashCode(): Int {
         var hash = 0
-        getTopLevelValues().forEachIndexed { index, value ->
-            hash += (index + 1) * ((value as? Local)?.type?.hashCode() ?: value.equivHashCode())
-        }
+        getTopLevelValues().forEachIndexed { index, value -> hash += (index + 1) * value.equivHashCode() }
         return hash
     }
 
