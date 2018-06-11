@@ -355,6 +355,22 @@ internal object ClassGeneratorTest : Spek({
                 .isEqualToComparingFieldByFieldRecursively(returnStmt)
         }
 
+        it("should replace statement target instances correctly in a loop") {
+            val ifStmt = Jimple.v().newIfStmt(
+                Jimple.v().newEqExpr(IntConstant.v(0), IntConstant.v(0)),
+                Jimple.v().newNopStmt()
+            )
+            ifStmt.setTarget(ifStmt)
+            val gotoStmt = Jimple.v().newGotoStmt(ifStmt)
+
+            val method = ClassGenerator("test").apply {
+                generateMethod("method", listOf(ifStmt, gotoStmt).map { JimpleNode(it) })
+            }.sootClass.methods.last()
+
+            val newIfStmt = method.activeBody.units.elementAt(0) as IfStmt
+            assertThat(newIfStmt.target).isEqualTo(newIfStmt)
+        }
+
         it("should replace statement target instances in if statements") {
             val value = Jimple.v().newLocal("value", RefType.v("myClass"))
             val ifCondition = Jimple.v().newConditionExprBox(JEqExpr(value, value)).value
