@@ -32,11 +32,16 @@ internal class GitHubProjectDownloader<P : Project>(
      * Extracts the directory denoting the master branch in a GitHub project by moving the up one level.
      */
     private fun File.extractMasterFile() {
-        require(this.listFiles().isNotEmpty()) { "GitHub project must contain files." }
-        require(this.listFiles().first().isDirectory) { "GitHub project must contain a directory for master." }
+        require(this.listFiles().size == 1) {
+            "GitHub project must contain exactly one file, but contained ${this.listFiles().size} files."
+        }
 
         val masterFile = this.listFiles().first()
-        masterFile.listFiles()?.forEach { it.moveUpOneLevel() }
+        require(masterFile.isDirectory) { "GitHub Project must contain a directory for master." }
+
+        if (masterFile.listFiles().isEmpty()) logger.warn { "${masterFile.absolutePath} did not contain any files." }
+        masterFile.listFiles().forEach { it.moveUpOneLevel() }
+
         masterFile.delete()
     }
 
