@@ -10,6 +10,7 @@ import org.apache.commons.cli.ParseException
 import org.cafejojo.schaapi.miningpipeline.projectcompiler.javamaven.MavenInstaller
 import org.cafejojo.schaapi.models.project.JavaMavenProject
 import java.io.File
+import kotlin.system.exitProcess
 
 internal const val DEFAULT_PIPELINE_TYPE = "directory"
 internal const val DEFAULT_TEST_GENERATOR_TIMEOUT = "60"
@@ -26,7 +27,7 @@ fun main(args: Array<String>) {
         .apply { DirectoryMiningCommandLineInterface.addOptionsTo(this) }
         .apply { GitHubMiningCommandLineInterface.addOptionsTo(this) }
 
-    val cmd = parseArgs(options, args) ?: return
+    val cmd = parseArgs(options, args) ?: exitProcess(-1)
 
     val mavenDir = File(cmd.getOptionValue("maven_dir") ?: JavaMavenProject.DEFAULT_MAVEN_HOME.absolutePath)
     val output = File(cmd.getOptionValue('o')).apply { mkdirs() }
@@ -41,10 +42,14 @@ fun main(args: Array<String>) {
         when (flavor) {
             "directory" -> DirectoryMiningCommandLineInterface().run(cmd, mavenDir, library, output)
             "github" -> GitHubMiningCommandLineInterface().run(cmd, mavenDir, library, output)
-            else -> KLogging().logger.error { "Given pipeline flavor was not recognized." }
+            else -> {
+                KLogging().logger.error { "Given pipeline flavor was not recognized." }
+                exitProcess(-1)
+            }
         }
     } catch (e: MissingArgumentException) {
         KLogging().logger.error { e.messageForFlavor(flavor) }
+        exitProcess(-1)
     }
 }
 
