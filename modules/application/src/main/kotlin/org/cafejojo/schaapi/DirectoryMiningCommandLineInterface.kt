@@ -11,6 +11,7 @@ import org.cafejojo.schaapi.miningpipeline.miner.directory.DirectorySearchOption
 import org.cafejojo.schaapi.miningpipeline.patterndetector.ccspan.CCSpanPatternDetector
 import org.cafejojo.schaapi.miningpipeline.patternfilter.jimple.EmptyLoopPatternFilterRule
 import org.cafejojo.schaapi.miningpipeline.patternfilter.jimple.IncompleteInitPatternFilterRule
+import org.cafejojo.schaapi.miningpipeline.patternfilter.jimple.InsufficientLibraryUsageFilter
 import org.cafejojo.schaapi.miningpipeline.patternfilter.jimple.LengthPatternFilterRule
 import org.cafejojo.schaapi.miningpipeline.projectcompiler.javamaven.JavaMavenProjectCompiler
 import org.cafejojo.schaapi.miningpipeline.testgenerator.jimpleevosuite.TestGenerator
@@ -51,6 +52,8 @@ internal class DirectoryMiningCommandLineInterface {
             cmd.getOptionValue("pattern_detector_minimum_count", DEFAULT_PATTERN_DETECTOR_MINIMUM_COUNT).toInt()
         val maxSequenceLength =
             cmd.getOptionValue("pattern_detector_maximum_sequence_length", DEFAULT_MAX_SEQUENCE_LENGTH).toInt()
+        val minLibraryUsageCount =
+            cmd.getOptionValue("pattern_minimum_library_usage_count", DEFAULT_MIN_LIBRARY_USAGE_COUNT).toInt()
 
         val libraryProject = JavaMavenProject(library, mavenDir)
         val jimpleLibraryUsageGraphGenerator = JimpleLibraryUsageGraphGenerator()
@@ -70,7 +73,8 @@ internal class DirectoryMiningCommandLineInterface {
             patternFilter = PatternFilter(
                 IncompleteInitPatternFilterRule(),
                 LengthPatternFilterRule(),
-                EmptyLoopPatternFilterRule()
+                EmptyLoopPatternFilterRule(),
+                InsufficientLibraryUsageFilter(libraryProject, minLibraryUsageCount)
             ),
             testGenerator = TestGenerator(
                 library = libraryProject,
