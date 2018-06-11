@@ -168,6 +168,29 @@ internal object ClassGeneratorTest : Spek({
             assertThat(method2.parameterCount).isZero()
             assertThat(generator.sootClass.methodCount).isEqualTo(2)
         }
+
+        it("adds a parameter for a value that is initialised recursively") {
+            val local = Jimple.v().newLocal("a", IntType.v())
+            val assign = Jimple.v().newAssignStmt(local, local)
+
+            val method = ClassGenerator("Test").also {
+                it.generateMethod("method", listOf(assign).map { JimpleNode(it) })
+            }.sootClass.methods.last()
+
+            assertThat(method.parameterCount).isEqualTo(1)
+        }
+
+        it("does not add a parameter for a value that is assigned recursively after initialization") {
+            val local = Jimple.v().newLocal("a", IntType.v())
+            val assignA = Jimple.v().newAssignStmt(local, IntConstant.v(58))
+            val assignB = Jimple.v().newAssignStmt(local, local)
+
+            val method = ClassGenerator("Test").also {
+                it.generateMethod("method", listOf(assignA, assignB).map { JimpleNode(it) })
+            }.sootClass.methods.last()
+
+            assertThat(method.parameterCount).isEqualTo(0)
+        }
     }
 
     it("should generate a valid body") {
