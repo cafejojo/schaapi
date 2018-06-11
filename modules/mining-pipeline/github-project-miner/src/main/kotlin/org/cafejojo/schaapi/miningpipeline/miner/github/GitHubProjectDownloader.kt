@@ -5,7 +5,6 @@ import org.cafejojo.schaapi.models.Project
 import org.zeroturnaround.zip.ZipException
 import org.zeroturnaround.zip.ZipUtil
 import java.io.File
-import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
 import java.net.HttpURLConnection
@@ -97,7 +96,7 @@ internal class GitHubProjectDownloader<P : Project>(
             }
 
             if (zipFile.createNewFile()) {
-                input.copyTo(FileOutputStream(zipFile))
+                zipFile.outputStream().use { input.copyTo(it) }
             } else {
                 logger.warn("Output file ${zipFile.path} could not be created.")
             }
@@ -126,12 +125,7 @@ internal class GitHubProjectDownloader<P : Project>(
             logger.warn("Could not unzip ${projectZipFile.absolutePath}.", e)
             return null
         } finally {
-            projectZipFile.outputStream().close()
-
-            if (projectZipFile.exists()) {
-                logger.debug { "Deleting ${projectZipFile.absolutePath}." }
-                projectZipFile.delete()
-            }
+            projectZipFile.delete()
         }
 
         return githubProject
