@@ -10,6 +10,7 @@ import java.io.IOException
 import java.io.InputStream
 import java.net.HttpURLConnection
 import java.net.URL
+import java.nio.file.Files
 import kotlin.streams.toList
 
 /**
@@ -26,13 +27,18 @@ internal class GitHubProjectDownloader<P : Project>(
 ) {
     private companion object : KLogging()
 
+    private fun File.moveUpOneLevel() = Files.move(this.toPath(), File(this.parentFile.parentFile, this.name).toPath())
+
     /**
-     * A GitHub project downloaded from GitHub should contain a single file, which is a directory which denotes the
-     * master branch.
+     * Extracts the directory denoting the master branch in a GitHub project by moving the up one level.
      */
-    private fun File.getMasterFile(): File {
-        require(this.listFiles().isNotEmpty()) { "GitHub Project must contain files" }
-        return this.listFiles().first()
+    private fun File.extractMasterFile() {
+        require(this.listFiles().isNotEmpty()) { "GitHub Project must contain files." }
+        require(this.listFiles().first().isDirectory) { "GitHub Project must contain a directory for master." }
+
+        val masterFile = this.listFiles().first()
+        masterFile.listFiles()?.forEach { it.moveUpOneLevel() }
+        masterFile.delete()
     }
 
     /**
@@ -62,8 +68,8 @@ internal class GitHubProjectDownloader<P : Project>(
 
             return if (gitHubProject.exists()) {
                 try {
-                    val masterDir = gitHubProject.getMasterFile()
-                    projectPacker(masterDir).also { logger.debug { "Created project of $masterDir." } }
+                    gitHubProject.extractMasterFile()
+                    projectPacker(gitHubProject).also { logger.debug { "Created project of $gitHubProject." } }
                 } catch (e: IllegalArgumentException) {
                     logger.warn("Unable to pack $gitHubProject into project.", e)
                     gitHubProject.deleteRecursively()
