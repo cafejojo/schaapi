@@ -34,7 +34,7 @@ internal class DirectoryMiningCommandLineInterface {
     }
 
     /**
-     * Mines a Directory.
+     * Mines a directory.
      *
      * @throws [MissingArgumentException] if required arguments not set in [CommandLine].
      */
@@ -44,12 +44,12 @@ internal class DirectoryMiningCommandLineInterface {
         val testGeneratorTimeout = cmd.getOptionValue("test_generator_timeout", DEFAULT_TEST_GENERATOR_TIMEOUT).toInt()
         val testGeneratorEnableOutput = cmd.hasOption("test_generator_enable_output")
 
-        val patternDetectorMinCount = cmd
-            .getOptionValue("pattern_detector_minimum_count", DEFAULT_PATTERN_DETECTOR_MINIMUM_COUNT).toInt()
-        val maxSequenceLength = cmd
-            .getOptionValue("pattern_detector_maximum_sequence_length", DEFAULT_MAX_SEQUENCE_LENGTH).toInt()
+        val patternDetectorMinCount =
+            cmd.getOptionValue("pattern_detector_minimum_count", DEFAULT_PATTERN_DETECTOR_MINIMUM_COUNT).toInt()
+        val maxSequenceLength =
+            cmd.getOptionValue("pattern_detector_maximum_sequence_length", DEFAULT_MAX_SEQUENCE_LENGTH).toInt()
 
-        val libraryMaven = JavaMavenProject(library, mavenDir)
+        val libraryProject = JavaMavenProject(library, mavenDir)
 
         MiningPipeline(
             outputDirectory = output,
@@ -61,12 +61,12 @@ internal class DirectoryMiningCommandLineInterface {
             patternDetector = PatternDetector(patternDetectorMinCount, maxSequenceLength, GeneralizedNodeComparator()),
             patternFilter = PatternFilter(IncompleteInitPatternFilterRule(), LengthPatternFilterRule()),
             testGenerator = TestGenerator(
-                library = libraryMaven,
+                library = libraryProject,
                 outputDirectory = output,
                 timeout = testGeneratorTimeout,
                 processStandardStream = if (testGeneratorEnableOutput) System.out else null,
                 processErrorStream = if (testGeneratorEnableOutput) System.out else null
             )
-        ).run(libraryMaven)
+        ).run(libraryProject)
     }
 }

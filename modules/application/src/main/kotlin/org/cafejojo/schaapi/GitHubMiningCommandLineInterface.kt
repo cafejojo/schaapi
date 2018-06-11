@@ -86,20 +86,19 @@ internal class GitHubMiningCommandLineInterface {
         val artifactId = cmd.getOptionOrThrowException("library_artifact_id")
         val version = cmd.getOptionOrThrowException("library_version")
 
-        val patternDetectorMinCount = cmd
-            .getOptionValue("pattern_detector_minimum_count", DEFAULT_PATTERN_DETECTOR_MINIMUM_COUNT).toInt()
-        val maxSequenceLength = cmd
-            .getOptionValue("pattern_detector_maximum_sequence_length", DEFAULT_MAX_SEQUENCE_LENGTH).toInt()
-
-        val testGeneratorTimeout = cmd
-            .getOptionValue("test_generator_timeout", DEFAULT_TEST_GENERATOR_TIMEOUT).toInt()
+        val testGeneratorTimeout = cmd.getOptionValue("test_generator_timeout", DEFAULT_TEST_GENERATOR_TIMEOUT).toInt()
         val testGeneratorEnableOutput = cmd.hasOption("test_generator_enable_output")
+
+        val patternDetectorMinCount =
+            cmd.getOptionValue("pattern_detector_minimum_count", DEFAULT_PATTERN_DETECTOR_MINIMUM_COUNT).toInt()
+        val maxSequenceLength =
+            cmd.getOptionValue("pattern_detector_maximum_sequence_length", DEFAULT_MAX_SEQUENCE_LENGTH).toInt()
 
         if (cmd.hasOption("sort_by_stargazers") && cmd.hasOption("sort_by_watchers")) {
             logger.error { "Cannot sort repositories on both stargazers and watchers." }
         }
 
-        val libraryJar = JavaJarProject(library)
+        val libraryProject = JavaJarProject(library)
 
         MiningPipeline(
             outputDirectory = output,
@@ -114,12 +113,12 @@ internal class GitHubMiningCommandLineInterface {
             patternDetector = PatternDetector(patternDetectorMinCount, maxSequenceLength, GeneralizedNodeComparator()),
             patternFilter = PatternFilter(IncompleteInitPatternFilterRule(), LengthPatternFilterRule()),
             testGenerator = TestGenerator(
-                library = libraryJar,
+                library = libraryProject,
                 outputDirectory = output,
                 timeout = testGeneratorTimeout,
                 processStandardStream = if (testGeneratorEnableOutput) System.out else null,
                 processErrorStream = if (testGeneratorEnableOutput) System.out else null
             )
-        ).run(libraryJar)
+        ).run(libraryProject)
     }
 }
