@@ -22,9 +22,10 @@ internal object GitHubProjectDownloaderTest : Spek({
     fun addZipFile(dirName: String, fileContent: String, customOutput: File = output): File {
         // Directory which represents what should be zipped
         val tempDir = File(customOutput, dirName)
-        val tempFile = File(tempDir, "temp.txt")
+        val tempMasterDir = File(tempDir, "master")
+        val tempFile = File(tempMasterDir, "temp.txt")
 
-        tempDir.mkdirs()
+        tempMasterDir.mkdirs()
         tempFile.createNewFile()
         tempFile.writeText(fileContent)
 
@@ -119,7 +120,7 @@ internal object GitHubProjectDownloaderTest : Spek({
             val zipFile = addZipFile("testZipDirectory", "test text")
             val unzippedFile = GitHubProjectDownloader(emptyList(), output, ::testProjectPacker).unzip(zipFile)
 
-            assertThat(unzippedFile?.listFiles()?.first()?.readText()).isEqualTo("test text")
+            assertThat(unzippedFile?.listFiles()?.first()?.listFiles()?.first()?.readText()).isEqualTo("test text")
         }
 
         it("should delete the zip file after extraction") {
@@ -174,7 +175,7 @@ internal object GitHubProjectDownloaderTest : Spek({
             assertThat(connection?.requestMethod).isEqualTo("GET")
         }
 
-        it("should save the unzipped file") {
+        it("should save the unzipped file and delete the old zip file") {
             val zipFile = addZipFile("testProject", "content", Files.createTempDirectory("project-downloader").toFile())
 
             val downloader = spy(GitHubProjectDownloader(listOf("testProject"), output, ::testProjectPacker))
@@ -189,7 +190,7 @@ internal object GitHubProjectDownloaderTest : Spek({
 
             downloader.download()
 
-            assertThat(output.listFiles()).isNotEmpty()
+            assertThat(output.listFiles()).hasSize(1)
             assertThat(output.listFiles().first().listFiles().first().readText()).isEqualTo("content")
         }
     }

@@ -5,11 +5,11 @@ import org.cafejojo.schaapi.models.Project
 import org.zeroturnaround.zip.ZipException
 import org.zeroturnaround.zip.ZipUtil
 import java.io.File
-import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
 import java.net.HttpURLConnection
 import java.net.URL
+import java.nio.file.Files
 import kotlin.streams.toList
 
 /**
@@ -26,13 +26,23 @@ internal class GitHubProjectDownloader<P : Project>(
 ) {
     private companion object : KLogging()
 
+    private fun File.moveUpOneLevel() = Files.move(this.toPath(), File(this.parentFile.parentFile, this.name).toPath())
+
     /**
-     * A GitHub project downloaded from GitHub should contain a single file, which is a directory which denotes the
-     * master branch.
+     * Extracts the directory denoting the master branch in a GitHub project by moving the up one level.
      */
-    private fun File.getMasterFile(): File {
-        require(this.listFiles().isNotEmpty()) { "GitHub Project must contain files" }
-        return this.listFiles().first()
+    private fun File.extractMasterFile() {
+        require(this.listFiles().size == 1) {
+            "GitHub project must contain exactly one file, but contained ${this.listFiles().size} files."
+        }
+
+        val masterFile = this.listFiles().first()
+        require(masterFile.isDirectory) { "GitHub Project must contain a directory for master." }
+
+        if (masterFile.listFiles().isEmpty()) logger.warn { "${masterFile.absolutePath} did not contain any files." }
+        masterFile.listFiles().forEach { it.moveUpOneLevel() }
+
+        masterFile.delete()
     }
 
     /**
@@ -62,8 +72,8 @@ internal class GitHubProjectDownloader<P : Project>(
 
             return if (gitHubProject.exists()) {
                 try {
-                    val masterDir = gitHubProject.getMasterFile()
-                    projectPacker(masterDir).also { logger.debug { "Created project of $masterDir." } }
+                    gitHubProject.extractMasterFile()
+                    projectPacker(gitHubProject).also { logger.debug { "Created project of $gitHubProject." } }
                 } catch (e: IllegalArgumentException) {
                     logger.warn("Unable to pack $gitHubProject into project.", e)
                     gitHubProject.deleteRecursively()
@@ -79,28 +89,28 @@ internal class GitHubProjectDownloader<P : Project>(
 
     internal fun saveZipToFile(input: InputStream, projectName: String): File? {
         val alphaNumericRegex = Regex("[^A-Za-z0-9]")
-        val outputFile = File(
+        val zipFile = File(
             outputDirectory,
             "${alphaNumericRegex.replace(projectName, "")}${projectNames.indexOf(projectName)}.zip"
         )
 
         try {
-            if (outputFile.exists()) {
-                logger.debug { "Output file ${outputFile.path} already exists and will be deleted." }
-                outputFile.delete()
+            if (zipFile.exists()) {
+                logger.debug { "Output file ${zipFile.path} already exists and will be deleted." }
+                zipFile.delete()
             }
 
-            if (outputFile.createNewFile()) {
-                input.copyTo(FileOutputStream(outputFile))
+            if (zipFile.createNewFile()) {
+                zipFile.outputStream().use { input.copyTo(it) }
             } else {
-                logger.warn("Output file ${outputFile.path} could not be created.")
+                logger.warn("Output file ${zipFile.path} could not be created.")
             }
         } catch (e: IOException) {
-            logger.warn("Could not save project to ${outputFile.path}.", e)
+            logger.warn("Could not save project to ${zipFile.path}.", e)
             return null
         }
 
-        return outputFile
+        return zipFile
     }
 
     internal fun unzip(projectZipFile: File): File? {
@@ -112,18 +122,15 @@ internal class GitHubProjectDownloader<P : Project>(
 
         try {
             ZipUtil.unpack(projectZipFile, githubProject)
-            logger.debug { "Successfully unzipped file ${projectZipFile.name}." }
+            logger.debug { "Successfully unzipped file ${projectZipFile.absolutePath}." }
         } catch (e: IOException) {
-            logger.warn("Could not unzip ${projectZipFile.name}.", e)
+            logger.warn("Could not unzip ${projectZipFile.absolutePath}.", e)
             return null
         } catch (e: ZipException) {
-            logger.warn("Could not unzip ${projectZipFile.name}.", e)
+            logger.warn("Could not unzip ${projectZipFile.absolutePath}.", e)
             return null
         } finally {
-            if (projectZipFile.exists()) {
-                logger.debug { "Deleting $projectZipFile." }
-                projectZipFile.delete()
-            }
+            projectZipFile.delete()
         }
 
         return githubProject
