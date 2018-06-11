@@ -36,7 +36,7 @@ fun main(args: Array<String>) {
         MavenInstaller().installMaven(mavenDir)
     }
 
-    val flavor = cmd.getOptionOrDefault("flavor", DEFAULT_PIPELINE_TYPE)
+    val flavor = cmd.getOptionValue("flavor", DEFAULT_PIPELINE_TYPE)
     try {
         when (flavor) {
             "directory" -> DirectoryMiningCommandLineInterface().run(cmd, mavenDir, library, output)
@@ -126,15 +126,6 @@ private fun printHelpMessage(options: Options) {
     helpFormatter.optionComparator = null
     helpFormatter.printHelp("schaapi", options, true)
 }
-
-/**
- * Returns [CommandLine.getOptionValue], unless this is null, in which case [default] is returned.
- *
- * @param option the name of the option
- * @param default the value to return if the option's value is null
- * @return [CommandLine.getOptionValue], unless this is null, in which case [default] is returned
- */
-internal fun CommandLine.getOptionOrDefault(option: String, default: String) = getOptionValue(option) ?: default
 
 /**
  * Returns [CommandLine.getOptionValue], unless this is null, in which case a [MissingArgumentException] is thrown.

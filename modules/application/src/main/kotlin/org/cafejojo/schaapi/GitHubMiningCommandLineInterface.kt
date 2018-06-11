@@ -83,18 +83,18 @@ internal class GitHubMiningCommandLineInterface {
      */
     fun run(cmd: CommandLine, mavenDir: File, library: File, output: File) {
         val token = cmd.getOptionOrThrowException("github_oauth_token")
-        val maxProjects = cmd.getOptionOrDefault("max_projects", DEFAULT_MAX_PROJECTS).toInt()
+        val maxProjects = cmd.getOptionValue("max_projects", DEFAULT_MAX_PROJECTS).toInt()
         val groupId = cmd.getOptionOrThrowException("library_group_id")
         val artifactId = cmd.getOptionOrThrowException("library_artifact_id")
         val version = cmd.getOptionOrThrowException("library_version")
 
         val patternDetectorMinCount = cmd
-            .getOptionOrDefault("pattern_detector_minimum_count", DEFAULT_PATTERN_DETECTOR_MINIMUM_COUNT).toInt()
+            .getOptionValue("pattern_detector_minimum_count", DEFAULT_PATTERN_DETECTOR_MINIMUM_COUNT).toInt()
         val maxSequenceLength = cmd
-            .getOptionOrDefault("pattern_detector_maximum_sequence_length", DEFAULT_MAX_SEQUENCE_LENGTH).toInt()
+            .getOptionValue("pattern_detector_maximum_sequence_length", DEFAULT_MAX_SEQUENCE_LENGTH).toInt()
 
         val testGeneratorTimeout = cmd
-            .getOptionOrDefault("test_generator_timeout", DEFAULT_TEST_GENERATOR_TIMEOUT).toInt()
+            .getOptionValue("test_generator_timeout", DEFAULT_TEST_GENERATOR_TIMEOUT).toInt()
         val testGeneratorEnableOutput = cmd.hasOption("test_generator_enable_output")
 
         if (cmd.hasOption("sort_by_stargazers") && cmd.hasOption("sort_by_watchers")) {

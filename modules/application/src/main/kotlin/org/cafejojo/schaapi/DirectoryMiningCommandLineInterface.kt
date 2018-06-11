@@ -41,14 +41,13 @@ internal class DirectoryMiningCommandLineInterface {
     fun run(cmd: CommandLine, mavenDir: File, library: File, output: File) {
         val userDirDirs = cmd.getOptionOrThrowException("u")
 
-        val testGeneratorTimeout = cmd
-            .getOptionOrDefault("test_generator_timeout", DEFAULT_TEST_GENERATOR_TIMEOUT).toInt()
+        val testGeneratorTimeout = cmd.getOptionValue("test_generator_timeout", DEFAULT_TEST_GENERATOR_TIMEOUT).toInt()
         val testGeneratorEnableOutput = cmd.hasOption("test_generator_enable_output")
 
         val patternDetectorMinCount = cmd
-            .getOptionOrDefault("pattern_detector_minimum_count", DEFAULT_PATTERN_DETECTOR_MINIMUM_COUNT).toInt()
+            .getOptionValue("pattern_detector_minimum_count", DEFAULT_PATTERN_DETECTOR_MINIMUM_COUNT).toInt()
         val maxSequenceLength = cmd
-            .getOptionOrDefault("pattern_detector_maximum_sequence_length", DEFAULT_MAX_SEQUENCE_LENGTH).toInt()
+            .getOptionValue("pattern_detector_maximum_sequence_length", DEFAULT_MAX_SEQUENCE_LENGTH).toInt()
 
         val libraryMaven = JavaMavenProject(library, mavenDir)
 
