@@ -125,16 +125,19 @@ internal class ClassGenerator(className: String) {
         val definitions = mutableSetOf<String>()
 
         statements.forEach { statement ->
-            statement.useAndDefBoxes
-                .filter { it.value is Local }
-                .forEach { box ->
-                    val identifier =
-                        (box.value as? Local)?.name ?: throw IllegalStateException("Value is no longer a local.")
-                    when {
-                        statement.defBoxes.contains(box) -> definitions.add(identifier)
-                        !definitions.contains(identifier) -> methodParams.add(box.value)
-                    }
+            statement.useBoxes
+                .map { it.value }
+                .filterIsInstance(Local::class.java)
+                .filter { !definitions.contains(it.name) }
+                .forEach {
+                    methodParams.add(it)
+                    definitions.add(it.name)
                 }
+
+            statement.defBoxes
+                .map { it.value }
+                .filterIsInstance(Local::class.java)
+                .forEach { definitions.add(it.name) }
         }
 
         return methodParams
