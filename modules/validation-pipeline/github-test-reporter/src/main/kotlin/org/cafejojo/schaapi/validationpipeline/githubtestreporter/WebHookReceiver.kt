@@ -3,9 +3,11 @@ package org.cafejojo.schaapi.validationpipeline.githubtestreporter
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.PropertyNamingStrategy
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import org.cafejojo.schaapi.validationpipeline.events.ValidateRequestReceivedEvent
 import org.cafejojo.schaapi.validationpipeline.githubtestreporter.events.CheckSuiteEvent
 import org.cafejojo.schaapi.validationpipeline.githubtestreporter.events.InstallationEvent
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestHeader
@@ -18,7 +20,7 @@ import java.io.File
  */
 @Controller
 @EnableAutoConfiguration
-class WebHookReceiver(val checkReporter: CheckReporter) {
+class WebHookReceiver(private val checkReporter: CheckReporter, private val publisher: ApplicationEventPublisher) {
     private val mapper = jacksonObjectMapper()
         .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
         .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
@@ -64,6 +66,11 @@ class WebHookReceiver(val checkReporter: CheckReporter) {
                         checkSuite.headBranch,
                         checkSuite.headSha
                     )
+
+                    publisher.publishEvent(ValidateRequestReceivedEvent(
+                        directory = File(Properties.testsStorageLocation, repository.fullName),
+                        downloadUrl = "https://github.com/${repository.fullName}/archive/${checkSuite.headSha}.zip"
+                    ))
                 }
             }
             "installation" -> {
