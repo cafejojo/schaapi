@@ -1,5 +1,6 @@
 repositories {
     maven { url "https://soot-build.cs.uni-paderborn.de/nexus/repository/soot-release/" }
+    maven { url "https://soot-build.cs.uni-paderborn.de/nexus/repository/soot-snapshot/" }
 }
 
 dependencies {
@@ -9,7 +10,7 @@ dependencies {
     compile project(":models:jimple-library-usage-graph")
 
     compile group: "org.evosuite", name: "evosuite-master", version: evosuiteMasterVersion
-    compile group: "ca.mcgill.sable", name: "soot", version: sootVersion, {
+    compile group: "com.github.cafejojo", name: "soot", version: "7c97c52", {
         exclude group: "org.slf4j", module: "slf4j-simple"
     }
 }
