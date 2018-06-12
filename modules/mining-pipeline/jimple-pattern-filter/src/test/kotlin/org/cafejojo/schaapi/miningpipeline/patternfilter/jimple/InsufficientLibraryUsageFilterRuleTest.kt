@@ -27,7 +27,7 @@ internal object InsufficientLibraryUsageFilterRuleTest : Spek({
 
         beforeEachTest {
             val project = mock<JavaProject> {
-                on { it.classNames } doReturn listOf("ClassA", "ClassB", "ClassC")
+                on { it.classNames } doReturn setOf("ClassA", "ClassB", "ClassC")
             }
             filter = InsufficientLibraryUsageFilter(project, 2)
         }
