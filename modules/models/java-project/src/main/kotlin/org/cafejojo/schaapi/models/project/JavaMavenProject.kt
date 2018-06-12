@@ -18,9 +18,9 @@ class JavaMavenProject(
     override val classDir = File(projectDir, "target/classes")
     override val dependencyDir = File(projectDir, "target/dependency")
 
-    override lateinit var classes: List<File>
-    override lateinit var classNames: List<String>
-    override lateinit var dependencies: List<File>
+    override lateinit var classes: Set<File>
+    override lateinit var classNames: Set<String>
+    override lateinit var dependencies: Set<File>
     override lateinit var classpath: String
 
     init {

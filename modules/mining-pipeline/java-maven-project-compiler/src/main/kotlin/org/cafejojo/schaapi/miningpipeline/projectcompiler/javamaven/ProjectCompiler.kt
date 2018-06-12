@@ -17,11 +17,11 @@ class ProjectCompiler : ProjectCompiler<JavaMavenProject> {
     override fun compile(project: JavaMavenProject): JavaMavenProject {
         runMaven(project)
 
-        project.classes = project.classDir.walk().filter { it.isFile && it.extension == "class" }.toList()
+        project.classes = project.classDir.walk().filter { it.isFile && it.extension == "class" }.toSet()
         project.classNames = project.classes.map {
             it.relativeTo(project.classDir).toString().dropLast(".class".length).replace(File.separatorChar, '.')
-        }
-        project.dependencies = project.dependencyDir.listFiles().orEmpty().toList()
+        }.toSet()
+        project.dependencies = project.dependencyDir.listFiles().orEmpty().toSet()
         project.classpath =
             if (project.dependencies.isEmpty()) {
                 project.classDir.absolutePath

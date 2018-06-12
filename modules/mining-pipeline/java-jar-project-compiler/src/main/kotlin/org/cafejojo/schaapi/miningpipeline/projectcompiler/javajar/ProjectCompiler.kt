@@ -13,7 +13,7 @@ class ProjectCompiler : ProjectCompiler<JavaJarProject> {
     private companion object : KLogging()
 
     override fun compile(project: JavaJarProject): JavaJarProject {
-        val classNames = mutableListOf<String>()
+        val classNames = mutableSetOf<String>()
         val jarInputStream = JarInputStream(FileInputStream(project.classDir))
         var jarEntry = jarInputStream.nextJarEntry
 
