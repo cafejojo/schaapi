@@ -28,9 +28,7 @@ internal const val DEFAULT_MAX_PROJECTS = "20"
  * Assumes that the passed library is a Java JAR project.
  */
 internal class GitHubMiningCommandLineInterface {
-    internal companion object {
-        val logger = KLogging().logger
-
+    internal companion object : KLogging() {
         fun addOptionsTo(options: Options): Options =
             options
                 .addOption(Option
@@ -84,25 +82,24 @@ internal class GitHubMiningCommandLineInterface {
      */
     fun run(cmd: CommandLine, mavenDir: File, library: File, output: File) {
         val token = cmd.getOptionOrThrowException("github_oauth_token")
-        val maxProjects = cmd.getOptionOrDefault("max_projects", DEFAULT_MAX_PROJECTS).toInt()
+        val maxProjects = cmd.getOptionValue("max_projects", DEFAULT_MAX_PROJECTS).toInt()
         val groupId = cmd.getOptionOrThrowException("library_group_id")
         val artifactId = cmd.getOptionOrThrowException("library_artifact_id")
         val version = cmd.getOptionOrThrowException("library_version")
 
-        val patternDetectorMinCount = cmd
-            .getOptionOrDefault("pattern_detector_minimum_count", DEFAULT_PATTERN_DETECTOR_MINIMUM_COUNT).toInt()
-        val maxSequenceLength = cmd
-            .getOptionOrDefault("pattern_detector_maximum_sequence_length", DEFAULT_MAX_SEQUENCE_LENGTH).toInt()
-
-        val testGeneratorTimeout = cmd
-            .getOptionOrDefault("test_generator_timeout", DEFAULT_TEST_GENERATOR_TIMEOUT).toInt()
+        val testGeneratorTimeout = cmd.getOptionValue("test_generator_timeout", DEFAULT_TEST_GENERATOR_TIMEOUT).toInt()
         val testGeneratorEnableOutput = cmd.hasOption("test_generator_enable_output")
+
+        val patternDetectorMinCount =
+            cmd.getOptionValue("pattern_detector_minimum_count", DEFAULT_PATTERN_DETECTOR_MINIMUM_COUNT).toInt()
+        val maxSequenceLength =
+            cmd.getOptionValue("pattern_detector_maximum_sequence_length", DEFAULT_MAX_SEQUENCE_LENGTH).toInt()
 
         if (cmd.hasOption("sort_by_stargazers") && cmd.hasOption("sort_by_watchers")) {
             logger.error { "Cannot sort repositories on both stargazers and watchers." }
         }
 
-        val libraryJar = JavaJarProject(library)
+        val libraryProject = JavaJarProject(library)
 
         MiningPipeline(
             outputDirectory = output,
@@ -121,12 +118,12 @@ internal class GitHubMiningCommandLineInterface {
                 EmptyLoopPatternFilterRule()
             ),
             testGenerator = TestGenerator(
-                library = libraryJar,
+                library = libraryProject,
                 outputDirectory = output,
                 timeout = testGeneratorTimeout,
                 processStandardStream = if (testGeneratorEnableOutput) System.out else null,
                 processErrorStream = if (testGeneratorEnableOutput) System.out else null
             )
-        ).run(libraryJar)
+        ).run(libraryProject)
     }
 }
