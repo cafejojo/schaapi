@@ -15,7 +15,7 @@ import soot.jimple.Jimple
 /**
  * Unit tests for [InsufficientLibraryUsageFilter].
  */
-internal object InsufficientLibraryUsageFilterTest : Spek({
+internal object InsufficientLibraryUsageFilterRuleTest : Spek({
     fun createLocal(name: String, type: String) = Jimple.v().newLocal(name, RefType.v(type))
 
     fun createAssignStmt(op1: Value, op2: Value) = Jimple.v().newAssignStmt(op1, op2)
