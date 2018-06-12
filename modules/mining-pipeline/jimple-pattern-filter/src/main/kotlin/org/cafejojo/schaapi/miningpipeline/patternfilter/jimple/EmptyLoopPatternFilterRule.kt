@@ -13,10 +13,7 @@ class EmptyLoopPatternFilterRule : PatternFilterRule<JimpleNode> {
 
     override fun retain(pattern: List<JimpleNode>) =
         pattern
-            .none { node ->
-                pattern.getOrNull(pattern.indexOf(node) - 1)?.let {
-                    it.statement === (node.statement as? GotoStmt)?.target
-                } ?: false
-            }
+            .drop(1)
+            .none { node -> pattern[pattern.indexOf(node) - 1].statement === (node.statement as? GotoStmt)?.target }
             .also { if (!it) logger.debug { "Empty loop pattern was detected: $pattern" } }
 }
