@@ -63,7 +63,7 @@ allprojects {
         }
 
         useJUnitPlatform() {
-            includeEngines "spek"
+            includeEngines "junit-jupiter", "spek"
         }
     }
 
