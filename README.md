@@ -59,13 +59,14 @@ usage: schaapi -o <arg> -l <arg> -u <arg> [--maven_dir <arg>]
 
 ## Pipeline Stages
 ### 1 Mining Pipeline
-| Stage                                         | Description |
-| --------------------------------------------- | --- |
-| **1.1 Mine Projects**                            | Mine version control or library distribution platforms for projects using your software version |
-| **1.2 Analyse Usage per Project**                 | Create library usage graphs of user projects |
-| **1.3 Find Usage Patterns across all Projects**   | Find common library usage patterns across usage graphs |
-| **1.4 Filter Found Patterns**                     | Filter relevant library usage patterns |
-| **1.5 Generate Tests**                            | Generate regression tests for library usage patterns |
+| Stage                                             | Description |
+| ------------------------------------------------- | --- |
+| **1.1 Mine Projects**                             | Mine version control or library distribution platforms for projects using your software version |
+| **1.2 Compile Projects**                          | Compile user projects |
+| **1.3 Analyse Usage per Project**                 | Create library usage graphs of user projects |
+| **1.4 Find Usage Patterns across all Projects**   | Find common library usage patterns across usage graphs |
+| **1.5 Filter Found Patterns**                     | Filter relevant library usage patterns |
+| **1.6 Generate Tests**                            | Generate regression tests for library usage patterns |
 
 #### 1.1 Mine Projects
 | | |
@@ -74,28 +75,35 @@ usage: schaapi -o <arg> -l <arg> -u <arg> [--maven_dir <arg>]
 | Interface          | `org.cafejojo.schaapi.miningpipeline.ProjectMiner` |
 | Implementations    | **[GitHub Project Miner](https://github.com/cafejojo/schaapi/tree/master/modules/mining-pipeline/github-project-miner)**<br>Mines projects from GitHub using its code search API.<br>**[Directory Project Miner](https://github.com/cafejojo/schaapi/tree/master/modules/mining-pipeline/directory-project-miner)**<br>'Mines' projects from the file system, finding all projects in one folder. |
 
-#### 1.2 Analyse Usage per Project
+#### 1.2 Compile Projects
+| | |
+| ------------------ | ------------- |
+| Description        | Compile user projects |
+| Interface          | `org.cafejojo.schaapi.miningpipeline.ProjectCompiler` |
+| Implementations    | **[Java Maven Project Compiler](https://github.com/cafejojo/schaapi/tree/master/modules/mining-pipeline/java-maven-project-compiler)**<br>Compiles Java [Maven](https://www.apache.org/) projects, by fetching their dependencies and compiling the source code.<br>**[Java JAR Project Compiler](https://github.com/cafejojo/schaapi/tree/master/modules/mining-pipeline/java-jar-project-compiler)**<br>Compiles Java JAR projects, by inspecting the classes contained in the JAR. |
+
+#### 1.3 Analyse Usage per Project
 | | |
 | ------------------ | ------------- |
 | Description        | Create library usage graphs of user projects |
 | Interface          | `org.cafejojo.schaapi.miningpipeline.LibraryUsageGraphGenerator` |
 | Implementations    | **[Jimple Library Usage Graph Generator](https://github.com/cafejojo/schaapi/tree/master/modules/mining-pipeline/jimple-library-usage-graph-generator)**<br>Generates library usage graphs for Java using [Soot](https://github.com/Sable/soot) Jimple control flow graphs. |
 
-#### 1.3 Find Usage Patterns across all Projects
+#### 1.4 Find Usage Patterns across all Projects
 | | |
 | ------------------ | ------------- |
 | Description        | Find common library usage patterns across usage graphs |
 | Interface          | `org.cafejojo.schaapi.miningpipeline.PatternDetector` |
 | Implementations    | **[PrefixSpan Pattern Detector](https://github.com/cafejojo/schaapi/tree/master/modules/mining-pipeline/prefix-span-pattern-detector)**<br>Identifies frequent sequential patterns in graphs, using the [PrefixSpan](https://ieeexplore.ieee.org/abstract/document/1339268/) algorithm.<br>**[SPAM Pattern Detector](https://github.com/cafejojo/schaapi/tree/master/modules/mining-pipeline/spam-pattern-detector)**<br>Identifies frequent sequential patterns in graphs, using the [SPAM](https://dl.acm.org/citation.cfm?id=775109) algorithm.<br>**[CCSpan Pattern Detector](https://github.com/cafejojo/schaapi/tree/master/modules/mining-pipeline/ccspan-pattern-detector)**<br>Identifies frequent sequential patterns in graphs, using the [CCSpan](https://dl.acm.org/citation.cfm?id=775109) algorithm. |
 
-#### 1.4 Filter Found Patterns
+#### 1.5 Filter Found Patterns
 | | |
 | ------------------ | ------------- |
 | Description        | Filter relevant library usage patterns |
 | Interface          | `org.cafejojo.schaapi.miningpipeline.PatternFilterRule` |
 | Implementations    | **[Jimple Pattern Filters](https://github.com/cafejojo/schaapi/tree/master/modules/mining-pipeline/jimple-pattern-filter)**<br>Collection of filters that work with [Soot](https://github.com/Sable/soot) Jimple based library usage graphs. |
 
-#### 1.5 Generate Tests
+#### 1.6 Generate Tests
 | | |
 | ------------------ | ------------- |
 | Description        | Generate regression tests for library usage patterns |
