@@ -47,12 +47,11 @@ internal class Spam<N : Node>(
             sequence to sequences.filter { pathUtil.pathContainsSequence(it, sequence, nodeComparator) }
         }.toMap()
 
-    @Suppress("UnsafeCast") // pattern: List<N> + extension: N is always a List<N>
     private fun runAlgorithm(pattern: List<N>, extensions: Set<N>) {
         frequentPatterns.add(pattern)
 
         val frequentExtensions = extensions.mapNotNull { extension ->
-            val extendedPattern: List<N> = (pattern + extension) as List<N>
+            val extendedPattern = pattern.toMutableList().apply { add(extension) }
             val support = sequences.count { sequence ->
                 pathUtil.pathContainsSequence(sequence, extendedPattern, nodeComparator)
             }
@@ -61,6 +60,6 @@ internal class Spam<N : Node>(
             else null
         }.toSet()
 
-        frequentExtensions.forEach { runAlgorithm((pattern + it) as List<N>, frequentExtensions) }
+        frequentExtensions.forEach { runAlgorithm(pattern.toMutableList().apply { add(it) }, frequentExtensions) }
     }
 }

@@ -128,7 +128,6 @@ internal object ClassGeneratorTest : Spek({
                 .apply { addField(SootField("field", IntType.v(), Modifier.STATIC + Modifier.PUBLIC)) }
 
             val a = Jimple.v().newLocal("a", IntType.v())
-            val b = Jimple.v().newLocal("b", classWithAField.type)
             val c = Jimple.v().newStaticFieldRef(AbstractSootFieldRef(classWithAField, "field", IntType.v(), true))
 
             val assignC = Jimple.v().newAssignStmt(c, a)

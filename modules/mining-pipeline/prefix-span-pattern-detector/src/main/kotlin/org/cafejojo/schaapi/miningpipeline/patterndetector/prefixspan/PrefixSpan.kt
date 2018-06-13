@@ -91,11 +91,10 @@ internal class PrefixSpan<N : Node>(
             }
             .toMap()
 
-    @Suppress("UnsafeCast") // prefix: List<N> + extension: N is always a List<N>
     private fun runAlgorithm(prefix: List<N> = emptyList(), projectedSequences: Collection<List<N>> = sequences) {
         frequentItems.forEach { frequentItem ->
             if (projectedSequences.any { sequenceContainsPrefix(it, prefix, frequentItem) }) {
-                val newPrefix = (prefix + frequentItem) as List<N>
+                val newPrefix = prefix.toMutableList().apply { add(frequentItem) }
                 frequentPatterns += newPrefix.toList()
 
                 runAlgorithm(newPrefix, extractSuffixes(prefix, sequences))
@@ -103,9 +102,8 @@ internal class PrefixSpan<N : Node>(
         }
     }
 
-    @Suppress("UnsafeCast") // prefix: List<N> + extension: N is always a List<N>
     private fun sequenceContainsPrefix(sequence: List<N>, prefix: List<N>, frequentItem: N) =
-        pathUtil.pathContainsSequence(sequence, (prefix + frequentItem) as List<N>, nodeComparator) ||
+        pathUtil.pathContainsSequence(sequence, prefix.toMutableList().apply { add(frequentItem) }, nodeComparator) ||
             prefix.isNotEmpty() &&
             pathUtil.pathContainsSequence(sequence, listOf(prefix.last(), frequentItem), nodeComparator)
 
