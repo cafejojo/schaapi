@@ -18,7 +18,7 @@ class ProjectCompiler : ProjectCompiler<JavaJarProject> {
         var jarEntry = jarInputStream.nextJarEntry
 
         if (jarEntry == null) {
-            logger.warn("Jar project at ${project.projectDir.path} is empty.")
+            logger.warn { "Jar project at ${project.projectDir.path} is empty." }
         }
 
         while (jarEntry != null) {

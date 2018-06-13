@@ -103,7 +103,7 @@ internal class GitHubProjectDownloader<P : Project>(
             if (zipFile.createNewFile()) {
                 zipFile.outputStream().use { input.copyTo(it) }
             } else {
-                logger.warn("Output file ${zipFile.path} could not be created.")
+                logger.warn { "Output file ${zipFile.path} could not be created." }
             }
         } catch (e: IOException) {
             logger.warn("Could not save project to ${zipFile.path}.", e)
