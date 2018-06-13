@@ -61,13 +61,13 @@ usage: schaapi -o <arg> -l <arg> -u <arg> [--maven_dir <arg>]
 ### 1 Mining Pipeline
 | Stage                                         | Description |
 | --------------------------------------------- | --- |
-| **1.1 Project Mining**                            | Mine version control or library distribution platforms for projects using your software version |
+| **1.1 Mine Projects**                            | Mine version control or library distribution platforms for projects using your software version |
 | **1.2 Analyse Usage per Project**                 | Create library usage graphs of user projects |
 | **1.3 Find Usage Patterns across all Projects**   | Find common library usage patterns across usage graphs |
 | **1.4 Filter Found Patterns**                     | Filter relevant library usage patterns |
 | **1.5 Generate Tests**                            | Generate regression tests for library usage patterns |
 
-#### 1.1 Project Mining
+#### 1.1 Mine Projects
 | | |
 | ------------------ | ------------- |
 | Description        | Mine version control or library distribution platforms for projects using your software version |
