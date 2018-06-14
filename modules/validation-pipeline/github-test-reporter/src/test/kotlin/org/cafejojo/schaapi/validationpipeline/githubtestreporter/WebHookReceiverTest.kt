@@ -10,6 +10,7 @@ import org.cafejojo.schaapi.validationpipeline.events.ValidationRequestReceivedE
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.it
 import org.springframework.context.ApplicationEventPublisher
+import java.io.File
 
 object WebHookReceiverTest : Spek({
     it("can receive GitHub check suite requested web hooks") {
@@ -37,7 +38,7 @@ object WebHookReceiverTest : Spek({
 
         verify(checkReporter).reportStarted(12345, "cafejojo/schaapi", "patch01", "abc123")
         assertThat(event).isNotNull()
-        assertThat(event?.directory?.path).contains("cafejojo/schaapi")
+        assertThat(event?.directory?.path).contains("cafejojo${File.separator}schaapi")
     }
 
     it("cannot process general GitHub check suite web hooks") {
