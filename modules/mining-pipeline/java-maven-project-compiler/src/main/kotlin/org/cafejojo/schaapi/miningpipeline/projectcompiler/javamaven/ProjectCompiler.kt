@@ -31,7 +31,7 @@ class ProjectCompiler : ProjectCompiler<JavaMavenProject> {
             }
 
         if (project.classes.isEmpty()) {
-            logger.warn("Maven project at ${project.projectDir.path} does not contain any classes.")
+            logger.warn { "Maven project at ${project.projectDir.path} does not contain any classes." }
         }
 
         logger.debug { "`maven install` of ${project.projectDir} was successful." }
