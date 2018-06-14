@@ -6,7 +6,7 @@ import com.nhaarman.mockito_kotlin.never
 import com.nhaarman.mockito_kotlin.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.cafejojo.schaapi.validationpipeline.events.ValidateRequestReceivedEvent
+import org.cafejojo.schaapi.validationpipeline.events.ValidationRequestReceivedEvent
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.it
 import org.springframework.context.ApplicationEventPublisher
@@ -14,10 +14,10 @@ import org.springframework.context.ApplicationEventPublisher
 object WebHookReceiverTest : Spek({
     it("can receive GitHub check suite requested web hooks") {
         val checkReporter = mock<CheckReporter>()
-        var event: ValidateRequestReceivedEvent? = null
+        var event: ValidationRequestReceivedEvent? = null
         val webHookReceiver = WebHookReceiver(
             checkReporter,
-            ApplicationEventPublisher { event = it as? ValidateRequestReceivedEvent }
+            ApplicationEventPublisher { event = it as? ValidationRequestReceivedEvent }
         )
 
         webHookReceiver.processWebHook("check_suite", json {

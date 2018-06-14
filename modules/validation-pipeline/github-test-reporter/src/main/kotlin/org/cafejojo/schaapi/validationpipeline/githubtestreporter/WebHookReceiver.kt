@@ -3,7 +3,7 @@ package org.cafejojo.schaapi.validationpipeline.githubtestreporter
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.PropertyNamingStrategy
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import org.cafejojo.schaapi.validationpipeline.events.ValidateRequestReceivedEvent
+import org.cafejojo.schaapi.validationpipeline.events.ValidationRequestReceivedEvent
 import org.cafejojo.schaapi.validationpipeline.githubtestreporter.events.CheckSuiteEvent
 import org.cafejojo.schaapi.validationpipeline.githubtestreporter.events.InstallationEvent
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
@@ -67,7 +67,7 @@ class WebHookReceiver(private val checkReporter: CheckReporter, private val publ
                         checkSuite.headSha
                     )
 
-                    publisher.publishEvent(ValidateRequestReceivedEvent(
+                    publisher.publishEvent(ValidationRequestReceivedEvent(
                         directory = File(Properties.testsStorageLocation, repository.fullName),
                         downloadUrl = "https://github.com/${repository.fullName}/archive/${checkSuite.headSha}.zip"
                     ))
