@@ -12,6 +12,8 @@ apply plugin: "org.springframework.boot"
 apply plugin: "io.spring.dependency-management"
 
 dependencies {
+    compile project(":validation-pipeline")
+
     compile group: "com.auth0", name: "java-jwt", version: javaJwtVersion
     compile group: "com.fasterxml.jackson.module", name: "jackson-module-kotlin"
     compile group: "com.github.kittinunf.fuel", name: "fuel", version: fuelVersion // for JVM

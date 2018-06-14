@@ -10,7 +10,7 @@ import org.springframework.context.annotation.ComponentScan
 @SpringBootApplication
 @ComponentScan(basePackages = [
     "org.cafejojo.schaapi.web",
-    "org.cafejojo.schaapi.validationpipeline.githubtestreporter"
+    "org.cafejojo.schaapi.validationpipeline"
 ])
 open class WebApplication
 

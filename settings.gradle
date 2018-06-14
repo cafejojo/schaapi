@@ -31,6 +31,7 @@ includeModule "mining-pipeline", "ccspan-pattern-detector"
 includeModule "mining-pipeline", "spam-pattern-detector"
 
 includeModule "validation-pipeline"
+includeModule "validation-pipeline", "ci-job"
 includeModule "validation-pipeline", "github-test-reporter"
 includeModule "validation-pipeline", "junit-test-runner"
 
