@@ -5,7 +5,6 @@ mainClassName = "org.cafejojo.schaapi.CommandLineInterfaceKt"
 
 repositories {
     maven { url "https://soot-build.cs.uni-paderborn.de/nexus/repository/soot-release/" }
-    maven { url "https://soot-build.cs.uni-paderborn.de/nexus/repository/soot-snapshot/" }
 }
 
 dependencies {
