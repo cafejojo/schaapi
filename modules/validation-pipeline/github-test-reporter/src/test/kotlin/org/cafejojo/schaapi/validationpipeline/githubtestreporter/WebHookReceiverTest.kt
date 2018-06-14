@@ -4,14 +4,21 @@ import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.never
 import com.nhaarman.mockito_kotlin.verify
+import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
+import org.cafejojo.schaapi.validationpipeline.events.ValidateRequestReceivedEvent
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.it
+import org.springframework.context.ApplicationEventPublisher
 
 object WebHookReceiverTest : Spek({
     it("can receive GitHub check suite requested web hooks") {
         val checkReporter = mock<CheckReporter>()
-        val webHookReceiver = WebHookReceiver(checkReporter)
+        var event: ValidateRequestReceivedEvent? = null
+        val webHookReceiver = WebHookReceiver(
+            checkReporter,
+            ApplicationEventPublisher { event = it as? ValidateRequestReceivedEvent }
+        )
 
         webHookReceiver.processWebHook("check_suite", json {
             "action" to "requested"
@@ -29,11 +36,13 @@ object WebHookReceiverTest : Spek({
         }.toString())
 
         verify(checkReporter).reportStarted(12345, "cafejojo/schaapi", "patch01", "abc123")
+        assertThat(event).isNotNull()
+        assertThat(event?.directory?.path).contains("cafejojo/schaapi")
     }
 
     it("cannot process general GitHub check suite web hooks") {
         val checkReporter = mock<CheckReporter>()
-        val webHookReceiver = WebHookReceiver(checkReporter)
+        val webHookReceiver = WebHookReceiver(checkReporter, ApplicationEventPublisher {})
 
         val body = json {
             "action" to "general-action"
@@ -58,7 +67,7 @@ object WebHookReceiverTest : Spek({
     }
 
     it("cannot process general GitHub web hooks") {
-        val webHookReceiver = WebHookReceiver(mock())
+        val webHookReceiver = WebHookReceiver(mock(), ApplicationEventPublisher {})
 
         assertThatThrownBy { webHookReceiver.processWebHook("general_event", "") }
             .isInstanceOf(IncomingWebHookException::class.java)
