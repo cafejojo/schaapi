@@ -14,7 +14,10 @@ apply plugin: "io.spring.dependency-management"
 dependencies {
     compile project(":validation-pipeline")
 
+    compile group: "com.github.kittinunf.fuel", name: "fuel", version: fuelVersion // for JVM
+    compile group: "com.github.kittinunf.fuel", name: "fuel-jackson", version: fuelVersion // for Jackson support
     compile group: "org.springframework.boot", name: "spring-boot-starter-web"
+    compile group: "org.zeroturnaround", name: "zt-zip", version: ztZipVersion
 
     testCompile group: "com.nhaarman", name: "mockito-kotlin", version: mockitoKotlinVersion
 }
