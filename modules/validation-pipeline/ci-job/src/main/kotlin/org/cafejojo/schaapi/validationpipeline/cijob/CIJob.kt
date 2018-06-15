@@ -27,7 +27,7 @@ class CIJob(private val identifier: String, private val projectDirectory: File, 
             .responseOrThrowException()
     }
 
-    private fun extractZip() = ZipUtil.unpack(zipFile, newProjectFiles, { it.substringAfter(File.separator) })
+    private fun extractZip() = ZipUtil.unpack(zipFile, newProjectFiles) { it.substringAfter("/") }
 }
 
 internal fun Request.responseOrThrowException() = response().also { (_, _, result) ->
