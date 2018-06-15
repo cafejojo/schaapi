@@ -33,9 +33,19 @@ internal object StatementFilterTest : Spek({
 
         it("filters definition statements") {
             assertThatItRetains(mock<DefinitionStmt> {
+                on { leftOp } doReturn libraryValue
                 on { rightOp } doReturn libraryValue
             })
             assertThatItDoesNotRetain(mock<DefinitionStmt> {
+                on { leftOp } doReturn nonLibraryValue
+                on { rightOp } doReturn libraryValue
+            })
+            assertThatItDoesNotRetain(mock<DefinitionStmt> {
+                on { leftOp } doReturn libraryValue
+                on { rightOp } doReturn nonLibraryValue
+            })
+            assertThatItDoesNotRetain(mock<DefinitionStmt> {
+                on { leftOp } doReturn nonLibraryValue
                 on { rightOp } doReturn nonLibraryValue
             })
         }
