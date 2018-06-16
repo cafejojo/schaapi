@@ -7,7 +7,7 @@ import org.zeroturnaround.zip.ZipUtil
 import java.io.File
 
 /**
- * The CI job that performs the execution of all involved steps.
+ * A CI job that performs the execution of all involved steps.
  */
 class CIJob(private val identifier: String, private val projectDirectory: File, private val downloadUrl: String) {
     private val zipFile = File(projectDirectory, "builds").let { it.mkdirs(); File(it, "$identifier.zip") }
