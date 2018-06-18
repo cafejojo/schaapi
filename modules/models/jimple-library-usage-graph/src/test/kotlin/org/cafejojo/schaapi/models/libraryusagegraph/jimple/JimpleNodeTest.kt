@@ -13,6 +13,10 @@ import soot.jimple.DefinitionStmt
 import soot.jimple.Jimple
 
 internal object JimpleNodeTest : Spek({
+    beforeGroup {
+        SootNameEquivalenceChanger.activate()
+    }
+
     describe("contained values") {
         context("non-recursive statements") {
             it("returns the operator of a throw statement") {

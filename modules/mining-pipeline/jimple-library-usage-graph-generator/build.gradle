@@ -1,6 +1,5 @@
 repositories {
     maven { url "https://soot-build.cs.uni-paderborn.de/nexus/repository/soot-release/" }
-    maven { url "https://soot-build.cs.uni-paderborn.de/nexus/repository/soot-snapshot/" }
 }
 
 dependencies {
@@ -9,7 +8,7 @@ dependencies {
     compile project(":models:java-project")
     compile project(":models:jimple-library-usage-graph")
 
-    compile group: "com.github.cafejojo", name: "soot", version: "7c97c52", {
+    compile group: "ca.mcgill.sable", name: "soot", version: sootVersion, {
         exclude group: "org.slf4j", module: "slf4j-simple"
     }
 

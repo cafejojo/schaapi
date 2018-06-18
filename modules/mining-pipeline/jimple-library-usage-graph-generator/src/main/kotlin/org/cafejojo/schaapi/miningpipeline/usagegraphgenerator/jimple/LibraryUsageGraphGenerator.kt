@@ -6,6 +6,7 @@ import org.cafejojo.schaapi.miningpipeline.usagegraphgenerator.jimple.filters.Re
 import org.cafejojo.schaapi.miningpipeline.usagegraphgenerator.jimple.filters.StatementFilter
 import org.cafejojo.schaapi.models.DfsIterator
 import org.cafejojo.schaapi.models.libraryusagegraph.jimple.JimpleNode
+import org.cafejojo.schaapi.models.libraryusagegraph.jimple.SootNameEquivalenceChanger
 import org.cafejojo.schaapi.models.project.JavaProject
 import soot.Scene
 import soot.SootClass
@@ -24,6 +25,12 @@ import java.io.File
  * Library usage graph generator based on Soot.
  */
 object LibraryUsageGraphGenerator : LibraryUsageGraphGenerator<JavaProject, JavaProject, JimpleNode> {
+    init {
+        SootNameEquivalenceChanger.activate()
+        Options.v().set_whole_program(true)
+        Options.v().set_allow_phantom_refs(true)
+    }
+
     override fun generate(libraryProject: JavaProject, userProject: JavaProject): List<JimpleNode> {
         Scene.v().sootClassPath = arrayOf(
             System.getProperty("java.home") + "${File.separator}lib${File.separator}rt.jar",
@@ -31,8 +38,6 @@ object LibraryUsageGraphGenerator : LibraryUsageGraphGenerator<JavaProject, Java
             libraryProject.classDir.absolutePath,
             userProject.classpath
         ).joinToString(File.pathSeparator)
-        Options.v().set_whole_program(true)
-        Options.v().set_allow_phantom_refs(true)
         Scene.v().loadNecessaryClasses()
 
         return userProject.classNames.flatMap {
