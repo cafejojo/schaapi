@@ -16,23 +16,7 @@ class ProjectCompiler : ProjectCompiler<JavaMavenProject> {
 
     override fun compile(project: JavaMavenProject): JavaMavenProject {
         runMaven(project)
-
-        project.classes = project.classDir.walk().filter { it.isFile && it.extension == "class" }.toSet()
-        project.classNames = project.classes.map {
-            it.relativeTo(project.classDir).toString().dropLast(".class".length).replace(File.separatorChar, '.')
-        }.toSet()
-        project.dependencies = project.dependencyDir.listFiles().orEmpty().toSet()
-        project.classpath =
-            if (project.dependencies.isEmpty()) {
-                project.classDir.absolutePath
-            } else {
-                project.classDir.absolutePath + File.pathSeparator +
-                    project.dependencies.joinToString(File.pathSeparator) { it.absolutePath }
-            }
-
-        if (project.classes.isEmpty()) {
-            logger.warn { "Maven project at ${project.projectDir.path} does not contain any classes." }
-        }
+        analyzeCompiledProject(project)
 
         logger.debug { "`maven install` of ${project.projectDir} was successful." }
         return project
@@ -58,6 +42,24 @@ class ProjectCompiler : ProjectCompiler<JavaMavenProject> {
         if (result.exitCode != 0)
             throw ProjectCompilationException("`maven install` of ${project.projectDir} failed:\n" +
                 "${result.executionException}")
+    }
+
+    private fun analyzeCompiledProject(project: JavaMavenProject) {
+        project.classes = project.classDir.walk().filter { it.isFile && it.extension == "class" }.toSet()
+        project.classNames = project.classes.map {
+            it.relativeTo(project.classDir).toString().dropLast(".class".length).replace(File.separatorChar, '.')
+        }.toSet()
+        project.dependencies = project.dependencyDir.listFiles().orEmpty().toSet()
+        project.classpath =
+            if (project.dependencies.isEmpty()) {
+                project.classDir.absolutePath
+            } else {
+                (project.dependencies + project.classDir).joinToString(File.pathSeparator) { it.absolutePath }
+            }
+
+        if (project.classes.isEmpty()) {
+            logger.warn { "Maven project at ${project.projectDir.path} does not contain any classes." }
+        }
     }
 }
 

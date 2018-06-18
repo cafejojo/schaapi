@@ -35,64 +35,66 @@ class WebHookReceiver(private val checkReporter: CheckReporter, private val publ
     @ResponseBody
     fun processWebHook(@RequestHeader("X-GitHub-Event") eventType: String, @RequestBody body: String): String {
         when (eventType) {
-            "check_suite" -> {
-                val checkSuiteEvent = mapper.readValue(body, CheckSuiteEvent::class.java)
-
-                if (!checkSuiteEvent.isRequested()) {
-                    throw IncomingWebHookException(
-                        "Cannot process check suite web hooks for action ${checkSuiteEvent.action}."
-                    )
-                }
-
-                println("""
-                    I received a check suite event. Here's what I should do next:
-
-                    - Create check run with the following properties:
-                        Installation id is ${checkSuiteEvent.installation.id}
-                        For commit ${checkSuiteEvent.checkSuite.headSha}
-                        On branch ${checkSuiteEvent.checkSuite.headBranch}
-                        For repository ${checkSuiteEvent.repository.fullName}
-
-                        with status `in_progress` and started_at set to the current time
-
-                    - Start a run of the regression tests
-                    """.trimIndent()
-                )
-
-                with(checkSuiteEvent) {
-                    checkReporter.reportStarted(
-                        installation.id,
-                        repository.fullName,
-                        checkSuite.headBranch,
-                        checkSuite.headSha
-                    )
-
-                    publisher.publishEvent(ValidationRequestReceivedEvent(
-                        directory = File(Properties.testsStorageLocation, repository.fullName),
-                        downloadUrl = "https://github.com/${repository.fullName}/archive/${checkSuite.headSha}.zip"
-                    ))
-                }
-            }
-            "installation" -> {
-                val installationEvent = mapper.readValue(body, InstallationEvent::class.java)
-
-                when {
-                    installationEvent.isCreated() -> {
-                        installationEvent.repositories?.forEach {
-                            File(Properties.testsStorageLocation, it.fullName).mkdirs()
-                        }
-                    }
-                    installationEvent.isDeleted() -> {
-                        installationEvent.installation.account?.let { account ->
-                            File(Properties.testsStorageLocation, account.login).deleteRecursively()
-                        }
-                    }
-                }
-            }
+            "check_suite" -> handleCheckSuiteEvent(body)
+            "installation" -> handleInstallationEvent(body)
             else -> throw IncomingWebHookException("Cannot process web hooks for events of type $eventType.")
         }
 
         return "Webhook received."
+    }
+
+    private fun handleCheckSuiteEvent(body: String) {
+        val checkSuiteEvent = mapper.readValue(body, CheckSuiteEvent::class.java)
+
+        if (!checkSuiteEvent.isRequested()) {
+            throw IncomingWebHookException(
+                "Cannot process check suite web hooks for action ${checkSuiteEvent.action}."
+            )
+        }
+
+        println("""
+                I received a check suite event. Here's what I should do next:
+
+                - Create check run with the following properties:
+                    Installation id is ${checkSuiteEvent.installation.id}
+                    For commit ${checkSuiteEvent.checkSuite.headSha}
+                    On branch ${checkSuiteEvent.checkSuite.headBranch}
+                    For repository ${checkSuiteEvent.repository.fullName}
+
+                    with status `in_progress` and started_at set to the current time
+
+                - Start a run of the regression tests
+                """.trimIndent()
+        )
+
+        with(checkSuiteEvent) {
+            checkReporter.reportStarted(
+                installation.id,
+                repository.fullName,
+                checkSuite.headBranch,
+                checkSuite.headSha
+            )
+
+            publisher.publishEvent(ValidationRequestReceivedEvent(
+                directory = File(Properties.testsStorageLocation, repository.fullName),
+                downloadUrl = "https://github.com/${repository.fullName}/archive/${checkSuite.headSha}.zip"
+            ))
+        }
+    }
+
+    private fun handleInstallationEvent(body: String) {
+        val installationEvent = mapper.readValue(body, InstallationEvent::class.java)
+
+        when {
+            installationEvent.isCreated() ->
+                installationEvent.repositories?.forEach {
+                    File(Properties.testsStorageLocation, it.fullName).mkdirs()
+                }
+            installationEvent.isDeleted() ->
+                installationEvent.installation.account?.let { account ->
+                    File(Properties.testsStorageLocation, account.login).deleteRecursively()
+                }
+        }
     }
 }
 

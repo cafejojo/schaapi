@@ -32,13 +32,7 @@ object LibraryUsageGraphGenerator : LibraryUsageGraphGenerator<JavaProject, Java
     }
 
     override fun generate(libraryProject: JavaProject, userProject: JavaProject): List<JimpleNode> {
-        Scene.v().sootClassPath = arrayOf(
-            System.getProperty("java.home") + "${File.separator}lib${File.separator}rt.jar",
-            System.getProperty("java.home") + "${File.separator}lib${File.separator}jce.jar",
-            libraryProject.classDir.absolutePath,
-            userProject.classpath
-        ).joinToString(File.pathSeparator)
-        Scene.v().loadNecessaryClasses()
+        setUpSootEnvironment(libraryProject, userProject)
 
         return userProject.classNames.flatMap {
             val sootClass = createSootClass(it)
@@ -52,6 +46,22 @@ object LibraryUsageGraphGenerator : LibraryUsageGraphGenerator<JavaProject, Java
                     }
                 }
         }
+    }
+
+    /**
+     * Sets up the static Soot analysis environment.
+     *
+     * @param libraryProject library project containing the classes defined by the library
+     * @param userProject user project to be analysed
+     */
+    private fun setUpSootEnvironment(libraryProject: JavaProject, userProject: JavaProject) {
+        Scene.v().sootClassPath = arrayOf(
+            System.getProperty("java.home") + "${File.separator}lib${File.separator}rt.jar",
+            System.getProperty("java.home") + "${File.separator}lib${File.separator}jce.jar",
+            libraryProject.classDir.absolutePath,
+            userProject.classpath
+        ).joinToString(File.pathSeparator)
+        Scene.v().loadNecessaryClasses()
     }
 
     /**
