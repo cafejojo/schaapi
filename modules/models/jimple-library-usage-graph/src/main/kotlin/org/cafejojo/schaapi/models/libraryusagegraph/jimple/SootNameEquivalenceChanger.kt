@@ -12,7 +12,7 @@ import soot.jimple.internal.JimpleLocal
  *
  * Also see https://github.com/Sable/soot/pull/954.
  */
-object SootHack {
+object SootNameEquivalenceChanger {
     /**
      * Makes [soot.jimple.Jimple.v] return a [NameIgnoringJimple] so that [Jimple.newLocal] will create
      * [NameIgnoringJimpleLocal]s.

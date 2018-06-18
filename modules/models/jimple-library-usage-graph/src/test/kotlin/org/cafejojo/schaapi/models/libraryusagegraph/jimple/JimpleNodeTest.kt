@@ -14,7 +14,7 @@ import soot.jimple.Jimple
 
 internal object JimpleNodeTest : Spek({
     beforeGroup {
-        SootHack.activate()
+        SootNameEquivalenceChanger.activate()
     }
 
     describe("contained values") {

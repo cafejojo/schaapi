@@ -8,12 +8,12 @@ import soot.IntType
 import soot.jimple.Jimple
 
 /**
- * Unit tests for [SootHack].
+ * Unit tests for [SootNameEquivalenceChanger].
  */
-internal object SootHackTest : Spek({
+internal object SootNameEquivalenceChangerTest : Spek({
     describe("Soot hack") {
         it("causes local equivalence after the hack is activated") {
-            SootHack.activate()
+            SootNameEquivalenceChanger.activate()
 
             val localA = Jimple.v().newLocal("localA", IntType.v())
             val localB = Jimple.v().newLocal("localB", IntType.v())
