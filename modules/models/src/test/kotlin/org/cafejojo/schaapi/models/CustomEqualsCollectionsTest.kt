@@ -15,9 +15,9 @@ internal object EqualsWrapperTest : Spek({
         }
 
         it("uses the wrapped type's equals implementation by default") {
-            @SuppressWarnings("EqualsWithHashCodeExist")
+            @Suppress("EqualsWithHashCodeExist")
             val key = object : Any() {
-                @SuppressWarnings("EqualsAlwaysReturnsTrueOrFalse")
+                @Suppress("EqualsAlwaysReturnsTrueOrFalse")
                 override fun equals(other: Any?) = false
             }
             val wrapper = EqualsWrapper(
@@ -36,7 +36,7 @@ internal object EqualsWrapperTest : Spek({
         }
 
         it("uses the wrapped type's hash code implementation by default") {
-            @SuppressWarnings("EqualsWithHashCodeExist")
+            @Suppress("EqualsWithHashCodeExist")
             val key = object : Any() {
                 override fun hashCode() = 31749
             }

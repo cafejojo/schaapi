@@ -15,7 +15,7 @@ import soot.jimple.UnopExpr
 /**
  * Recursively visits the [Value]s contained within a [Value] and accumulates a result based on the implemented methods.
  */
-@SuppressWarnings("MethodOverloading", "TooManyFunctions") // Result of the inverted implementation of Visitor
+@Suppress("MethodOverloading", "TooManyFunctions") // Result of the inverted implementation of Visitor
 abstract class JimpleValueVisitor<R> {
     /**
      * This method is called at the start of [visit].
