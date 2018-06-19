@@ -84,7 +84,7 @@ internal class CCSpan<N : Node>(
 
     private fun identifyNonClosedSequences() {
         sequencesOfCurrentLength.forEach { (sequence, sequenceSupport, _) ->
-            sequencesOfPreviousLength.parallelStream()
+            sequencesOfPreviousLength.stream()
                 .filter {
                     it.isClosedSequence
                         && (it.sequence == sequence.pre() || it.sequence == sequence.post())
@@ -95,7 +95,7 @@ internal class CCSpan<N : Node>(
     }
 
     private fun calculateSupport(sequence: List<N>) =
-        sequenceSupportMap[sequence] ?: equalsSequences.parallelStream()
+        sequenceSupportMap[sequence] ?: equalsSequences.stream()
             .filter {
                 it.size >= sequence.size && nodeSequenceUtil.sequenceContainsSubSequence(it,
                     sequence,
