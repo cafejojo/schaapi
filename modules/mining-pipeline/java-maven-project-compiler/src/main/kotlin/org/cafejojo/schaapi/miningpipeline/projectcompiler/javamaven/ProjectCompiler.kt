@@ -51,7 +51,7 @@ class ProjectCompiler : ProjectCompiler<JavaMavenProject> {
         }.toSet()
         project.dependencies = project.dependencyDir.listFiles().orEmpty().toSet()
 
-        val classpathDirectories = (project.dependencies + project.classDir)
+        val classpathDirectories = project.dependencies + project.classDir
         project.classpath = classpathDirectories.joinToString(File.pathSeparator) { it.absolutePath }
 
         if (project.classes.isEmpty()) {
