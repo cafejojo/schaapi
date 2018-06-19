@@ -17,10 +17,10 @@ class TestRunner : TestRunner {
      *
      * @param rootDir the directory that contains the classes with the tests to be executed
      * @param testFiles the files that contain the tests to be run
-     * @param classPathDirectories the directories that need to be put on the class path during a test execution
+     * @param classpathDirectories the directories that need to be put on the class path during a test execution
      * @return the results of the executed tests, where each test class has its own entry in [TestResults.subResults]
      */
-    override fun run(rootDir: File, testFiles: List<File>, classPathDirectories: List<File>): TestResults {
+    override fun run(rootDir: File, testFiles: List<File>, classpathDirectories: List<File>): TestResults {
         require(rootDir.exists()) { "Given test directory does not exist." }
         require(rootDir.isDirectory) { "Given test directory is not a directory." }
         require(testFiles.all { it.exists() }) { "Not all given test files exist." }
@@ -34,7 +34,7 @@ class TestRunner : TestRunner {
                         .replace(Regex("[/\\\\]"), ".")
                         .removeSuffix(".class")
                     val classLoader = URLClassLoader(
-                        classPathDirectories.map { it.toURI().toURL() }.toTypedArray()
+                        classpathDirectories.map { it.toURI().toURL() }.toTypedArray()
                             + testFile.parentFile.toURI().toURL()
                     )
                     className to JUnitCore.runClasses(classLoader.loadClass(className))
