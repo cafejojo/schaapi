@@ -5,7 +5,7 @@ import java.io.File
 /**
  * A Java project using Maven.
  */
-@SuppressWarnings("LateinitUsage") // Refer to PR #23
+@Suppress("LateinitUsage") // Refer to PR #23
 class JavaMavenProject(
     override val projectDir: File,
     override val mavenDir: File = DEFAULT_MAVEN_HOME

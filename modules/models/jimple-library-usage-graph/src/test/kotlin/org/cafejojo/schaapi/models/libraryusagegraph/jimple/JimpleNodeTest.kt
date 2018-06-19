@@ -166,7 +166,7 @@ internal object JimpleNodeTest : Spek({
                 it("finds the values in an invocation without arguments") {
                     val method = SimpleSootMethod("method", emptyList(), "output")
                     val base = mockValue("base")
-                    @SuppressWarnings("SpreadOperator") // Cannot be avoided because of generic
+                    @Suppress("SpreadOperator") // Cannot be avoided because of generic
                     val expr = SimpleInvokeExpr(base, method, *emptyArray<String>())
                     val node = JimpleNode(mockIfStmt(expr))
 

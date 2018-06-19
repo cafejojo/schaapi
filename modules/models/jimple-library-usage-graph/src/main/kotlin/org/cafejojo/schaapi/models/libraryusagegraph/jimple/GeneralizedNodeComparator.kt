@@ -51,7 +51,7 @@ class GeneralizedNodeComparator : GeneralizedNodeComparator<JimpleNode> {
      * @param instance the instance [Node]
      * @return true iff [template] and [instance] have the same generalized values
      */
-    @SuppressWarnings("UnsafeCallOnNullableType") // The !! is implicitly avoided by checking `templateHasTag`
+    @Suppress("UnsafeCallOnNullableType") // The !! is implicitly avoided by checking `templateHasTag`
     override fun generalizedValuesAreEqual(template: JimpleNode, instance: JimpleNode): Boolean {
         val templateValues = template.getValues()
         val instanceValues = instance.getValues()

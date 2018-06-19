@@ -5,7 +5,7 @@ import java.io.File
 /**
  * A Java project contained in a JAR file.
  */
-@SuppressWarnings("LateinitUsage") // Refer to PR #23
+@Suppress("LateinitUsage") // Refer to PR #23
 class JavaJarProject(private val jar: File) : JavaProject {
     override val classDir: File
         get() = jar

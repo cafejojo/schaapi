@@ -20,7 +20,7 @@ internal object RecursiveGotoFilterTest : Spek({
         }
 
         it("does not retain a recursive goto statement") {
-            @SuppressWarnings("UnsafeCast") // Unavoidable
+            @Suppress("UnsafeCast") // Unavoidable
             val goto = mock<GotoStmt> { on { it.target } doAnswer { it.mock as GotoStmt } }
 
             assertThat(filter.retain(goto)).isFalse()
@@ -44,7 +44,7 @@ internal object RecursiveGotoFilterTest : Spek({
         }
 
         it("retains a goto that goes to a recursive goto") {
-            @SuppressWarnings("UnsafeCast") // Unavoidable
+            @Suppress("UnsafeCast") // Unavoidable
             val gotoA = mock<GotoStmt> { on { it.target } doAnswer { it.mock as GotoStmt } }
             val gotoB = mock<GotoStmt> { on { it.target } doReturn gotoA }
 

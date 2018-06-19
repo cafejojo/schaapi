@@ -87,7 +87,7 @@ internal class SimpleBinopExpr(leftValue: Value, rightValue: Value) : AbstractBi
 /**
  * A simple implementation of [soot.jimple.internal.AbstractInvokeExpr].
  */
-@SuppressWarnings("SpreadOperator") // No clean alternative
+@Suppress("SpreadOperator") // No clean alternative
 internal class SimpleInvokeExpr(base: Value, sootMethod: SootMethod, vararg arguments: Value) :
     AbstractSpecialInvokeExpr(
         mockValueBox(base),
