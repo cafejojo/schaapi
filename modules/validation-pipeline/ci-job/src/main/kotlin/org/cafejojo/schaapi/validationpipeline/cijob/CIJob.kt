@@ -16,11 +16,7 @@ import javax.tools.ToolProvider
 /**
  * A CI job that performs the execution of all involved steps.
  */
-class CIJob(
-    private val identifier: String,
-    private val projectDirectory: File,
-    private val downloadUrl: String
-) {
+class CIJob(private val identifier: String, private val projectDirectory: File, private val downloadUrl: String) {
     private val zipFile = File(projectDirectory, "builds").let { it.mkdirs(); File(it, "$identifier.zip") }
     private val newProjectFiles = File(projectDirectory, "builds/$identifier").also { it.mkdirs() }
     private val testsDirectory = File(projectDirectory, "tests")
