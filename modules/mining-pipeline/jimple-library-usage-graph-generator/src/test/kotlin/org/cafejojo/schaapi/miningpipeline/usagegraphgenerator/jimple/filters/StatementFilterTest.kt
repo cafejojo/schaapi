@@ -36,11 +36,11 @@ internal object StatementFilterTest : Spek({
                 on { leftOp } doReturn libraryValue
                 on { rightOp } doReturn libraryValue
             })
-            assertThatItDoesNotRetain(mock<DefinitionStmt> {
+            assertThatItRetains(mock<DefinitionStmt> {
                 on { leftOp } doReturn nonLibraryValue
                 on { rightOp } doReturn libraryValue
             })
-            assertThatItDoesNotRetain(mock<DefinitionStmt> {
+            assertThatItRetains(mock<DefinitionStmt> {
                 on { leftOp } doReturn libraryValue
                 on { rightOp } doReturn nonLibraryValue
             })

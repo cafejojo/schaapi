@@ -27,27 +27,37 @@ import soot.jimple.toolkits.thread.synchronization.NewStaticLock
  * Determines whether to keep individual [Value]s.
  */
 internal class ValueFilter(libraryProject: JavaProject) {
-    private val classFilter = ValueClassFilter()
-    private val libraryUsageFilter = ValueLibraryUsageFilter(libraryProject)
-    private val userUsageFilter = ValueUserUsageFilter(libraryProject)
+    private val filterRules = listOf(
+        ClassValueFilterRule(),
+        LibraryUsageValueFilterRule(libraryProject),
+        UserUsageValueFilterRule(libraryProject)
+    )
 
     /**
-     * Returns true iff [value] is of a useful class (as determined by [ValueClassFilter]), has a library usage, and
+     * Returns true iff [value] is of a useful class (as determined by [ClassValueFilterRule]), has a library usage, and
      * does not have any user project usages.
      *
      * @param value a [Value]
-     * @return true iff [value] is of a useful class (as determined by [ValueClassFilter]), has a library usage, and
+     * @return true iff [value] is of a useful class (as determined by [ClassValueFilterRule]), has a library usage, and
      * does not have any user project usages
      */
-    fun retain(value: Value) =
-        classFilter.retain(value) && libraryUsageFilter.retain(value) && userUsageFilter.retain(value)
+    fun retain(value: Value) = filterRules.all { it.retain(value) }
+
+    /**
+     * Returns true iff all [values] are of a useful class (as determined by [ClassValueFilterRule]), at least one of them
+     * has a library usage, and none of them has a user project usage.
+     *
+     * @param values a collection of [Value]s
+     * @return true iff all [values] are of a useful class (as determined by [ClassValueFilterRule]), at least one of them
+     * has a library usage, and none of them has a user project usage
+     */
+    fun retain(values: Iterable<Value>) = filterRules.all { it.retain(values) }
 }
 
 /**
- * Filters [Value]s based on their class.
+ * Describes how a [Value] should be filtered.
  */
-@Suppress("MethodOverloading") // That is how JimpleValueVisitor works
-private class ValueClassFilter : JimpleValueVisitor<Boolean>() {
+private abstract class ValueFilterRule : JimpleValueVisitor<Boolean>() {
     /**
      * Returns true iff [value] should be retained.
      *
@@ -56,6 +66,21 @@ private class ValueClassFilter : JimpleValueVisitor<Boolean>() {
      */
     fun retain(value: Value) = visit(value)
 
+    /**
+     * Returns true iff all [values] should be retained.
+     *
+     * @param values a collection of [Value]s
+     * @return true iff all [values] should be retained
+     */
+    fun retain(values: Iterable<Value>) =
+        values.fold(retain(values.elementAt(0))) { acc, value -> accumulate(acc, retain(value)) }
+}
+
+/**
+ * Filters [Value]s based on their class.
+ */
+@Suppress("MethodOverloading") // That is how JimpleValueVisitor works
+private class ClassValueFilterRule : ValueFilterRule() {
     override fun applyDefault(value: Value) = true
 
     override fun applyOther(value: Value) =
@@ -79,20 +104,12 @@ private class ValueClassFilter : JimpleValueVisitor<Boolean>() {
 }
 
 /**
- * Retains [Value]s that use the library somewhere.
+ * Retains [Value]s iff they use a class from [libraryProject].
  *
  * @property libraryProject a library project
  */
 @Suppress("MethodOverloading", "TooManyFunctions") // That is how JimpleValueVisitor works
-private class ValueLibraryUsageFilter(private val libraryProject: JavaProject) : JimpleValueVisitor<Boolean>() {
-    /**
-     * Returns true iff [value] uses a class from [libraryProject] somewhere.
-     *
-     * @param value a [Value]
-     * @return true iff [value] uses a class from [libraryProject] somewhere
-     */
-    fun retain(value: Value) = visit(value)
-
+private class LibraryUsageValueFilterRule(private val libraryProject: JavaProject) : ValueFilterRule() {
     override fun applyDefault(value: Value) = isLibraryClass(value.type)
 
     override fun apply(value: NewExpr) = isLibraryClass(value.baseType)
@@ -131,9 +148,7 @@ private class ValueLibraryUsageFilter(private val libraryProject: JavaProject) :
  * @property libraryProject a library project
  */
 @Suppress("MethodOverloading", "TooManyFunctions") // That is how JimpleValueVisitor works
-private class ValueUserUsageFilter(private val libraryProject: JavaProject) : JimpleValueVisitor<Boolean>() {
-    fun retain(value: Value) = visit(value)
-
+private class UserUsageValueFilterRule(private val libraryProject: JavaProject) : ValueFilterRule() {
     override fun applyDefault(value: Value) = isNotUserClass(value.type)
 
     override fun apply(value: NewExpr) = isNotUserClass(value.baseType)
@@ -169,6 +184,6 @@ private class ValueUserUsageFilter(private val libraryProject: JavaProject) : Ji
 }
 
 /**
- * Exception for encountered values that are not supported by the [ValueClassFilter].
+ * Exception for encountered values that are not supported by the [ClassValueFilterRule].
  */
 internal class UnsupportedValueException(message: String) : Exception(message)

@@ -250,6 +250,83 @@ internal object ValueFilterTest : Spek({
             assertThatItDoesNotRecognize(mock {})
         }
     }
+
+    describe("filtering multiple values at once") {
+        it("retains both values if they are both valid") {
+            assertThatItRetains(listOf<Value>(
+                mock<UnopExpr> {
+                    on { type } doReturn libraryType
+                    on { op } doReturn libraryInvokeExpr
+                },
+                mock<UnopExpr> {
+                    on { type } doReturn libraryType
+                    on { op } doReturn libraryInvokeExpr
+                }
+            ))
+        }
+
+        it("filters out both values if either has an undesired class") {
+            assertThatItDoesNotRetain(listOf(
+                mock<UnopExpr> {
+                    on { type } doReturn libraryType
+                    on { op } doReturn libraryInvokeExpr
+                },
+                mock<NewStaticLock> {
+                    on { type } doReturn libraryType
+                }
+            ))
+            assertThatItDoesNotRetain(listOf(
+                mock<NewStaticLock> {
+                    on { type } doReturn libraryType
+                },
+                mock<UnopExpr> {
+                    on { type } doReturn libraryType
+                    on { op } doReturn libraryInvokeExpr
+                }
+            ))
+            assertThatItDoesNotRetain(listOf<Value>(
+                mock<NewStaticLock> {
+                    on { type } doReturn libraryType
+                },
+                mock<NewStaticLock> {
+                    on { type } doReturn libraryType
+                }
+            ))
+        }
+
+        it("filters out both values if neither has a library usage") {
+            assertThatItRetains(listOf<Value>(
+                mock<UnopExpr> {
+                    on { type } doReturn libraryType
+                    on { op } doReturn libraryInvokeExpr
+                },
+                mock<UnopExpr> {
+                    on { type } doReturn nonLibraryType
+                    on { op } doReturn nonLibraryInvokeExpr
+                }
+            ))
+            assertThatItRetains(listOf<Value>(
+                mock<UnopExpr> {
+                    on { type } doReturn nonLibraryType
+                    on { op } doReturn nonLibraryInvokeExpr
+                },
+                mock<UnopExpr> {
+                    on { type } doReturn libraryType
+                    on { op } doReturn libraryInvokeExpr
+                }
+            ))
+            assertThatItDoesNotRetain(listOf<Value>(
+                mock<UnopExpr> {
+                    on { type } doReturn nonLibraryType
+                    on { op } doReturn nonLibraryInvokeExpr
+                },
+                mock<UnopExpr> {
+                    on { type } doReturn nonLibraryType
+                    on { op } doReturn nonLibraryInvokeExpr
+                }
+            ))
+        }
+    }
 })
 
 private fun constructDeclaringClass(declaringClassName: String) = mock<SootClass> {
@@ -262,5 +339,11 @@ private fun assertThatItDoesNotRecognize(value: Value) =
 private fun assertThatItRetains(value: Value) =
     assertThat(ValueFilter(libraryProject).retain(value)).isTrue()
 
+private fun assertThatItRetains(values: Iterable<Value>) =
+    assertThat(ValueFilter(libraryProject).retain(values)).isTrue()
+
 private fun assertThatItDoesNotRetain(value: Value) =
     assertThat(ValueFilter(libraryProject).retain(value)).isFalse()
+
+private fun assertThatItDoesNotRetain(values: Iterable<Value>) =
+    assertThat(ValueFilter(libraryProject).retain(values)).isFalse()
