@@ -50,12 +50,9 @@ class ProjectCompiler : ProjectCompiler<JavaMavenProject> {
             it.relativeTo(project.classDir).toString().dropLast(".class".length).replace(File.separatorChar, '.')
         }.toSet()
         project.dependencies = project.dependencyDir.listFiles().orEmpty().toSet()
-        project.classpath =
-            if (project.dependencies.isEmpty()) {
-                project.classDir.absolutePath
-            } else {
-                (project.dependencies + project.classDir).joinToString(File.pathSeparator) { it.absolutePath }
-            }
+
+        val classpathDirectories = (project.dependencies + project.classDir)
+        project.classpath = classpathDirectories.joinToString(File.pathSeparator) { it.absolutePath }
 
         if (project.classes.isEmpty()) {
             logger.warn { "Maven project at ${project.projectDir.path} does not contain any classes." }
