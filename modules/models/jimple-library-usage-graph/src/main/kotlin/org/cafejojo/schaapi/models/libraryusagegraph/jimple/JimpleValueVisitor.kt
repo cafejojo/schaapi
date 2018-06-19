@@ -1,5 +1,6 @@
 package org.cafejojo.schaapi.models.libraryusagegraph.jimple
 
+import soot.EquivalentValue
 import soot.Immediate
 import soot.Local
 import soot.Value
@@ -23,6 +24,8 @@ import soot.jimple.Ref
 import soot.jimple.StaticFieldRef
 import soot.jimple.StaticInvokeExpr
 import soot.jimple.UnopExpr
+import soot.jimple.toolkits.infoflow.AbstractDataSource
+import soot.jimple.toolkits.thread.synchronization.NewStaticLock
 
 /**
  * Recursively visits the [Value]s contained within a [Value] and accumulates a result based on the implemented methods.
@@ -57,6 +60,9 @@ abstract class JimpleValueVisitor<R> {
             is Expr -> visitExpr(value)
             is Ref -> visitRef(value)
             is Immediate -> visitImmediate(value)
+            is EquivalentValue -> accumulate(apply(value), visit(value.value))
+            is NewStaticLock -> apply(value)
+            is AbstractDataSource -> apply(value)
             else -> applyOther(value)
         }
 
@@ -286,6 +292,27 @@ abstract class JimpleValueVisitor<R> {
      * @param value a [CastExpr]
      */
     open fun apply(value: CastExpr) = applyDefault(value)
+
+    /**
+     * This method is called when an [EquivalentValue] is visited by [visit].
+     *
+     * @param value an [EquivalentValue]
+     */
+    open fun apply(value: EquivalentValue) = applyDefault(value)
+
+    /**
+     * This method is called when an [NewStaticLock] is visited by [visit].
+     *
+     * @param value an [NewStaticLock]
+     */
+    open fun apply(value: NewStaticLock) = applyDefault(value)
+
+    /**
+     * This method is called when an [AbstractDataSource] is visited by [visit].
+     *
+     * @param value an [AbstractDataSource]
+     */
+    open fun apply(value: AbstractDataSource) = applyDefault(value)
 
     /**
      * This method is called by default if an [apply] method is not overridden.

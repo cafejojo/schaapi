@@ -6,6 +6,7 @@ import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.context
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
+import soot.EquivalentValue
 import soot.Immediate
 import soot.IntType
 import soot.Modifier
@@ -21,6 +22,8 @@ import soot.jimple.IntConstant
 import soot.jimple.InvokeExpr
 import soot.jimple.Jimple
 import soot.jimple.Ref
+import soot.jimple.toolkits.infoflow.AbstractDataSource
+import soot.jimple.toolkits.thread.synchronization.NewStaticLock
 
 /**
  * Unit tests for [JimpleValueVisitor].
@@ -216,6 +219,28 @@ internal object JimpleValueVisitorTest : Spek({
 
             it("returns the value of a Constant") {
                 val value = IntConstant.v(384)
+
+                assertThat(visitor.visit(value)).containsExactly(value)
+            }
+        }
+
+        context("miscellaneous") {
+            it("returns the value and equivalent value of an EquivalentValue") {
+                val value = Jimple.v().newLocal("local", IntType.v())
+                val eqValue = EquivalentValue(value)
+
+                assertThat(visitor.visit(eqValue)).containsExactly(eqValue, value)
+            }
+
+            it("returns the value of a NewStaticLock") {
+                val clazz = SootClass("SomeClass", Modifier.PUBLIC)
+                val value = NewStaticLock(clazz)
+
+                assertThat(visitor.visit(value)).containsExactly(value)
+            }
+
+            it("returns the value of an AbstractDataSource") {
+                val value = AbstractDataSource(Any())
 
                 assertThat(visitor.visit(value)).containsExactly(value)
             }
