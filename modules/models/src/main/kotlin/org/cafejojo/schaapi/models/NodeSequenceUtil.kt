@@ -15,7 +15,7 @@ class NodeSequenceUtil<N : Node> {
         sequence.indices.any { sequenceIndex ->
             subSequence.indices.all { subSequenceIndex ->
                 sequenceIndex + subSequenceIndex < sequence.size &&
-                    comparator.satisfies(sequence[sequenceIndex + subSequenceIndex], subSequence[subSequenceIndex])
+                    comparator.satisfies(subSequence[subSequenceIndex], sequence[sequenceIndex + subSequenceIndex])
             }
         }
 
