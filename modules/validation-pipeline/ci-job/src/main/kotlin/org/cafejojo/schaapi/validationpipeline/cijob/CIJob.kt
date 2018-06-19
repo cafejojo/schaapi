@@ -31,8 +31,8 @@ class CIJob(private val identifier: String, private val projectDirectory: File, 
 
         next("Start downloading...") { download() }
         next("Extract zip...") { extractZip() }
-        val library = next("Start compile library...") { compileLibrary() }
-        val tests = next( "Start compile tests...") { compileTests(library) }
+        val library = next("Start compiling library...") { compileLibrary() }
+        val tests = next( "Start compiling tests...") { compileTests(library) }
         return next("Start running tests...") { TestRunner().run(testsDirectory, tests, listOf(library.classDir)) }
     }
 
