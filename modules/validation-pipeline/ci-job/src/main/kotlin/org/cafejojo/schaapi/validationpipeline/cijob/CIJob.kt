@@ -12,12 +12,14 @@ import org.cafejojo.schaapi.validationpipeline.testrunner.junit.TestRunner
 import org.zeroturnaround.zip.ZipUtil
 import java.io.ByteArrayOutputStream
 import java.io.File
+import java.util.concurrent.Callable
 import javax.tools.ToolProvider
 
 /**
  * A CI job that performs the execution of all involved steps.
  */
-class CIJob(private val identifier: String, private val projectDirectory: File, private val downloadUrl: String) {
+class CIJob(private val identifier: String, private val projectDirectory: File, private val downloadUrl: String) :
+    Callable<TestResults> {
     private val zipFile = File(projectDirectory, "builds").let { it.mkdirs(); File(it, "$identifier.zip") }
     private val newProjectFiles = File(projectDirectory, "builds/$identifier").also { it.mkdirs() }
     private val testsDirectory = File(projectDirectory, "tests")
@@ -27,7 +29,7 @@ class CIJob(private val identifier: String, private val projectDirectory: File, 
     /**
      * Executes the necessary steps to run tests and report the results.
      */
-    fun run(): TestResults {
+    override fun call(): TestResults {
         if (!testsDirectory.exists()) throw CIJobException("This project has not been initialized yet. $testsDirectory")
 
         MavenInstaller().installMaven(JavaMavenProject.DEFAULT_MAVEN_HOME)

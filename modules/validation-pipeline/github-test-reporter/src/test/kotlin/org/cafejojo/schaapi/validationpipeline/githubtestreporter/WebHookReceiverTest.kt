@@ -38,7 +38,11 @@ object WebHookReceiverTest : Spek({
 
         verify(checkReporter).reportStarted(12345, "cafejojo/schaapi", "patch01", "abc123")
         assertThat(event).isNotNull()
-        assertThat(event?.directory?.path).contains("cafejojo${File.separator}schaapi")
+        event?.apply {
+            assertThat(identifier).isEqualTo("abc123")
+            assertThat(downloadUrl).contains("cafejojo/schaapi").contains(".zip")
+            assertThat(directory.path).contains("cafejojo${File.separator}schaapi")
+        }
     }
 
     it("cannot process general GitHub check suite web hooks") {

@@ -1,12 +1,15 @@
 package org.cafejojo.schaapi.validationpipeline.cijob
 
 import org.assertj.core.api.Assertions.assertThat
+import org.cafejojo.schaapi.validationpipeline.events.CIJobCompletedEvent
+import org.cafejojo.schaapi.validationpipeline.events.ValidationRequestReceivedEvent
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.it
+import org.springframework.context.ApplicationEventPublisher
 import java.io.File
 import java.nio.file.Files
 
-object CIJobTest : Spek({
+object IntegrationTest : Spek({
     lateinit var storageDirectory: File
     lateinit var projectDirectory: File
 
@@ -21,16 +24,27 @@ object CIJobTest : Spek({
             .forEach { it.copyTo(File(testsDirectory, it.name), overwrite = true) }
     }
 
-    it("executes a CI job") {
+    afterEachTest {
+        CIJobInitiator.executorService.shutdown()
+    }
+
+    it("initiates a CI job") {
         val commitHash = "ced7a679ba6337977d99effccdb4ac66b3ba34e0"
         val downloadUrl = "https://github.com/cafejojo/dummy-simple-maven-library/archive/$commitHash.zip"
 
-        val ciJob = CIJob(commitHash, projectDirectory, downloadUrl)
+        var event: CIJobCompletedEvent? = null
+        val initiator = CIJobInitiator(
+            ApplicationEventPublisher { event = it as? CIJobCompletedEvent }
+        )
 
-        val testResults = ciJob.call()
+        initiator.handleValidateRequestReceivedEvent(
+            ValidationRequestReceivedEvent(commitHash, projectDirectory, downloadUrl)
+        )
 
-        assertThat(File(projectDirectory, "builds/$commitHash/README.md")).exists()
-        assertThat(testResults.totalCount).isEqualTo(1)
-        assertThat(testResults.passCount).isEqualTo(1)
+        assertThat(event).isNotNull()
+        event?.apply {
+            assertThat(testResults.totalCount).isEqualTo(1)
+            assertThat(testResults.passCount).isEqualTo(1)
+        }
     }
 })
