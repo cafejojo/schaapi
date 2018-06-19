@@ -4,7 +4,7 @@ import org.cafejojo.schaapi.miningpipeline.Pattern
 import org.cafejojo.schaapi.models.CustomEqualsHashSet
 import org.cafejojo.schaapi.models.GeneralizedNodeComparator
 import org.cafejojo.schaapi.models.Node
-import org.cafejojo.schaapi.models.PathUtil
+import org.cafejojo.schaapi.models.NodeSequenceUtil
 
 /**
  * Finds frequent sequences of [Node]s in the given collection of sequences, using the SPAM algorithm by Ayres et al.
@@ -19,7 +19,7 @@ internal class Spam<N : Node>(
     private val minimumSupport: Int,
     private val nodeComparator: GeneralizedNodeComparator<N>
 ) {
-    private val pathUtil = PathUtil<N>()
+    private val nodeSequenceUtil = NodeSequenceUtil<N>()
     private val frequentPatterns = mutableListOf<Pattern<N>>()
     private val frequentItems = CustomEqualsHashSet<N>(Node.Companion::equiv, Node::equivHashCode)
 
@@ -29,7 +29,7 @@ internal class Spam<N : Node>(
      * @return frequent sequences in [sequences]
      */
     internal fun findFrequentPatterns(): List<Pattern<N>> {
-        frequentItems.addAll(pathUtil.findFrequentNodesInPaths(sequences, minimumSupport).keys)
+        frequentItems.addAll(nodeSequenceUtil.findFrequentNodesInSequences(sequences, minimumSupport).keys)
         frequentItems.forEach { runAlgorithm(listOf(it), frequentItems) }
 
         return frequentPatterns
@@ -44,7 +44,7 @@ internal class Spam<N : Node>(
      */
     internal fun mapFrequentPatternsToSequences(): Map<Pattern<N>, List<List<N>>> =
         frequentPatterns.map { sequence ->
-            sequence to sequences.filter { pathUtil.pathContainsSequence(it, sequence, nodeComparator) }
+            sequence to sequences.filter { nodeSequenceUtil.sequenceContainsSubSequence(it, sequence, nodeComparator) }
         }.toMap()
 
     private fun runAlgorithm(pattern: List<N>, extensions: Set<N>) {
@@ -53,7 +53,7 @@ internal class Spam<N : Node>(
         val frequentExtensions = extensions.mapNotNull { extension ->
             val extendedPattern = pattern.toMutableList().apply { add(extension) }
             val support = sequences.count { sequence ->
-                pathUtil.pathContainsSequence(sequence, extendedPattern, nodeComparator)
+                nodeSequenceUtil.sequenceContainsSubSequence(sequence, extendedPattern, nodeComparator)
             }
 
             if (support >= minimumSupport) extension

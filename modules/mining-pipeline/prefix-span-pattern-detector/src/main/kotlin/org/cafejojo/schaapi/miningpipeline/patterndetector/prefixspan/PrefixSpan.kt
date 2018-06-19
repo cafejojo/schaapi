@@ -4,7 +4,7 @@ import org.cafejojo.schaapi.miningpipeline.Pattern
 import org.cafejojo.schaapi.models.CustomEqualsHashSet
 import org.cafejojo.schaapi.models.GeneralizedNodeComparator
 import org.cafejojo.schaapi.models.Node
-import org.cafejojo.schaapi.models.PathUtil
+import org.cafejojo.schaapi.models.NodeSequenceUtil
 
 /**
  * Finds all the frequent patterns of [Node]s in the given collection of sequences using the PrefixSpan algorithm by
@@ -20,7 +20,7 @@ internal class PrefixSpan<N : Node>(
     private val minimumSupport: Int,
     private val nodeComparator: GeneralizedNodeComparator<N>
 ) {
-    private val pathUtil = PathUtil<N>()
+    private val nodeSequenceUtil = NodeSequenceUtil<N>()
 
     private val frequentPatterns = mutableListOf<Pattern<N>>()
     private val frequentItems = CustomEqualsHashSet<N>(Node.Companion::equiv, Node::equivHashCode)
@@ -71,7 +71,7 @@ internal class PrefixSpan<N : Node>(
      * @return the list of sequences, each a list of nodes, that are common within [sequences]
      */
     internal fun findFrequentPatterns(): List<Pattern<N>> {
-        frequentItems.addAll(pathUtil.findFrequentNodesInPaths(sequences, minimumSupport).keys)
+        frequentItems.addAll(nodeSequenceUtil.findFrequentNodesInSequences(sequences, minimumSupport).keys)
         runAlgorithm()
 
         return frequentPatterns
@@ -87,7 +87,11 @@ internal class PrefixSpan<N : Node>(
     internal fun mapFrequentPatternsToSequences(): Map<Pattern<N>, List<List<N>>> =
         frequentPatterns
             .map { sequence ->
-                sequence to sequences.filter { pathUtil.pathContainsSequence(it, sequence, nodeComparator) }
+                sequence to sequences.filter {
+                    nodeSequenceUtil.sequenceContainsSubSequence(it,
+                        sequence,
+                        nodeComparator)
+                }
             }
             .toMap()
 
@@ -103,9 +107,11 @@ internal class PrefixSpan<N : Node>(
     }
 
     private fun sequenceContainsPrefix(sequence: List<N>, prefix: List<N>, frequentItem: N) =
-        pathUtil.pathContainsSequence(sequence, prefix.toMutableList().apply { add(frequentItem) }, nodeComparator) ||
+        nodeSequenceUtil.sequenceContainsSubSequence(sequence,
+            prefix.toMutableList().apply { add(frequentItem) },
+            nodeComparator) ||
             prefix.isNotEmpty() &&
-            pathUtil.pathContainsSequence(sequence, listOf(prefix.last(), frequentItem), nodeComparator)
+            nodeSequenceUtil.sequenceContainsSubSequence(sequence, listOf(prefix.last(), frequentItem), nodeComparator)
 
     internal fun extractSuffixes(prefix: List<N>, sequences: Collection<List<N>>): List<List<N>> =
         sequences.filter { it.size >= prefix.size && it.subList(0, prefix.size) == prefix }

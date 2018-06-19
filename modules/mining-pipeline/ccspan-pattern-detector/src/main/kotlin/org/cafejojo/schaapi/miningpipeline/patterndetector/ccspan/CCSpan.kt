@@ -5,7 +5,7 @@ import org.cafejojo.schaapi.models.CustomEqualsHashMap
 import org.cafejojo.schaapi.models.CustomEqualsList
 import org.cafejojo.schaapi.models.GeneralizedNodeComparator
 import org.cafejojo.schaapi.models.Node
-import org.cafejojo.schaapi.models.PathUtil
+import org.cafejojo.schaapi.models.NodeSequenceUtil
 
 /**
  * Finds closed sequential patterns using the CCSpan algorithm by Zhang et. al.
@@ -23,7 +23,7 @@ internal class CCSpan<N : Node>(
     private val equalsSequences = sequences.map { sequence ->
         CustomEqualsList<N>(Node.Companion::equiv, Node::equivHashCode).also { it.addAll(sequence) }
     }
-    private val pathUtil = PathUtil<N>()
+    private val nodeSequenceUtil = NodeSequenceUtil<N>()
 
     private val sequencesOfPreviousLength = mutableSetOf<SequenceTriple<N>>()
     private val sequencesOfCurrentLength = mutableSetOf<SequenceTriple<N>>()
@@ -61,7 +61,7 @@ internal class CCSpan<N : Node>(
     }
 
     private fun findFrequentSingletonSequences() {
-        sequencesOfPreviousLength += pathUtil.findFrequentNodesInPaths(equalsSequences, minimumSupport)
+        sequencesOfPreviousLength += nodeSequenceUtil.findFrequentNodesInSequences(equalsSequences, minimumSupport)
             .map { (node, support) -> SequenceTriple(listOf(node), support) }
     }
 
@@ -96,7 +96,11 @@ internal class CCSpan<N : Node>(
 
     private fun calculateSupport(sequence: List<N>) =
         sequenceSupportMap[sequence] ?: equalsSequences.parallelStream()
-            .filter { it.size >= sequence.size && pathUtil.pathContainsSequence(it, sequence, nodeComparator) }
+            .filter {
+                it.size >= sequence.size && nodeSequenceUtil.sequenceContainsSubSequence(it,
+                    sequence,
+                    nodeComparator)
+            }
             .count()
             .also { sequenceSupportMap[sequence] = it }
 
