@@ -52,21 +52,6 @@ class WebHookReceiver(private val checkReporter: CheckReporter, private val publ
             )
         }
 
-        println("""
-                I received a check suite event. Here's what I should do next:
-
-                - Create check run with the following properties:
-                    Installation id is ${checkSuiteEvent.installation.id}
-                    For commit ${checkSuiteEvent.checkSuite.headSha}
-                    On branch ${checkSuiteEvent.checkSuite.headBranch}
-                    For repository ${checkSuiteEvent.repository.fullName}
-
-                    with status `in_progress` and started_at set to the current time
-
-                - Start a run of the regression tests
-                """.trimIndent()
-        )
-
         with(checkSuiteEvent) {
             checkReporter.reportStarted(
                 installation.id,
