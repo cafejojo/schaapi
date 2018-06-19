@@ -32,11 +32,11 @@ class CIJob(private val identifier: String, private val projectDirectory: File, 
 
         MavenInstaller().installMaven(JavaMavenProject.DEFAULT_MAVEN_HOME)
 
-        next("Start downloading...") { download() }
-        next("Extract zip...") { extractZip() }
-        val library = next("Start compiling library...") { compileLibrary() }
-        val tests = next("Start compiling tests...") { compileTests(library) }
-        return next("Start running tests...") { TestRunner().run(testsDirectory, tests, listOf(library.classDir)) }
+        next("Downloading...") { download() }
+        next("Extracting zip...") { extractZip() }
+        val library = next("Compiling library...") { compileLibrary() }
+        val tests = next("Compiling tests...") { compileTests(library) }
+        return next("Running tests...") { TestRunner().run(testsDirectory, tests, listOf(library.classDir)) }
     }
 
     private fun download() = Fuel.head(downloadUrl).responseOrThrowException().let { (_, urlResponse, _) ->
