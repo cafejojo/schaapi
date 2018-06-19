@@ -9,10 +9,11 @@ import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 import org.junit.jupiter.api.assertThrows
 import soot.Immediate
+import soot.IntType
 import soot.Local
+import soot.RefType
 import soot.SootClass
 import soot.SootField
-import soot.Type
 import soot.Value
 import soot.jimple.AnyNewExpr
 import soot.jimple.ArrayRef
@@ -21,27 +22,24 @@ import soot.jimple.CastExpr
 import soot.jimple.ConcreteRef
 import soot.jimple.Constant
 import soot.jimple.Expr
-import soot.jimple.FieldRef
 import soot.jimple.IdentityRef
 import soot.jimple.NewArrayExpr
 import soot.jimple.NewExpr
 import soot.jimple.NewMultiArrayExpr
 import soot.jimple.Ref
+import soot.jimple.StaticFieldRef
 import soot.jimple.UnopExpr
-import soot.jimple.internal.AbstractBinopExpr
 import soot.jimple.toolkits.infoflow.AbstractDataSource
 import soot.jimple.toolkits.thread.synchronization.NewStaticLock
-import soot.shimple.PhiExpr
-import soot.shimple.ShimpleExpr
 
 internal object ValueFilterTest : Spek({
     val libraryInvokeExpr = constructInvokeExprMock(LIBRARY_CLASS)
     val nonLibraryInvokeExpr = constructInvokeExprMock(NON_LIBRARY_CLASS)
 
-    val libraryType = mock<Type> {
+    val libraryType = mock<RefType> {
         on { toString() } doReturn LIBRARY_CLASS
     }
-    val nonLibraryType = mock<Type> {
+    val nonLibraryType = mock<RefType> {
         on { toString() } doReturn NON_LIBRARY_CLASS
     }
 
@@ -54,74 +52,83 @@ internal object ValueFilterTest : Spek({
         it("filters unary operation expression") {
             assertThatItRetains(mock<UnopExpr> {
                 on { op } doReturn libraryInvokeExpr
+                on { type } doReturn libraryType
+            })
+            assertThatItRetains(mock<UnopExpr> {
+                on { op } doReturn libraryInvokeExpr
+                on { type } doReturn nonLibraryType
+            })
+            assertThatItRetains(mock<UnopExpr> {
+                on { op } doReturn nonLibraryInvokeExpr
+                on { type } doReturn libraryType
             })
             assertThatItDoesNotRetain(mock<UnopExpr> {
                 on { op } doReturn nonLibraryInvokeExpr
+                on { type } doReturn nonLibraryType
             })
         }
 
         it("filters binary operation expressions") {
             assertThatItRetains(mock<BinopExpr> {
+                on { type } doReturn libraryType
                 on { op1 } doReturn libraryInvokeExpr
                 on { op2 } doReturn libraryInvokeExpr
             })
             assertThatItRetains(mock<BinopExpr> {
+                on { type } doReturn libraryType
                 on { op1 } doReturn libraryInvokeExpr
                 on { op2 } doReturn nonLibraryInvokeExpr
             })
             assertThatItRetains(mock<BinopExpr> {
+                on { type } doReturn libraryType
+                on { op1 } doReturn nonLibraryInvokeExpr
+                on { op2 } doReturn libraryInvokeExpr
+            })
+            assertThatItRetains(mock<BinopExpr> {
+                on { type } doReturn libraryType
+                on { op1 } doReturn nonLibraryInvokeExpr
+                on { op2 } doReturn nonLibraryInvokeExpr
+            })
+            assertThatItRetains(mock<BinopExpr> {
+                on { type } doReturn nonLibraryType
+                on { op1 } doReturn libraryInvokeExpr
+                on { op2 } doReturn libraryInvokeExpr
+            })
+            assertThatItRetains(mock<BinopExpr> {
+                on { type } doReturn nonLibraryType
+                on { op1 } doReturn libraryInvokeExpr
+                on { op2 } doReturn nonLibraryInvokeExpr
+            })
+            assertThatItRetains(mock<BinopExpr> {
+                on { type } doReturn nonLibraryType
                 on { op1 } doReturn nonLibraryInvokeExpr
                 on { op2 } doReturn libraryInvokeExpr
             })
             assertThatItDoesNotRetain(mock<BinopExpr> {
+                on { type } doReturn nonLibraryType
                 on { op1 } doReturn nonLibraryInvokeExpr
                 on { op2 } doReturn nonLibraryInvokeExpr
             })
-        }
-
-        it("filters abstract binary operation expressions") {
-            assertThatItRetains(mock<AbstractBinopExpr> {
-                on { op1 } doReturn libraryInvokeExpr
-                on { op2 } doReturn libraryInvokeExpr
-            })
-            assertThatItRetains(mock<AbstractBinopExpr> {
-                on { op1 } doReturn libraryInvokeExpr
-                on { op2 } doReturn nonLibraryInvokeExpr
-            })
-            assertThatItRetains(mock<AbstractBinopExpr> {
-                on { op1 } doReturn nonLibraryInvokeExpr
-                on { op2 } doReturn libraryInvokeExpr
-            })
-            assertThatItDoesNotRetain(mock<AbstractBinopExpr> {
-                on { op1 } doReturn nonLibraryInvokeExpr
-                on { op2 } doReturn nonLibraryInvokeExpr
-            })
-        }
-
-        it("filters phi expressions") {
-            assertThatItRetains(mock<PhiExpr> {
-                on { values } doReturn listOf(libraryInvokeExpr, nonLibraryInvokeExpr)
-            })
-            assertThatItDoesNotRetain(mock<PhiExpr> {
-                on { values } doReturn listOf(nonLibraryInvokeExpr)
-            })
-        }
-
-        it("does not recognize unknown shimple expressions") {
-            assertThatItDoesNotRecognize(mock<ShimpleExpr>())
         }
 
         it("filters new expressions") {
             assertThatItRetains(mock<NewExpr> {
-                on { type } doReturn libraryType
+                on { baseType } doReturn libraryType
             })
             assertThatItDoesNotRetain(mock<NewExpr> {
-                on { type } doReturn nonLibraryType
+                on { baseType } doReturn nonLibraryType
             })
         }
 
         it("filters new array expressions") {
-            assertThatItDoesNotRetain(mock<NewArrayExpr>())
+            val sizeLocal = mock<Local> {
+                on { type } doReturn IntType.v()
+            }
+
+            assertThatItDoesNotRetain(mock<NewArrayExpr> {
+                on { size } doReturn sizeLocal
+                on { baseType } doReturn libraryType
+            })
         }
 
         it("filters new multi array expressions") {
@@ -135,9 +142,19 @@ internal object ValueFilterTest : Spek({
         it("filters cast expressions") {
             assertThatItRetains(mock<CastExpr> {
                 on { op } doReturn libraryInvokeExpr
+                on { castType } doReturn libraryType
+            })
+            assertThatItRetains(mock<CastExpr> {
+                on { op } doReturn libraryInvokeExpr
+                on { castType } doReturn nonLibraryType
+            })
+            assertThatItRetains(mock<CastExpr> {
+                on { op } doReturn nonLibraryInvokeExpr
+                on { castType } doReturn libraryType
             })
             assertThatItDoesNotRetain(mock<CastExpr> {
                 on { op } doReturn nonLibraryInvokeExpr
+                on { castType } doReturn nonLibraryType
             })
         }
 
@@ -162,20 +179,28 @@ internal object ValueFilterTest : Spek({
         }
 
         it("filters field refs") {
-            assertThatItRetains(mock<FieldRef> {
+            assertThatItRetains(mock<StaticFieldRef> {
                 on { field } doReturn libraryField
             })
-            assertThatItDoesNotRetain(mock<FieldRef> {
+            assertThatItDoesNotRetain(mock<StaticFieldRef> {
                 on { field } doReturn nonLibraryField
             })
         }
 
         it("filters array refs") {
+            val indexLocal = mock<Local> {
+                on { type } doReturn IntType.v()
+            }
+
             assertThatItRetains(mock<ArrayRef> {
+                on { type } doReturn libraryType
                 on { base } doReturn libraryInvokeExpr
+                on { index } doReturn indexLocal
             })
             assertThatItDoesNotRetain(mock<ArrayRef> {
+                on { type } doReturn nonLibraryType
                 on { base } doReturn nonLibraryInvokeExpr
+                on { index } doReturn indexLocal
             })
         }
 
@@ -222,7 +247,7 @@ internal object ValueFilterTest : Spek({
 
     describe("filtering of unrecognized values based on library usage") {
         it("does not recognize unknown values") {
-            assertThatItDoesNotRecognize(mock<Value>())
+            assertThatItDoesNotRecognize(mock {})
         }
     }
 })
