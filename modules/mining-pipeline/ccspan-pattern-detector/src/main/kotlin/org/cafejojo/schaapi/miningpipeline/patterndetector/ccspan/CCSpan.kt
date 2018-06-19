@@ -28,7 +28,7 @@ internal class CCSpan<N : Node>(
     private val sequencesOfPreviousLength = mutableSetOf<SequenceTriple<N>>()
     private val sequencesOfCurrentLength = mutableSetOf<SequenceTriple<N>>()
 
-    private val sequenceSupportMap = CustomEqualsHashMap<List<N>, Long>(List<N>::equals, List<N>::hashCode)
+    private val sequenceSupportMap = CustomEqualsHashMap<List<N>, Int>(List<N>::equals, List<N>::hashCode)
 
     private fun List<N>.pre() = this.subList(0, this.size - 1)
     private fun List<N>.post() = this.subList(1, this.size)
@@ -95,13 +95,9 @@ internal class CCSpan<N : Node>(
     }
 
     private fun calculateSupport(sequence: List<N>) =
-        sequenceSupportMap[sequence] ?: equalsSequences.parallelStream()
-            .filter {
-                it.size >= sequence.size && nodeSequenceUtil.sequenceContainsSubSequence(it,
-                    sequence,
-                    nodeComparator)
-            }
-            .count()
+        sequenceSupportMap[sequence] ?: equalsSequences
+            .filter { it.size >= sequence.size }
+            .count { nodeSequenceUtil.sequenceContainsSubSequence(it, sequence, nodeComparator) }
             .also { sequenceSupportMap[sequence] = it }
 
     private fun shiftCurrent() {
@@ -111,4 +107,4 @@ internal class CCSpan<N : Node>(
     }
 }
 
-private data class SequenceTriple<N>(val sequence: List<N>, val support: Long, var isClosedSequence: Boolean = true)
+private data class SequenceTriple<N>(val sequence: List<N>, val support: Int, var isClosedSequence: Boolean = true)

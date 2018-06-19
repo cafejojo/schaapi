@@ -15,7 +15,7 @@ class NodeSequenceUtil<N : Node> {
         sequence.indices.any { sequenceIndex ->
             subSequence.indices.all { subSequenceIndex ->
                 sequenceIndex + subSequenceIndex < sequence.size &&
-                    comparator.satisfies(sequence[sequenceIndex + subSequenceIndex], subSequence[subSequenceIndex])
+                    comparator.satisfies(subSequence[subSequenceIndex], sequence[sequenceIndex + subSequenceIndex])
             }
         }
 
@@ -26,8 +26,8 @@ class NodeSequenceUtil<N : Node> {
      * @param minimumCount the minimum number of times a node needs to occur
      * @return the set of nodes occurring at least [minimumCount] times
      */
-    fun findFrequentNodesInSequences(sequences: Collection<List<N>>, minimumCount: Int): Map<N, Long> {
-        val nodeCounts = CustomEqualsHashMap<N, Long>(Node.Companion::equiv, Node::equivHashCode)
+    fun findFrequentNodesInSequences(sequences: Collection<List<N>>, minimumCount: Int): Map<N, Int> {
+        val nodeCounts = CustomEqualsHashMap<N, Int>(Node.Companion::equiv, Node::equivHashCode)
         val sequenceSets = sequences.map { sequence ->
             CustomEqualsHashSet<N>(Node.Companion::equiv, Node::equivHashCode).also { it.addAll(sequence) }
         }

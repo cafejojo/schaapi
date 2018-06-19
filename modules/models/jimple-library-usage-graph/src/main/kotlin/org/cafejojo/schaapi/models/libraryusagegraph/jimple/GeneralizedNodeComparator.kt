@@ -21,6 +21,7 @@ class GeneralizedNodeComparator : GeneralizedNodeComparator<JimpleNode> {
      */
     private val tagOrigins = HashMap<Int, Stmt>()
 
+    @Synchronized
     override fun satisfies(template: JimpleNode, instance: JimpleNode) =
         structuresAreEqual(template, instance) && generalizedValuesAreEqual(template, instance)
 
