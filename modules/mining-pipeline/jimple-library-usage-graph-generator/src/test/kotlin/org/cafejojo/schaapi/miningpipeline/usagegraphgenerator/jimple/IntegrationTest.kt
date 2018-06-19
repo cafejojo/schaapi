@@ -258,7 +258,9 @@ internal object IntegrationTest : Spek({
             assertThatStructureMatches(
                 node<JAssignStmt>(
                     node<JInvokeStmt>(
-                        node<JReturnStmt>()
+                        node<JInvokeStmt>(
+                            node<JReturnStmt>()
+                        )
                     )
                 ),
                 libraryUsageGraph
