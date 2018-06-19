@@ -23,11 +23,22 @@ import soot.jimple.StaticInvokeExpr
 import soot.jimple.toolkits.infoflow.AbstractDataSource
 import soot.jimple.toolkits.thread.synchronization.NewStaticLock
 
+/**
+ * Determines whether to keep individual [Value]s.
+ */
 internal class ValueFilter(libraryProject: JavaProject) {
     private val classFilter = ValueClassFilter()
     private val libraryUsageFilter = ValueLibraryUsageFilter(libraryProject)
     private val userUsageFilter = ValueUserUsageFilter(libraryProject)
 
+    /**
+     * Returns true iff [value] is of a useful class (as determined by [ValueClassFilter]), has a library usage, and
+     * does not have any user project usages.
+     *
+     * @param value a [Value]
+     * @return true iff [value] is of a useful class (as determined by [ValueClassFilter]), has a library usage, and
+     * does not have any user project usages
+     */
     fun retain(value: Value) =
         classFilter.retain(value) && libraryUsageFilter.retain(value) && userUsageFilter.retain(value)
 }
