@@ -33,9 +33,7 @@ fun main(args: Array<String>) {
     val output = File(cmd.getOptionValue('o')).apply { mkdirs() }
     val library = File(cmd.getOptionValue('l'))
 
-    if (!mavenDir.resolve("bin/mvn").exists() || cmd.hasOption("repair_maven")) {
-        MavenInstaller().installMaven(mavenDir)
-    }
+    installMavenIfNeeded(mavenDir, cmd)
 
     val flavor = cmd.getOptionValue("flavor", DEFAULT_PIPELINE_TYPE)
     try {
@@ -123,6 +121,12 @@ private fun parseArgs(options: Options, args: Array<String>): CommandLine? {
         println(e.message)
         printHelpMessage(options)
         null
+    }
+}
+
+private fun installMavenIfNeeded(mavenDir: File, cmd: CommandLine) {
+    if (!mavenDir.resolve("bin/mvn").exists() || cmd.hasOption("repair_maven")) {
+        MavenInstaller().installMaven(mavenDir)
     }
 }
 

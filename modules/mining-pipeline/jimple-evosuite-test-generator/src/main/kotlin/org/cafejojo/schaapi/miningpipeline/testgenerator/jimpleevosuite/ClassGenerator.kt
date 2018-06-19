@@ -40,7 +40,7 @@ internal class ClassGenerator(className: String) {
     }
 
     /**
-     * Generates a non-static soot method for the given [SootClass] with a body written in Jimple IR, and add it to the
+     * Generates a non-static soot method for the given [SootClass] with a body written in Jimple IR, and adds it to the
      * class.
      *
      * Unbound variables in the list of [Unit]s are used as method parameters. All variables are stored as locals
