@@ -4,6 +4,7 @@ import com.github.kittinunf.fuel.Fuel
 import com.github.kittinunf.fuel.core.Request
 import com.github.kittinunf.result.Result
 import mu.KLogging
+import org.cafejojo.schaapi.miningpipeline.projectcompiler.javamaven.MavenInstaller
 import org.cafejojo.schaapi.miningpipeline.projectcompiler.javamaven.ProjectCompiler
 import org.cafejojo.schaapi.models.project.JavaMavenProject
 import org.cafejojo.schaapi.validationpipeline.TestResults
@@ -29,10 +30,12 @@ class CIJob(private val identifier: String, private val projectDirectory: File, 
     fun run(): TestResults {
         if (!testsDirectory.exists()) throw CIJobException("This project has not been initialized yet. $testsDirectory")
 
+        MavenInstaller().installMaven(JavaMavenProject.DEFAULT_MAVEN_HOME)
+
         next("Start downloading...") { download() }
         next("Extract zip...") { extractZip() }
         val library = next("Start compiling library...") { compileLibrary() }
-        val tests = next( "Start compiling tests...") { compileTests(library) }
+        val tests = next("Start compiling tests...") { compileTests(library) }
         return next("Start running tests...") { TestRunner().run(testsDirectory, tests, listOf(library.classDir)) }
     }
 
