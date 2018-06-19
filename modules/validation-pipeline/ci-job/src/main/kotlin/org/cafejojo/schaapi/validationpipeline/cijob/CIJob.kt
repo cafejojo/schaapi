@@ -41,15 +41,21 @@ class CIJob(private val identifier: String, private val projectDirectory: File, 
         return next("Running tests...") { TestRunner().run(testsDirectory, tests, listOf(library.classDir)) }
     }
 
-    private fun download() = Fuel.head(downloadUrl).responseOrThrowException().let { (_, urlResponse, _) ->
-        Fuel.download(urlResponse.url.toString())
-            .destination { _, _ -> zipFile }
-            .responseOrThrowException()
+    private fun download() = catchExceptions("New source code could not be downloaded from $downloadUrl.") {
+        Fuel.head(downloadUrl).responseOrThrowException().let { (_, urlResponse, _) ->
+            Fuel.download(urlResponse.url.toString())
+                .destination { _, _ -> zipFile }
+                .responseOrThrowException()
+        }
     }
 
-    private fun extractZip() = ZipUtil.unpack(zipFile, newProjectFiles, { it.substringAfter("/") })
+    private fun extractZip() = catchExceptions("Error occurred while unzipping new source code.") {
+        ZipUtil.unpack(zipFile, newProjectFiles, { it.substringAfter("/") })
+    }
 
-    private fun compileLibrary() = ProjectCompiler().compile(JavaMavenProject(newProjectFiles))
+    private fun compileLibrary() = catchExceptions("New library source code could not be compiled.") {
+        ProjectCompiler().compile(JavaMavenProject(newProjectFiles))
+    }
 
     private fun compileTests(library: JavaMavenProject): List<File> {
         val compiler = ToolProvider.getSystemJavaCompiler()
@@ -66,7 +72,7 @@ class CIJob(private val identifier: String, private val projectDirectory: File, 
         return testsDirectory.listFiles().filter { it.extension == "java" }
             .also { files ->
                 if (files.any { compiler.run(null, null, errorOutput, it.absolutePath, "-cp", classPath) != 0 }) {
-                    throw CIJobException("Compilation failed:\n\n${errorOutput.toString("UTF-8")}")
+                    throw CIJobException("User test compilation failed:\n\n${errorOutput.toString("UTF-8")}")
                 }
             }
             .map { File(testsDirectory, "${it.nameWithoutExtension}.class") }
@@ -76,6 +82,15 @@ class CIJob(private val identifier: String, private val projectDirectory: File, 
         logger.info("[build-$projectDirectory-$identifier] $logMessage")
 
         return action()
+    }
+
+    @Suppress("TooGenericExceptionCaught") // That is exactly what we want here :)
+    private fun <T> catchExceptions(message: String, action: () -> T): T {
+        try {
+            return action()
+        } catch (exception: Exception) {
+            throw CIJobException(message, exception)
+        }
     }
 }
 
@@ -89,4 +104,4 @@ internal fun Request.responseOrThrowException() = response().also { (_, _, resul
 /**
  * Exception that gets thrown when an error occurs during the execution of a CI job.
  */
-class CIJobException(message: String) : Exception(message)
+class CIJobException(message: String, cause: Throwable? = null) : Exception(message, cause)
