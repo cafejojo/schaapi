@@ -17,11 +17,12 @@ class PathEnumerator<N : Node>(
     private val maximumPathLength: Int
 ) {
     private val allPaths = mutableListOf<List<Node>>()
-    private val visited = Stack<Node>()
-    private val exitNode = entryNode.connectLeavesToExitNode()
+    private val currentPath = Stack<Node>()
+    private val exitNode = ExitNode()
 
     init {
-        visited.push(entryNode)
+        currentPath.push(entryNode)
+        entryNode.connectLeavesTo(exitNode)
     }
 
     /**
@@ -29,57 +30,52 @@ class PathEnumerator<N : Node>(
      *
      * @return list of found paths, with all [Node]s guaranteed to be of type [N]
      */
-    @Suppress("UNCHECKED_CAST", "UnsafeCast") // We assume that all artificial Nodes are removed
+    @Synchronized
     fun enumerate(): List<List<N>> {
         recursivelyEnumerate(entryNode)
-        entryNode.removeExitNodes()
+        cleanUp()
 
-        return allPaths as List<List<N>>
+        return allPaths.filterIsInstance<List<N>>()
     }
 
     private fun recursivelyEnumerate(node: Node) {
-        checkIfExitNodeIsReached(node)
-        visitSuccessors(node)
+        if (exitNode in node.successors) allPaths.add(currentPath.toList())
+        if (currentPath.size >= maximumPathLength) return
+
+        node.successors
+            .filter { it !in currentPath && it != exitNode }
+            .forEach {
+                currentPath.push(it)
+                recursivelyEnumerate(it)
+                currentPath.pop()
+            }
     }
 
-    private fun checkIfExitNodeIsReached(node: Node) =
-        node.successors.filter { hasNotBeenVisited(it) }
-            .find { it == exitNode }
-            ?.let { allPaths.add(visited.toMutableList()) }
-
-    private fun visitSuccessors(node: Node) =
-        node.successors
-            .filter { hasNotBeenVisited(it) && it != exitNode }
-            .forEach {
-                if (visited.size < maximumPathLength) {
-                    visited.push(it)
-                    recursivelyEnumerate(visited.peek())
-                    visited.pop()
-                }
-            }
-
-    private fun hasNotBeenVisited(node: Node) = visited.none { it == node }
+    private fun cleanUp() = entryNode.removeExitNodes()
 }
 
 /**
- * The sink of a control flow graph.
+ * Connects all nodes that are connected to this node and have no successors to [node]. If there is no such node, the
+ * last node connected to this node is connected to [node] instead.
+ *
+ * @param node the [Node] to connect leaves to
  */
-class ExitNode(successors: MutableList<Node> = mutableListOf()) : SimpleNode(successors)
+internal fun Node.connectLeavesTo(node: Node) {
+    val allNodes = iterator().asSequence().toList()
+    val leaves = allNodes
+        .filter { it.successors.isEmpty() }
+        .let { if (it.isEmpty()) allNodes.takeLast(1) else it }
 
-/**
- * Connects all nodes with no successors (connected to this node) with a single [ExitNode].
- */
-internal fun Node.connectLeavesToExitNode() =
-    ExitNode().also { exitNode ->
-        iterator().asSequence().toList().let { allNodes ->
-            allNodes.filter { it.successors.isEmpty() }
-                .let { if (it.isEmpty()) allNodes.takeLast(1) else it }
-                .forEach { it.successors.add(exitNode) }
-        }
-    }
+    leaves.forEach { it.successors.add(node) }
+}
 
 /**
  * Removes all [ExitNode]s from the graph of nodes connected to this node.
  */
 internal fun Node.removeExitNodes() =
     iterator().asSequence().toList().forEach { it.successors.removeIf { it is ExitNode } }
+
+/**
+ * The sink of a control flow graph.
+ */
+class ExitNode : SimpleNode(mutableListOf())
