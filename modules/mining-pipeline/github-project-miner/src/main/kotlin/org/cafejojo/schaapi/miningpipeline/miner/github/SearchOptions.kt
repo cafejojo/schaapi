@@ -99,6 +99,7 @@ class MavenProjectSearchOptions(
             `in`("file")
             filename("pom")
             extension("xml")
+            path("/")
         }
     }
 }
