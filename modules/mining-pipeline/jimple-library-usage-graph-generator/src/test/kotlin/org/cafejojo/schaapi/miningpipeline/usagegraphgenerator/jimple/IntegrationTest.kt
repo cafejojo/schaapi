@@ -24,7 +24,7 @@ private val testClassesClassPath = IntegrationTest::class.java.getResource("../.
 internal object IntegrationTest : Spek({
     describe("the integration of different components of the package for simple classes") {
         it("converts a simple class to a library usage graph") {
-            val libraryUsageGraph = LibraryUsageGraphGenerator.generate(
+            val libraryUsageGraph = JimpleLibraryUsageGraphGenerator.generate(
                 libraryProject,
                 TestProject(testClassesClassPath, setOf("$TEST_CLASSES_PACKAGE.users.SimpleTest"))
             )[0]
@@ -46,7 +46,7 @@ internal object IntegrationTest : Spek({
 
     describe("the integration of different components of the package for classes containing if statements") {
         it("converts a class containing an if with a library usage in the false-branch to a library usage graph") {
-            val libraryUsageGraph = LibraryUsageGraphGenerator.generate(
+            val libraryUsageGraph = JimpleLibraryUsageGraphGenerator.generate(
                 libraryProject,
                 TestProject(testClassesClassPath, setOf("$TEST_CLASSES_PACKAGE.users.ifconditional.IfFalseUseTest"))
             )[0]
@@ -71,7 +71,7 @@ internal object IntegrationTest : Spek({
         }
 
         it("converts a class containing an if with a library usage in the true-branch to a library usage graph") {
-            val libraryUsageGraph = LibraryUsageGraphGenerator.generate(
+            val libraryUsageGraph = JimpleLibraryUsageGraphGenerator.generate(
                 libraryProject,
                 TestProject(testClassesClassPath, setOf("$TEST_CLASSES_PACKAGE.users.ifconditional.IfTrueUseTest"))
             )[0]
@@ -96,7 +96,7 @@ internal object IntegrationTest : Spek({
         }
 
         it("converts a class containing an if with a library usage in both branches to a library usage graph") {
-            val libraryUsageGraph = LibraryUsageGraphGenerator.generate(
+            val libraryUsageGraph = JimpleLibraryUsageGraphGenerator.generate(
                 libraryProject,
                 TestProject(testClassesClassPath, setOf("$TEST_CLASSES_PACKAGE.users.ifconditional.IfBothUseTest"))
             )[0]
@@ -123,7 +123,7 @@ internal object IntegrationTest : Spek({
         }
 
         it("converts a class containing an if with a library usage in both branches to a library usage graph") {
-            val libraryUsageGraph = LibraryUsageGraphGenerator.generate(
+            val libraryUsageGraph = JimpleLibraryUsageGraphGenerator.generate(
                 libraryProject,
                 TestProject(testClassesClassPath, setOf("$TEST_CLASSES_PACKAGE.users.ifconditional.IfNoUseTest"))
             )[0]
@@ -141,7 +141,7 @@ internal object IntegrationTest : Spek({
         }
 
         it("converts a class containing an if with no successors of the true/false branch") {
-            val libraryUsageGraph = LibraryUsageGraphGenerator.generate(
+            val libraryUsageGraph = JimpleLibraryUsageGraphGenerator.generate(
                 libraryProject,
                 TestProject(testClassesClassPath, setOf("$TEST_CLASSES_PACKAGE.users.ifconditional.IfNoEndTest"))
             )[0]
@@ -157,7 +157,7 @@ internal object IntegrationTest : Spek({
         }
 
         it("filters out a class containing an if with method exitting return statements") {
-            val libraryUsageGraphs = LibraryUsageGraphGenerator.generate(
+            val libraryUsageGraphs = JimpleLibraryUsageGraphGenerator.generate(
                 libraryProject,
                 TestProject(testClassesClassPath, setOf("$TEST_CLASSES_PACKAGE.users.ifconditional.IfReturnsTest"))
             )
@@ -168,7 +168,7 @@ internal object IntegrationTest : Spek({
 
     describe("the integration of different components of the package for classes containing switch statements") {
         it("converts a class containing a switch with a library usage in a branch to a library usage graph") {
-            val libraryUsageGraph = LibraryUsageGraphGenerator.generate(
+            val libraryUsageGraph = JimpleLibraryUsageGraphGenerator.generate(
                 libraryProject,
                 TestProject(testClassesClassPath, setOf(
                     "$TEST_CLASSES_PACKAGE.users.switchconditional.SwitchOneUseTest"
@@ -198,7 +198,7 @@ internal object IntegrationTest : Spek({
         }
 
         it("converts a class containing a switch with a library usage in the default branch to a library usage graph") {
-            val libraryUsageGraph = LibraryUsageGraphGenerator.generate(
+            val libraryUsageGraph = JimpleLibraryUsageGraphGenerator.generate(
                 libraryProject,
                 TestProject(testClassesClassPath, setOf(
                     "$TEST_CLASSES_PACKAGE.users.switchconditional.SwitchDefaultUseTest"
@@ -228,7 +228,7 @@ internal object IntegrationTest : Spek({
         }
 
         it("converts a class containing a switch with no library usage in its branches to a library usage graph") {
-            val libraryUsageGraph = LibraryUsageGraphGenerator.generate(
+            val libraryUsageGraph = JimpleLibraryUsageGraphGenerator.generate(
                 libraryProject,
                 TestProject(testClassesClassPath, setOf(
                     "$TEST_CLASSES_PACKAGE.users.switchconditional.SwitchNoUseTest"
@@ -250,7 +250,7 @@ internal object IntegrationTest : Spek({
 
     describe("the integration of different components of the package for classes containing complex statements") {
         it("converts a class containing an arraylist and a lambda") {
-            val libraryUsageGraph = LibraryUsageGraphGenerator.generate(
+            val libraryUsageGraph = JimpleLibraryUsageGraphGenerator.generate(
                 libraryProject,
                 TestProject(testClassesClassPath, setOf("$TEST_CLASSES_PACKAGE.users.ArrayListAndLambdaTest"))
             )[0]
@@ -268,7 +268,7 @@ internal object IntegrationTest : Spek({
         }
 
         it("converts a class containing annotations") {
-            val libraryUsageGraph = LibraryUsageGraphGenerator.generate(
+            val libraryUsageGraph = JimpleLibraryUsageGraphGenerator.generate(
                 libraryProject,
                 TestProject(testClassesClassPath, setOf("$TEST_CLASSES_PACKAGE.users.AnnotationTest"))
             )[0]
@@ -284,7 +284,7 @@ internal object IntegrationTest : Spek({
         }
 
         it("converts a class containing a throw statement with library usage to a library usage graph") {
-            val libraryUsageGraph = LibraryUsageGraphGenerator.generate(
+            val libraryUsageGraph = JimpleLibraryUsageGraphGenerator.generate(
                 libraryProject,
                 TestProject(testClassesClassPath, setOf("$TEST_CLASSES_PACKAGE.users.ThrowTest"))
             )[0]
@@ -298,7 +298,7 @@ internal object IntegrationTest : Spek({
         }
 
         it("does not convert a class containing a checked throw statement without library usage") {
-            val libraryUsageGraphs = LibraryUsageGraphGenerator.generate(
+            val libraryUsageGraphs = JimpleLibraryUsageGraphGenerator.generate(
                 libraryProject,
                 TestProject(testClassesClassPath,
                     setOf("$TEST_CLASSES_PACKAGE.users.ThrowOtherUncheckedExceptionTest"))
@@ -308,7 +308,7 @@ internal object IntegrationTest : Spek({
         }
 
         it("does not convert a class containing an unchecked throw statement without library usage") {
-            val libraryUsageGraphs = LibraryUsageGraphGenerator.generate(
+            val libraryUsageGraphs = JimpleLibraryUsageGraphGenerator.generate(
                 libraryProject,
                 TestProject(testClassesClassPath, setOf("$TEST_CLASSES_PACKAGE.users.ThrowOtherCheckedExceptionTest"))
             )
@@ -317,7 +317,7 @@ internal object IntegrationTest : Spek({
         }
 
         it("converts a class with a try-catch with library usage in the try block to a library usage graph") {
-            val libraryUsageGraph = LibraryUsageGraphGenerator.generate(
+            val libraryUsageGraph = JimpleLibraryUsageGraphGenerator.generate(
                 libraryProject,
                 TestProject(testClassesClassPath, setOf("$TEST_CLASSES_PACKAGE.users.TryCatchTest"))
             )[0]
@@ -337,7 +337,7 @@ internal object IntegrationTest : Spek({
         }
 
         it("converts a class containing a static class call to a library usage graph") {
-            val libraryUsageGraph = LibraryUsageGraphGenerator.generate(
+            val libraryUsageGraph = JimpleLibraryUsageGraphGenerator.generate(
                 libraryProject,
                 TestProject(testClassesClassPath, setOf("$TEST_CLASSES_PACKAGE.users.StaticTest"))
             )[0]
@@ -351,7 +351,7 @@ internal object IntegrationTest : Spek({
         }
 
         it("converts a class containing a nested loop to a library usage graph") {
-            val libraryUsageGraph = LibraryUsageGraphGenerator.generate(
+            val libraryUsageGraph = JimpleLibraryUsageGraphGenerator.generate(
                 libraryProject,
                 TestProject(testClassesClassPath, setOf("$TEST_CLASSES_PACKAGE.users.LoopTest"))
             )[0]
@@ -385,7 +385,7 @@ internal object IntegrationTest : Spek({
         }
 
         it("converts a class containing a loop with a continue statement to a library usage graph") {
-            val libraryUsageGraph = LibraryUsageGraphGenerator.generate(
+            val libraryUsageGraph = JimpleLibraryUsageGraphGenerator.generate(
                 libraryProject,
                 TestProject(testClassesClassPath, setOf("$TEST_CLASSES_PACKAGE.users.LoopContinueTest"))
             )[0]
@@ -421,7 +421,7 @@ internal object IntegrationTest : Spek({
 
     describe("the integration of different components for types containing non-concrete method declarations") {
         it("ignores a non-concrete interface method declaration") {
-            val libraryUsageGraphs = LibraryUsageGraphGenerator.generate(
+            val libraryUsageGraphs = JimpleLibraryUsageGraphGenerator.generate(
                 libraryProject,
                 TestProject(testClassesClassPath, setOf(
                     "$TEST_CLASSES_PACKAGE.users.InterfaceTest"
@@ -432,7 +432,7 @@ internal object IntegrationTest : Spek({
         }
 
         it("ignores a non-concrete abstract class method declaration") {
-            val libraryUsageGraphs = LibraryUsageGraphGenerator.generate(
+            val libraryUsageGraphs = JimpleLibraryUsageGraphGenerator.generate(
                 libraryProject,
                 TestProject(testClassesClassPath, setOf(
                     "$TEST_CLASSES_PACKAGE.users.AbstractClassTest"
@@ -443,7 +443,7 @@ internal object IntegrationTest : Spek({
         }
 
         it("ignores a non-concrete abstract class method declaration") {
-            val libraryUsageGraphs = LibraryUsageGraphGenerator.generate(
+            val libraryUsageGraphs = JimpleLibraryUsageGraphGenerator.generate(
                 libraryProject,
                 TestProject(testClassesClassPath, setOf(
                     "$TEST_CLASSES_PACKAGE.users.PartiallyAbstractClassTest"
@@ -457,7 +457,7 @@ internal object IntegrationTest : Spek({
 
     describe("it filters non-'empty' patterns") {
         it("filters out patterns with only return statements") {
-            val libraryUsageGraphs = LibraryUsageGraphGenerator.generate(
+            val libraryUsageGraphs = JimpleLibraryUsageGraphGenerator.generate(
                 libraryProject,
                 TestProject(testClassesClassPath, setOf(
                     "$TEST_CLASSES_PACKAGE.users.EmptyPatternTest"

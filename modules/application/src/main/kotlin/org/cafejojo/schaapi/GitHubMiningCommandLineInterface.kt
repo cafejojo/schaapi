@@ -15,7 +15,7 @@ import org.cafejojo.schaapi.miningpipeline.patternfilter.jimple.LengthPatternFil
 import org.cafejojo.schaapi.miningpipeline.projectcompiler.javajar.JavaJarProjectCompiler
 import org.cafejojo.schaapi.miningpipeline.projectcompiler.javamaven.JavaMavenProjectCompiler
 import org.cafejojo.schaapi.miningpipeline.testgenerator.jimpleevosuite.TestGenerator
-import org.cafejojo.schaapi.miningpipeline.usagegraphgenerator.jimple.LibraryUsageGraphGenerator
+import org.cafejojo.schaapi.miningpipeline.usagegraphgenerator.jimple.JimpleLibraryUsageGraphGenerator
 import org.cafejojo.schaapi.models.libraryusagegraph.jimple.GeneralizedNodeComparator
 import org.cafejojo.schaapi.models.project.JavaJarProject
 import org.cafejojo.schaapi.models.project.JavaMavenProject
@@ -111,7 +111,7 @@ internal class GitHubMiningCommandLineInterface {
             },
             libraryProjectCompiler = JavaJarProjectCompiler(),
             userProjectCompiler = JavaMavenProjectCompiler(),
-            libraryUsageGraphGenerator = LibraryUsageGraphGenerator,
+            libraryUsageGraphGenerator = JimpleLibraryUsageGraphGenerator,
             patternDetector = CCSpanPatternDetector(
                 patternDetectorMinCount,
                 maxSequenceLength,
