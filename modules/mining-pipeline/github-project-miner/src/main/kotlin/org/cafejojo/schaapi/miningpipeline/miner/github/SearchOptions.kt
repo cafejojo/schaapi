@@ -91,7 +91,7 @@ class MavenProjectSearchOptions(
     private companion object : KLogging()
 
     override fun buildGitHubSearchContent(gitHub: GitHub): GHContentSearchBuilder {
-        logger.info { "Mining a maximum of $maxProjects GitHub maven projects." }
+        logger.info { "Mining a maximum of $maxProjects GitHub Maven projects." }
         logger.info { "Should depend on group id: $groupId, artifact id: $artifactId, version: $version." }
 
         return gitHub.searchContent().apply {
