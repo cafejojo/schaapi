@@ -44,12 +44,12 @@ internal class ValueFilter(libraryProject: JavaProject) {
     fun retain(value: Value) = filterRules.all { it.retain(value) }
 
     /**
-     * Returns true iff all [values] are of a useful class (as determined by [ClassValueFilterRule]), at least one of them
-     * has a library usage, and none of them has a user project usage.
+     * Returns true iff all [values] are of a useful class (as determined by [ClassValueFilterRule]), at least one of
+     * them has a library usage, and none of them has a user project usage.
      *
      * @param values a collection of [Value]s
-     * @return true iff all [values] are of a useful class (as determined by [ClassValueFilterRule]), at least one of them
-     * has a library usage, and none of them has a user project usage
+     * @return true iff all [values] are of a useful class (as determined by [ClassValueFilterRule]), at least one of
+     * them has a library usage, and none of them has a user project usage
      */
     fun retain(values: Iterable<Value>) = filterRules.all { it.retain(values) }
 }
