@@ -34,24 +34,16 @@ internal class ValueFilter(libraryProject: JavaProject) {
     )
 
     /**
-     * Returns true iff [value] is of a useful class (as determined by [ClassValueFilterRule]), has a library usage, and
-     * does not have any user project usages.
-     *
-     * @param value a [Value]
-     * @return true iff [value] is of a useful class (as determined by [ClassValueFilterRule]), has a library usage, and
-     * does not have any user project usages
-     */
-    fun retain(value: Value) = filterRules.all { it.retain(value) }
-
-    /**
      * Returns true iff all [values] are of a useful class (as determined by [ClassValueFilterRule]), at least one of
      * them has a library usage, and none of them has a user project usage.
+     *
+     * If [values] is empty, true is returned.
      *
      * @param values a collection of [Value]s
      * @return true iff all [values] are of a useful class (as determined by [ClassValueFilterRule]), at least one of
      * them has a library usage, and none of them has a user project usage
      */
-    fun retain(values: Iterable<Value>) = filterRules.all { it.retain(values) }
+    fun retain(vararg values: Value) = filterRules.all { it.retain(values.toList()) }
 }
 
 /**
@@ -67,13 +59,13 @@ private abstract class ValueFilterRule : JimpleValueVisitor<Boolean>() {
     fun retain(value: Value) = visit(value)
 
     /**
-     * Returns true iff all [values] should be retained.
+     * Returns true iff all [values] should be retained or [values] is empty.
      *
      * @param values a collection of [Value]s
-     * @return true iff all [values] should be retained
+     * @return true iff all [values] should be retained or [values] is empty
      */
-    fun retain(values: Iterable<Value>) =
-        values.fold(retain(values.first())) { acc, value -> accumulate(acc, retain(value)) }
+    fun retain(values: List<Value>) =
+        values.isEmpty() || values.fold(retain(values.first())) { acc, value -> accumulate(acc, retain(value)) }
 }
 
 /**

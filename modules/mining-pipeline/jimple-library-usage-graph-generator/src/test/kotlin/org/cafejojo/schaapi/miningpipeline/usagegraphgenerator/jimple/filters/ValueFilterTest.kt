@@ -252,8 +252,12 @@ internal object ValueFilterTest : Spek({
     }
 
     describe("filtering multiple values at once") {
+        it("retains if no values are given") {
+            assertThatItRetains()
+        }
+
         it("retains both values if they are both valid") {
-            assertThatItRetains(listOf<Value>(
+            assertThatItRetains(
                 mock<UnopExpr> {
                     on { type } doReturn libraryType
                     on { op } doReturn libraryInvokeExpr
@@ -262,11 +266,11 @@ internal object ValueFilterTest : Spek({
                     on { type } doReturn libraryType
                     on { op } doReturn libraryInvokeExpr
                 }
-            ))
+            )
         }
 
         it("filters out both values if either has an undesired class") {
-            assertThatItDoesNotRetain(listOf(
+            assertThatItDoesNotRetain(
                 mock<UnopExpr> {
                     on { type } doReturn libraryType
                     on { op } doReturn libraryInvokeExpr
@@ -274,8 +278,8 @@ internal object ValueFilterTest : Spek({
                 mock<NewStaticLock> {
                     on { type } doReturn libraryType
                 }
-            ))
-            assertThatItDoesNotRetain(listOf(
+            )
+            assertThatItDoesNotRetain(
                 mock<NewStaticLock> {
                     on { type } doReturn libraryType
                 },
@@ -283,19 +287,19 @@ internal object ValueFilterTest : Spek({
                     on { type } doReturn libraryType
                     on { op } doReturn libraryInvokeExpr
                 }
-            ))
-            assertThatItDoesNotRetain(listOf<Value>(
+            )
+            assertThatItDoesNotRetain(
                 mock<NewStaticLock> {
                     on { type } doReturn libraryType
                 },
                 mock<NewStaticLock> {
                     on { type } doReturn libraryType
                 }
-            ))
+            )
         }
 
         it("filters out both values if neither has a library usage") {
-            assertThatItRetains(listOf<Value>(
+            assertThatItRetains(
                 mock<UnopExpr> {
                     on { type } doReturn libraryType
                     on { op } doReturn libraryInvokeExpr
@@ -304,8 +308,8 @@ internal object ValueFilterTest : Spek({
                     on { type } doReturn nonLibraryType
                     on { op } doReturn nonLibraryInvokeExpr
                 }
-            ))
-            assertThatItRetains(listOf<Value>(
+            )
+            assertThatItRetains(
                 mock<UnopExpr> {
                     on { type } doReturn nonLibraryType
                     on { op } doReturn nonLibraryInvokeExpr
@@ -314,8 +318,8 @@ internal object ValueFilterTest : Spek({
                     on { type } doReturn libraryType
                     on { op } doReturn libraryInvokeExpr
                 }
-            ))
-            assertThatItDoesNotRetain(listOf<Value>(
+            )
+            assertThatItDoesNotRetain(
                 mock<UnopExpr> {
                     on { type } doReturn nonLibraryType
                     on { op } doReturn nonLibraryInvokeExpr
@@ -324,7 +328,7 @@ internal object ValueFilterTest : Spek({
                     on { type } doReturn nonLibraryType
                     on { op } doReturn nonLibraryInvokeExpr
                 }
-            ))
+            )
         }
     }
 })
@@ -336,14 +340,10 @@ private fun constructDeclaringClass(declaringClassName: String) = mock<SootClass
 private fun assertThatItDoesNotRecognize(value: Value) =
     assertThrows<UnsupportedValueException> { ValueFilter(libraryProject).retain(value) }
 
-private fun assertThatItRetains(value: Value) =
-    assertThat(ValueFilter(libraryProject).retain(value)).isTrue()
+@Suppress("SpreadOperator") // Inputs are small
+private fun assertThatItRetains(vararg values: Value) =
+    assertThat(ValueFilter(libraryProject).retain(*values)).isTrue()
 
-private fun assertThatItRetains(values: Iterable<Value>) =
-    assertThat(ValueFilter(libraryProject).retain(values)).isTrue()
-
-private fun assertThatItDoesNotRetain(value: Value) =
-    assertThat(ValueFilter(libraryProject).retain(value)).isFalse()
-
-private fun assertThatItDoesNotRetain(values: Iterable<Value>) =
-    assertThat(ValueFilter(libraryProject).retain(values)).isFalse()
+@Suppress("SpreadOperator") // Inputs are small
+private fun assertThatItDoesNotRetain(vararg values: Value) =
+    assertThat(ValueFilter(libraryProject).retain(*values)).isFalse()
