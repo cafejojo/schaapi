@@ -1,4 +1,4 @@
-package org.cafejojo.schaapi.validationpipeline.githubtestreporter
+package org.cafejojo.schaapi.validationpipeline.githubtestreporter.githubapi
 
 import com.github.kittinunf.fuel.core.FuelError
 import com.github.kittinunf.fuel.core.Method

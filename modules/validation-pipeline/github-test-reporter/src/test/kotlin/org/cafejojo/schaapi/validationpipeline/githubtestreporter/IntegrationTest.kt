@@ -5,6 +5,7 @@ import com.nhaarman.mockito_kotlin.mock
 import net.javacrumbs.jsonunit.fluent.JsonFluentAssert.assertThatJson
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.entry
+import org.cafejojo.schaapi.validationpipeline.githubtestreporter.githubapi.json
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

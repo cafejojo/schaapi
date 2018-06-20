@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategy
 import com.github.kittinunf.fuel.Fuel
 import com.github.kittinunf.fuel.jackson.mapper
 import com.github.kittinunf.fuel.jackson.responseObject
+import org.cafejojo.schaapi.validationpipeline.githubtestreporter.githubapi.GitHubApi
+import org.cafejojo.schaapi.validationpipeline.githubtestreporter.githubapi.getResultOrThrowException
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
