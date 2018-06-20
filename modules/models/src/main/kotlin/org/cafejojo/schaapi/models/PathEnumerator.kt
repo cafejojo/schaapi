@@ -78,4 +78,4 @@ internal fun Node.removeExitNodes() =
 /**
  * The sink of a control flow graph.
  */
-class ExitNode(successors: MutableList<Node> = mutableListOf()) : SimpleNode(successors)
+class ExitNode : SimpleNode(mutableListOf())
