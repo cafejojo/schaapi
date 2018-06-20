@@ -7,9 +7,9 @@ import org.cafejojo.schaapi.miningpipeline.Pattern
 import org.cafejojo.schaapi.miningpipeline.PatternDetector
 
 /**
- * Represents a pattern detector.
+ * A pattern detector implementing the SPAM algorithm.
  */
-class PatternDetector<N : Node>(
+class SpamPatternDetector<N : Node>(
     private val minimumCount: Int,
     private val maximumSequenceLength: Int,
     private val comparator: GeneralizedNodeComparator<N>

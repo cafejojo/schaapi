@@ -12,19 +12,19 @@ import org.jetbrains.spek.api.dsl.it
 import java.io.File
 import java.net.URLDecoder
 
-internal object ProjectMinerTest : Spek({
+internal object DirectoryProjectMinerTest : Spek({
     fun getResourceAsFile(path: String) =
-        File(URLDecoder.decode(ProjectMinerTest::class.java.getResource(path).path, "UTF-8"))
+        File(URLDecoder.decode(DirectoryProjectMinerTest::class.java.getResource(path).path, "UTF-8"))
 
     describe("directory project miner") {
-        lateinit var miner: ProjectMiner<Project>
+        lateinit var miner: DirectoryProjectMiner<Project>
         lateinit var packer: (File) -> Project
 
         beforeEachTest {
             packer = mock {
                 on { it.invoke(any()) }.thenReturn(mock {})
             }
-            miner = ProjectMiner(packer)
+            miner = DirectoryProjectMiner(packer)
         }
 
         it("finds no projects if the directory is invalid") {

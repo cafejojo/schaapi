@@ -14,12 +14,12 @@ import java.io.File
  * file which likely contain searchContent dependency on the desired library. No guarantees however are given, as GitHub
  * does not provide information on which projects have searchContent dependency on searchContent given library.
  *
- * @property token gitub token
+ * @property token GitHub token
  * @property outputDirectory directory to store all the project directories. If directory doesn't exit new directory
  * is created
  * @property projectPacker packer which determines what type of [Project] to wrap the project directory in
  */
-class ProjectMiner<P : Project>(
+class GitHubProjectMiner<P : Project>(
     private var token: String,
     private val outputDirectory: File,
     private val projectPacker: (File) -> P

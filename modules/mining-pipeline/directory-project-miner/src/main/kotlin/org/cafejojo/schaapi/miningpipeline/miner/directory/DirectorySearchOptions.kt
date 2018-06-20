@@ -4,7 +4,7 @@ import org.cafejojo.schaapi.miningpipeline.SearchOptions
 import java.io.File
 
 /**
- * Search options for a [ProjectMiner].
+ * Search options for a [DirectoryProjectMiner].
  *
  * @property directory the directory containing the projects to be mined
  */

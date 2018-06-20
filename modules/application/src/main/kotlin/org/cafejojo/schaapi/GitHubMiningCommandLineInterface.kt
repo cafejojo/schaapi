@@ -7,14 +7,15 @@ import org.apache.commons.cli.Options
 import org.cafejojo.schaapi.miningpipeline.MiningPipeline
 import org.cafejojo.schaapi.miningpipeline.PatternFilter
 import org.cafejojo.schaapi.miningpipeline.miner.github.MavenProjectSearchOptions
-import org.cafejojo.schaapi.miningpipeline.miner.github.ProjectMiner
-import org.cafejojo.schaapi.miningpipeline.patterndetector.ccspan.PatternDetector
+import org.cafejojo.schaapi.miningpipeline.miner.github.GitHubProjectMiner
+import org.cafejojo.schaapi.miningpipeline.patterndetector.ccspan.CCSpanPatternDetector
 import org.cafejojo.schaapi.miningpipeline.patternfilter.jimple.EmptyLoopPatternFilterRule
 import org.cafejojo.schaapi.miningpipeline.patternfilter.jimple.IncompleteInitPatternFilterRule
 import org.cafejojo.schaapi.miningpipeline.patternfilter.jimple.LengthPatternFilterRule
-import org.cafejojo.schaapi.miningpipeline.projectcompiler.javajar.ProjectCompiler
+import org.cafejojo.schaapi.miningpipeline.projectcompiler.javajar.JavaJarProjectCompiler
+import org.cafejojo.schaapi.miningpipeline.projectcompiler.javamaven.JavaMavenProjectCompiler
 import org.cafejojo.schaapi.miningpipeline.testgenerator.jimpleevosuite.TestGenerator
-import org.cafejojo.schaapi.miningpipeline.usagegraphgenerator.jimple.LibraryUsageGraphGenerator
+import org.cafejojo.schaapi.miningpipeline.usagegraphgenerator.jimple.JimpleLibraryUsageGraphGenerator
 import org.cafejojo.schaapi.models.libraryusagegraph.jimple.GeneralizedNodeComparator
 import org.cafejojo.schaapi.models.project.JavaJarProject
 import org.cafejojo.schaapi.models.project.JavaMavenProject
@@ -103,15 +104,19 @@ internal class GitHubMiningCommandLineInterface {
 
         MiningPipeline(
             outputDirectory = output,
-            projectMiner = ProjectMiner(token, output) { JavaMavenProject(it, mavenDir) },
+            projectMiner = GitHubProjectMiner(token, output) { JavaMavenProject(it, mavenDir) },
             searchOptions = MavenProjectSearchOptions(groupId, artifactId, version, maxProjects).apply {
                 this.sortByStargazers = cmd.hasOption("sort_by_stargazers")
                 this.sortByWatchers = cmd.hasOption("sort_by_watchers")
             },
-            libraryProjectCompiler = ProjectCompiler(),
-            userProjectCompiler = org.cafejojo.schaapi.miningpipeline.projectcompiler.javamaven.ProjectCompiler(),
-            libraryUsageGraphGenerator = LibraryUsageGraphGenerator,
-            patternDetector = PatternDetector(patternDetectorMinCount, maxSequenceLength, GeneralizedNodeComparator()),
+            libraryProjectCompiler = JavaJarProjectCompiler(),
+            userProjectCompiler = JavaMavenProjectCompiler(),
+            libraryUsageGraphGenerator = JimpleLibraryUsageGraphGenerator,
+            patternDetector = CCSpanPatternDetector(
+                patternDetectorMinCount,
+                maxSequenceLength,
+                GeneralizedNodeComparator()
+            ),
             patternFilter = PatternFilter(
                 IncompleteInitPatternFilterRule(),
                 LengthPatternFilterRule(),

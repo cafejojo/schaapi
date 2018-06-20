@@ -9,13 +9,13 @@ import java.io.File
 import java.io.FileNotFoundException
 import java.net.URLDecoder
 
-internal object ProjectCompilerTest : Spek({
+internal object JavaJarProjectCompilerTest : Spek({
     describe("Java JAR project compilation") {
         it("compiles simple projects") {
             val projectFile = File(URLDecoder.decode(
                 getResourceURI("/schaapi.simple-project-1.0.0.jar").path, "UTF-8"))
             val project = JavaJarProject(projectFile)
-            ProjectCompiler().compile(project)
+            JavaJarProjectCompiler().compile(project)
 
             assertThat(project.projectDir).isEqualTo(projectFile)
             assertThat(project.classes).isEmpty()
@@ -31,7 +31,7 @@ internal object ProjectCompilerTest : Spek({
             val projectFile = File(URLDecoder.decode(
                 getResourceURI("/schaapi.no-classes-project-1.0.0.jar").path, "UTF-8"))
             val project = JavaJarProject(projectFile)
-            ProjectCompiler().compile(project)
+            JavaJarProjectCompiler().compile(project)
 
             assertThat(project.projectDir).isEqualTo(projectFile)
             assertThat(project.classes).isEmpty()
@@ -44,12 +44,12 @@ internal object ProjectCompilerTest : Spek({
             val projectFile = File(URLDecoder.decode(
                 getResourceURI("/schaapi.simple-project-in-meta-inf-1.0.0.jar").path, "UTF-8"))
             val project = JavaJarProject(projectFile)
-            ProjectCompiler().compile(project)
+            JavaJarProjectCompiler().compile(project)
 
             assertThat(project.classNames).doesNotContain("META-INF.Test")
         }
     }
 })
 
-fun getResourceURI(path: String) = ProjectCompilerTest::class.java.getResource(path)
+fun getResourceURI(path: String) = JavaJarProjectCompilerTest::class.java.getResource(path)
     ?: throw FileNotFoundException("Could not find test resources.")

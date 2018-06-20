@@ -24,7 +24,7 @@ import java.io.File
 /**
  * Library usage graph generator based on Soot.
  */
-object LibraryUsageGraphGenerator : LibraryUsageGraphGenerator<JavaProject, JavaProject, JimpleNode> {
+object JimpleLibraryUsageGraphGenerator : LibraryUsageGraphGenerator<JavaProject, JavaProject, JimpleNode> {
     init {
         SootNameEquivalenceChanger.activate()
         Options.v().set_whole_program(true)

@@ -10,7 +10,7 @@ import java.io.File
 import java.io.FileNotFoundException
 import java.nio.file.Files
 
-internal object ProjectCompilerTest : Spek({
+internal object JavaMavenProjectCompilerTest : Spek({
     lateinit var mavenHome: File
     lateinit var target: File
 
@@ -50,7 +50,7 @@ internal object ProjectCompilerTest : Spek({
             setUpTestFiles("/ProjectCompiler/no-sources", target)
 
             val project = JavaMavenProject(target, mavenHome)
-            ProjectCompiler().compile(project)
+            JavaMavenProjectCompiler().compile(project)
 
             assertThat(project.projectDir).isEqualTo(target)
             assertThat(project.classes).isEmpty()
@@ -65,7 +65,7 @@ internal object ProjectCompilerTest : Spek({
             setUpTestFiles("/ProjectCompiler/simple", target)
 
             val project = JavaMavenProject(target, mavenHome)
-            ProjectCompiler().compile(project)
+            JavaMavenProjectCompiler().compile(project)
 
             assertThat(project.projectDir).isEqualTo(target)
             assertThat(project.classes).containsExactlyInAnyOrder(
@@ -84,7 +84,7 @@ internal object ProjectCompilerTest : Spek({
             setUpTestFiles("/ProjectCompiler/dependencies", target)
 
             val project = JavaMavenProject(target, mavenHome)
-            ProjectCompiler().compile(project)
+            JavaMavenProjectCompiler().compile(project)
 
             assertThat(project.projectDir).isEqualTo(target)
             assertThat(project.classes).containsExactlyInAnyOrder(
@@ -105,7 +105,7 @@ internal object ProjectCompilerTest : Spek({
 })
 
 private fun setUpTestFiles(resourceString: String, target: File) {
-    val projectURI = ProjectCompilerTest::class.java.getResource(resourceString)
+    val projectURI = JavaMavenProjectCompilerTest::class.java.getResource(resourceString)
         ?: throw FileNotFoundException("Could not find test resources at $resourceString.")
 
     val projectFiles = File(projectURI.toURI())
