@@ -5,7 +5,7 @@ import com.github.kittinunf.fuel.core.Request
 import com.github.kittinunf.result.Result
 import mu.KLogging
 import org.cafejojo.schaapi.miningpipeline.projectcompiler.javamaven.MavenInstaller
-import org.cafejojo.schaapi.miningpipeline.projectcompiler.javamaven.ProjectCompiler
+import org.cafejojo.schaapi.miningpipeline.projectcompiler.javamaven.JavaMavenProjectCompiler
 import org.cafejojo.schaapi.models.project.JavaMavenProject
 import org.cafejojo.schaapi.validationpipeline.TestResults
 import org.cafejojo.schaapi.validationpipeline.testrunner.junit.TestRunner
@@ -54,7 +54,7 @@ class CIJob(private val identifier: String, private val projectDirectory: File, 
     }
 
     private fun compileLibrary() = catchExceptions("New library source code could not be compiled.") {
-        ProjectCompiler().compile(JavaMavenProject(newProjectFiles))
+        JavaMavenProjectCompiler().compile(JavaMavenProject(newProjectFiles))
     }
 
     private fun compileTests(library: JavaMavenProject): List<File> {

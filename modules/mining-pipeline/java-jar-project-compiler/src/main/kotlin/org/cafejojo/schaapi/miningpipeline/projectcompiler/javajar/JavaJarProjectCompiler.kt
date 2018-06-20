@@ -9,7 +9,7 @@ import java.util.jar.JarInputStream
 /**
  * Finds all classes in a Java project consisting of a single JAR.
  */
-class ProjectCompiler : ProjectCompiler<JavaJarProject> {
+class JavaJarProjectCompiler : ProjectCompiler<JavaJarProject> {
     private companion object : KLogging()
 
     override fun compile(project: JavaJarProject): JavaJarProject {

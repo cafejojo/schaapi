@@ -12,7 +12,8 @@ import org.cafejojo.schaapi.miningpipeline.patterndetector.ccspan.CCSpanPatternD
 import org.cafejojo.schaapi.miningpipeline.patternfilter.jimple.EmptyLoopPatternFilterRule
 import org.cafejojo.schaapi.miningpipeline.patternfilter.jimple.IncompleteInitPatternFilterRule
 import org.cafejojo.schaapi.miningpipeline.patternfilter.jimple.LengthPatternFilterRule
-import org.cafejojo.schaapi.miningpipeline.projectcompiler.javajar.ProjectCompiler
+import org.cafejojo.schaapi.miningpipeline.projectcompiler.javajar.JavaJarProjectCompiler
+import org.cafejojo.schaapi.miningpipeline.projectcompiler.javamaven.JavaMavenProjectCompiler
 import org.cafejojo.schaapi.miningpipeline.testgenerator.jimpleevosuite.TestGenerator
 import org.cafejojo.schaapi.miningpipeline.usagegraphgenerator.jimple.LibraryUsageGraphGenerator
 import org.cafejojo.schaapi.models.libraryusagegraph.jimple.GeneralizedNodeComparator
@@ -108,8 +109,8 @@ internal class GitHubMiningCommandLineInterface {
                 this.sortByStargazers = cmd.hasOption("sort_by_stargazers")
                 this.sortByWatchers = cmd.hasOption("sort_by_watchers")
             },
-            libraryProjectCompiler = ProjectCompiler(),
-            userProjectCompiler = org.cafejojo.schaapi.miningpipeline.projectcompiler.javamaven.ProjectCompiler(),
+            libraryProjectCompiler = JavaJarProjectCompiler(),
+            userProjectCompiler = JavaMavenProjectCompiler(),
             libraryUsageGraphGenerator = LibraryUsageGraphGenerator,
             patternDetector = CCSpanPatternDetector(
                 patternDetectorMinCount,

@@ -11,7 +11,7 @@ import org.cafejojo.schaapi.miningpipeline.patterndetector.ccspan.CCSpanPatternD
 import org.cafejojo.schaapi.miningpipeline.patternfilter.jimple.EmptyLoopPatternFilterRule
 import org.cafejojo.schaapi.miningpipeline.patternfilter.jimple.IncompleteInitPatternFilterRule
 import org.cafejojo.schaapi.miningpipeline.patternfilter.jimple.LengthPatternFilterRule
-import org.cafejojo.schaapi.miningpipeline.projectcompiler.javamaven.ProjectCompiler
+import org.cafejojo.schaapi.miningpipeline.projectcompiler.javamaven.JavaMavenProjectCompiler
 import org.cafejojo.schaapi.miningpipeline.testgenerator.jimpleevosuite.TestGenerator
 import org.cafejojo.schaapi.miningpipeline.usagegraphgenerator.jimple.LibraryUsageGraphGenerator
 import org.cafejojo.schaapi.models.libraryusagegraph.jimple.GeneralizedNodeComparator
@@ -56,8 +56,8 @@ internal class DirectoryMiningCommandLineInterface {
             outputDirectory = output,
             projectMiner = ProjectMiner { JavaMavenProject(it, mavenDir) },
             searchOptions = DirectorySearchOptions(File(userDirDirs)),
-            libraryProjectCompiler = ProjectCompiler(),
-            userProjectCompiler = ProjectCompiler(),
+            libraryProjectCompiler = JavaMavenProjectCompiler(),
+            userProjectCompiler = JavaMavenProjectCompiler(),
             libraryUsageGraphGenerator = LibraryUsageGraphGenerator,
             patternDetector = CCSpanPatternDetector(
                 patternDetectorMinCount,
