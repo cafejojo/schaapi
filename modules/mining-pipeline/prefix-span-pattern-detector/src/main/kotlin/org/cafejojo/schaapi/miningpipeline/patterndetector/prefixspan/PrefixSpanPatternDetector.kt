@@ -8,7 +8,7 @@ import org.cafejojo.schaapi.models.Node
 import org.cafejojo.schaapi.models.PathEnumerator
 
 /**
- * A pattern detector implementing the prefix span algorithm.
+ * A pattern detector implementing the PrefixSpan algorithm.
  */
 class PrefixSpanPatternDetector<N : Node>(
     private val minimumCount: Int,
