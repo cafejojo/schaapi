@@ -12,11 +12,11 @@ import soot.jimple.IntConstant
 import soot.jimple.Jimple
 
 /**
- * Integration tests for the integration between [PatternDetector] and [GeneralizedNodeComparator].
+ * Integration tests for the integration between [CCSpanPatternDetector] and [GeneralizedNodeComparator].
  */
 internal object CCSpanIntegrationTest : Spek({
     describe("integration of CCSpan with GeneralizedNodeComparator") {
-        lateinit var patternDetector: PatternDetector<JimpleNode>
+        lateinit var patternDetector: CCSpanPatternDetector<JimpleNode>
 
         beforeGroup {
             SootNameEquivalenceChanger.activate()
@@ -24,7 +24,7 @@ internal object CCSpanIntegrationTest : Spek({
 
         beforeEachTest {
             val nodeComparator = GeneralizedNodeComparator()
-            patternDetector = PatternDetector(0, 10, nodeComparator)
+            patternDetector = CCSpanPatternDetector(0, 10, nodeComparator)
         }
 
         it("can detect very simple patterns") {

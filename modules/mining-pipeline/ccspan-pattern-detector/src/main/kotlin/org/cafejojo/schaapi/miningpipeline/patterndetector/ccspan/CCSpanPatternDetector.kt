@@ -1,6 +1,5 @@
-package org.cafejojo.schaapi.miningpipeline.patterndetector.prefixspan
+package org.cafejojo.schaapi.miningpipeline.patterndetector.ccspan
 
-import mu.KLogging
 import org.cafejojo.schaapi.miningpipeline.Pattern
 import org.cafejojo.schaapi.miningpipeline.PatternDetector
 import org.cafejojo.schaapi.models.GeneralizedNodeComparator
@@ -8,21 +7,15 @@ import org.cafejojo.schaapi.models.Node
 import org.cafejojo.schaapi.models.PathEnumerator
 
 /**
- * Represents a pattern detector.
+ * Finds closed sequential patterns using the CCSpan algorithm by Zhang et. al.
  */
-class PatternDetector<N : Node>(
+class CCSpanPatternDetector<N : Node>(
     private val minimumCount: Int,
     private val maximumSequenceLength: Int,
     private val comparator: GeneralizedNodeComparator<N>
 ) : PatternDetector<N> {
-    private companion object : KLogging()
-
     override fun findPatterns(graphs: List<N>): List<Pattern<N>> {
-        logger.info { "Detecting patterns in ${graphs.size} graphs." }
-
         val sequences = graphs.flatMap { PathEnumerator(it, maximumSequenceLength).enumerate() }
-        logger.info { "Found ${sequences.size} sequences in ${graphs.size} graphs." }
-
-        return PrefixSpan(sequences, minimumCount, comparator).findFrequentPatterns()
+        return CCSpan(sequences, minimumCount, comparator).findFrequentPatterns()
     }
 }

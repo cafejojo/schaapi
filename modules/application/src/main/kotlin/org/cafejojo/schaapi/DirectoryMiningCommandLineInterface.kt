@@ -7,7 +7,7 @@ import org.cafejojo.schaapi.miningpipeline.MiningPipeline
 import org.cafejojo.schaapi.miningpipeline.PatternFilter
 import org.cafejojo.schaapi.miningpipeline.miner.directory.DirectorySearchOptions
 import org.cafejojo.schaapi.miningpipeline.miner.directory.ProjectMiner
-import org.cafejojo.schaapi.miningpipeline.patterndetector.ccspan.PatternDetector
+import org.cafejojo.schaapi.miningpipeline.patterndetector.ccspan.CCSpanPatternDetector
 import org.cafejojo.schaapi.miningpipeline.patternfilter.jimple.EmptyLoopPatternFilterRule
 import org.cafejojo.schaapi.miningpipeline.patternfilter.jimple.IncompleteInitPatternFilterRule
 import org.cafejojo.schaapi.miningpipeline.patternfilter.jimple.LengthPatternFilterRule
@@ -59,7 +59,11 @@ internal class DirectoryMiningCommandLineInterface {
             libraryProjectCompiler = ProjectCompiler(),
             userProjectCompiler = ProjectCompiler(),
             libraryUsageGraphGenerator = LibraryUsageGraphGenerator,
-            patternDetector = PatternDetector(patternDetectorMinCount, maxSequenceLength, GeneralizedNodeComparator()),
+            patternDetector = CCSpanPatternDetector(
+                patternDetectorMinCount,
+                maxSequenceLength,
+                GeneralizedNodeComparator()
+            ),
             patternFilter = PatternFilter(
                 IncompleteInitPatternFilterRule(),
                 LengthPatternFilterRule(),
