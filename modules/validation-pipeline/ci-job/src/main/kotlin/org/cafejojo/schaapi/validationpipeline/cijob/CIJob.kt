@@ -58,24 +58,25 @@ class CIJob(private val identifier: String, private val projectDirectory: File, 
     }
 
     private fun compileTests(library: JavaMavenProject): List<File> {
+        val classpath = testsDirectory.listFiles().filter { it.extension == "class" }.map { it.parentFile } +
+            File(CIJob::class.java.getResource("/junit-4.12.jar").file) +
+            library.classDir
+
+        return testsDirectory.listFiles()
+            .filter { it.extension == "java" }
+            .map { compile(it, classpath); it }
+            .map { File(testsDirectory, "${it.nameWithoutExtension}.class") }
+    }
+
+    private fun compile(file: File, classpathFiles: List<File>) {
         val compiler = ToolProvider.getSystemJavaCompiler()
         val errorOutput = ByteArrayOutputStream()
 
-        val classPath = mutableListOf<String>().run {
-            addAll(testsDirectory.listFiles().filter { it.extension == "class" }.map { it.parent })
-            add(library.classDir.absolutePath)
-            add(CIJob::class.java.getResource("/junit-4.12.jar").file)
+        val classpath = classpathFiles.joinToString(File.pathSeparator) { it.absolutePath }
 
-            joinToString(File.pathSeparator)
+        if (compiler.run(null, null, errorOutput, file.absolutePath, "-cp", classpath) != 0) {
+            throw CIJobException("User test compilation failed:\n\n${errorOutput.toString("UTF-8")}")
         }
-
-        return testsDirectory.listFiles().filter { it.extension == "java" }
-            .also { files ->
-                if (files.any { compiler.run(null, null, errorOutput, it.absolutePath, "-cp", classPath) != 0 }) {
-                    throw CIJobException("User test compilation failed:\n\n${errorOutput.toString("UTF-8")}")
-                }
-            }
-            .map { File(testsDirectory, "${it.nameWithoutExtension}.class") }
     }
 
     private fun <T> next(logMessage: String, action: () -> T): T {
