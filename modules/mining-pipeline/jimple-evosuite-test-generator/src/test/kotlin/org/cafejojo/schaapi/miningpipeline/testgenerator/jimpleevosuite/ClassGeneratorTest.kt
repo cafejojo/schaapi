@@ -389,7 +389,7 @@ internal object ClassGeneratorTest : Spek({
                 generateMethod("method", listOf(ifStmt, gotoStmt).map { JimpleNode(it) })
             }.sootClass.methods.last()
 
-            val newIfStmt = method.activeBody.units.elementAt(0) as IfStmt
+            val newIfStmt = method.activeBody.units.first() as IfStmt
             assertThat(newIfStmt.target).isEqualTo(newIfStmt)
         }
 

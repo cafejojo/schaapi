@@ -73,7 +73,7 @@ private abstract class ValueFilterRule : JimpleValueVisitor<Boolean>() {
      * @return true iff all [values] should be retained
      */
     fun retain(values: Iterable<Value>) =
-        values.fold(retain(values.elementAt(0))) { acc, value -> accumulate(acc, retain(value)) }
+        values.fold(retain(values.first())) { acc, value -> accumulate(acc, retain(value)) }
 }
 
 /**
