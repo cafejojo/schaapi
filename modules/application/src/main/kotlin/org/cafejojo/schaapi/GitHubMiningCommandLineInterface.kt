@@ -7,7 +7,7 @@ import org.apache.commons.cli.Options
 import org.cafejojo.schaapi.miningpipeline.MiningPipeline
 import org.cafejojo.schaapi.miningpipeline.PatternFilter
 import org.cafejojo.schaapi.miningpipeline.miner.github.MavenProjectSearchOptions
-import org.cafejojo.schaapi.miningpipeline.miner.github.ProjectMiner
+import org.cafejojo.schaapi.miningpipeline.miner.github.GitHubProjectMiner
 import org.cafejojo.schaapi.miningpipeline.patterndetector.ccspan.CCSpanPatternDetector
 import org.cafejojo.schaapi.miningpipeline.patternfilter.jimple.EmptyLoopPatternFilterRule
 import org.cafejojo.schaapi.miningpipeline.patternfilter.jimple.IncompleteInitPatternFilterRule
@@ -104,7 +104,7 @@ internal class GitHubMiningCommandLineInterface {
 
         MiningPipeline(
             outputDirectory = output,
-            projectMiner = ProjectMiner(token, output) { JavaMavenProject(it, mavenDir) },
+            projectMiner = GitHubProjectMiner(token, output) { JavaMavenProject(it, mavenDir) },
             searchOptions = MavenProjectSearchOptions(groupId, artifactId, version, maxProjects).apply {
                 this.sortByStargazers = cmd.hasOption("sort_by_stargazers")
                 this.sortByWatchers = cmd.hasOption("sort_by_watchers")

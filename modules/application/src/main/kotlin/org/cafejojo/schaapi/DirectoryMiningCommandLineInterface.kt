@@ -6,7 +6,7 @@ import org.apache.commons.cli.Options
 import org.cafejojo.schaapi.miningpipeline.MiningPipeline
 import org.cafejojo.schaapi.miningpipeline.PatternFilter
 import org.cafejojo.schaapi.miningpipeline.miner.directory.DirectorySearchOptions
-import org.cafejojo.schaapi.miningpipeline.miner.directory.ProjectMiner
+import org.cafejojo.schaapi.miningpipeline.miner.directory.DirectoryProjectMiner
 import org.cafejojo.schaapi.miningpipeline.patterndetector.ccspan.CCSpanPatternDetector
 import org.cafejojo.schaapi.miningpipeline.patternfilter.jimple.EmptyLoopPatternFilterRule
 import org.cafejojo.schaapi.miningpipeline.patternfilter.jimple.IncompleteInitPatternFilterRule
@@ -54,7 +54,7 @@ internal class DirectoryMiningCommandLineInterface {
 
         MiningPipeline(
             outputDirectory = output,
-            projectMiner = ProjectMiner { JavaMavenProject(it, mavenDir) },
+            projectMiner = DirectoryProjectMiner { JavaMavenProject(it, mavenDir) },
             searchOptions = DirectorySearchOptions(File(userDirDirs)),
             libraryProjectCompiler = JavaMavenProjectCompiler(),
             userProjectCompiler = JavaMavenProjectCompiler(),
