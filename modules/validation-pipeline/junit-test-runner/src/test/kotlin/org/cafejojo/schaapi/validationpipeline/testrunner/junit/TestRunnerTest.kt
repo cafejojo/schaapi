@@ -82,7 +82,7 @@ internal object TestRunnerTest : Spek({
                 listOf(getFileFromClasspath("$testDirectory/EmptyTest.class"))
             )
 
-            assertThat(results.totalCount).isZero()
+            assertThat(results.totalCount).isEqualTo(1)
             assertThat(results.subResults).containsOnlyKeys("$testPackage.EmptyTest")
 
             val subResult = results.subResults["$testPackage.EmptyTest"]
@@ -97,7 +97,7 @@ internal object TestRunnerTest : Spek({
                 listOf(getFileFromClasspath("$testDirectory/SimpleTest.class"))
             )
 
-            assertThat(results.totalCount).isZero()
+            assertThat(results.totalCount).isEqualTo(3)
             assertThat(results.subResults).containsOnlyKeys("$testPackage.SimpleTest")
 
             val subResult = results.subResults["$testPackage.SimpleTest"]
@@ -117,7 +117,7 @@ internal object TestRunnerTest : Spek({
                 )
             )
 
-            assertThat(results.totalCount).isZero()
+            assertThat(results.totalCount).isEqualTo(5)
             assertThat(results.subResults).containsOnlyKeys(
                 "$testPackage.SimpleTest",
                 "$testPackage.AnotherSimpleTest"

@@ -11,9 +11,10 @@ interface TestRunner {
      *
      * @param rootDir the root directory of the project that contains the test files
      * @param testFiles the files that contain the tests to be run
+     * @param classpathDirectories the directories that need to be put on the class path during a test execution
      * @return the results of the executed tests
      */
-    fun run(rootDir: File, testFiles: List<File>): TestResults
+    fun run(rootDir: File, testFiles: List<File>, classpathDirectories: List<File> = emptyList()): TestResults
 }
 
 /**

@@ -4,6 +4,7 @@ import org.cafejojo.schaapi.validationpipeline.TestResults
 import org.cafejojo.schaapi.validationpipeline.TestRunner
 import org.junit.runner.JUnitCore
 import java.io.File
+import java.net.URLClassLoader
 import org.junit.runner.Result as JUnitResults
 
 /**
@@ -15,9 +16,11 @@ class TestRunner : TestRunner {
      * already be on the classpath.
      *
      * @param rootDir the directory that contains the classes with the tests to be executed
+     * @param testFiles the files that contain the tests to be run
+     * @param classpathDirectories the directories that need to be put on the class path during a test execution
      * @return the results of the executed tests, where each test class has its own entry in [TestResults.subResults]
      */
-    override fun run(rootDir: File, testFiles: List<File>): TestResults {
+    override fun run(rootDir: File, testFiles: List<File>, classpathDirectories: List<File>): TestResults {
         require(rootDir.exists()) { "Given test directory does not exist." }
         require(rootDir.isDirectory) { "Given test directory is not a directory." }
         require(testFiles.all { it.exists() }) { "Not all given test files exist." }
@@ -30,7 +33,11 @@ class TestRunner : TestRunner {
                     val className = testFile.toRelativeString(rootDir)
                         .replace(Regex("[/\\\\]"), ".")
                         .removeSuffix(".class")
-                    className to JUnitCore.runClasses(this.javaClass.classLoader.loadClass(className))
+                    val classLoader = URLClassLoader(
+                        classpathDirectories.map { it.toURI().toURL() }.toTypedArray()
+                            + testFile.parentFile.toURI().toURL()
+                    )
+                    className to JUnitCore.runClasses(classLoader.loadClass(className))
                 }
                 .map { (name, results) -> name to gatherResults(results) }
                 .toMap()
@@ -44,24 +51,35 @@ class TestRunner : TestRunner {
      */
     private fun gatherResults(results: JUnitResults) =
         TestResults(
-            subResults = emptyMap(),
-            totalCount = results.runCount,
-            passCount = results.runCount - results.failureCount,
-            ignoreCount = results.ignoreCount,
-            failures = results.failures.map { it.testHeader }
+            localTotalCount = results.runCount,
+            localPassCount = results.runCount - results.failureCount,
+            localIgnoreCount = results.ignoreCount,
+            localFailures = results.failures.map { println("FAILED:" + it.exception); it.testHeader }
         )
 }
 
 /**
  * A type of [TestResults] adjusted for the results returned by JUnit.
  */
-class TestResults(
+data class TestResults(
     override val subResults: Map<String, TestResults> = emptyMap(),
-    override val totalCount: Int = 0,
-    override val passCount: Int = 0,
-    override val ignoreCount: Int = 0,
-    override val failures: Collection<String> = emptyList()
+    val localTotalCount: Int = 0,
+    val localPassCount: Int = 0,
+    val localIgnoreCount: Int = 0,
+    val localFailures: Collection<String> = emptyList()
 ) : TestResults {
+    override val totalCount: Int
+        get() = localTotalCount + subResults.map { (_, subResult) -> subResult.totalCount }.sum()
+
+    override val passCount: Int
+        get() = localPassCount + subResults.map { (_, subResult) -> subResult.passCount }.sum()
+
+    override val ignoreCount: Int
+        get() = localIgnoreCount + subResults.map { (_, subResult) -> subResult.ignoreCount }.sum()
+
+    override val failures: Collection<String>
+        get() = localFailures + subResults.flatMap { (_, subResult) -> subResult.failures }
+
     override val failureCount: Int
         get() = failures.size
 
