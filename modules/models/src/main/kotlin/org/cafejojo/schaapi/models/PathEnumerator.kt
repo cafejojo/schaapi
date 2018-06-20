@@ -57,6 +57,8 @@ class PathEnumerator<N : Node>(
 /**
  * Connects all nodes that are connected to this node and have no successors to [node]. If there is no such node, the
  * last node connected to this node is connected to [node] instead.
+ *
+ * @param node the [Node] to connect leaves to
  */
 internal fun Node.connectLeavesTo(node: Node) {
     val allNodes = iterator().asSequence().toList()
