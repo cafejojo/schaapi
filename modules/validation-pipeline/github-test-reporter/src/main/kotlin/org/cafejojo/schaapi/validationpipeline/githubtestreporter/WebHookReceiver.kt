@@ -4,8 +4,8 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.PropertyNamingStrategy
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.cafejojo.schaapi.validationpipeline.events.ValidationRequestReceivedEvent
-import org.cafejojo.schaapi.validationpipeline.githubtestreporter.events.CheckSuiteEvent
-import org.cafejojo.schaapi.validationpipeline.githubtestreporter.events.InstallationEvent
+import org.cafejojo.schaapi.validationpipeline.githubtestreporter.webhookevents.CheckSuiteEvent
+import org.cafejojo.schaapi.validationpipeline.githubtestreporter.webhookevents.InstallationEvent
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Controller

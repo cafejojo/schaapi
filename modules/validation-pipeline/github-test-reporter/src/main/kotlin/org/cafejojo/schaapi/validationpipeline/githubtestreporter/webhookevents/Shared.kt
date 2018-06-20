@@ -1,4 +1,4 @@
-package org.cafejojo.schaapi.validationpipeline.githubtestreporter.events
+package org.cafejojo.schaapi.validationpipeline.githubtestreporter.webhookevents
 
 internal data class Installation(val id: Int = 0, val account: Account? = null)
 

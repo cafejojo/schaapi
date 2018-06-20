@@ -1,4 +1,4 @@
-package org.cafejojo.schaapi.validationpipeline.githubtestreporter
+package org.cafejojo.schaapi.validationpipeline.githubtestreporter.githubapi
 
 import java.util.ArrayDeque
 import java.util.Deque

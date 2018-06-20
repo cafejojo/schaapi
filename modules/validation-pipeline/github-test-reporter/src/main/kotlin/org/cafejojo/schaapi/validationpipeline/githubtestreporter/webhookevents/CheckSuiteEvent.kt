@@ -1,4 +1,4 @@
-package org.cafejojo.schaapi.validationpipeline.githubtestreporter.events
+package org.cafejojo.schaapi.validationpipeline.githubtestreporter.webhookevents
 
 internal data class CheckSuiteEvent(
     val installation: Installation,

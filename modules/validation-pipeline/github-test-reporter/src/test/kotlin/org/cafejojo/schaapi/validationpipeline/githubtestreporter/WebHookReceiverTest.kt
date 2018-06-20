@@ -7,6 +7,7 @@ import com.nhaarman.mockito_kotlin.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.cafejojo.schaapi.validationpipeline.events.ValidationRequestReceivedEvent
+import org.cafejojo.schaapi.validationpipeline.githubtestreporter.githubapi.json
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.it
 import org.springframework.context.ApplicationEventPublisher
