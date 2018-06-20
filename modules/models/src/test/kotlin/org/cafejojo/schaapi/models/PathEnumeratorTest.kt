@@ -132,7 +132,8 @@ internal class PathEnumeratorTest : Spek({
             node1.successors.addAll(listOf(node2))
             node2.successors.addAll(listOf(node3, node4))
 
-            val exitNode = node1.connectLeavesToExitNode()
+            val exitNode = ExitNode()
+            node1.connectLeavesTo(exitNode)
 
             assertThat(node1.successors).doesNotContain(exitNode)
             assertThat(node2.successors).doesNotContain(exitNode)
@@ -149,7 +150,8 @@ internal class PathEnumeratorTest : Spek({
             node2.successors.add(node3)
             node3.successors.add(node2)
 
-            val exitNode = node1.connectLeavesToExitNode()
+            val exitNode = ExitNode()
+            node1.connectLeavesTo(exitNode)
             assertThat(node3.successors).contains(exitNode)
         }
     }
@@ -162,12 +164,13 @@ internal class PathEnumeratorTest : Spek({
 
             node1.successors.addAll(listOf(node2, node3))
 
-            node1.connectLeavesToExitNode()
+            val exitNode = ExitNode()
+            node1.connectLeavesTo(exitNode)
             node1.removeExitNodes()
 
-            assertThat(node1.successors).doesNotHaveAnyElementsOfTypes(ExitNode::class.java)
-            assertThat(node2.successors).doesNotHaveAnyElementsOfTypes(ExitNode::class.java)
-            assertThat(node3.successors).doesNotHaveAnyElementsOfTypes(ExitNode::class.java)
+            assertThat(node1.successors).doesNotContain(exitNode)
+            assertThat(node2.successors).doesNotContain(exitNode)
+            assertThat(node3.successors).doesNotContain(exitNode)
         }
 
         it("keeps the list intact if no exit nodes are present") {
