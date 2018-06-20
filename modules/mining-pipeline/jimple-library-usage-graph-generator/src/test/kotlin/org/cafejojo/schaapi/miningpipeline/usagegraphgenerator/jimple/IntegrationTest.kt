@@ -179,16 +179,18 @@ internal object IntegrationTest : Spek({
                 node<JAssignStmt>(
                     node<JInvokeStmt>(
                         node<JAssignStmt>(
-                            node<JTableSwitchStmt>(
-                                node<JGotoStmt>(
-                                    node<JReturnVoidStmt>()
-                                ),
-                                node<JInvokeStmt>(
+                            node<JAssignStmt>(
+                                node<JTableSwitchStmt>(
                                     node<JGotoStmt>(
                                         node<JReturnVoidStmt>()
-                                    )
-                                ),
-                                node<JReturnVoidStmt>()
+                                    ),
+                                    node<JInvokeStmt>(
+                                        node<JGotoStmt>(
+                                            node<JReturnVoidStmt>()
+                                        )
+                                    ),
+                                    node<JReturnVoidStmt>()
+                                )
                             )
                         )
                     )
@@ -209,15 +211,17 @@ internal object IntegrationTest : Spek({
                 node<JAssignStmt>(
                     node<JInvokeStmt>(
                         node<JAssignStmt>(
-                            node<JLookupSwitchStmt>(
-                                node<JGotoStmt>(
-                                    node<JReturnStmt>()
-                                ),
-                                node<JGotoStmt>(
-                                    node<JReturnStmt>()
-                                ),
-                                node<JInvokeStmt>(
-                                    node<JReturnStmt>()
+                            node<JAssignStmt>(
+                                node<JLookupSwitchStmt>(
+                                    node<JGotoStmt>(
+                                        node<JReturnStmt>()
+                                    ),
+                                    node<JGotoStmt>(
+                                        node<JReturnStmt>()
+                                    ),
+                                    node<JInvokeStmt>(
+                                        node<JReturnStmt>()
+                                    )
                                 )
                             )
                         )
@@ -239,7 +243,9 @@ internal object IntegrationTest : Spek({
                 node<JAssignStmt>(
                     node<JInvokeStmt>(
                         node<JAssignStmt>(
-                            node<JReturnStmt>()
+                            node<JAssignStmt>(
+                                node<JReturnStmt>()
+                            )
                         )
                     )
                 ),
@@ -276,7 +282,9 @@ internal object IntegrationTest : Spek({
             assertThatStructureMatches(
                 node<JAssignStmt>(
                     node<JInvokeStmt>(
-                        node<JReturnStmt>()
+                        node<JAssignStmt>(
+                            node<JReturnStmt>()
+                        )
                     )
                 ),
                 libraryUsageGraph
@@ -291,7 +299,9 @@ internal object IntegrationTest : Spek({
 
             assertThatStructureMatches(
                 node<JAssignStmt>(
-                    node<JInvokeStmt>()
+                    node<JInvokeStmt>(
+                        node<JAssignStmt>()
+                    )
                 ),
                 libraryUsageGraph
             )
@@ -360,22 +370,26 @@ internal object IntegrationTest : Spek({
                 node<JAssignStmt>(
                     node<JInvokeStmt>(
                         node<JAssignStmt>(
-                            node<JIfStmt>(
-                                node<JInvokeStmt>(
-                                    node<JIfStmt>(
-                                        node<JInvokeStmt>(
-                                            node<JGotoStmt>(
-                                                PreviousBranchNode()
-                                            )
-                                        ),
-                                        node<JInvokeStmt>(
-                                            node<JGotoStmt>(
-                                                PreviousBranchNode()
+                            node<JAssignStmt>(
+                                node<JIfStmt>(
+                                    node<JInvokeStmt>(
+                                        node<JAssignStmt>(
+                                            node<JIfStmt>(
+                                                node<JInvokeStmt>(
+                                                    node<JGotoStmt>(
+                                                        PreviousBranchNode()
+                                                    )
+                                                ),
+                                                node<JInvokeStmt>(
+                                                    node<JGotoStmt>(
+                                                        PreviousBranchNode()
+                                                    )
+                                                )
                                             )
                                         )
-                                    )
-                                ),
-                                node<JReturnVoidStmt>()
+                                    ),
+                                    node<JReturnVoidStmt>()
+                                )
                             )
                         )
                     )
@@ -394,22 +408,26 @@ internal object IntegrationTest : Spek({
                 node<JAssignStmt>(
                     node<JInvokeStmt>(
                         node<JAssignStmt>(
-                            node<JIfStmt>(
-                                node<JInvokeStmt>(
-                                    node<JIfStmt>(
-                                        node<JGotoStmt>(
-                                            node<JGotoStmt>(
-                                                PreviousBranchNode()
-                                            )
-                                        ),
-                                        node<JInvokeStmt>(
-                                            node<JGotoStmt>(
-                                                PreviousBranchNode()
+                            node<JAssignStmt>(
+                                node<JIfStmt>(
+                                    node<JInvokeStmt>(
+                                        node<JAssignStmt>(
+                                            node<JIfStmt>(
+                                                node<JGotoStmt>(
+                                                    node<JGotoStmt>(
+                                                        PreviousBranchNode()
+                                                    )
+                                                ),
+                                                node<JInvokeStmt>(
+                                                    node<JGotoStmt>(
+                                                        PreviousBranchNode()
+                                                    )
+                                                )
                                             )
                                         )
-                                    )
-                                ),
-                                node<JReturnVoidStmt>()
+                                    ),
+                                    node<JReturnVoidStmt>()
+                                )
                             )
                         )
                     )
