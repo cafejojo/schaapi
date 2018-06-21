@@ -50,6 +50,7 @@ class JavaMavenProjectCompiler : ProjectCompiler<JavaMavenProject> {
             it.relativeTo(project.classDir).toString().dropLast(".class".length).replace(File.separatorChar, '.')
         }.toSet()
 
+        project.dependencies = emptySet()
         project.classpath = project.classDir.absolutePath
 
         if (project.classes.isEmpty()) {
