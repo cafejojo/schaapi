@@ -481,23 +481,21 @@ internal object ClassGeneratorTest : Spek({
             }.sootClass.methods.last()
             val methodStatements = method.retrieveActiveBody().units
 
-            assertThat(methodStatements.count { it is AssignStmt && it.leftOp.type is IntType }).isEqualTo(10)
-            assertThat(methodStatements.count { it is AssignStmt && it.leftOp.type is DoubleType }).isEqualTo(2)
-            assertThat(methodStatements.count { it is AssignStmt && it.leftOp.type is FloatType }).isEqualTo(2)
-            assertThat(methodStatements.count { it is AssignStmt && it.leftOp.type is LongType }).isEqualTo(2)
+            assertThat(methodStatements).filteredOn { it is AssignStmt && it.leftOp.type is IntType }.hasSize(10)
+            assertThat(methodStatements).filteredOn { it is AssignStmt && it.leftOp.type is DoubleType }.hasSize(2)
+            assertThat(methodStatements).filteredOn { it is AssignStmt && it.leftOp.type is FloatType }.hasSize(2)
+            assertThat(methodStatements).filteredOn { it is AssignStmt && it.leftOp.type is LongType }.hasSize(2)
         }
 
         it("should add an initialization statement for an object type") {
             val local = Jimple.v().newLocal("local", NullType.v())
 
             val method = ClassGenerator("test").apply {
-                generateMethod("method", listOf(
-                    Jimple.v().newAssignStmt(local, NullConstant.v())
-                ).map { JimpleNode(it) })
+                generateMethod("method", listOf(JimpleNode(Jimple.v().newAssignStmt(local, NullConstant.v()))))
             }.sootClass.methods.last()
             val methodStatements = method.retrieveActiveBody().units
 
-            assertThat(methodStatements.count { it is AssignStmt && it.leftOp.type is NullType }).isEqualTo(2)
+            assertThat(methodStatements).filteredOn { it is AssignStmt && it.leftOp.type is NullType }.hasSize(2)
         }
     }
 })
