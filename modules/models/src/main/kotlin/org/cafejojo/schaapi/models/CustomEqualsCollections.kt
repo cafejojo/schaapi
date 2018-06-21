@@ -110,6 +110,17 @@ class CustomEqualsList<K>(
     override val size: Int
         get() = innerList.size
 
+    /**
+     * Constructs a new [CustomEqualsList] that contains [elements].
+     */
+    constructor(
+        elements: Collection<K>,
+        customEquals: (K, Any?) -> Boolean,
+        customHash: (K) -> Int
+    ) : this(customEquals, customHash) {
+        addAll(elements)
+    }
+
     override fun contains(element: K) = innerList.contains(wrapElement(element))
 
     override fun containsAll(elements: Collection<K>) = innerList.containsAll(elements.map { wrapElement(it) })
@@ -169,7 +180,21 @@ class CustomEqualsList<K>(
     override fun set(index: Int, element: K) = innerList.set(index, wrapElement(element)).value
 
     override fun subList(fromIndex: Int, toIndex: Int) =
-        innerList.subList(fromIndex, toIndex).map { it.value }.toMutableList()
+        CustomEqualsList(
+            innerList.subList(fromIndex, toIndex).map { it.value },
+            customEquals,
+            customHash
+        )
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is CustomEqualsList<*>) return false
+        if (this.size != other.size) return false
+
+        return (0 until innerList.size).all { this.innerList[it] == other.innerList[it] }
+    }
+
+    override fun hashCode() = innerList.hashCode()
 
     private fun wrapElement(key: K) = EqualsWrapper(key, customEquals, customHash)
 }
