@@ -6,8 +6,8 @@ import org.apache.commons.cli.Option
 import org.apache.commons.cli.Options
 import org.cafejojo.schaapi.miningpipeline.MiningPipeline
 import org.cafejojo.schaapi.miningpipeline.PatternFilter
-import org.cafejojo.schaapi.miningpipeline.miner.github.MavenProjectSearchOptions
 import org.cafejojo.schaapi.miningpipeline.miner.github.GitHubProjectMiner
+import org.cafejojo.schaapi.miningpipeline.miner.github.MavenProjectSearchOptions
 import org.cafejojo.schaapi.miningpipeline.patterndetector.ccspan.CCSpanPatternDetector
 import org.cafejojo.schaapi.miningpipeline.patternfilter.jimple.EmptyLoopPatternFilterRule
 import org.cafejojo.schaapi.miningpipeline.patternfilter.jimple.IncompleteInitPatternFilterRule
@@ -101,6 +101,7 @@ internal class GitHubMiningCommandLineInterface {
         }
 
         val libraryProject = JavaJarProject(library)
+        val jimpleLibraryUsageGraphGenerator = JimpleLibraryUsageGraphGenerator()
 
         MiningPipeline(
             outputDirectory = output,
@@ -111,7 +112,7 @@ internal class GitHubMiningCommandLineInterface {
             },
             libraryProjectCompiler = JavaJarProjectCompiler(),
             userProjectCompiler = JavaMavenProjectCompiler(),
-            libraryUsageGraphGenerator = JimpleLibraryUsageGraphGenerator,
+            libraryUsageGraphGenerator = jimpleLibraryUsageGraphGenerator,
             patternDetector = CCSpanPatternDetector(
                 patternDetectorMinCount,
                 maxSequenceLength,
@@ -130,5 +131,9 @@ internal class GitHubMiningCommandLineInterface {
                 processErrorStream = if (testGeneratorEnableOutput) System.out else null
             )
         ).run(libraryProject)
+
+        logger.info { "Found ${jimpleLibraryUsageGraphGenerator.concreteMethods} concrete methods." }
+        logger.info { "Found ${jimpleLibraryUsageGraphGenerator.statements} statements." }
+        logger.info { "Found ${jimpleLibraryUsageGraphGenerator.validStatements} valid statements." }
     }
 }

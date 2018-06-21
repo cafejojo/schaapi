@@ -1,12 +1,13 @@
 package org.cafejojo.schaapi
 
+import mu.KLogging
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.Option
 import org.apache.commons.cli.Options
 import org.cafejojo.schaapi.miningpipeline.MiningPipeline
 import org.cafejojo.schaapi.miningpipeline.PatternFilter
-import org.cafejojo.schaapi.miningpipeline.miner.directory.DirectorySearchOptions
 import org.cafejojo.schaapi.miningpipeline.miner.directory.DirectoryProjectMiner
+import org.cafejojo.schaapi.miningpipeline.miner.directory.DirectorySearchOptions
 import org.cafejojo.schaapi.miningpipeline.patterndetector.ccspan.CCSpanPatternDetector
 import org.cafejojo.schaapi.miningpipeline.patternfilter.jimple.EmptyLoopPatternFilterRule
 import org.cafejojo.schaapi.miningpipeline.patternfilter.jimple.IncompleteInitPatternFilterRule
@@ -24,7 +25,7 @@ import java.io.File
  * Assumes that the passed library is a Java Maven project.
  */
 internal class DirectoryMiningCommandLineInterface {
-    internal companion object {
+    internal companion object : KLogging() {
         fun addOptionsTo(options: Options): Options =
             options.addOption(Option
                 .builder("u")
@@ -51,6 +52,7 @@ internal class DirectoryMiningCommandLineInterface {
             cmd.getOptionValue("pattern_detector_maximum_sequence_length", DEFAULT_MAX_SEQUENCE_LENGTH).toInt()
 
         val libraryProject = JavaMavenProject(library, mavenDir)
+        val jimpleLibraryUsageGraphGenerator = JimpleLibraryUsageGraphGenerator()
 
         MiningPipeline(
             outputDirectory = output,
@@ -58,7 +60,7 @@ internal class DirectoryMiningCommandLineInterface {
             searchOptions = DirectorySearchOptions(File(userDirDirs)),
             libraryProjectCompiler = JavaMavenProjectCompiler(),
             userProjectCompiler = JavaMavenProjectCompiler(),
-            libraryUsageGraphGenerator = JimpleLibraryUsageGraphGenerator,
+            libraryUsageGraphGenerator = jimpleLibraryUsageGraphGenerator,
             patternDetector = CCSpanPatternDetector(
                 patternDetectorMinCount,
                 maxSequenceLength,
@@ -77,5 +79,9 @@ internal class DirectoryMiningCommandLineInterface {
                 processErrorStream = if (testGeneratorEnableOutput) System.out else null
             )
         ).run(libraryProject)
+
+        logger.info { "Found ${jimpleLibraryUsageGraphGenerator.concreteMethods} concrete methods." }
+        logger.info { "Found ${jimpleLibraryUsageGraphGenerator.statements} statements." }
+        logger.info { "Found ${jimpleLibraryUsageGraphGenerator.validStatements} valid statements." }
     }
 }

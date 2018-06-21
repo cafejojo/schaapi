@@ -24,12 +24,32 @@ import java.io.File
 /**
  * Library usage graph generator based on Soot.
  */
-object JimpleLibraryUsageGraphGenerator : LibraryUsageGraphGenerator<JavaProject, JavaProject, JimpleNode> {
-    init {
-        SootNameEquivalenceChanger.activate()
-        Options.v().set_whole_program(true)
-        Options.v().set_allow_phantom_refs(true)
+class JimpleLibraryUsageGraphGenerator : LibraryUsageGraphGenerator<JavaProject, JavaProject, JimpleNode> {
+    companion object {
+        init {
+            SootNameEquivalenceChanger.activate()
+            Options.v().set_whole_program(true)
+            Options.v().set_allow_phantom_refs(true)
+        }
     }
+
+    /**
+     * The total amount of concrete methods observed in user [JavaProject]s up until this point.
+     */
+    var concreteMethods = 0L
+        private set
+
+    /**
+     * The total amount of statements observed in user [JavaProject]s up until this point.
+     */
+    var statements = 0L
+        private set
+
+    /**
+     * The total amount of valid statements observed in user [JavaProject]s up until this point.
+     */
+    var validStatements = 0L
+        private set
 
     override fun generate(libraryProject: JavaProject, userProject: JavaProject): List<JimpleNode> {
         setUpSootEnvironment(libraryProject, userProject)
@@ -39,6 +59,7 @@ object JimpleLibraryUsageGraphGenerator : LibraryUsageGraphGenerator<JavaProject
 
             sootClass.methods
                 .filter { it.isConcrete }
+                .also { concreteMethods += it.size }
                 .map { generateMethodGraph(libraryProject, it) }
                 .filter {
                     DfsIterator(it).asSequence().toList().any {
@@ -82,6 +103,8 @@ object JimpleLibraryUsageGraphGenerator : LibraryUsageGraphGenerator<JavaProject
      */
     private fun generateMethodGraph(libraryProject: JavaProject, method: SootMethod): JimpleNode {
         val methodBody = method.retrieveActiveBody()
+        statements += methodBody.units.size
+
         val filters = listOf(
             StatementFilter(libraryProject),
             BranchStatementFilter(libraryProject),
@@ -89,6 +112,7 @@ object JimpleLibraryUsageGraphGenerator : LibraryUsageGraphGenerator<JavaProject
         )
         filters.forEach { it.apply(methodBody) }
 
+        validStatements += methodBody.units.size
         if (methodBody.units.isEmpty()) methodBody.units.add(Jimple.v().newReturnVoidStmt())
 
         return ControlFlowGraphGenerator.create(methodBody)
