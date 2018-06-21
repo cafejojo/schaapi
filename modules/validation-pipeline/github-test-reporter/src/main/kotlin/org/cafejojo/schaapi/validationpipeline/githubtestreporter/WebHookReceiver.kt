@@ -61,7 +61,7 @@ class WebHookReceiver(private val checkReporter: CheckReporter, private val publ
             )
 
             publisher.publishEvent(ValidationRequestReceivedEvent(
-                identifier = checkSuiteEvent.checkSuite.headSha,
+                identifier = checkSuiteEvent.checkSuite.id.toString(),
                 directory = File(Properties.testsStorageLocation, repository.fullName),
                 downloadUrl = "https://github.com/${repository.fullName}/archive/${checkSuite.headSha}.zip"
             ))
