@@ -11,7 +11,7 @@ object Properties {
     val appPrivateKeyLocation: String
         get() = getProperty("app_private_key_location")
     val testsStorageLocation: File
-        get() = File(getProperty("app_private_key_location"))
+        get() = File(getProperty("tests_storage_location"))
 
     init {
         File("githubtestreporter.properties").apply {
