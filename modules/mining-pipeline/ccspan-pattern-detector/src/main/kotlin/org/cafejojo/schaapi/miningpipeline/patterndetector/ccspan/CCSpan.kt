@@ -57,7 +57,7 @@ internal class CCSpan<N : Node>(
             subSequenceLength++
         }
 
-        return frequentClosedContiguousSequences
+        return frequentClosedContiguousSequences.map { it.toList() }
     }
 
     private fun findFrequentSingletonSequences() {
