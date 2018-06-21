@@ -458,7 +458,9 @@ internal object CustomEqualsListTest : Spek({
 
             list.addAll(elements)
 
-            assertThat(list.subList(1, 3)).containsExactly(elements[1], elements[2])
+            assertThat(list.subList(1, 3))
+                .isInstanceOf(CustomEqualsList::class.java)
+                .containsExactly(elements[1], elements[2])
         }
 
         it("can be iterated over forwards") {
