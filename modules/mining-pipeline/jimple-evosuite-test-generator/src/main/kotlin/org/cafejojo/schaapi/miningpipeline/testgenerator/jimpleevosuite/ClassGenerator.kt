@@ -128,12 +128,10 @@ internal class ClassGenerator(className: String) {
         val defaultValue = getDefaultValueForType(local.type)
         val assignStatement = Jimple.v().newAssignStmt(local, defaultValue)
 
-        val identityStatements = jimpleBody.units.takeWhile { it is IdentityStmt }
-        if (identityStatements.isEmpty()) {
+        if (jimpleBody.units.first is IdentityStmt)
+            jimpleBody.units.insertAfter(assignStatement, jimpleBody.units.last { it is IdentityStmt })
+        else
             jimpleBody.units.addFirst(assignStatement)
-        } else {
-            jimpleBody.units.insertAfter(assignStatement, identityStatements.last())
-        }
     }
 
     private fun addReturnStatement(jimpleBody: Body): Type {
