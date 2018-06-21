@@ -13,7 +13,7 @@ import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.it
 
 object CIJobCompletedListenerTest : Spek({
-    it("can receive a ci job failed event") {
+    it("can receive a CI job failed event") {
         val checkReporter = mock<CheckReporter>()
         val ciJobCompletedListener = CIJobCompletedListener(checkReporter)
 
@@ -32,7 +32,7 @@ object CIJobCompletedListenerTest : Spek({
         )
     }
 
-    it("can receive a ci job succeeded event for failing tests") {
+    it("can receive a CI job succeeded event for failing tests") {
         val checkReporter = mock<CheckReporter>()
         val ciJobCompletedListener = CIJobCompletedListener(checkReporter)
 
@@ -60,7 +60,7 @@ object CIJobCompletedListenerTest : Spek({
         }
     }
 
-    it("can receive a ci job succeeded event for passing tests") {
+    it("can receive a CI job succeeded event for passing tests") {
         val checkReporter = mock<CheckReporter>()
         val ciJobCompletedListener = CIJobCompletedListener(checkReporter)
 
