@@ -1,10 +1,13 @@
 package org.cafejojo.schaapi.validationpipeline.cijob
 
-import org.cafejojo.schaapi.validationpipeline.events.CIJobCompletedEvent
+import org.cafejojo.schaapi.validationpipeline.CIJobException
+import org.cafejojo.schaapi.validationpipeline.events.CIJobFailedEvent
+import org.cafejojo.schaapi.validationpipeline.events.CIJobSuccessfulEvent
 import org.cafejojo.schaapi.validationpipeline.events.ValidationRequestReceivedEvent
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.context.event.EventListener
 import org.springframework.stereotype.Component
+import java.util.concurrent.ExecutionException
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -21,8 +24,17 @@ class CIJobInitiator(private val publisher: ApplicationEventPublisher) {
      * Listens to [ValidationRequestReceivedEvent] events.
      */
     @EventListener
+    @Suppress("InstanceOfCheckForException")
     fun handleValidateRequestReceivedEvent(event: ValidationRequestReceivedEvent) =
-        executorService.submit(CIJob(event.identifier, event.directory, event.downloadUrl))
-            .get()
-            .let { testResults -> publisher.publishEvent(CIJobCompletedEvent(testResults)) }
+        try {
+            executorService.submit(CIJob(event.identifier, event.directory, event.downloadUrl))
+                .get()
+                .let { testResults -> publisher.publishEvent(CIJobSuccessfulEvent(testResults)) }
+        } catch (exception: ExecutionException) {
+            exception.cause.let {
+                if (it !is CIJobException) throw exception
+
+                publisher.publishEvent(CIJobFailedEvent(it))
+            }
+        }
 }

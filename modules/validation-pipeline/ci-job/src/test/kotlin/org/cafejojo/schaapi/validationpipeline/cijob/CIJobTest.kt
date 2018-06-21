@@ -2,6 +2,7 @@ package org.cafejojo.schaapi.validationpipeline.cijob
 
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
+import org.cafejojo.schaapi.validationpipeline.CIJobException
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.it
 import java.io.File

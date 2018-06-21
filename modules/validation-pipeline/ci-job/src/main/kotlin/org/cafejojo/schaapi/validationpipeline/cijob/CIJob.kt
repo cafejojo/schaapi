@@ -7,6 +7,7 @@ import mu.KLogging
 import org.cafejojo.schaapi.miningpipeline.projectcompiler.javamaven.MavenInstaller
 import org.cafejojo.schaapi.miningpipeline.projectcompiler.javamaven.JavaMavenProjectCompiler
 import org.cafejojo.schaapi.models.project.JavaMavenProject
+import org.cafejojo.schaapi.validationpipeline.CIJobException
 import org.cafejojo.schaapi.validationpipeline.TestResults
 import org.cafejojo.schaapi.validationpipeline.testrunner.junit.TestRunner
 import org.zeroturnaround.zip.ZipUtil
@@ -101,8 +102,3 @@ internal fun Request.responseOrThrowException() = response().also { (_, _, resul
         is Result.Failure -> throw result.getException()
     }
 }
-
-/**
- * Exception that gets thrown when an error occurs during the execution of a CI job.
- */
-class CIJobException(message: String, cause: Throwable? = null) : Exception(message, cause)

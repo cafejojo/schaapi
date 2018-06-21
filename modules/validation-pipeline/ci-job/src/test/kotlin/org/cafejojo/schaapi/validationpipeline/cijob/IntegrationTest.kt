@@ -1,7 +1,8 @@
 package org.cafejojo.schaapi.validationpipeline.cijob
 
 import org.assertj.core.api.Assertions.assertThat
-import org.cafejojo.schaapi.validationpipeline.events.CIJobCompletedEvent
+import org.cafejojo.schaapi.validationpipeline.events.CIJobFailedEvent
+import org.cafejojo.schaapi.validationpipeline.events.CIJobSuccessfulEvent
 import org.cafejojo.schaapi.validationpipeline.events.ValidationRequestReceivedEvent
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.it
@@ -24,7 +25,7 @@ object IntegrationTest : Spek({
             .forEach { it.copyTo(File(testsDirectory, it.name), overwrite = true) }
     }
 
-    afterEachTest {
+    afterGroup {
         CIJobInitiator.executorService.shutdown()
     }
 
@@ -32,9 +33,9 @@ object IntegrationTest : Spek({
         val commitHash = "ced7a679ba6337977d99effccdb4ac66b3ba34e0"
         val downloadUrl = "https://github.com/cafejojo/dummy-simple-maven-library/archive/$commitHash.zip"
 
-        var event: CIJobCompletedEvent? = null
+        var event: CIJobSuccessfulEvent? = null
         val initiator = CIJobInitiator(
-            ApplicationEventPublisher { event = it as? CIJobCompletedEvent }
+            ApplicationEventPublisher { event = it as? CIJobSuccessfulEvent }
         )
 
         initiator.handleValidateRequestReceivedEvent(
@@ -45,6 +46,25 @@ object IntegrationTest : Spek({
         event?.apply {
             assertThat(testResults.totalCount).isEqualTo(1)
             assertThat(testResults.passCount).isEqualTo(1)
+        }
+    }
+
+    it("handles a failing CI job") {
+        val commitHash = "1234ab"
+        val downloadUrl = "https://does-not-exist.test"
+
+        var event: CIJobFailedEvent? = null
+        val initiator = CIJobInitiator(
+            ApplicationEventPublisher { event = it as? CIJobFailedEvent }
+        )
+
+        initiator.handleValidateRequestReceivedEvent(
+            ValidationRequestReceivedEvent(commitHash, projectDirectory, downloadUrl)
+        )
+
+        assertThat(event).isNotNull()
+        event?.apply {
+            assertThat(exception.message).contains("could not be downloaded")
         }
     }
 })
