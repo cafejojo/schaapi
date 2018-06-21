@@ -186,6 +186,16 @@ class CustomEqualsList<K>(
             customHash
         )
 
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is CustomEqualsList<*>) return false
+        if (this.size != other.size) return false
+
+        return (0 until innerList.size).all { this.innerList[it] == other.innerList[it] }
+    }
+
+    override fun hashCode() = innerList.hashCode()
+
     private fun wrapElement(key: K) = EqualsWrapper(key, customEquals, customHash)
 }
 
