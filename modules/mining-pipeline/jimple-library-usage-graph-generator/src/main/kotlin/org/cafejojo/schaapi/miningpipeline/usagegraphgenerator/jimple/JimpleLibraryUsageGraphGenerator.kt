@@ -34,22 +34,9 @@ class JimpleLibraryUsageGraphGenerator : LibraryUsageGraphGenerator<JavaProject,
     }
 
     /**
-     * The total amount of concrete methods observed in user [JavaProject]s up until this point.
+     * Contains the statistics of this object's method generation process.
      */
-    var concreteMethods = 0L
-        private set
-
-    /**
-     * The total amount of statements observed in user [JavaProject]s up until this point.
-     */
-    var statements = 0L
-        private set
-
-    /**
-     * The total amount of valid statements observed in user [JavaProject]s up until this point.
-     */
-    var validStatements = 0L
-        private set
+    val lugStatistics = LUGStatistics()
 
     override fun generate(libraryProject: JavaProject, userProject: JavaProject): List<JimpleNode> {
         setUpSootEnvironment(libraryProject, userProject)
@@ -59,7 +46,7 @@ class JimpleLibraryUsageGraphGenerator : LibraryUsageGraphGenerator<JavaProject,
 
             sootClass.methods
                 .filter { it.isConcrete }
-                .also { concreteMethods += it.size }
+                .also { lugStatistics.concreteMethods += it.size }
                 .map { generateMethodGraph(libraryProject, it) }
                 .filter {
                     DfsIterator(it).asSequence().toList().any {
@@ -103,7 +90,7 @@ class JimpleLibraryUsageGraphGenerator : LibraryUsageGraphGenerator<JavaProject,
      */
     private fun generateMethodGraph(libraryProject: JavaProject, method: SootMethod): JimpleNode {
         val methodBody = method.retrieveActiveBody()
-        statements += methodBody.units.size
+        lugStatistics.statements += methodBody.units.size
 
         val filters = listOf(
             StatementFilter(libraryProject),
@@ -112,7 +99,7 @@ class JimpleLibraryUsageGraphGenerator : LibraryUsageGraphGenerator<JavaProject,
         )
         filters.forEach { it.apply(methodBody) }
 
-        validStatements += methodBody.units.size
+        lugStatistics.validStatements += methodBody.units.size
         if (methodBody.units.isEmpty()) methodBody.units.add(Jimple.v().newReturnVoidStmt())
 
         return ControlFlowGraphGenerator.create(methodBody)
