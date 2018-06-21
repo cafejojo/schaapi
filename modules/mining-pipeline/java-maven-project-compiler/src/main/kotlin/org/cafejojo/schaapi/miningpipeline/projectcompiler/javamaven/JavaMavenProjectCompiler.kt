@@ -25,7 +25,7 @@ class JavaMavenProjectCompiler : ProjectCompiler<JavaMavenProject> {
     private fun runMaven(project: JavaMavenProject) {
         val request = DefaultInvocationRequest().apply {
             baseDirectory = project.projectDir
-            goals = listOf("clean", "install", "dependency:copy-dependencies")
+            goals = listOf("clean", "install")
             isBatchMode = true
             javaHome = File(System.getProperty("java.home"))
             mavenOpts = "-DskipTests=true"
@@ -49,10 +49,8 @@ class JavaMavenProjectCompiler : ProjectCompiler<JavaMavenProject> {
         project.classNames = project.classes.map {
             it.relativeTo(project.classDir).toString().dropLast(".class".length).replace(File.separatorChar, '.')
         }.toSet()
-        project.dependencies = project.dependencyDir.listFiles().orEmpty().toSet()
 
-        val classpathDirectories = project.dependencies + project.classDir
-        project.classpath = classpathDirectories.joinToString(File.pathSeparator) { it.absolutePath }
+        project.classpath = project.classDir.absolutePath
 
         if (project.classes.isEmpty()) {
             logger.warn { "Maven project at ${project.projectDir.path} does not contain any classes." }
