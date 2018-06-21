@@ -3,9 +3,17 @@ package org.cafejojo.schaapi.miningpipeline.testgenerator.jimpleevosuite
 import org.cafejojo.schaapi.models.Node
 import org.cafejojo.schaapi.models.libraryusagegraph.jimple.JimpleNode
 import soot.Body
+import soot.BooleanType
+import soot.ByteType
+import soot.CharType
+import soot.DoubleType
+import soot.FloatType
+import soot.IntType
 import soot.Local
+import soot.LongType
 import soot.Modifier
 import soot.Scene
+import soot.ShortType
 import soot.SootClass
 import soot.SootMethod
 import soot.Type
@@ -13,10 +21,16 @@ import soot.Unit
 import soot.Value
 import soot.VoidType
 import soot.jimple.ArrayRef
+import soot.jimple.DoubleConstant
 import soot.jimple.FieldRef
+import soot.jimple.FloatConstant
 import soot.jimple.GotoStmt
+import soot.jimple.IdentityStmt
 import soot.jimple.IfStmt
+import soot.jimple.IntConstant
 import soot.jimple.Jimple
+import soot.jimple.LongConstant
+import soot.jimple.NullConstant
 import soot.jimple.Stmt
 import soot.jimple.SwitchStmt
 import soot.jimple.internal.JReturnStmt
@@ -94,16 +108,31 @@ internal class ClassGenerator(className: String) {
     private fun addStatementsToBody(jimpleBody: Body, statements: List<Unit>, methodParams: Set<Value>) {
         statements.forEach { statement ->
             jimpleBody.units.add(statement)
-            jimpleBody.locals.addAll(statement.defBoxes
+
+            val unboundLocals = statement.defBoxes
                 .map { it.value }
                 .filterNot {
                     methodParams.contains(it) || jimpleBody.locals.contains(it)
                         || it is FieldRef || it is ArrayRef
                 }
                 .map { it as? Local ?: throw ValueIsNotLocalException(it) }
-            )
+
+            jimpleBody.locals.addAll(unboundLocals)
+            unboundLocals.forEach { addLocalInitializationsAfterIdentityStatements(jimpleBody, it) }
 
             if (statement is JReturnStmt) return
+        }
+    }
+
+    private fun addLocalInitializationsAfterIdentityStatements(jimpleBody: Body, local: Local) {
+        val defaultValue = getDefaultValueForType(local.type)
+        val assignStatement = Jimple.v().newAssignStmt(local, defaultValue)
+
+        val identityStatements = jimpleBody.units.takeWhile { it is IdentityStmt }
+        if (identityStatements.isEmpty()) {
+            jimpleBody.units.addFirst(assignStatement)
+        } else {
+            jimpleBody.units.insertAfter(assignStatement, identityStatements.last())
         }
     }
 
@@ -191,6 +220,18 @@ private fun List<JimpleNode>.duplicate(): List<JimpleNode> {
     }
 
     return newNodes
+}
+
+private fun getDefaultValueForType(type: Type) = when (type) {
+    is BooleanType -> IntConstant.v(0)
+    is ByteType -> IntConstant.v(0)
+    is CharType -> IntConstant.v(0)
+    is DoubleType -> DoubleConstant.v(0.0)
+    is FloatType -> FloatConstant.v(0f)
+    is IntType -> IntConstant.v(0)
+    is LongType -> LongConstant.v(0)
+    is ShortType -> IntConstant.v(0)
+    else -> NullConstant.v()
 }
 
 /**
