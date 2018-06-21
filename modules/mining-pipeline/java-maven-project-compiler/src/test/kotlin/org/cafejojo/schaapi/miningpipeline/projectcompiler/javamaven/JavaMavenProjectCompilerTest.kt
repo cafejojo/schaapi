@@ -93,12 +93,9 @@ internal object JavaMavenProjectCompilerTest : Spek({
             assertThat(project.classNames).containsExactlyInAnyOrder(
                 "org.cafejojo.schaapi.test.MyClass"
             )
-            assertThat(project.dependencies).containsExactlyInAnyOrder(
-                target.resolve("target/dependency/zip4j-1.3.2.jar")
-            )
+            assertThat(project.dependencies).isEmpty()
             assertThat(project.classpath.split(File.pathSeparator)).containsExactlyInAnyOrder(
-                target.resolve("target/classes").absolutePath,
-                target.resolve("target/dependency").resolve("zip4j-1.3.2.jar").absolutePath
+                target.resolve("target/classes").absolutePath
             )
         }
     }
