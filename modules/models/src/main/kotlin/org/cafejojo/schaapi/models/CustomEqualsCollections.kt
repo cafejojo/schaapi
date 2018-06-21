@@ -181,7 +181,7 @@ class CustomEqualsList<K>(
 
     override fun subList(fromIndex: Int, toIndex: Int) =
         CustomEqualsList(
-            innerList.subList(fromIndex, toIndex).map { it.value }.toMutableList(),
+            innerList.subList(fromIndex, toIndex).map { it.value },
             customEquals,
             customHash
         )
