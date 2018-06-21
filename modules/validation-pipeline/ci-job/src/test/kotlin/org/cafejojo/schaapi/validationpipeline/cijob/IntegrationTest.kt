@@ -1,6 +1,7 @@
 package org.cafejojo.schaapi.validationpipeline.cijob
 
 import org.assertj.core.api.Assertions.assertThat
+import org.cafejojo.schaapi.validationpipeline.CIJobProjectMetadata
 import org.cafejojo.schaapi.validationpipeline.events.CIJobFailedEvent
 import org.cafejojo.schaapi.validationpipeline.events.CIJobSucceededEvent
 import org.cafejojo.schaapi.validationpipeline.events.ValidationRequestReceivedEvent
@@ -39,7 +40,7 @@ object IntegrationTest : Spek({
         )
 
         initiator.handleValidateRequestReceivedEvent(
-            ValidationRequestReceivedEvent(commitHash, projectDirectory, downloadUrl)
+            ValidationRequestReceivedEvent(projectDirectory, downloadUrl, FakeMetadata(commitHash))
         )
 
         assertThat(event).isNotNull()
@@ -59,7 +60,7 @@ object IntegrationTest : Spek({
         )
 
         initiator.handleValidateRequestReceivedEvent(
-            ValidationRequestReceivedEvent(commitHash, projectDirectory, downloadUrl)
+            ValidationRequestReceivedEvent(projectDirectory, downloadUrl, FakeMetadata(commitHash))
         )
 
         assertThat(event).isNotNull()
@@ -68,3 +69,7 @@ object IntegrationTest : Spek({
         }
     }
 })
+
+private class FakeMetadata(private val id: String) : CIJobProjectMetadata {
+    override fun getIdentifier() = id
+}
