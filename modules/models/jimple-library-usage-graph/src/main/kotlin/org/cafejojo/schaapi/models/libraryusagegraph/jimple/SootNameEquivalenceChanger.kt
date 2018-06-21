@@ -79,4 +79,6 @@ private class NameIgnoringJimpleLocal(name: String?, type: Type?) : JimpleLocal(
 
     @Suppress("MagicNumber") // Necessary for compatibility with Soot
     override fun equivHashCode() = 31 + (type?.hashCode() ?: 0)
+
+    override fun clone() = NameIgnoringJimpleLocal(name, type)
 }
