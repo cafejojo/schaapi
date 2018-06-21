@@ -20,9 +20,7 @@ internal class CCSpan<N : Node>(
     private val minimumSupport: Int,
     private val nodeComparator: GeneralizedNodeComparator<N>
 ) {
-    private val equalsSequences = sequences.map { sequence ->
-        CustomEqualsList<N>(Node.Companion::equiv, Node::equivHashCode).also { it.addAll(sequence) }
-    }
+    private val equalsSequences = sequences.map { CustomEqualsList(it, Node.Companion::equiv, Node::equivHashCode) }
     private val nodeSequenceUtil = NodeSequenceUtil<N>()
 
     private val sequencesOfPreviousLength = mutableSetOf<SequenceTriple<N>>()
