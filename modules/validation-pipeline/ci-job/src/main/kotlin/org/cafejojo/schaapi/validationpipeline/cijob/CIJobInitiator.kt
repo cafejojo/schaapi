@@ -27,14 +27,13 @@ class CIJobInitiator(private val publisher: ApplicationEventPublisher) {
     @Suppress("InstanceOfCheckForException")
     fun handleValidateRequestReceivedEvent(event: ValidationRequestReceivedEvent) =
         try {
-            executorService.submit(CIJob(event.identifier, event.directory, event.downloadUrl))
+            executorService.submit(CIJob(event.metadata.getIdentifier(), event.directory, event.downloadUrl))
                 .get()
-                .let { testResults -> publisher.publishEvent(CIJobSucceededEvent(testResults)) }
+                .let { testResults -> publisher.publishEvent(CIJobSucceededEvent(testResults, event.metadata)) }
         } catch (exception: ExecutionException) {
             exception.cause.let {
                 if (it !is CIJobException) throw exception
-
-                publisher.publishEvent(CIJobFailedEvent(it))
+                publisher.publishEvent(CIJobFailedEvent(it, event.metadata))
             }
         }
 }

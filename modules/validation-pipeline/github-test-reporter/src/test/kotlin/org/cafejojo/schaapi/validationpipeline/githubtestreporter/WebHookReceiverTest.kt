@@ -47,7 +47,7 @@ object WebHookReceiverTest : Spek({
         verify(checkReporter).reportStarted(12345, "cafejojo/schaapi", "patch01", "abc123")
         assertThat(event).isNotNull()
         event?.apply {
-            assertThat(identifier).isEqualTo("1234567890")
+            assertThat(metadata.getIdentifier()).isEqualTo("1234567890")
             assertThat(downloadUrl).contains("cafejojo/schaapi").contains(".zip")
             assertThat(directory.path).contains("cafejojo${File.separator}schaapi")
         }
