@@ -14,6 +14,12 @@ import org.springframework.context.ApplicationEventPublisher
 import java.io.File
 
 object WebHookReceiverTest : Spek({
+    beforeEachTest {
+        System.getProperties().load(
+            WebHookReceiverTest::class.java.getResourceAsStream("/githubtestreporter.properties")
+        )
+    }
+
     it("can receive GitHub check suite requested web hooks") {
         val checkReporter = mock<CheckReporter>()
         var event: ValidationRequestReceivedEvent? = null
@@ -28,6 +34,7 @@ object WebHookReceiverTest : Spek({
                 "id" to "12345"
             }
             "check_suite" to json {
+                "id" to 1234567890
                 "head_branch" to "patch01"
                 "head_sha" to "abc123"
             }
@@ -40,7 +47,7 @@ object WebHookReceiverTest : Spek({
         verify(checkReporter).reportStarted(12345, "cafejojo/schaapi", "patch01", "abc123")
         assertThat(event).isNotNull()
         event?.apply {
-            assertThat(identifier).isEqualTo("abc123")
+            assertThat(identifier).isEqualTo("1234567890")
             assertThat(downloadUrl).contains("cafejojo/schaapi").contains(".zip")
             assertThat(directory.path).contains("cafejojo${File.separator}schaapi")
         }

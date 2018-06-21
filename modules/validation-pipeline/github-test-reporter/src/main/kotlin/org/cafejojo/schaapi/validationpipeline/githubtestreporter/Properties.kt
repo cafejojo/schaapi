@@ -1,24 +1,22 @@
 package org.cafejojo.schaapi.validationpipeline.githubtestreporter
 
 import java.io.File
-import java.io.FileInputStream
 
 /**
  * Environment properties of the GitHub test reporter.
  */
 object Properties {
     val appId: String
+        get() = getProperty("app_id")
     val appPrivateKeyLocation: String
+        get() = getProperty("app_private_key_location")
     val testsStorageLocation: File
+        get() = File(getProperty("tests_storage_location"))
 
     init {
-        if (File("githubtestreporter.properties").exists()) {
-            System.getProperties().load(FileInputStream("githubtestreporter.properties"))
+        File("githubtestreporter.properties").apply {
+            if (exists()) System.getProperties().load(inputStream())
         }
-
-        appId = getProperty("app_id")
-        appPrivateKeyLocation = getProperty("app_private_key_location")
-        testsStorageLocation = File(getProperty("tests_storage_location"))
     }
 
     private fun getProperty(name: String) = System.getProperty(name) ?: throw PropertyNotSetException(name)
