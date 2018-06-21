@@ -2,7 +2,7 @@ package org.cafejojo.schaapi.validationpipeline.cijob
 
 import org.assertj.core.api.Assertions.assertThat
 import org.cafejojo.schaapi.validationpipeline.events.CIJobFailedEvent
-import org.cafejojo.schaapi.validationpipeline.events.CIJobSuccessfulEvent
+import org.cafejojo.schaapi.validationpipeline.events.CIJobSucceededEvent
 import org.cafejojo.schaapi.validationpipeline.events.ValidationRequestReceivedEvent
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.it
@@ -33,9 +33,9 @@ object IntegrationTest : Spek({
         val commitHash = "ced7a679ba6337977d99effccdb4ac66b3ba34e0"
         val downloadUrl = "https://github.com/cafejojo/dummy-simple-maven-library/archive/$commitHash.zip"
 
-        var event: CIJobSuccessfulEvent? = null
+        var event: CIJobSucceededEvent? = null
         val initiator = CIJobInitiator(
-            ApplicationEventPublisher { event = it as? CIJobSuccessfulEvent }
+            ApplicationEventPublisher { event = it as? CIJobSucceededEvent }
         )
 
         initiator.handleValidateRequestReceivedEvent(

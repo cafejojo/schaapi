@@ -2,7 +2,7 @@ package org.cafejojo.schaapi.validationpipeline.cijob
 
 import org.cafejojo.schaapi.validationpipeline.CIJobException
 import org.cafejojo.schaapi.validationpipeline.events.CIJobFailedEvent
-import org.cafejojo.schaapi.validationpipeline.events.CIJobSuccessfulEvent
+import org.cafejojo.schaapi.validationpipeline.events.CIJobSucceededEvent
 import org.cafejojo.schaapi.validationpipeline.events.ValidationRequestReceivedEvent
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.context.event.EventListener
@@ -29,7 +29,7 @@ class CIJobInitiator(private val publisher: ApplicationEventPublisher) {
         try {
             executorService.submit(CIJob(event.identifier, event.directory, event.downloadUrl))
                 .get()
-                .let { testResults -> publisher.publishEvent(CIJobSuccessfulEvent(testResults)) }
+                .let { testResults -> publisher.publishEvent(CIJobSucceededEvent(testResults)) }
         } catch (exception: ExecutionException) {
             exception.cause.let {
                 if (it !is CIJobException) throw exception
