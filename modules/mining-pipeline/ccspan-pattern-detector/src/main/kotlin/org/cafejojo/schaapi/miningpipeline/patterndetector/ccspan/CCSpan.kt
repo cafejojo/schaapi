@@ -42,14 +42,13 @@ internal class CCSpan<N : Node>(
 
         var subSequenceLength = 2
         while (sequencesOfPreviousLength.isNotEmpty()) {
-            equalsSequences
-                .filter { it.size >= subSequenceLength }
+            equalsSequences.filter { it.size >= subSequenceLength }
                 .forEach { findAllContiguousSequencesOfLength(it, subSequenceLength) }
 
             identifyNonClosedSequences()
             frequentClosedContiguousSequences.addAll(
-                sequencesOfPreviousLength.filter { it.isClosedSequence }.map { it.sequence }
-            )
+                sequencesOfPreviousLength.filter { it.isClosedSequence }.map { it.sequence })
+
 
             shiftCurrent()
             subSequenceLength++
@@ -63,10 +62,7 @@ internal class CCSpan<N : Node>(
             .map { (node, support) -> SequenceTriple(listOf(node), support) }
     }
 
-    private fun findAllContiguousSequencesOfLength(
-        sequence: List<N>,
-        subSequenceLength: Int
-    ) {
+    private fun findAllContiguousSequencesOfLength(sequence: List<N>, subSequenceLength: Int) {
         sequence.dropLast(subSequenceLength - 1).indices.forEach {
             checkSupportOfSubSequence(sequence.subList(it, it + subSequenceLength))
         }

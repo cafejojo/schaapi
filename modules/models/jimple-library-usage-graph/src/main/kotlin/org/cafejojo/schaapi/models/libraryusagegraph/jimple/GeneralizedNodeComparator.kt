@@ -54,11 +54,8 @@ class GeneralizedNodeComparator : GeneralizedNodeComparator<JimpleNode> {
      */
     @Suppress("UnsafeCallOnNullableType") // The !! is implicitly avoided by checking `templateHasTag`
     override fun generalizedValuesAreEqual(template: JimpleNode, instance: JimpleNode): Boolean {
-        val templateValues = template.getValues()
-        val instanceValues = instance.getValues()
-
-        templateValues.forEachIndexed { index, templateValue ->
-            val instanceValue = instanceValues[index]
+        template.getValues().forEachIndexed { index, templateValue ->
+            val instanceValue = instance.getValues()[index]
 
             val templateHasTag = hasTag(templateValue)
             val instanceHasTag = hasTag(instanceValue)

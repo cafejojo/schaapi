@@ -12,14 +12,15 @@ import java.util.jar.JarInputStream
 class JavaJarProjectCompiler : ProjectCompiler<JavaJarProject> {
     private companion object : KLogging()
 
-    override fun compile(project: JavaJarProject): JavaJarProject {
-        val classNames = mutableSetOf<String>()
-        val jarInputStream = JarInputStream(FileInputStream(project.classDir))
-        var jarEntry = jarInputStream.nextJarEntry
+    override fun compile(project: JavaJarProject) = with(project) {
+        classNames = findClasses(JarInputStream(FileInputStream(project.classDir)))
+        if (classes.isEmpty()) logger.warn { "Jar project at ${projectDir.path} is empty." }
+        project
+    }
 
-        if (jarEntry == null) {
-            logger.warn { "Jar project at ${project.projectDir.path} is empty." }
-        }
+    private fun findClasses(jarInputStream: JarInputStream): Set<String> {
+        val classNames = mutableSetOf<String>()
+        var jarEntry = jarInputStream.nextJarEntry
 
         while (jarEntry != null) {
             if (jarEntry.name.endsWith(".class") && !jarEntry.name.startsWith("META-INF")) {
@@ -29,8 +30,6 @@ class JavaJarProjectCompiler : ProjectCompiler<JavaJarProject> {
             jarEntry = jarInputStream.nextJarEntry
         }
 
-        project.classNames = classNames
-
-        return project
+        return classNames
     }
 }

@@ -22,18 +22,17 @@ internal object GitHubProjectDownloaderTest : Spek({
     fun addZipFile(dirName: String, fileContent: String, customOutput: File = output): File {
         // Directory which represents what should be zipped
         val tempDir = File(customOutput, dirName)
-        val tempMasterDir = File(tempDir, "master")
-        val tempFile = File(tempMasterDir, "temp.txt")
-
-        tempMasterDir.mkdirs()
-        tempFile.createNewFile()
-        tempFile.writeText(fileContent)
+        val tempMasterDir = File(tempDir, "master").apply { mkdirs() }
+        // Temp file
+        File(tempMasterDir, "temp.txt").apply {
+            createNewFile()
+            writeText(fileContent)
+        }
 
         // File which represents the zip file
-        val zipFile = File(customOutput, "$dirName.zip")
-
-        zipFile.createNewFile()
-        ZipUtil.pack(tempDir, zipFile)
+        val zipFile = File(customOutput, "$dirName.zip").apply {
+            ZipUtil.pack(tempDir, this)
+        }
         tempDir.deleteRecursively()
 
         assertThat(customOutput.listFiles()).contains(zipFile)

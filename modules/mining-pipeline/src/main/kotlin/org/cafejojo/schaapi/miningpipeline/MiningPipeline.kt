@@ -74,11 +74,6 @@ class MiningPipeline<SO : SearchOptions, UP : Project, LP : Project, N : Node>(
 
     /**
      * Calls the specified function [map] on each element in `this` and returns the result as an iterable.
-     */
-    private fun <T, R> Iterable<T>.next(map: (T) -> R): Iterable<R> = this.map { map(it) }
-
-    /**
-     * Calls the specified function [map] on each element in `this` and returns the result as an iterable.
      *
      * Catches exceptions of type [E] and logs these. All other exceptions are thrown.
      */

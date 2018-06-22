@@ -72,9 +72,7 @@ internal class ClassGenerator(className: String) {
     fun generateMethod(methodName: String, nodes: List<JimpleNode>) {
         val statements = nodes.duplicate().map { it.statement }
         val methodParams = findUnboundVariables(statements)
-        val sootMethod = SootMethod(methodName, methodParams.map { it.type }, VoidType.v())
-        sootMethod.modifiers = Modifier.PUBLIC.or(Modifier.STATIC)
-        sootClass.addMethod(sootMethod)
+        val sootMethod = createSootMethod(methodName, methodParams)
 
         val jimpleBody = Jimple.v().newBody(sootMethod)
         sootMethod.activeBody = jimpleBody
@@ -85,6 +83,12 @@ internal class ClassGenerator(className: String) {
 
         replaceInvalidTargets(statements)
     }
+
+    private fun createSootMethod(name: String, parameters: Set<Value>) =
+        SootMethod(name, parameters.map { it.type }, VoidType.v()).apply {
+            modifiers = Modifier.PUBLIC.or(Modifier.STATIC)
+            sootClass.addMethod(this)
+        }
 
     /**
      * Writes the generated class to a class file.
@@ -112,8 +116,7 @@ internal class ClassGenerator(className: String) {
             val unboundLocals = statement.defBoxes
                 .map { it.value }
                 .filterNot {
-                    methodParams.contains(it) || jimpleBody.locals.contains(it)
-                        || it is FieldRef || it is ArrayRef
+                    methodParams.contains(it) || jimpleBody.locals.contains(it) || it is FieldRef || it is ArrayRef
                 }
                 .map { it as? Local ?: throw ValueIsNotLocalException(it) }
 

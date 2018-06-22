@@ -28,8 +28,7 @@ class TestRunner : TestRunner {
         require(testFiles.all { it.extension == "class" }) { "Not all test files are classes." }
 
         return TestResults(
-            testFiles
-                .map { testFile ->
+            testFiles.map { testFile ->
                     val className = testFile.toRelativeString(rootDir)
                         .replace(Regex("[/\\\\]"), ".")
                         .removeSuffix(".class")
@@ -37,10 +36,8 @@ class TestRunner : TestRunner {
                         classpathDirectories.map { it.toURI().toURL() }.toTypedArray()
                             + testFile.parentFile.toURI().toURL()
                     )
-                    className to JUnitCore.runClasses(classLoader.loadClass(className))
-                }
-                .map { (name, results) -> name to gatherResults(results) }
-                .toMap()
+                    className to gatherResults(JUnitCore.runClasses(classLoader.loadClass(className)))
+                }.toMap()
         )
     }
 
