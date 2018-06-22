@@ -85,8 +85,7 @@ object CheckReporterTest : Spek({
 
         val checkRun = CheckReporter(appKeyGenerator).reportSuccess(
             installationId = 123456,
-            owner = "cafejojo",
-            repository = "schaapi",
+            repositoryFullName = "cafejojo/schaapi",
             checkRunId = 87575775,
             checkMessage = CheckMessage(
                 title = "Mandatory title of the message",
@@ -130,8 +129,7 @@ object CheckReporterTest : Spek({
 
         val checkRun = CheckReporter(appKeyGenerator).reportFailure(
             installationId = 123456,
-            owner = "cafejojo",
-            repository = "schaapi",
+            repositoryFullName = "cafejojo/schaapi",
             checkRunId = 87575775,
             checkMessage = CheckMessage(
                 title = "Mandatory title of the message",

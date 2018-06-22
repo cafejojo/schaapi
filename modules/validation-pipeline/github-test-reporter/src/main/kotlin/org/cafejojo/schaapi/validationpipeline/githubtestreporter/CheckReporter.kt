@@ -37,14 +37,12 @@ class CheckReporter(@Autowired private val appKeyGenerator: AppKeyGenerator) {
      */
     fun reportSuccess(
         installationId: Int,
-        owner: String,
-        repository: String,
+        repositoryFullName: String,
         checkRunId: Int,
         checkMessage: CheckMessage? = null
     ) =
         GitHubApi.reportCheckCompleted(
-            owner,
-            repository,
+            repositoryFullName,
             checkRunId,
             conclusion = "success",
             token = requestInstallationToken(installationId).token,
@@ -58,14 +56,12 @@ class CheckReporter(@Autowired private val appKeyGenerator: AppKeyGenerator) {
      */
     fun reportFailure(
         installationId: Int,
-        owner: String,
-        repository: String,
+        repositoryFullName: String,
         checkRunId: Int,
         checkMessage: CheckMessage? = null
     ) =
         GitHubApi.reportCheckCompleted(
-            owner,
-            repository,
+            repositoryFullName,
             checkRunId,
             conclusion = "failure",
             token = requestInstallationToken(installationId).token,
@@ -83,7 +79,7 @@ class CheckReporter(@Autowired private val appKeyGenerator: AppKeyGenerator) {
 /**
  * A message to be displayed on the checks page containing the results of a check run.
  */
-data class CheckMessage(val title: String, val summary: String, val text: String)
+data class CheckMessage(val title: String, val summary: String = "", val text: String = "")
 
 /**
  * A check run.

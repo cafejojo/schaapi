@@ -1,6 +1,7 @@
 package org.cafejojo.schaapi.validationpipeline.githubtestreporter
 
 import com.nhaarman.mockito_kotlin.any
+import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.never
 import com.nhaarman.mockito_kotlin.verify
@@ -21,7 +22,9 @@ object WebHookReceiverTest : Spek({
     }
 
     it("can receive GitHub check suite requested web hooks") {
-        val checkReporter = mock<CheckReporter>()
+        val checkReporter = mock<CheckReporter> {
+            on { reportStarted(any(), any(), any(), any()) } doReturn CheckRun(67890)
+        }
         var event: ValidationRequestReceivedEvent? = null
         val webHookReceiver = WebHookReceiver(
             checkReporter,
@@ -47,7 +50,7 @@ object WebHookReceiverTest : Spek({
         verify(checkReporter).reportStarted(12345, "cafejojo/schaapi", "patch01", "abc123")
         assertThat(event).isNotNull()
         event?.apply {
-            assertThat(identifier).isEqualTo("1234567890")
+            assertThat(metadata.getIdentifier()).isEqualTo("67890")
             assertThat(downloadUrl).contains("cafejojo/schaapi").contains(".zip")
             assertThat(directory.path).contains("cafejojo${File.separator}schaapi")
         }

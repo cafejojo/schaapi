@@ -51,7 +51,7 @@ class TestRunner : TestRunner {
             localTotalCount = results.runCount,
             localPassCount = results.runCount - results.failureCount,
             localIgnoreCount = results.ignoreCount,
-            localFailures = results.failures.map { println("FAILED:" + it.exception); it.testHeader }
+            localFailures = results.failures.map { it.testHeader }
         )
 }
 

@@ -53,4 +53,9 @@ interface TestResults {
      * Equals true iff no tests were executed at this level nor in the [subResults].
      */
     val isEmpty: Boolean
+
+    /**
+     * True if one of the executed tests failed.
+     */
+    fun hasFailures() = failureCount > 0
 }
