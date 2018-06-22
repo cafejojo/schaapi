@@ -2,6 +2,7 @@ package org.cafejojo.schaapi.miningpipeline.usagegraphgenerator.jimple.filters
 
 import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.mock
+import soot.Modifier
 import soot.SootClass
 import soot.SootMethod
 import soot.jimple.StaticInvokeExpr
@@ -13,9 +14,7 @@ internal const val LIBRARY_CLASS =
     "org.cafejojo.schaapi.miningpipeline.usagegraphgenerator.jimple.testclasses.library.Object1"
 
 internal fun constructInvokeExprMock(declaringClassName: String): StaticInvokeExpr {
-    val clazz = mock<SootClass> {
-        on { name } doReturn declaringClassName
-    }
+    val clazz = SootClass(declaringClassName, Modifier.PUBLIC)
     val method = mock<SootMethod> {
         on { declaringClass } doReturn clazz
     }

@@ -11,6 +11,7 @@ import org.junit.jupiter.api.assertThrows
 import soot.Immediate
 import soot.IntType
 import soot.Local
+import soot.Modifier
 import soot.RefType
 import soot.SootClass
 import soot.SootField
@@ -38,9 +39,11 @@ internal object ValueFilterTest : Spek({
 
     val libraryType = mock<RefType> {
         on { toString() } doReturn LIBRARY_CLASS
+        on { sootClass } doReturn SootClass(LIBRARY_CLASS, Modifier.PUBLIC)
     }
     val nonLibraryType = mock<RefType> {
         on { toString() } doReturn NON_LIBRARY_CLASS
+        on { sootClass } doReturn SootClass(NON_LIBRARY_CLASS, Modifier.PUBLIC)
     }
 
     describe("filtering of expression values based on library usage") {
