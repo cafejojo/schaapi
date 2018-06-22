@@ -56,43 +56,46 @@ class GeneralizedNodeComparator : GeneralizedNodeComparator<JimpleNode> {
         template.getValues().forEachIndexed { index, templateValue ->
             val instanceValue = instance.getValues()[index]
 
-            val templateHasTag = hasTag(templateValue)
-            val instanceHasTag = hasTag(instanceValue)
-
-            if (templateHasTag) {
+            if (hasTag(templateValue)) {
                 if (!compareInstanceWithTemplate(template, templateValue, instanceValue)) return false
-            } else if (!templateHasTag && instanceHasTag) {
+            } else if (hasTag(instanceValue)) {
                 return false
             } else {
-                createNewTag(template, templateValue, instanceValue)
+                assignNewTag(template, templateValue, instanceValue)
             }
         }
 
         return true
     }
 
-    @Suppress("UnsafeCallOnNullableType") // The !! is implicitly avoided by checking `hasTag`
     private fun compareInstanceWithTemplate(template: JimpleNode, templateValue: Value, instanceValue: Value): Boolean {
         val templateTag = valueTags[templateValue]
+            ?: throw IllegalArgumentException("Template tag is unexpectedly no longer available.")
         val instanceTag = valueTags[instanceValue]
 
-        if (hasTag(instanceValue)) {
-            if (templateTag != instanceTag) return false
-        } else {
-            if (!isDefinedIn(templateValue, template.statement)) return false
-            valueTags[instanceValue] = templateTag!!
-        }
+        if (hasTag(instanceValue)) return templateTag == instanceTag
+
+        if (!isDefinedIn(templateValue, template.statement)) return false
+
+        valueTags[instanceValue] = templateTag
 
         return true
     }
 
-    private fun generateNewTag() = tagOrigins.size
-
-    private fun createNewTag(template: JimpleNode, templateValue: Value, instanceValue: Value) = generateNewTag().let {
+    /**
+     * Creates a new tag, assigns it to the values, and makes the the template the origin of the tag.
+     *
+     * @param template template node which has the statement that will be the origin of the tag
+     * @param templateValue template value for which a tag will be assigned
+     * @param instanceValue instance value for which a tag will be assigned
+     */
+    private fun assignNewTag(template: JimpleNode, templateValue: Value, instanceValue: Value) = generateNewTag().let {
         valueTags[templateValue] = it
         valueTags[instanceValue] = it
         tagOrigins[it] = template.statement
     }
+
+    private fun generateNewTag() = tagOrigins.size
 
     private fun hasTag(value: Value) = valueTags.contains(value)
 
