@@ -59,10 +59,13 @@ class GeneralizedNodeComparator : GeneralizedNodeComparator<JimpleNode> {
             val templateHasTag = hasTag(templateValue)
             val instanceHasTag = hasTag(instanceValue)
 
-            if (templateHasTag && !compareInstanceWithTemplate(template, templateValue, instanceValue)) return false
-            if (!templateHasTag && instanceHasTag) return false
-
-            createNewTag(template, templateValue, instanceValue)
+            if (templateHasTag) {
+                if (!compareInstanceWithTemplate(template, templateValue, instanceValue)) return false
+            } else if (!templateHasTag && instanceHasTag) {
+                return false
+            } else {
+                createNewTag(template, templateValue, instanceValue)
+            }
         }
 
         return true
