@@ -133,7 +133,7 @@ internal class GitHubMiningCommandLineInterface {
         ).run(libraryProject)
 
         logger.info { "Found ${jimpleLibraryUsageGraphGenerator.lugStatistics.concreteMethods} concrete methods." }
-        logger.info { "Found ${jimpleLibraryUsageGraphGenerator.lugStatistics.statements} statements." }
+        logger.info { "Found ${jimpleLibraryUsageGraphGenerator.lugStatistics.allStatements} statements." }
         logger.info { "Found ${jimpleLibraryUsageGraphGenerator.lugStatistics.validStatements} valid statements." }
     }
 }

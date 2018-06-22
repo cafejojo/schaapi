@@ -36,7 +36,7 @@ class JimpleLibraryUsageGraphGenerator : LibraryUsageGraphGenerator<JavaProject,
     /**
      * Contains the statistics of this object's method generation process.
      */
-    val lugStatistics = LUGStatistics()
+    val lugStatistics = LugStatistics()
 
     override fun generate(libraryProject: JavaProject, userProject: JavaProject): List<JimpleNode> {
         setUpSootEnvironment(libraryProject, userProject)
@@ -45,8 +45,7 @@ class JimpleLibraryUsageGraphGenerator : LibraryUsageGraphGenerator<JavaProject,
             val sootClass = createSootClass(it)
 
             sootClass.methods
-                .filter { it.isConcrete }
-                .also { lugStatistics.concreteMethods += it.size }
+                .filter { it.isConcrete }.also { lugStatistics.concreteMethods += it.size }
                 .map { generateMethodGraph(libraryProject, it) }
                 .filter {
                     DfsIterator(it).asSequence().toList().any {
@@ -90,7 +89,7 @@ class JimpleLibraryUsageGraphGenerator : LibraryUsageGraphGenerator<JavaProject,
      */
     private fun generateMethodGraph(libraryProject: JavaProject, method: SootMethod): JimpleNode {
         val methodBody = method.retrieveActiveBody()
-        lugStatistics.statements += methodBody.units.size
+        lugStatistics.allStatements += methodBody.units.size
 
         val filters = listOf(
             StatementFilter(libraryProject),
