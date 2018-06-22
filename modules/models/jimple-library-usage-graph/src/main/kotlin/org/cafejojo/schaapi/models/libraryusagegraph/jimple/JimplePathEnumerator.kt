@@ -4,6 +4,7 @@ import org.cafejojo.schaapi.models.Node
 import org.cafejojo.schaapi.models.PathEnumerator
 import soot.jimple.EqExpr
 import soot.jimple.GeExpr
+import soot.jimple.GotoStmt
 import soot.jimple.GtExpr
 import soot.jimple.IfStmt
 import soot.jimple.Jimple
@@ -61,6 +62,10 @@ class JimplePathEnumerator(entryNode: JimpleNode, maximumPathLength: Int) :
                 when (statement) {
                     is IfStmt -> handleIf(path, node, statement)
                     is SwitchStmt -> handleSwitch(path, node)
+                    is GotoStmt -> {
+                        // Do nothing
+                    }
+                    else -> throw IllegalArgumentException("Unrecognized branching statement.")
                 }
             }
     }
