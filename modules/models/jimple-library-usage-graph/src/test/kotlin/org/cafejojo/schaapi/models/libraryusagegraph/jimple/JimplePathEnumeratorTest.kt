@@ -256,7 +256,7 @@ internal object JimplePathEnumeratorTest : Spek({
                 )
             }
 
-            it("") {
+            it("creates two different paths if switch targets go to the same location") {
                 val endNode = createReturnNode(local)
                 val switchDefaultTargetNode = createAssignNode(local, 3, endNode)
                 val switchTargetCGoto = createGotoNode(endNode)
