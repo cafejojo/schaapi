@@ -38,7 +38,7 @@ abstract class GitHubSearchOptions(private val maxProjects: Int) : SearchOptions
             .take(maxProjects)
             .map { it.owner.fullName }
 
-        logger.info { "Found ${names.size} projects names using the Github v3 Search API." }
+        logger.info { "Found ${names.size} projects names using the GitHub v3 Search API." }
         return names
     }
 
