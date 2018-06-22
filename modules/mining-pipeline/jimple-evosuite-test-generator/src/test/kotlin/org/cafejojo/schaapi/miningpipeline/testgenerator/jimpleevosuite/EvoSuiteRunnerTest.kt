@@ -8,8 +8,8 @@ import org.jetbrains.spek.api.dsl.it
 import java.io.File
 
 internal object EvoSuiteRunnerTest : Spek({
-    val classPath = EvoSuiteRunnerTest::class.java.getResource("../../../../../../").toURI().path
-    val evoSuiteTestOutput = File("$classPath/evosuite-tests/")
+    val classpath = EvoSuiteRunnerTest::class.java.getResource("../../../../../../").toURI().path
+    val evoSuiteTestOutput = File("$classpath/evosuite-tests/")
 
     fun deleteTestOutput() {
         if (evoSuiteTestOutput.exists()) {
@@ -29,8 +29,8 @@ internal object EvoSuiteRunnerTest : Spek({
         it("generates tests for a test class") {
             val evoSuiteRunner = EvoSuiteRunner(
                 "org.cafejojo.schaapi.test.EvoSuiteTestClass",
-                classPath,
-                classPath,
+                classpath,
+                classpath,
                 generationTimeoutSeconds = 5
             )
 
@@ -40,11 +40,11 @@ internal object EvoSuiteRunnerTest : Spek({
                 .exists()
         }
 
-        it("throws an exception when the class can't be found on the given class path") {
+        it("throws an exception when the class can't be found on the given classpath") {
             val evoSuiteRunner = EvoSuiteRunner(
                 "org.cafejojo.schaapi.test.EvoSuiteTestClass",
                 ".",
-                classPath,
+                classpath,
                 generationTimeoutSeconds = 5
             )
 
@@ -56,8 +56,8 @@ internal object EvoSuiteRunnerTest : Spek({
         it("throws an exception when the class doesn't exist") {
             val evoSuiteRunner = EvoSuiteRunner(
                 "no.way.this.exists.SampleClass",
-                classPath,
-                classPath,
+                classpath,
+                classpath,
                 generationTimeoutSeconds = 5
             )
 

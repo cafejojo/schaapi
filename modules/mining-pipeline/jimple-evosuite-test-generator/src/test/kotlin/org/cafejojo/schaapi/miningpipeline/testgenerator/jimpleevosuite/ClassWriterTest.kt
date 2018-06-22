@@ -10,8 +10,8 @@ import java.nio.file.Paths
 import javax.xml.bind.DatatypeConverter
 
 internal object ClassWriterTest : Spek({
-    val classPath = Paths.get(ClassWriterTest::class.java.getResource("../../../../").toURI()).toString()
-    val classOutputDirectory = Paths.get(classPath, "class-writer-test/").toFile()
+    val classpath = Paths.get(ClassWriterTest::class.java.getResource("../../../../").toURI()).toString()
+    val classOutputDirectory = Paths.get(classpath, "class-writer-test/").toFile()
 
     fun deleteClassFileOutput() {
         if (classOutputDirectory.exists()) {
