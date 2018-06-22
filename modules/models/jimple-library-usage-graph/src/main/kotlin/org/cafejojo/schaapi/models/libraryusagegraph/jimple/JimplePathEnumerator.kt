@@ -51,7 +51,7 @@ class JimplePathEnumerator(entryNode: JimpleNode, maximumPathLength: Int) :
     PathEnumerator<JimpleNode>(entryNode, maximumPathLength) {
     override fun postProcess(paths: List<List<JimpleNode>>) =
         paths.map { it.toMutableList() }
-            .also { it.forEach(this::processPath) }
+            .also { it.forEach(::processPath) }
 
     private fun processPath(path: MutableList<JimpleNode>) {
         path.toList()
@@ -101,17 +101,17 @@ class JimplePathEnumerator(entryNode: JimpleNode, maximumPathLength: Int) :
     }
 
     /**
-     * Returns the first common node in the (recursive) successors of [base] and [target], or the last element of [path]
+     * Returns the first common node in the (recursive) successors of [nodeA] and [nodeB], or the last element of [path]
      * if there is no such element.
      *
-     * @param base // TODO
-     * @param target // TODO
-     * @param path // TODO
-     * @return the first common node in the (recursive) successors of [base] and [target], or the last element of [path]
+     * @param nodeA a node
+     * @param nodeB a node
+     * @param path the path from which to return the last node if there is no common node
+     * @return the first common node in the (recursive) successors of [nodeA] and [nodeB], or the last element of [path]
      * if there is no such element
      */
-    private fun findCoercionTargetFor(base: Node, target: Node, path: List<Node>) =
-        ((base.findNextCommonNodeWithOrNull(target) ?: path.last()) as? JimpleNode
+    private fun findCoercionTargetFor(nodeA: Node, nodeB: Node, path: List<Node>) =
+        ((nodeA.findNextCommonNodeWithOrNull(nodeB) ?: path.last()) as? JimpleNode
             ?: throw IllegalStateException("JimpleNode should not have non-Jimple successor during path enumeration."))
             .statement
 }
