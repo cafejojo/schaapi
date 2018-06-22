@@ -63,9 +63,8 @@ internal class CCSpan<N : Node>(
     }
 
     private fun findAllContiguousSequencesOfLength(sequence: List<N>, subSequenceLength: Int) {
-        sequence.dropLast(subSequenceLength - 1).indices.forEach {
-            checkSupportOfSubSequence(sequence.subList(it, it + subSequenceLength))
-        }
+        (0..sequence.size - subSequenceLength)
+            .forEach { checkSupportOfSubSequence(sequence.subList(it, it + subSequenceLength)) }
     }
 
     private fun checkSupportOfSubSequence(subSequence: List<N>) {
