@@ -3,6 +3,7 @@ package org.cafejojo.schaapi.miningpipeline.usagegraphgenerator.jimple.filters
 import org.cafejojo.schaapi.models.libraryusagegraph.jimple.JimpleValueVisitor
 import org.cafejojo.schaapi.models.project.JavaProject
 import soot.EquivalentValue
+import soot.Modifier
 import soot.PrimType
 import soot.Scene
 import soot.SootClass
@@ -25,12 +26,16 @@ import soot.jimple.toolkits.thread.synchronization.NewStaticLock
 
 /**
  * Determines whether to keep individual [Value]s.
+ *
+ * @property filterRules the rules to apply to the values
  */
-internal class ValueFilter(libraryProject: JavaProject) {
-    private val filterRules = listOf(
-        ClassValueFilterRule(),
-        LibraryUsageValueFilterRule(libraryProject),
-        UserUsageValueFilterRule(libraryProject)
+internal open class ValueFilter(private val filterRules: List<ValueFilterRule>) {
+    constructor(libraryProject: JavaProject) : this(
+        listOf(
+            ClassValueFilterRule(),
+            LibraryUsageValueFilterRule(libraryProject),
+            UserUsageValueFilterRule(libraryProject)
+        )
     )
 
     /**
@@ -47,9 +52,15 @@ internal class ValueFilter(libraryProject: JavaProject) {
 }
 
 /**
+ * Filters [Value]s based only on their usage of classes from user projects.
+ */
+internal class UserUsageValueFilter(libraryProject: JavaProject) :
+    ValueFilter(listOf(UserUsageValueFilterRule(libraryProject)))
+
+/**
  * Describes how a [Value] should be filtered.
  */
-private abstract class ValueFilterRule : JimpleValueVisitor<Boolean>() {
+internal abstract class ValueFilterRule : JimpleValueVisitor<Boolean>() {
     /**
      * Returns true iff [value] should be retained.
      *
