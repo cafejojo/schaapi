@@ -54,13 +54,13 @@ class CIJobCompletedListener(private val checkReporter: CheckReporter) {
         """
             **$passCount** out of **$totalCount** tests passed.
 
-            |               |                                                   |
-            | ------------- | ------------------------------------------------- |
-            | **Total**     | $totalCount                                       |
-            | **Pass**      | $passCount                                        |
-            | **Fail**      | $failureCount                                     |
-            | **Ignored**   | $ignoreCount                                      |
-            | **Failures**  | ${failures.joinToString("<br><br>")}              |
+            |                       |                                                   |
+            | --------------------- | ------------------------------------------------- |
+            | **Total**             | $totalCount                                       |
+            | **Pass**              | $passCount                                        |
+            | **Fail**              | $failureCount                                     |
+            | **Ignored**           | $ignoreCount                                      |
+            | **Failure Messages**  | ${failures.joinToString("<br><br>")}              |
         """.trimIndent()
     }
 }
