@@ -47,9 +47,7 @@ class WebHookReceiver(private val checkReporter: CheckReporter, private val publ
         val checkSuiteEvent = mapper.readValue(body, CheckSuiteEvent::class.java)
 
         if (!checkSuiteEvent.isRequested()) {
-            throw IncomingWebHookException(
-                "Cannot process check suite web hooks for action ${checkSuiteEvent.action}."
-            )
+            throw IncomingWebHookException("Cannot process check suite web hooks for action ${checkSuiteEvent.action}.")
         }
 
         with(checkSuiteEvent) {
