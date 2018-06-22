@@ -30,20 +30,32 @@ internal object CCSpanIntegrationTest : Spek({
 
         it("can detect very simple patterns") {
             val localA = Jimple.v().newLocal("local", IntType.v())
-            val stmtA2 = Jimple.v().newAssignStmt(localA, IntConstant.v(504))
-            val nodeA2 = JimpleNode(stmtA2)
-            val stmtA1 = Jimple.v().newAssignStmt(localA, IntConstant.v(591))
-            val nodeA1 = JimpleNode(stmtA1, mutableListOf(nodeA2))
+            val nodeA2 = JimpleNode(Jimple.v().newAssignStmt(localA, IntConstant.v(504)))
+            val nodeA1 = JimpleNode(Jimple.v().newAssignStmt(localA, IntConstant.v(591)), mutableListOf(nodeA2))
 
             val localB = Jimple.v().newLocal("local", IntType.v())
-            val stmtB2 = Jimple.v().newAssignStmt(localB, IntConstant.v(504))
-            val nodeB2 = JimpleNode(stmtB2)
-            val stmtB1 = Jimple.v().newAssignStmt(localB, IntConstant.v(591))
-            val nodeB1 = JimpleNode(stmtB1, mutableListOf(nodeB2))
+            val nodeB2 = JimpleNode(Jimple.v().newAssignStmt(localB, IntConstant.v(504)))
+            val nodeB1 = JimpleNode(Jimple.v().newAssignStmt(localB, IntConstant.v(591)), mutableListOf(nodeB2))
 
             val patterns = patternDetector.findPatterns(listOf(nodeA1, nodeB1))
 
             assertThat(patterns).containsExactly(listOf(nodeA1, nodeA2))
+        }
+
+        it("correctly uses the custom equivalence method to compare singleton lists") {
+            val localA = Jimple.v().newLocal("local", IntType.v())
+            val nodeA1 = JimpleNode(Jimple.v().newAssignStmt(localA, IntConstant.v(107)))
+
+            val localB = Jimple.v().newLocal("local", IntType.v())
+            val nodeB2 = JimpleNode(Jimple.v().newAssignStmt(localB, IntConstant.v(944)))
+            val nodeB1 = JimpleNode(Jimple.v().newAssignStmt(localB, IntConstant.v(107)), mutableListOf(nodeB2))
+
+            val patterns = patternDetector.findPatterns(listOf(nodeA1, nodeB1))
+
+            assertThat(patterns).containsExactlyInAnyOrder(
+                listOf(nodeA1),
+                listOf(nodeB1, nodeB2)
+            )
         }
     }
 })

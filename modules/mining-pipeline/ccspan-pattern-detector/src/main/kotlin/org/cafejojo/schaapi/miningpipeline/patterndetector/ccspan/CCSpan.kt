@@ -59,7 +59,12 @@ internal class CCSpan<N : Node>(
 
     private fun findFrequentSingletonSequences() {
         sequencesOfPreviousLength += nodeSequenceUtil.findFrequentNodesInSequences(equalsSequences, minimumSupport)
-            .map { (node, support) -> SequenceTriple(listOf(node), support) }
+            .map { (node, support) ->
+                SequenceTriple(
+                    CustomEqualsList(listOf(node), Node.Companion::equiv, Node::equivHashCode),
+                    support
+                )
+            }
     }
 
     private fun findAllContiguousSequencesOfLength(sequence: List<N>, subSequenceLength: Int) {
