@@ -9,17 +9,26 @@ import org.jetbrains.spek.api.dsl.it
 import soot.AbstractSootFieldRef
 import soot.BooleanType
 import soot.CharType
+import soot.DoubleType
+import soot.FloatType
 import soot.IntType
+import soot.LongType
 import soot.Modifier
+import soot.NullType
 import soot.RefType
 import soot.Scene
 import soot.SootClass
 import soot.SootField
 import soot.VoidType
+import soot.jimple.AssignStmt
+import soot.jimple.DoubleConstant
+import soot.jimple.FloatConstant
 import soot.jimple.GotoStmt
 import soot.jimple.IfStmt
 import soot.jimple.IntConstant
 import soot.jimple.Jimple
+import soot.jimple.LongConstant
+import soot.jimple.NullConstant
 import soot.jimple.Stmt
 import soot.jimple.StringConstant
 import soot.jimple.SwitchStmt
@@ -289,7 +298,7 @@ internal object ClassGeneratorTest : Spek({
             generateMethod("method", listOf(assignC, returnC, assignCAgain).map { JimpleNode(it) })
         }.sootClass.methods.last()
 
-        assertThat(jimpleMethod.activeBody.units).hasSize(2)
+        assertThat(jimpleMethod.activeBody.units).hasSize(3)
     }
 
     describe("replacing missing targets") {
@@ -445,5 +454,48 @@ internal object ClassGeneratorTest : Spek({
         }.sootClass.methods.last()
 
         assertThat(method.retrieveActiveBody().locals).containsExactly(local)
+    }
+
+    describe("initialization of locals") {
+        it("should add an initialization statement for all primitive types") {
+            val booleanLocal = Jimple.v().newLocal("booleanLocal", IntType.v())
+            val byteLocal = Jimple.v().newLocal("byteLocal", IntType.v())
+            val charLocal = Jimple.v().newLocal("charLocal", IntType.v())
+            val doubleLocal = Jimple.v().newLocal("doubleLocal", DoubleType.v())
+            val floatLocal = Jimple.v().newLocal("floatLocal", FloatType.v())
+            val intLocal = Jimple.v().newLocal("intLocal", IntType.v())
+            val longLocal = Jimple.v().newLocal("longLocal", LongType.v())
+            val shortLocal = Jimple.v().newLocal("shortLocal", IntType.v())
+
+            val method = ClassGenerator("test").apply {
+                generateMethod("method", listOf(
+                    Jimple.v().newAssignStmt(booleanLocal, IntConstant.v(0)),
+                    Jimple.v().newAssignStmt(byteLocal, IntConstant.v(0)),
+                    Jimple.v().newAssignStmt(charLocal, IntConstant.v(0)),
+                    Jimple.v().newAssignStmt(doubleLocal, DoubleConstant.v(0.0)),
+                    Jimple.v().newAssignStmt(floatLocal, FloatConstant.v(0f)),
+                    Jimple.v().newAssignStmt(intLocal, IntConstant.v(0)),
+                    Jimple.v().newAssignStmt(longLocal, LongConstant.v(0)),
+                    Jimple.v().newAssignStmt(shortLocal, IntConstant.v(0))
+                ).map { JimpleNode(it) })
+            }.sootClass.methods.last()
+            val methodStatements = method.retrieveActiveBody().units
+
+            assertThat(methodStatements).filteredOn { it is AssignStmt && it.leftOp.type is IntType }.hasSize(10)
+            assertThat(methodStatements).filteredOn { it is AssignStmt && it.leftOp.type is DoubleType }.hasSize(2)
+            assertThat(methodStatements).filteredOn { it is AssignStmt && it.leftOp.type is FloatType }.hasSize(2)
+            assertThat(methodStatements).filteredOn { it is AssignStmt && it.leftOp.type is LongType }.hasSize(2)
+        }
+
+        it("should add an initialization statement for an object type") {
+            val local = Jimple.v().newLocal("local", NullType.v())
+
+            val method = ClassGenerator("test").apply {
+                generateMethod("method", listOf(JimpleNode(Jimple.v().newAssignStmt(local, NullConstant.v()))))
+            }.sootClass.methods.last()
+            val methodStatements = method.retrieveActiveBody().units
+
+            assertThat(methodStatements).filteredOn { it is AssignStmt && it.leftOp.type is NullType }.hasSize(2)
+        }
     }
 })
