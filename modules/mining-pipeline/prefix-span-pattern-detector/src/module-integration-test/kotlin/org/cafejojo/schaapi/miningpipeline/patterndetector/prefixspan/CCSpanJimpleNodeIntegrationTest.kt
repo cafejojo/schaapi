@@ -3,6 +3,7 @@ package org.cafejojo.schaapi.miningpipeline.patterndetector.prefixspan
 import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.mock
 import org.assertj.core.api.Assertions.assertThat
+import org.cafejojo.schaapi.models.SimplePathEnumerator
 import org.cafejojo.schaapi.models.libraryusagegraph.jimple.GeneralizedNodeComparator
 import org.cafejojo.schaapi.models.libraryusagegraph.jimple.JimpleNode
 import org.jetbrains.spek.api.Spek
@@ -70,7 +71,7 @@ internal object CCSpanJimpleNodeIntegrationTest : Spek({
                 makeGraph(node7, node8, node9, node10, node4, node5, node6)
             )
 
-            val frequent = PrefixSpanPatternDetector(2, 100, GeneralizedNodeComparator())
+            val frequent = PrefixSpanPatternDetector(2, { SimplePathEnumerator(it, 100) }, GeneralizedNodeComparator())
                 .findPatterns(graphs)
 
             assertThat(frequent).contains(listOf(node1, node2, node3))
@@ -98,7 +99,7 @@ internal object CCSpanJimpleNodeIntegrationTest : Spek({
                 makeGraph(node11, node12, node6, node7, node8, node9, node10)
             )
 
-            val frequent = PrefixSpanPatternDetector(2, 100, GeneralizedNodeComparator())
+            val frequent = PrefixSpanPatternDetector(2, { SimplePathEnumerator(it, 100) }, GeneralizedNodeComparator())
                 .findPatterns(graphs)
 
             assertThat(frequent).hasSize(amountOfPossibleSubSequences(5))
@@ -123,7 +124,7 @@ internal object CCSpanJimpleNodeIntegrationTest : Spek({
                 makeGraph(node9, node10, node5, node6, node7, node8)
             )
 
-            val frequent = PrefixSpanPatternDetector(2, 100, GeneralizedNodeComparator())
+            val frequent = PrefixSpanPatternDetector(2, { SimplePathEnumerator(it, 100) }, GeneralizedNodeComparator())
                 .findPatterns(graphs)
 
             assertThat(frequent).contains(listOf(node1, node2, node3, node4))
@@ -143,7 +144,7 @@ internal object CCSpanJimpleNodeIntegrationTest : Spek({
                 makeGraph(node7, node8, node9, node10, node1, node2, node3)
             )
 
-            val frequent = PrefixSpanPatternDetector(2, 100, GeneralizedNodeComparator())
+            val frequent = PrefixSpanPatternDetector(2, { SimplePathEnumerator(it, 100) }, GeneralizedNodeComparator())
                 .findPatterns(graphs)
 
             assertThat(frequent).contains(listOf(node1, node2, node3))
@@ -166,7 +167,7 @@ internal object CCSpanJimpleNodeIntegrationTest : Spek({
                 makeGraph(node7, node8, node9, node10, node4, node5, node6)
             )
 
-            val frequent = PrefixSpanPatternDetector(2, 100, GeneralizedNodeComparator())
+            val frequent = PrefixSpanPatternDetector(2, { SimplePathEnumerator(it, 100) }, GeneralizedNodeComparator())
                 .findPatterns(graps)
 
             assertThat(frequent).isEmpty()
@@ -192,7 +193,7 @@ internal object CCSpanJimpleNodeIntegrationTest : Spek({
                 makeGraph(node9, node10, node5, node6, node7, node8)
             )
 
-            val frequent = PrefixSpanPatternDetector(2, 100, GeneralizedNodeComparator())
+            val frequent = PrefixSpanPatternDetector(2, { SimplePathEnumerator(it, 100) }, GeneralizedNodeComparator())
                 .findPatterns(graphs)
 
             assertThat(frequent).hasSize(4)
