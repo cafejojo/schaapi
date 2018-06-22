@@ -12,7 +12,7 @@ import org.cafejojo.schaapi.models.PathEnumerator
  */
 class PrefixSpanPatternDetector<N : Node>(
     private val minimumCount: Int,
-    private val maximumSequenceLength: Int,
+    private val enumerator: (N) -> PathEnumerator<N>,
     private val comparator: GeneralizedNodeComparator<N>
 ) : PatternDetector<N> {
     private companion object : KLogging()
@@ -20,7 +20,7 @@ class PrefixSpanPatternDetector<N : Node>(
     override fun findPatterns(graphs: List<N>): List<Pattern<N>> {
         logger.info { "Detecting patterns in ${graphs.size} graphs." }
 
-        val sequences = graphs.flatMap { PathEnumerator(it, maximumSequenceLength).enumerate() }
+        val sequences = graphs.flatMap { enumerator(it).enumerate() }
         logger.info { "Found ${sequences.size} sequences in ${graphs.size} graphs." }
 
         return PrefixSpan(sequences, minimumCount, comparator).findFrequentPatterns()

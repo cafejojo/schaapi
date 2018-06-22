@@ -16,6 +16,7 @@ import org.cafejojo.schaapi.miningpipeline.projectcompiler.javamaven.JavaMavenPr
 import org.cafejojo.schaapi.miningpipeline.testgenerator.jimpleevosuite.TestGenerator
 import org.cafejojo.schaapi.miningpipeline.usagegraphgenerator.jimple.JimpleLibraryUsageGraphGenerator
 import org.cafejojo.schaapi.models.libraryusagegraph.jimple.GeneralizedNodeComparator
+import org.cafejojo.schaapi.models.libraryusagegraph.jimple.JimplePathEnumerator
 import org.cafejojo.schaapi.models.project.JavaMavenProject
 import java.io.File
 
@@ -63,7 +64,7 @@ internal class DirectoryMiningCommandLineInterface {
             libraryUsageGraphGenerator = jimpleLibraryUsageGraphGenerator,
             patternDetector = CCSpanPatternDetector(
                 patternDetectorMinCount,
-                maxSequenceLength,
+                { node -> JimplePathEnumerator(node, maxSequenceLength) },
                 GeneralizedNodeComparator()
             ),
             patternFilter = PatternFilter(

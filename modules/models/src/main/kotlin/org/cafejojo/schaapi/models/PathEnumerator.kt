@@ -12,7 +12,7 @@ import java.util.Stack
  * @property entryNode the entry node of the method graph
  * @property maximumPathLength the maximum length a path output by this enumerator should have
  */
-class PathEnumerator<N : Node>(
+abstract class PathEnumerator<N : Node>(
     private val entryNode: N,
     private val maximumPathLength: Int
 ) {
@@ -35,8 +35,16 @@ class PathEnumerator<N : Node>(
         recursivelyEnumerate(entryNode)
         cleanUp()
 
-        return allPaths.filterIsInstance<List<N>>()
+        return postProcess(allPaths.filterIsInstance<List<N>>())
     }
+
+    /**
+     * Applies processing to the paths before they are returned by [enumerate].
+     *
+     * @param paths the paths to process
+     * @return the processed paths
+     */
+    protected abstract fun postProcess(paths: List<List<N>>): List<List<N>>
 
     private fun recursivelyEnumerate(node: Node) {
         if (exitNode in node.successors) allPaths.add(currentPath.toList())
@@ -52,6 +60,14 @@ class PathEnumerator<N : Node>(
     }
 
     private fun cleanUp() = entryNode.removeExitNodes()
+}
+
+/**
+ * A simple [PathEnumerator] that does not perform post-processing.
+ */
+class SimplePathEnumerator<N : Node>(entryNode: N, maximumPathLength: Int) :
+    PathEnumerator<N>(entryNode, maximumPathLength) {
+    override fun postProcess(paths: List<List<N>>) = paths
 }
 
 /**

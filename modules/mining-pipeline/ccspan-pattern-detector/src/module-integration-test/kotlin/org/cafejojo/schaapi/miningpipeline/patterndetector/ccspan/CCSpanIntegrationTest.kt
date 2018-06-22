@@ -3,6 +3,7 @@ package org.cafejojo.schaapi.miningpipeline.patterndetector.ccspan
 import org.assertj.core.api.Assertions.assertThat
 import org.cafejojo.schaapi.models.libraryusagegraph.jimple.GeneralizedNodeComparator
 import org.cafejojo.schaapi.models.libraryusagegraph.jimple.JimpleNode
+import org.cafejojo.schaapi.models.libraryusagegraph.jimple.JimplePathEnumerator
 import org.cafejojo.schaapi.models.libraryusagegraph.jimple.SootNameEquivalenceChanger
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
@@ -24,7 +25,7 @@ internal object CCSpanIntegrationTest : Spek({
 
         beforeEachTest {
             val nodeComparator = GeneralizedNodeComparator()
-            patternDetector = CCSpanPatternDetector(0, 10, nodeComparator)
+            patternDetector = CCSpanPatternDetector(0, { node -> JimplePathEnumerator(node, 10) }, nodeComparator)
         }
 
         it("can detect very simple patterns") {
