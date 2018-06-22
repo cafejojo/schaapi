@@ -172,7 +172,7 @@ private class UserUsageValueFilterRule(private val libraryProject: JavaProject) 
     private fun isNotUserClass(clazz: SootClass) = isNotUserClass(clazz.name)
     private fun isNotUserClass(className: String) =
         libraryProject.classNames.contains(className)
-            || Scene.v().forceResolve(className, SootClass.BODIES).isJavaLibraryClass
+            || SootClass(className, Modifier.PUBLIC).isJavaLibraryClass
 }
 
 /**
