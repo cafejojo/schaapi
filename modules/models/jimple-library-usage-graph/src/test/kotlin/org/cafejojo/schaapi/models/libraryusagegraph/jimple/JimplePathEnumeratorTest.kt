@@ -302,6 +302,51 @@ internal object JimplePathEnumeratorTest : Spek({
                 )
             }
 
+            it("creates two different paths if a switch target is the same as the default target") {
+                val endNode = createReturnNode(local)
+                val switchTargetCDefaultNode = createAssignNode(local, 2, endNode)
+                val switchTargetBGoto = createGotoNode(endNode)
+                val switchTargetBNode = createAssignNode(local, 1, switchTargetBGoto)
+                val switchTargetAGoto = createGotoNode(endNode)
+                val switchTargetANode = createAssignNode(local, 1, switchTargetAGoto)
+                val switchNode = createSwitchNode(local,
+                    switchTargetCDefaultNode,
+                    switchTargetANode,
+                    switchTargetBNode,
+                    switchTargetCDefaultNode
+                )
+                val localInitNode = createAssignNode(local, 0, switchNode)
+
+                assertThatEnumeratorCreatesPaths(localInitNode,
+                    listOf(
+                        localInitNode,
+                        createSwitchNode(local, switchTargetCDefaultNode, endNode, endNode, endNode),
+                        switchTargetCDefaultNode,
+                        endNode
+                    ),
+                    listOf(
+                        localInitNode,
+                        createSwitchNode(local, endNode, switchTargetANode, endNode, endNode),
+                        switchTargetANode,
+                        switchTargetAGoto,
+                        endNode
+                    ),
+                    listOf(
+                        localInitNode,
+                        createSwitchNode(local, endNode, endNode, switchTargetBNode, endNode),
+                        switchTargetBNode,
+                        switchTargetBGoto,
+                        endNode
+                    ),
+                    listOf(
+                        localInitNode,
+                        createSwitchNode(local, endNode, endNode, switchTargetCDefaultNode),
+                        switchTargetCDefaultNode,
+                        endNode
+                    )
+                )
+            }
+
             it("jumps past the inner switch statement of another branch") {
                 val endNode = createReturnNode(local)
                 val switchDefault = createGotoNode(endNode)
