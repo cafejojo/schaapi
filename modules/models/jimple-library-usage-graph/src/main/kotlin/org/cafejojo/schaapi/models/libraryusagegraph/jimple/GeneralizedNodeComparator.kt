@@ -52,38 +52,48 @@ class GeneralizedNodeComparator : GeneralizedNodeComparator<JimpleNode> {
      * @param instance the instance [Node]
      * @return true iff [template] and [instance] have the same generalized values
      */
-    @Suppress("UnsafeCallOnNullableType") // The !! is implicitly avoided by checking `templateHasTag`
     override fun generalizedValuesAreEqual(template: JimpleNode, instance: JimpleNode): Boolean {
         template.getValues().forEachIndexed { index, templateValue ->
             val instanceValue = instance.getValues()[index]
 
-            val templateHasTag = hasTag(templateValue)
-            val instanceHasTag = hasTag(instanceValue)
-            val templateIsFinalized = isDefinedIn(templateValue, template.statement)
-
-            val templateTag = valueTags[templateValue]
-            val instanceTag = valueTags[instanceValue]
-
             when {
-                !templateHasTag && !instanceHasTag -> {
-                    val newTag = createNewTag()
-                    valueTags[templateValue] = newTag
-                    valueTags[instanceValue] = newTag
-                    tagOrigins[newTag] = template.statement
-                }
-                !templateHasTag && instanceHasTag -> return false
-
-                templateHasTag && !instanceHasTag && templateIsFinalized -> valueTags[instanceValue] = templateTag!!
-                templateHasTag && !instanceHasTag && !templateIsFinalized -> return false
-
-                templateHasTag && instanceHasTag && templateTag != instanceTag -> return false
+                hasTag(templateValue) ->
+                    if (instanceAheadOfTemplate(template, templateValue, instanceValue)) return false
+                hasTag(instanceValue) -> return false
+                else -> assignNewTag(template, templateValue, instanceValue)
             }
         }
 
         return true
     }
 
-    private fun createNewTag() = tagOrigins.size
+    private fun instanceAheadOfTemplate(template: JimpleNode, templateValue: Value, instanceValue: Value): Boolean {
+        val templateTag = valueTags[templateValue]
+            ?: throw IllegalArgumentException("Given template value should be tagged.")
+
+        if (hasTag(instanceValue)) return templateTag != valueTags[instanceValue]
+
+        if (!isDefinedIn(templateValue, template.statement)) return true
+
+        valueTags[instanceValue] = templateTag
+
+        return false
+    }
+
+    /**
+     * Creates a new tag, assigns it to the values, and makes the the template the origin of the tag.
+     *
+     * @param template template node which has the statement that will be the origin of the tag
+     * @param templateValue template value for which a tag will be assigned
+     * @param instanceValue instance value for which a tag will be assigned
+     */
+    private fun assignNewTag(template: JimpleNode, templateValue: Value, instanceValue: Value) = generateNewTag().let {
+        valueTags[templateValue] = it
+        valueTags[instanceValue] = it
+        tagOrigins[it] = template.statement
+    }
+
+    private fun generateNewTag() = tagOrigins.size
 
     private fun hasTag(value: Value) = valueTags.contains(value)
 
