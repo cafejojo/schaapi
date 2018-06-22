@@ -70,10 +70,9 @@ class GeneralizedNodeComparator : GeneralizedNodeComparator<JimpleNode> {
 
     private fun compareInstanceWithTemplate(template: JimpleNode, templateValue: Value, instanceValue: Value): Boolean {
         val templateTag = valueTags[templateValue]
-            ?: throw IllegalArgumentException("Template tag is unexpectedly no longer available.")
-        val instanceTag = valueTags[instanceValue]
+            ?: throw IllegalArgumentException("Given template value should be tagged.")
 
-        if (hasTag(instanceValue)) return templateTag == instanceTag
+        if (hasTag(instanceValue)) return templateTag == valueTags[instanceValue]
 
         if (!isDefinedIn(templateValue, template.statement)) return false
 
