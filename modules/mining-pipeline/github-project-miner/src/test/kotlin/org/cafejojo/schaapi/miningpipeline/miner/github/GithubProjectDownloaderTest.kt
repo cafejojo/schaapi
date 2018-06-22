@@ -17,26 +17,34 @@ import java.nio.file.Files
 internal object GitHubProjectDownloaderTest : Spek({
     var output = Files.createTempDirectory("project-downloader").toFile()
 
-    // Create zip file with given dir name (+ zip extension) in output with searchContent single text file with given
-    // file content
-    fun addZipFile(dirName: String, fileContent: String, customOutput: File = output): File {
+    /**
+     * Creates a ZIP file with the given directory name (+ZIP extension) in [customOutput] containing a single text file
+     * with [fileContents] as its contents.
+     *
+     * @param zipName the name of the directory that should be zipped
+     * @param fileContents the contents to add to the only file in the ZIP
+     * @param customOutput the directory to store the created ZIP in
+     */
+    fun addZipFile(zipName: String, fileContents: String, customOutput: File = output): File {
         // Directory which represents what should be zipped
-        val tempDir = File(customOutput, dirName)
+        val tempDir = File(customOutput, zipName)
         val tempMasterDir = File(tempDir, "master").apply { mkdirs() }
-        // Temp file
+
+        // Temporary file
         File(tempMasterDir, "temp.txt").apply {
             createNewFile()
-            writeText(fileContent)
+            writeText(fileContents)
         }
 
         // File which represents the zip file
-        val zipFile = File(customOutput, "$dirName.zip").apply {
+        val zipFile = File(customOutput, "$zipName.zip").apply {
+            this.createNewFile()
             ZipUtil.pack(tempDir, this)
         }
         tempDir.deleteRecursively()
 
-        assertThat(customOutput.listFiles()).contains(zipFile)
-        assertThat(customOutput.listFiles()).doesNotContain(tempDir)
+        check(zipFile in customOutput.listFiles())
+        check(tempDir !in customOutput.listFiles())
 
         return zipFile
     }
