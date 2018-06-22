@@ -9,6 +9,7 @@ import java.io.File
  * Represents the complete Schaapi pipeline.
  */
 class MiningPipeline<SO : SearchOptions, UP : Project, LP : Project, N : Node>(
+    private val csvWriter: CSVWriter<N>,
     private val outputDirectory: File,
     private val projectMiner: ProjectMiner<SO, UP>,
     private val searchOptions: SO,
@@ -46,6 +47,7 @@ class MiningPipeline<SO : SearchOptions, UP : Project, LP : Project, N : Node>(
                 .also { logger.info { "Started generating library usage graphs for ${it.count()} projects." } }
                 .flatMap { libraryUsageGraphGenerator.generate(libraryProject, it) }
                 .also { logger.info { "Successfully generated ${it.size} library usage graphs." } }
+                .also { csvWriter.writeGraphSize(it) }
 
                 .also { logger.info { "Started finding patterns in ${it.size} library usage graphs." } }
                 .next(patternDetector::findPatterns)

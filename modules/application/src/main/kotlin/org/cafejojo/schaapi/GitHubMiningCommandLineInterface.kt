@@ -4,6 +4,7 @@ import mu.KLogging
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.Option
 import org.apache.commons.cli.Options
+import org.cafejojo.schaapi.miningpipeline.CSVWriter
 import org.cafejojo.schaapi.miningpipeline.MiningPipeline
 import org.cafejojo.schaapi.miningpipeline.PatternFilter
 import org.cafejojo.schaapi.miningpipeline.miner.github.GitHubProjectMiner
@@ -17,6 +18,7 @@ import org.cafejojo.schaapi.miningpipeline.projectcompiler.javamaven.JavaMavenPr
 import org.cafejojo.schaapi.miningpipeline.testgenerator.jimpleevosuite.TestGenerator
 import org.cafejojo.schaapi.miningpipeline.usagegraphgenerator.jimple.JimpleLibraryUsageGraphGenerator
 import org.cafejojo.schaapi.models.libraryusagegraph.jimple.GeneralizedNodeComparator
+import org.cafejojo.schaapi.models.libraryusagegraph.jimple.JimpleNode
 import org.cafejojo.schaapi.models.libraryusagegraph.jimple.JimplePathEnumerator
 import org.cafejojo.schaapi.models.project.JavaJarProject
 import org.cafejojo.schaapi.models.project.JavaMavenProject
@@ -103,8 +105,10 @@ internal class GitHubMiningCommandLineInterface {
 
         val libraryProject = JavaJarProject(library)
         val jimpleLibraryUsageGraphGenerator = JimpleLibraryUsageGraphGenerator()
+        val csvWriter = CSVWriter<JimpleNode>(output)
 
         MiningPipeline(
+            csvWriter,
             outputDirectory = output,
             projectMiner = GitHubProjectMiner(token, output) { JavaMavenProject(it, mavenDir) },
             searchOptions = MavenProjectSearchOptions(groupId, artifactId, version, maxProjects).apply {
@@ -115,11 +119,13 @@ internal class GitHubMiningCommandLineInterface {
             userProjectCompiler = JavaMavenProjectCompiler(),
             libraryUsageGraphGenerator = jimpleLibraryUsageGraphGenerator,
             patternDetector = CCSpanPatternDetector(
+                csvWriter,
                 patternDetectorMinCount,
                 { node -> JimplePathEnumerator(node, maxSequenceLength) },
                 GeneralizedNodeComparator()
             ),
             patternFilter = PatternFilter(
+                csvWriter,
                 IncompleteInitPatternFilterRule(),
                 LengthPatternFilterRule(),
                 EmptyLoopPatternFilterRule()
