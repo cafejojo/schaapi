@@ -15,7 +15,7 @@ internal class PathEnumeratorTest : Spek({
             node1.successors.addAll(listOf(node2))
             node2.successors.addAll(listOf(node3))
 
-            val paths = PathEnumerator(node1, 100).enumerate()
+            val paths = SimplePathEnumerator(node1, 100).enumerate()
             assertThat(paths)
                 .isEqualTo(
                     listOf(
@@ -36,7 +36,7 @@ internal class PathEnumeratorTest : Spek({
             node3.successors.addAll(listOf(node5))
             node4.successors.addAll(listOf(node5))
 
-            val paths = PathEnumerator(node1, 100).enumerate()
+            val paths = SimplePathEnumerator(node1, 100).enumerate()
 
             assertThat(paths)
                 .isEqualTo(
@@ -65,7 +65,7 @@ internal class PathEnumeratorTest : Spek({
             node6.successors.addAll(listOf(node7))
             node7.successors.addAll(listOf(node8))
 
-            val paths = PathEnumerator(node1, 100).enumerate()
+            val paths = SimplePathEnumerator(node1, 100).enumerate()
 
             assertThat(paths)
                 .isEqualTo(
@@ -87,7 +87,7 @@ internal class PathEnumeratorTest : Spek({
             node2.successors.addAll(listOf(node3))
             node3.successors.addAll(listOf(node4, node2))
 
-            val paths = PathEnumerator(node1, 100).enumerate()
+            val paths = SimplePathEnumerator(node1, 100).enumerate()
 
             assertThat(paths)
                 .isEqualTo(
@@ -111,7 +111,7 @@ internal class PathEnumeratorTest : Spek({
             node4.successors.addAll(listOf(node5, node3))
             node5.successors.addAll(listOf(node6, node2))
 
-            val paths = PathEnumerator(node1, 100).enumerate()
+            val paths = SimplePathEnumerator(node1, 100).enumerate()
 
             assertThat(paths)
                 .isEqualTo(
@@ -197,7 +197,7 @@ internal class PathEnumeratorTest : Spek({
             node2.successors.addAll(listOf(node3, node4))
             node3.successors.addAll(listOf(node5))
 
-            val paths = PathEnumerator(node1, 3).enumerate()
+            val paths = SimplePathEnumerator(node1, 3).enumerate()
 
             assertThat(paths)
                 .isEqualTo(
