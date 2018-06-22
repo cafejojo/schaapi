@@ -5,7 +5,6 @@ import org.cafejojo.schaapi.models.project.JavaProject
 import soot.EquivalentValue
 import soot.Modifier
 import soot.PrimType
-import soot.Scene
 import soot.SootClass
 import soot.Type
 import soot.Value
