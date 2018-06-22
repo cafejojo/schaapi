@@ -2,9 +2,11 @@ package org.cafejojo.schaapi.miningpipeline.usagegraphgenerator.jimple.filters
 
 import org.cafejojo.schaapi.models.libraryusagegraph.jimple.JimpleValueVisitor
 import org.cafejojo.schaapi.models.project.JavaProject
+import soot.AnySubType
+import soot.ArrayType
 import soot.EquivalentValue
-import soot.Modifier
 import soot.PrimType
+import soot.RefType
 import soot.SootClass
 import soot.Type
 import soot.Value
@@ -178,11 +180,16 @@ private class UserUsageValueFilterRule(private val libraryProject: JavaProject) 
      */
     override fun accumulate(result1: Boolean, result2: Boolean) = result1 && result2
 
-    private fun isNotUserClass(type: Type) = type is PrimType || isNotUserClass(type.toString())
-    private fun isNotUserClass(clazz: SootClass) = isNotUserClass(clazz.name)
-    private fun isNotUserClass(className: String) =
-        libraryProject.classNames.contains(className)
-            || SootClass(className, Modifier.PUBLIC).isJavaLibraryClass
+    private fun isNotUserClass(type: Type): Boolean =
+        when (type) {
+            is ArrayType -> isNotUserClass(type.baseType)
+            is AnySubType -> isNotUserClass(type.base)
+            is RefType -> isNotUserClass(type.sootClass)
+            else -> true
+        }
+
+    private fun isNotUserClass(clazz: SootClass) =
+        libraryProject.classNames.contains(clazz.name) || clazz.isJavaLibraryClass
 }
 
 /**
