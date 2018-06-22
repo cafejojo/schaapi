@@ -12,7 +12,7 @@ import java.nio.charset.Charset
  * Executes the EvoSuite test generator on a new process and returns once that process finishes.
  *
  * @property fullyQualifiedClassName the class that EvoSuite should generate tests for
- * @property classpath the class path on which to find the class that should be tested
+ * @property classpath the classpath on which to find the class that should be tested
  * @property outputDirectory the output directory path for the generated EvoSuite tests
  * @property generationTimeoutSeconds how long to let the EvoSuite test generator run (in seconds)
  * @property processStandardStream a stream to output EvoSuite's standard messages to

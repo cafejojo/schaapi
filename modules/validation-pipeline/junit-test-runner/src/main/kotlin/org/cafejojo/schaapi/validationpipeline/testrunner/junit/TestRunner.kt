@@ -17,7 +17,7 @@ class TestRunner : TestRunner {
      *
      * @param rootDir the directory that contains the classes with the tests to be executed
      * @param testFiles the files that contain the tests to be run
-     * @param classpathDirectories the directories that need to be put on the class path during a test execution
+     * @param classpathDirectories the directories that need to be put on the classpath during a test execution
      * @return the results of the executed tests, where each test class has its own entry in [TestResults.subResults]
      */
     override fun run(rootDir: File, testFiles: List<File>, classpathDirectories: List<File>): TestResults {
