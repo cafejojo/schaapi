@@ -13,7 +13,7 @@ import org.jetbrains.spek.api.dsl.xit
 import soot.jimple.DefinitionStmt
 import soot.jimple.IfStmt
 
-internal object CCSpanJimpleNodeIntegrationTest : Spek({
+internal object PrefixSpanJimpleNodeIntegrationTest : Spek({
     /**
      * Calculates how many sub-sequences a given sequence may have.
      */
