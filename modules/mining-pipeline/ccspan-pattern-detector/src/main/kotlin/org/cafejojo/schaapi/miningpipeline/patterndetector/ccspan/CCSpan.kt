@@ -47,7 +47,8 @@ internal class CCSpan<N : Node>(
 
             identifyNonClosedSequences()
             frequentClosedContiguousSequences.addAll(
-                sequencesOfPreviousLength.filter { it.isClosedSequence }.map { it.sequence })
+                sequencesOfPreviousLength.filter { it.isClosedSequence }.map { it.sequence }
+            )
 
             shiftCurrent()
             subSequenceLength++
