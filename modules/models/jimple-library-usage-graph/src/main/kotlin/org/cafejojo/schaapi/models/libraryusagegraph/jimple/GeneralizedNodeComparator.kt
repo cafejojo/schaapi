@@ -56,19 +56,18 @@ class GeneralizedNodeComparator : GeneralizedNodeComparator<JimpleNode> {
         template.getValues().forEachIndexed { index, templateValue ->
             val instanceValue = instance.getValues()[index]
 
-            if (hasTag(templateValue)) {
-                if (!compareInstanceWithTemplate(template, templateValue, instanceValue)) return false
-            } else if (hasTag(instanceValue)) {
-                return false
-            } else {
-                assignNewTag(template, templateValue, instanceValue)
+            when {
+                hasTag(templateValue) ->
+                    if (!instanceNotAheadOfTemplate(template, templateValue, instanceValue)) return false
+                hasTag(instanceValue) -> return false
+                else -> assignNewTag(template, templateValue, instanceValue)
             }
         }
 
         return true
     }
 
-    private fun compareInstanceWithTemplate(template: JimpleNode, templateValue: Value, instanceValue: Value): Boolean {
+    private fun instanceNotAheadOfTemplate(template: JimpleNode, templateValue: Value, instanceValue: Value): Boolean {
         val templateTag = valueTags[templateValue]
             ?: throw IllegalArgumentException("Given template value should be tagged.")
 
