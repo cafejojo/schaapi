@@ -41,7 +41,7 @@ internal class UserUsageProcessor(project: JavaProject) : Processor {
                 }
             }
 
-    companion object {
+    private companion object {
         private var localsInserted = 0
     }
 }
