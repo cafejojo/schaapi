@@ -58,7 +58,7 @@ internal object StatementFilterTest : Spek({
             assertThatItRetains(mock<IfStmt> {
                 on { it.condition } doReturn nonLibraryValue
             })
-            assertThatItDoesNotRetain(mock<IfStmt> {
+            assertThatItRetains(mock<IfStmt> {
                 on { it.condition } doReturn userValue
             })
         }

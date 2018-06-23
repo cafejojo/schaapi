@@ -4,6 +4,7 @@ import org.cafejojo.schaapi.miningpipeline.LibraryUsageGraphGenerator
 import org.cafejojo.schaapi.miningpipeline.usagegraphgenerator.jimple.filters.BranchStatementFilter
 import org.cafejojo.schaapi.miningpipeline.usagegraphgenerator.jimple.filters.RecursiveGotoFilter
 import org.cafejojo.schaapi.miningpipeline.usagegraphgenerator.jimple.filters.StatementFilter
+import org.cafejojo.schaapi.miningpipeline.usagegraphgenerator.jimple.processors.UserUsageProcessor
 import org.cafejojo.schaapi.models.DfsIterator
 import org.cafejojo.schaapi.models.libraryusagegraph.jimple.JimpleNode
 import org.cafejojo.schaapi.models.libraryusagegraph.jimple.SootNameEquivalenceChanger
@@ -97,6 +98,9 @@ class JimpleLibraryUsageGraphGenerator : LibraryUsageGraphGenerator<JavaProject,
             RecursiveGotoFilter()
         )
         filters.forEach { it.apply(methodBody) }
+
+        val processors = listOf(UserUsageProcessor(libraryProject))
+        processors.forEach { it.process(methodBody) }
 
         lugStatistics.validStatements += methodBody.units.size
         if (methodBody.units.isEmpty()) methodBody.units.add(Jimple.v().newReturnVoidStmt())
