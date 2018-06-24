@@ -17,7 +17,6 @@ import org.cafejojo.schaapi.miningpipeline.projectcompiler.javamaven.JavaMavenPr
 import org.cafejojo.schaapi.miningpipeline.testgenerator.jimpleevosuite.TestGenerator
 import org.cafejojo.schaapi.miningpipeline.usagegraphgenerator.jimple.JimpleLibraryUsageGraphGenerator
 import org.cafejojo.schaapi.models.libraryusagegraph.jimple.GeneralizedNodeComparator
-import org.cafejojo.schaapi.models.libraryusagegraph.jimple.JimpleNode
 import org.cafejojo.schaapi.models.libraryusagegraph.jimple.JimplePathEnumerator
 import org.cafejojo.schaapi.models.project.JavaMavenProject
 import java.io.File
@@ -56,10 +55,9 @@ internal class DirectoryMiningCommandLineInterface {
 
         val libraryProject = JavaMavenProject(library, mavenDir)
         val jimpleLibraryUsageGraphGenerator = JimpleLibraryUsageGraphGenerator()
-        val csvWriter = CSVWriter<JimpleNode>(output)
 
         MiningPipeline(
-            csvWriter,
+            csvWriter = CSVWriter(output),
             outputDirectory = output,
             projectMiner = DirectoryProjectMiner { JavaMavenProject(it, mavenDir) },
             searchOptions = DirectorySearchOptions(File(userDirDirs)),

@@ -4,9 +4,12 @@ import mu.KLogging
 import org.cafejojo.schaapi.models.Node
 import java.io.File
 import java.io.FileWriter
+import java.time.LocalDateTime
 
-class CSVWriter<N : Node>(private val output: File) {
+class CSVWriter<N : Node>(parent: File) {
     companion object : KLogging()
+
+    private val output: File = File(parent, "${LocalDateTime.now()}").apply { mkdir() }
 
     fun writeGraphSizes(graphs: List<N>) {
         val graphSizeFile = File(output, "graphSize.csv")
