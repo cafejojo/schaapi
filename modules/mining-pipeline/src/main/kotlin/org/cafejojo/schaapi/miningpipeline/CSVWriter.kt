@@ -5,72 +5,62 @@ import org.cafejojo.schaapi.models.Node
 import java.io.File
 import java.io.FileWriter
 
-class CSVWriter<N : Node>(parent: File) {
+/**
+ * CSV writer that writes the desired data to separate csv files under a data directory.
+ *
+ * @param output output within which to contain the data file
+ */
+class CSVWriter<N : Node>(output: File) {
     companion object : KLogging()
 
-    private val output: File = parent.resolve("data/").apply { mkdirs() }
+    private val dataFile: File = output.resolve("data/").apply { mkdirs() }
 
+    /**
+     * Write graph sizes to file.
+     */
     fun writeGraphSizes(graphs: List<N>) {
-        val graphSizeFile = File(output, "graphSize.csv")
+        val graphSizeFile = File(dataFile, "graphSize.csv")
         logger.debug { "Writing graph sizes to ${graphSizeFile.absolutePath}." }
-
-        FileWriter(graphSizeFile).use { fileWriter ->
-            val graphSizes = mutableMapOf<Int, Int>()
-
-            graphs.forEach { graphSizes[it.count()] = graphSizes[it.count()]?.inc() ?: 1 }
-
-            fileWriter.write("graph_size,count\n")
-            graphSizes.forEach { fileWriter.write("${it.key},${it.value}\n") }
-        }
-
+        writeToFile(graphSizeFile, graphs, { graph: N -> graph.count() }, "graph_size")
         logger.debug { "Wrote pattern lengths to ${graphSizeFile.absolutePath}." }
     }
 
+    /**
+     * Write pattern lengths to file.
+     */
     fun writePatternLengths(patterns: List<Pattern<N>>) {
-        val patternsFile = File(output, "patterns.csv")
+        val patternsFile = File(dataFile, "patterns.csv")
         logger.debug { "Writing pattern lengths to ${patternsFile.absolutePath}." }
-
-        val fileWriter = FileWriter(patternsFile)
-        val patternLengths = mutableMapOf<Int, Int>()
-
-        patterns.forEach { patternLengths[it.size] = patternLengths[it.size]?.inc() ?: 1 }
-
-        fileWriter.write("pattern_length,count\n")
-        patternLengths.forEach { fileWriter.write("${it.key},${it.value}\n") }
-
-        fileWriter.close()
+        writeToFile(patternsFile, patterns, { pattern: Pattern<N> -> pattern.size }, "pattern_length")
         logger.debug { "Wrote pattern lengths to ${patternsFile.absolutePath}." }
     }
 
+    /**
+     * Write filtered pattern lengths to file.
+     */
     fun writeFilteredPatternLengths(patterns: List<Pattern<N>>) {
-        val filteredPatternsFile = File(output, "filteredPatterns.csv")
+        val filteredPatternsFile = File(dataFile, "filteredPatterns.csv")
         logger.debug { "Writing filtered pattern lengths to ${filteredPatternsFile.absolutePath}." }
-
-        val fileWriter = FileWriter(filteredPatternsFile)
-        val patternLengths = mutableMapOf<Int, Int>()
-
-        patterns.forEach { patternLengths[it.size] = patternLengths[it.size]?.inc() ?: 1 }
-
-        fileWriter.write("pattern_length,count\n")
-        patternLengths.forEach { fileWriter.write("${it.key},${it.value}\n") }
-
-        fileWriter.close()
+        writeToFile(filteredPatternsFile, patterns, { pattern: Pattern<N> -> pattern.size }, "pattern_length")
         logger.debug { "Wrote filtered pattern lengths to ${filteredPatternsFile.absolutePath}." }
     }
 
-    fun writeSequenceLengths(patterns: List<List<N>>) {
-        val sequencesFile = File(output, "sequences.csv")
+    /**
+     * Write sequence lengths to file.
+     */
+    fun writeSequenceLengths(sequences: List<List<N>>) {
+        val sequencesFile = File(dataFile, "sequences.csv")
         logger.debug { "Writing sequence lengths to ${sequencesFile.absolutePath}." }
-
-        val fileWriter = FileWriter(sequencesFile)
-        val patternLengths = mutableMapOf<Int, Int>()
-
-        patterns.forEach { patternLengths[it.size] = patternLengths[it.size]?.inc() ?: 1 }
-
-        fileWriter.write("sequence_length,count\n")
-        patternLengths.forEach { fileWriter.write("${it.key},${it.value}\n") }
-
-        fileWriter.close()
+        writeToFile(sequencesFile, sequences, { sequence: List<N> -> sequence.size }, "sequence_length")
         logger.debug { "Wrote sequence lengths to ${sequencesFile.absolutePath}." }
     }
+
+    private fun <P> writeToFile(output: File, items: List<P>, mapToInt: (P) -> Int, type: String) =
+        FileWriter(output).use {
+            val values = mutableMapOf<Int, Int>()
+            items.forEach { values[mapToInt(it)] = values[mapToInt(it)]?.inc() ?: 1 }
+
+            it.write("$type,count\n")
+            values.forEach { value -> it.write("${value.key},${value.value}\n") }
+        }
 }
