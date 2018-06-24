@@ -6,11 +6,18 @@ import org.apache.commons.cli.Option
 import org.apache.commons.cli.Options
 import org.cafejojo.schaapi.miningpipeline.MiningPipeline
 import org.cafejojo.schaapi.miningpipeline.PatternFilter
+import org.cafejojo.schaapi.miningpipeline.miner.github.GitHubProjectMiner
 import org.cafejojo.schaapi.miningpipeline.miner.github.MavenProjectSearchOptions
+import org.cafejojo.schaapi.miningpipeline.patterndetector.ccspan.CCSpanPatternDetector
+import org.cafejojo.schaapi.miningpipeline.patternfilter.jimple.EmptyLoopPatternFilterRule
 import org.cafejojo.schaapi.miningpipeline.patternfilter.jimple.IncompleteInitPatternFilterRule
 import org.cafejojo.schaapi.miningpipeline.patternfilter.jimple.LengthPatternFilterRule
+import org.cafejojo.schaapi.miningpipeline.projectcompiler.javajar.JavaJarProjectCompiler
+import org.cafejojo.schaapi.miningpipeline.projectcompiler.javamaven.JavaMavenProjectCompiler
 import org.cafejojo.schaapi.miningpipeline.testgenerator.jimpleevosuite.TestGenerator
+import org.cafejojo.schaapi.miningpipeline.usagegraphgenerator.jimple.JimpleLibraryUsageGraphGenerator
 import org.cafejojo.schaapi.models.libraryusagegraph.jimple.GeneralizedNodeComparator
+import org.cafejojo.schaapi.models.libraryusagegraph.jimple.JimplePathEnumerator
 import org.cafejojo.schaapi.models.project.JavaJarProject
 import org.cafejojo.schaapi.models.project.JavaMavenProject
 import org.cafejojo.schaapi.models.project.JavaProject
@@ -97,7 +104,7 @@ internal class GitHubMiningCommandLineInterface {
 
         val jimpleLibraryUsageGraphGenerator = JimpleLibraryUsageGraphGenerator()
 
-        when(library) {
+        when (library) {
             is JavaJarProject -> MiningPipeline(
                 outputDirectory = output,
                 projectMiner = GitHubProjectMiner(token, output) { JavaMavenProject(it, mavenDir) },
@@ -133,7 +140,7 @@ internal class GitHubMiningCommandLineInterface {
                     this.sortByStargazers = cmd.hasOption("sort_by_stargazers")
                     this.sortByWatchers = cmd.hasOption("sort_by_watchers")
                 },
-                libraryProjectCompiler = JavaMavenProject(),
+                libraryProjectCompiler = JavaMavenProjectCompiler(),
                 userProjectCompiler = JavaMavenProjectCompiler(),
                 libraryUsageGraphGenerator = jimpleLibraryUsageGraphGenerator,
                 patternDetector = CCSpanPatternDetector(

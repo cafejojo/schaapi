@@ -7,7 +7,6 @@ import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Option
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
-import org.cafejojo.schaapi.miningpipeline.projectcompiler.javamaven.MavenInstaller
 import org.cafejojo.schaapi.models.project.JavaJarProject
 import org.cafejojo.schaapi.models.project.JavaMavenProject
 import java.io.File
@@ -33,7 +32,7 @@ fun main(args: Array<String>) {
 
     val mavenDir = File(cmd.getOptionValue("maven_dir") ?: JavaMavenProject.DEFAULT_MAVEN_HOME.absolutePath)
     val output = File(cmd.getOptionValue('o')).apply { mkdirs() }
-    val libraryDirectory = File(cmd.getOptionValue('l'))
+    val libraryDir = File(cmd.getOptionValue('l'))
     val libraryFlavor = cmd.getOptionValue("library_flavor", DEFAULT_LIBRARY_FLAVOR)
 
     val flavor = cmd.getOptionValue("flavor", DEFAULT_PIPELINE_TYPE)
