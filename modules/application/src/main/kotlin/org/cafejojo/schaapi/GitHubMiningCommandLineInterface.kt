@@ -118,14 +118,12 @@ internal class GitHubMiningCommandLineInterface {
             libraryProjectCompiler = JavaJarProjectCompiler(),
             userProjectCompiler = JavaMavenProjectCompiler(),
             libraryUsageGraphGenerator = jimpleLibraryUsageGraphGenerator,
+            sequenceEnumerator = { node -> JimplePathEnumerator(node, maxSequenceLength) },
             patternDetector = CCSpanPatternDetector(
-                csvWriter,
                 patternDetectorMinCount,
-                { node -> JimplePathEnumerator(node, maxSequenceLength) },
                 GeneralizedNodeComparator()
             ),
             patternFilter = PatternFilter(
-                csvWriter,
                 IncompleteInitPatternFilterRule(),
                 LengthPatternFilterRule(),
                 EmptyLoopPatternFilterRule()

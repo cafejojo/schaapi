@@ -7,10 +7,10 @@ import org.cafejojo.schaapi.models.Node
  */
 interface PatternDetector<N : Node> {
     /**
-     * Detects patterns that are common to the given [graphs].
+     * Detects patterns that are common in the given set of [sequences].
      *
-     * @param graphs a list of graphs, where each graph is represented by a [Node]
+     * @param sequences a list of sequences, each a list of [Node]s
      * @return the list of detected patterns
      */
-    fun findPatterns(graphs: List<N>): List<Pattern<N>>
+    fun findPatterns(sequences: List<List<N>>): List<Pattern<N>>
 }

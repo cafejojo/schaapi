@@ -2,6 +2,7 @@ package org.cafejojo.schaapi.miningpipeline
 
 import mu.KLogging
 import org.cafejojo.schaapi.models.Node
+import org.cafejojo.schaapi.models.PathEnumerator
 import org.cafejojo.schaapi.models.Project
 import java.io.File
 
@@ -16,6 +17,7 @@ class MiningPipeline<SO : SearchOptions, UP : Project, LP : Project, N : Node>(
     private val libraryProjectCompiler: ProjectCompiler<LP>,
     private val userProjectCompiler: ProjectCompiler<UP>,
     private val libraryUsageGraphGenerator: LibraryUsageGraphGenerator<LP, UP, N>,
+    private val sequenceEnumerator: (N) -> PathEnumerator<N>,
     private val patternDetector: PatternDetector<N>,
     private val patternFilter: PatternFilter<N>,
     private val testGenerator: TestGenerator<N>
@@ -47,15 +49,22 @@ class MiningPipeline<SO : SearchOptions, UP : Project, LP : Project, N : Node>(
                 .also { logger.info { "Started generating library usage graphs for ${it.count()} projects." } }
                 .flatMap { libraryUsageGraphGenerator.generate(libraryProject, it) }
                 .also { logger.info { "Successfully generated ${it.size} library usage graphs." } }
-                .also { csvWriter.writeGraphSize(it) }
+                .also { csvWriter.writeGraphSizes(it) }
+
+                .also { logger.info { "Started generating sequences for ${it.size} usage graphs." } }
+                .flatMap { sequenceEnumerator(it).enumerate() }
+                .also { logger.info { "Successfully generated ${it.size} sequences." } }
+                .also { csvWriter.writeSequenceLengths(it) }
 
                 .also { logger.info { "Started finding patterns in ${it.size} library usage graphs." } }
                 .next(patternDetector::findPatterns)
                 .also { logger.info { "Successfully found ${it.size} patterns." } }
+                .also { csvWriter.writePatternLengths(it) }
 
                 .also { logger.info { "Started filtering ${it.size} patterns." } }
                 .next(patternFilter::filter)
                 .also { logger.info { "${it.size} patterns remain after filtering." } }
+                .also { csvWriter.writeFilteredPatternLengths(it) }
 
                 .also { logger.info { "Started generating test for ${it.size} usage patterns." } }
                 .next(testGenerator::generate)

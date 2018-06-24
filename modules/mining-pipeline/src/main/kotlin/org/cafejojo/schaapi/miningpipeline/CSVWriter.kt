@@ -8,7 +8,7 @@ import java.io.FileWriter
 class CSVWriter<N : Node>(private val output: File) {
     companion object : KLogging()
 
-    fun writeGraphSize(graphs: List<N>) {
+    fun writeGraphSizes(graphs: List<N>) {
         val graphSizeFile = File(output, "graphSize.csv")
         logger.debug { "Writing graph sizes to ${graphSizeFile.absolutePath}." }
 
