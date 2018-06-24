@@ -4,26 +4,25 @@ import mu.KLogging
 import org.cafejojo.schaapi.models.Node
 import java.io.File
 import java.io.FileWriter
-import java.time.LocalDateTime
 
 class CSVWriter<N : Node>(parent: File) {
     companion object : KLogging()
 
-    private val output: File = File(parent, "${LocalDateTime.now()}").apply { mkdir() }
+    private val output: File = parent.resolve("data/").apply { mkdirs() }
 
     fun writeGraphSizes(graphs: List<N>) {
         val graphSizeFile = File(output, "graphSize.csv")
         logger.debug { "Writing graph sizes to ${graphSizeFile.absolutePath}." }
 
-        val fileWriter = FileWriter(graphSizeFile)
-        val graphSizes = mutableMapOf<Int, Int>()
+        FileWriter(graphSizeFile).use { fileWriter ->
+            val graphSizes = mutableMapOf<Int, Int>()
 
-        graphs.forEach { graphSizes[it.count()] = graphSizes[it.count()]?.inc() ?: 1 }
+            graphs.forEach { graphSizes[it.count()] = graphSizes[it.count()]?.inc() ?: 1 }
 
-        fileWriter.write("graph_size,count\n")
-        graphSizes.forEach { fileWriter.write("${it.key},${it.value}\n") }
+            fileWriter.write("graph_size,count\n")
+            graphSizes.forEach { fileWriter.write("${it.key},${it.value}\n") }
+        }
 
-        fileWriter.close()
         logger.debug { "Wrote pattern lengths to ${graphSizeFile.absolutePath}." }
     }
 
