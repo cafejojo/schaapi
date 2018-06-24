@@ -91,9 +91,9 @@ class JimplePathEnumerator(entryNode: JimpleNode, maximumPathLength: Int) :
             ?: throw IllegalStateException("SwitchStmt changed class after copy.")
         val defaultTargetNode = node.successors
             .filterIsInstance<JimpleNode>()
-            .singleEquiv { it.statement === statementCopy.defaultTarget }
+            .first { it.statement === statementCopy.defaultTarget }
 
-        val currentBranchNode = node.successors.singleEquiv { it in path }
+        val currentBranchNode = node.successors.first { it in path }
         (0 until node.successors.size)
             .filterNot { node.successors[it] === currentBranchNode }
             .filterNot { node.successors[it] === defaultTargetNode }
@@ -151,21 +151,3 @@ private fun MutableList<JimpleNode>.replaceAndUpdateTargets(old: JimpleNode, new
 }
 
 private fun Node.findNextCommonNodeWithOrNull(node: Node) = this.toList().intersect(node.toList()).firstOrNull()
-
-/**
- * Returns the first element for which [predicate] is true iff all elements for which [predicate] is true are
- * equivalent; otherwise an [IllegalArgumentException] is thrown.
- *
- * @param N the type of [Node] contained in this [Iterable]
- * @param predicate the predicate to check for
- * @return the first element for which [predicate] is true iff all elements for which [predicate] is true are
- * equivalent
- */
-private fun <N : Node> Iterable<N>.singleEquiv(predicate: (N) -> Boolean): N {
-    val candidates = this.toList().filter(predicate)
-    require(candidates.isNotEmpty()) { "No elements match the predicate." }
-    require(candidates.all { it.equivTo(candidates.first()) }) {
-        "Not all elements matching the predicate are equivalent."
-    }
-    return candidates.first()
-}

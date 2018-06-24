@@ -413,6 +413,70 @@ internal object JimplePathEnumeratorTest : Spek({
                     )
                 )
             }
+
+            it("correctly identifies the current branch when a branch is empty") {
+                val endNode = createReturnNode(local)
+                val switchDefaultTargetGoto = createGotoNode(endNode)
+                val switchDefaultTargetNode = createAssignNode(local, 3, switchDefaultTargetGoto)
+                val switchTargetAGoto = createGotoNode(endNode)
+                val switchTargetANode = createAssignNode(local, 1, switchTargetAGoto)
+                val switchNode = createSwitchNode(local, switchDefaultTargetNode, switchTargetANode, endNode)
+                val localInitNode = createAssignNode(local, 0, switchNode)
+
+                assertThatEnumeratorCreatesPaths(localInitNode,
+                    listOf(
+                        localInitNode,
+                        createSwitchNode(local, switchDefaultTargetNode, endNode, endNode),
+                        switchDefaultTargetNode,
+                        switchDefaultTargetGoto,
+                        endNode
+                    ),
+                    listOf(
+                        localInitNode,
+                        createSwitchNode(local, endNode, switchTargetANode, endNode),
+                        switchTargetANode,
+                        switchTargetAGoto,
+                        endNode
+                    ),
+                    listOf(
+                        localInitNode,
+                        createSwitchNode(local, endNode, endNode, endNode),
+                        endNode
+                    )
+                )
+            }
+
+            it("correctly identifies the current branch when the default is empty") {
+                val endNode = createReturnNode(local)
+                val switchTargetBGoto = createGotoNode(endNode)
+                val switchTargetBNode = createAssignNode(local, 2, switchTargetBGoto)
+                val switchTargetAGoto = createGotoNode(endNode)
+                val switchTargetANode = createAssignNode(local, 1, switchTargetAGoto)
+                val switchNode = createSwitchNode(local, endNode, switchTargetANode, switchTargetBNode)
+                val localInitNode = createAssignNode(local, 0, switchNode)
+
+                assertThatEnumeratorCreatesPaths(localInitNode,
+                    listOf(
+                        localInitNode,
+                        createSwitchNode(local, endNode, endNode, endNode),
+                        endNode
+                    ),
+                    listOf(
+                        localInitNode,
+                        createSwitchNode(local, endNode, switchTargetANode, endNode),
+                        switchTargetANode,
+                        switchTargetAGoto,
+                        endNode
+                    ),
+                    listOf(
+                        localInitNode,
+                        createSwitchNode(local, endNode, endNode, switchTargetBNode),
+                        switchTargetBNode,
+                        switchTargetBGoto,
+                        endNode
+                    )
+                )
+            }
         }
     }
 })
