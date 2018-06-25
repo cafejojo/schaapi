@@ -141,16 +141,16 @@ internal class ClassGenerator(className: String) {
 
     private fun addReturnStatement(jimpleBody: Body): Type {
         val lastStatement = jimpleBody.units.last()
-        val returnType = when (lastStatement) {
-            is JReturnStmt -> lastStatement.op.type
+        return when (lastStatement) {
+            is JReturnStmt ->
+                if (lastStatement.op.type == NullType.v()) RefType.v("java.lang.Object")
+                else lastStatement.op.type
             is JReturnVoidStmt -> VoidType.v()
             else -> {
                 jimpleBody.units.add(Jimple.v().newReturnVoidStmt())
                 VoidType.v()
             }
         }
-
-        return if (returnType == NullType.v()) RefType.v("java.lang.Object") else returnType
     }
 
     private fun findUnboundVariables(statements: List<Unit>): Set<Value> {
