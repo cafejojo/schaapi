@@ -1,6 +1,11 @@
 <p align="center">
-    <img src="https://user-images.githubusercontent.com/15815208/41853512-38dd02c4-788e-11e8-8e56-7035e66eabb7.png" width="400"><br>
-    Early detection of breaking changes based on API usage<br><br><br>
+    <br>
+    <img src="https://user-images.githubusercontent.com/15815208/41853512-38dd02c4-788e-11e8-8e56-7035e66eabb7.png" width="400">
+    <br>
+    Early detection of breaking changes based on API usage
+    <br>
+    <br>
+    <br>
 </p>
     
 [![Travis build status][travis-status]](https://travis-ci.org/cafejojo/schaapi)
