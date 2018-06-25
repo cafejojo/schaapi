@@ -45,16 +45,6 @@ class CsvWriter<N : Node>(output: File) {
         logger.debug { "Wrote filtered pattern lengths to ${filteredPatternsFile.absolutePath}." }
     }
 
-    /**
-     * Write sequence lengths to file.
-     */
-    fun writeSequenceLengths(sequences: List<List<N>>) {
-        val sequencesFile = File(dataFile, "sequences.csv")
-        logger.debug { "Writing sequence lengths to ${sequencesFile.absolutePath}." }
-        writeToFile(sequencesFile, sequences, { sequence: List<N> -> sequence.size }, "sequence_length")
-        logger.debug { "Wrote sequence lengths to ${sequencesFile.absolutePath}." }
-    }
-
     private fun <P> writeToFile(output: File, items: List<P>, mapToInt: (P) -> Int, type: String) =
         FileWriter(output).use {
             val values = mutableMapOf<Int, Int>()
