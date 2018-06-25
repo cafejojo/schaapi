@@ -1,4 +1,13 @@
-# 🐑 schaapi
+<p align="center">
+    <br>
+    <img src="https://user-images.githubusercontent.com/15815208/41853512-38dd02c4-788e-11e8-8e56-7035e66eabb7.png" width="400">
+    <br>
+    Early detection of breaking changes based on API usage
+    <br>
+    <br>
+    <br>
+</p>
+    
 [![Travis build status][travis-status]](https://travis-ci.org/cafejojo/schaapi)
 [![AppVeyor build status][appveyor-status]](https://ci.appveyor.com/project/CafeJojo/schaapi/branch/master)
 [![Codecov][codecov-status]](https://codecov.io/gh/cafejojo/schaapi/)
