@@ -64,11 +64,8 @@ internal class DirectoryMiningCommandLineInterface {
             libraryProjectCompiler = JavaMavenProjectCompiler(),
             userProjectCompiler = JavaMavenProjectCompiler(),
             libraryUsageGraphGenerator = jimpleLibraryUsageGraphGenerator,
-            sequenceEnumerator = { node -> JimplePathEnumerator(node, maxSequenceLength) },
-            patternDetector = CCSpanPatternDetector(
-                patternDetectorMinCount,
-                GeneralizedNodeComparator()
-            ),
+            sequenceEnumerator = { JimplePathEnumerator(it, maxSequenceLength) },
+            patternDetector = CCSpanPatternDetector(patternDetectorMinCount, GeneralizedNodeComparator()),
             patternFilter = PatternFilter(
                 IncompleteInitPatternFilterRule(),
                 LengthPatternFilterRule(),
