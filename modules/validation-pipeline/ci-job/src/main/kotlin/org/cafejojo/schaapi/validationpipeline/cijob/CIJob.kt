@@ -38,7 +38,7 @@ class CIJob(private val identifier: String, private val projectDirectory: File, 
         next("Downloading...") { download() }
         next("Extracting zip...") { extractZip() }
         val library = next("Compiling library...") { compileLibrary() }
-        val tests = next("Compiling tests...") { compileTests(library) }
+        val tests = next("Compiling tests...") { compileTests() }
         return next("Running tests...") { TestRunner().run(testsDirectory, tests, listOf(library.classDir)) }
     }
 
@@ -58,10 +58,9 @@ class CIJob(private val identifier: String, private val projectDirectory: File, 
         JavaMavenProjectCompiler().compile(JavaMavenProject(newProjectFiles))
     }
 
-    private fun compileTests(library: JavaMavenProject): List<File> {
+    private fun compileTests(): List<File> {
         val classpath = testsDirectory.listFiles().filter { it.extension == "class" }.map { it.parentFile } +
-            File(CIJob::class.java.getResource("/junit-4.12.jar").file) +
-            library.classDir
+            File(CIJob::class.java.getResource("/junit-4.12.jar").file)
 
         return testsDirectory.listFiles()
             .filter { it.extension == "java" }
