@@ -1,9 +1,15 @@
-# 🐑 schaapi
+<p align="center">
+    <img src="https://user-images.githubusercontent.com/15815208/41853512-38dd02c4-788e-11e8-8e56-7035e66eabb7.png" width="400"><br>
+    Early detection of breaking changes based on API usage
+</p>
+
+    
 [![Travis build status][travis-status]](https://travis-ci.org/cafejojo/schaapi)
 [![AppVeyor build status][appveyor-status]](https://ci.appveyor.com/project/CafeJojo/schaapi/branch/master)
 [![Codecov][codecov-status]](https://codecov.io/gh/cafejojo/schaapi/)
 [![Schaap][schaap-status]](https://github.com/cafejojo/schaapi)
 [![Built with love][baby-dont-hurt-me]](https://github.com/cafejojo/)
+
 
 Schaapi ensures Safe Changes for APIs of libraries. It focuses on detection of semantic breaking changes, but provides a general-purpose pipeline that is also applicable to the detection of other types of breaking changes. The default implementation detects incompatibilities between Java libraries and Java projects using that library.
 
