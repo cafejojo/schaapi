@@ -33,7 +33,7 @@ internal class StatementFilter(project: JavaProject) : Filter {
         is ThrowStmt -> valueFilter.retain(unit.op)
         is DefinitionStmt -> valueFilter.retain(unit.leftOp, unit.rightOp)
         is IfStmt -> true // defer to BranchStatementFilter
-        is SwitchStmt -> userUsageFilter.retain(unit.key) // defer to BranchStatementFilter
+        is SwitchStmt -> true // defer to BranchStatementFilter
         is InvokeStmt -> valueFilter.retain(unit.invokeExpr)
         is ReturnStmt -> userUsageFilter.retain(unit.op)
         is GotoStmt -> true

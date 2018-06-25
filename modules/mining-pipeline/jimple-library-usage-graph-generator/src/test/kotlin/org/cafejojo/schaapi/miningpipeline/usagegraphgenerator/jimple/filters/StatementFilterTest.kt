@@ -70,7 +70,7 @@ internal object StatementFilterTest : Spek({
             assertThatItRetains(mock<SwitchStmt> {
                 on { it.key } doReturn nonLibraryValue
             })
-            assertThatItDoesNotRetain(mock<SwitchStmt> {
+            assertThatItRetains(mock<SwitchStmt> {
                 on { it.key } doReturn userValue
             })
         }
