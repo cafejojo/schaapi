@@ -92,15 +92,15 @@ class JimpleLibraryUsageGraphGenerator : LibraryUsageGraphGenerator<JavaProject,
         val methodBody = method.retrieveActiveBody()
         lugStatistics.allStatements += methodBody.units.size
 
-        val filters = listOf(
+        listOf(
             StatementFilter(libraryProject),
             BranchStatementFilter(libraryProject),
             RecursiveGotoFilter()
-        )
-        filters.forEach { it.apply(methodBody) }
+        ).forEach { it.apply(methodBody) }
 
-        val processors = listOf(UserUsageProcessor(libraryProject))
-        processors.forEach { it.process(methodBody) }
+        listOf(
+            UserUsageProcessor(libraryProject)
+        ).forEach { it.process(methodBody) }
 
         lugStatistics.validStatements += methodBody.units.size
         if (methodBody.units.isEmpty()) methodBody.units.add(Jimple.v().newReturnVoidStmt())
