@@ -20,6 +20,7 @@ import soot.jimple.ThrowStmt
 internal object StatementFilterTest : Spek({
     describe("filters statements based on library usage") {
         val libraryValue = constructInvokeExprMock(LIBRARY_CLASS)
+        val userValue = constructInvokeExprMock(USER_CLASS)
         val nonLibraryValue = constructInvokeExprMock(NON_LIBRARY_CLASS)
 
         it("filters throw statements") {
@@ -51,11 +52,27 @@ internal object StatementFilterTest : Spek({
         }
 
         it("filters if statements") {
-            assertThatItRetains(mock<IfStmt>())
+            assertThatItRetains(mock<IfStmt> {
+                on { it.condition } doReturn libraryValue
+            })
+            assertThatItRetains(mock<IfStmt> {
+                on { it.condition } doReturn nonLibraryValue
+            })
+            assertThatItRetains(mock<IfStmt> {
+                on { it.condition } doReturn userValue
+            })
         }
 
         it("filters switch statements") {
-            assertThatItRetains(mock<SwitchStmt>())
+            assertThatItRetains(mock<SwitchStmt> {
+                on { it.key } doReturn libraryValue
+            })
+            assertThatItRetains(mock<SwitchStmt> {
+                on { it.key } doReturn nonLibraryValue
+            })
+            assertThatItRetains(mock<SwitchStmt> {
+                on { it.key } doReturn userValue
+            })
         }
 
         it("filters invoke statements") {
@@ -68,7 +85,15 @@ internal object StatementFilterTest : Spek({
         }
 
         it("filters return statements") {
-            assertThatItRetains(mock<ReturnStmt>())
+            assertThatItRetains(mock<ReturnStmt> {
+                on { op } doReturn libraryValue
+            })
+            assertThatItRetains(mock<ReturnStmt> {
+                on { op } doReturn nonLibraryValue
+            })
+            assertThatItDoesNotRetain(mock<ReturnStmt> {
+                on { op } doReturn userValue
+            })
         }
 
         it("filters goto statements") {
