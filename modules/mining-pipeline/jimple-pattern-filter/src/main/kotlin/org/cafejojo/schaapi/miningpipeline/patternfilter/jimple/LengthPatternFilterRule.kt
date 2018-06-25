@@ -3,7 +3,7 @@ package org.cafejojo.schaapi.miningpipeline.patternfilter.jimple
 import org.cafejojo.schaapi.miningpipeline.PatternFilterRule
 import org.cafejojo.schaapi.models.libraryusagegraph.jimple.JimpleNode
 
-private const val DEFAULT_MINIMUM_PATTERN_LENGTH = 2
+private const val DEFAULT_MINIMUM_PATTERN_LENGTH = 1
 
 /**
  * Filters out patterns that are too short.
