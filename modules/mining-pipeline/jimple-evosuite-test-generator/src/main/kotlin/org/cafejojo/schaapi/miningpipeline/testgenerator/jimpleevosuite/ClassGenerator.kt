@@ -12,6 +12,8 @@ import soot.IntType
 import soot.Local
 import soot.LongType
 import soot.Modifier
+import soot.NullType
+import soot.RefType
 import soot.Scene
 import soot.ShortType
 import soot.SootClass
@@ -139,8 +141,7 @@ internal class ClassGenerator(className: String) {
 
     private fun addReturnStatement(jimpleBody: Body): Type {
         val lastStatement = jimpleBody.units.last()
-
-        return when (lastStatement) {
+        val returnType = when (lastStatement) {
             is JReturnStmt -> lastStatement.op.type
             is JReturnVoidStmt -> VoidType.v()
             else -> {
@@ -148,6 +149,8 @@ internal class ClassGenerator(className: String) {
                 VoidType.v()
             }
         }
+
+        return if (returnType == NullType.v()) RefType.v("java.lang.Object") else returnType
     }
 
     private fun findUnboundVariables(statements: List<Unit>): Set<Value> {
