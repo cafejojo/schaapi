@@ -40,8 +40,8 @@ class JavaMavenProjectCompiler : ProjectCompiler<JavaMavenProject> {
 
         val result = invoker.execute(request)
         if (result.exitCode != 0)
-            throw ProjectCompilationException("`maven install` of ${project.projectDir} failed:\n" +
-                "${result.executionException}")
+            throw ProjectCompilationException("`maven install` of ${project.projectDir} failed: " +
+                (result.executionException?.message ?: "Cause Unknown"))
     }
 
     private fun analyzeCompiledProject(project: JavaMavenProject) {

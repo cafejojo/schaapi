@@ -2,7 +2,6 @@ package org.cafejojo.schaapi.miningpipeline
 
 import mu.KLogging
 import org.cafejojo.schaapi.models.Node
-import org.cafejojo.schaapi.models.PathEnumerator
 import org.cafejojo.schaapi.models.Project
 import java.io.File
 
@@ -10,14 +9,12 @@ import java.io.File
  * Represents the complete Schaapi pipeline.
  */
 class MiningPipeline<SO : SearchOptions, UP : Project, LP : Project, N : Node>(
-    private val csvWriter: CSVWriter<N>,
     private val outputDirectory: File,
     private val projectMiner: ProjectMiner<SO, UP>,
     private val searchOptions: SO,
     private val libraryProjectCompiler: ProjectCompiler<LP>,
     private val userProjectCompiler: ProjectCompiler<UP>,
     private val libraryUsageGraphGenerator: LibraryUsageGraphGenerator<LP, UP, N>,
-    private val sequenceEnumerator: (N) -> PathEnumerator<N>,
     private val patternDetector: PatternDetector<N>,
     private val patternFilter: PatternFilter<N>,
     private val testGenerator: TestGenerator<N>
@@ -36,6 +33,8 @@ class MiningPipeline<SO : SearchOptions, UP : Project, LP : Project, N : Node>(
         logger.info { "Mining has started." }
         logger.info { "Output directory is ${outputDirectory.absolutePath}." }
 
+        val csvWriter = CsvWriter<N>(outputDirectory)
+
         try {
             searchOptions
                 .also { logger.info { "Started mining projects." } }
@@ -51,11 +50,6 @@ class MiningPipeline<SO : SearchOptions, UP : Project, LP : Project, N : Node>(
                 .also { logger.info { "Successfully generated ${it.size} library usage graphs." } }
                 .also { csvWriter.writeGraphSizes(it) }
 
-                .also { logger.info { "Started generating sequences for ${it.size} usage graphs." } }
-                .flatMap { sequenceEnumerator(it).enumerate() }
-                .also { logger.info { "Successfully generated ${it.size} sequences." } }
-                .also { csvWriter.writeSequenceLengths(it) }
-
                 .also { logger.info { "Started finding patterns in ${it.size} library usage graphs." } }
                 .next(patternDetector::findPatterns)
                 .also { logger.info { "Successfully found ${it.size} patterns." } }
@@ -69,7 +63,6 @@ class MiningPipeline<SO : SearchOptions, UP : Project, LP : Project, N : Node>(
                 .also { logger.info { "Started generating test for ${it.size} usage patterns." } }
                 .next(testGenerator::generate)
                 .also { logger.info { "Test generation has finished." } }
-
             logger.info { "Tests have been successfully generated." }
         } catch (e: Exception) {
             logger.error("A critical error occurred during the mining process causing it to be aborted.", e)
@@ -95,7 +88,7 @@ class MiningPipeline<SO : SearchOptions, UP : Project, LP : Project, N : Node>(
             map(it)
         } catch (e: RuntimeException) {
             if (e is E) {
-                logger.warn(e.message, e)
+                logger.warn(e.message)
                 null
             } else throw e
         }

@@ -18,7 +18,6 @@ import soot.jimple.Jimple
 internal object CCSpanIntegrationTest : Spek({
     describe("integration of CCSpan with GeneralizedNodeComparator") {
         lateinit var patternDetector: CCSpanPatternDetector<JimpleNode>
-        lateinit var enumerator: (JimpleNode) -> JimplePathEnumerator
 
         beforeGroup {
             SootNameEquivalenceChanger.activate()
@@ -26,8 +25,7 @@ internal object CCSpanIntegrationTest : Spek({
 
         beforeEachTest {
             val nodeComparator = GeneralizedNodeComparator()
-            enumerator = { node -> JimplePathEnumerator(node, 10) }
-            patternDetector = CCSpanPatternDetector(0, nodeComparator)
+            patternDetector = CCSpanPatternDetector(0, { JimplePathEnumerator(it, 10) }, nodeComparator)
         }
 
         it("can detect very simple patterns") {
@@ -39,8 +37,7 @@ internal object CCSpanIntegrationTest : Spek({
             val nodeB2 = JimpleNode(Jimple.v().newAssignStmt(localB, IntConstant.v(504)))
             val nodeB1 = JimpleNode(Jimple.v().newAssignStmt(localB, IntConstant.v(591)), mutableListOf(nodeB2))
 
-            val sequences = listOf(nodeA1, nodeB1).flatMap { enumerator(it).enumerate() }
-            val patterns = patternDetector.findPatterns(sequences)
+            val patterns = patternDetector.findPatterns(listOf(nodeA1, nodeB1))
 
             assertThat(patterns).containsExactly(listOf(nodeA1, nodeA2))
         }
@@ -53,8 +50,7 @@ internal object CCSpanIntegrationTest : Spek({
             val nodeB2 = JimpleNode(Jimple.v().newAssignStmt(localB, IntConstant.v(944)))
             val nodeB1 = JimpleNode(Jimple.v().newAssignStmt(localB, IntConstant.v(107)), mutableListOf(nodeB2))
 
-            val sequences = listOf(nodeA1, nodeB1).flatMap { enumerator(it).enumerate() }
-            val patterns = patternDetector.findPatterns(sequences)
+            val patterns = patternDetector.findPatterns(listOf(nodeA1, nodeB1))
 
             assertThat(patterns).containsExactlyInAnyOrder(
                 listOf(nodeA1),

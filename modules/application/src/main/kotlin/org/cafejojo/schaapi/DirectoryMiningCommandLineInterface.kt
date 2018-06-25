@@ -4,7 +4,6 @@ import mu.KLogging
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.Option
 import org.apache.commons.cli.Options
-import org.cafejojo.schaapi.miningpipeline.CSVWriter
 import org.cafejojo.schaapi.miningpipeline.MiningPipeline
 import org.cafejojo.schaapi.miningpipeline.PatternFilter
 import org.cafejojo.schaapi.miningpipeline.miner.directory.DirectoryProjectMiner
@@ -13,11 +12,13 @@ import org.cafejojo.schaapi.miningpipeline.patterndetector.ccspan.CCSpanPatternD
 import org.cafejojo.schaapi.miningpipeline.patternfilter.jimple.EmptyLoopPatternFilterRule
 import org.cafejojo.schaapi.miningpipeline.patternfilter.jimple.IncompleteInitPatternFilterRule
 import org.cafejojo.schaapi.miningpipeline.patternfilter.jimple.LengthPatternFilterRule
+import org.cafejojo.schaapi.miningpipeline.projectcompiler.javajar.JavaJarProjectCompiler
 import org.cafejojo.schaapi.miningpipeline.projectcompiler.javamaven.JavaMavenProjectCompiler
 import org.cafejojo.schaapi.miningpipeline.testgenerator.jimpleevosuite.TestGenerator
 import org.cafejojo.schaapi.miningpipeline.usagegraphgenerator.jimple.JimpleLibraryUsageGraphGenerator
 import org.cafejojo.schaapi.models.libraryusagegraph.jimple.GeneralizedNodeComparator
 import org.cafejojo.schaapi.models.libraryusagegraph.jimple.JimplePathEnumerator
+import org.cafejojo.schaapi.models.project.JavaJarProject
 import org.cafejojo.schaapi.models.project.JavaMavenProject
 import java.io.File
 
@@ -53,19 +54,21 @@ internal class DirectoryMiningCommandLineInterface {
         val maxSequenceLength =
             cmd.getOptionValue("pattern_detector_maximum_sequence_length", DEFAULT_MAX_SEQUENCE_LENGTH).toInt()
 
-        val libraryProject = JavaMavenProject(library, mavenDir)
+        val libraryProject = JavaJarProject(library)
         val jimpleLibraryUsageGraphGenerator = JimpleLibraryUsageGraphGenerator()
 
         MiningPipeline(
-            csvWriter = CSVWriter(output),
             outputDirectory = output,
             projectMiner = DirectoryProjectMiner { JavaMavenProject(it, mavenDir) },
             searchOptions = DirectorySearchOptions(File(userDirDirs)),
-            libraryProjectCompiler = JavaMavenProjectCompiler(),
+            libraryProjectCompiler = JavaJarProjectCompiler(),
             userProjectCompiler = JavaMavenProjectCompiler(),
             libraryUsageGraphGenerator = jimpleLibraryUsageGraphGenerator,
-            sequenceEnumerator = { JimplePathEnumerator(it, maxSequenceLength) },
-            patternDetector = CCSpanPatternDetector(patternDetectorMinCount, GeneralizedNodeComparator()),
+            patternDetector = CCSpanPatternDetector(
+                patternDetectorMinCount,
+                { JimplePathEnumerator(it, maxSequenceLength) },
+                GeneralizedNodeComparator()
+            ),
             patternFilter = PatternFilter(
                 IncompleteInitPatternFilterRule(),
                 LengthPatternFilterRule(),

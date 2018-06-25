@@ -4,7 +4,6 @@ import mu.KLogging
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.Option
 import org.apache.commons.cli.Options
-import org.cafejojo.schaapi.miningpipeline.CSVWriter
 import org.cafejojo.schaapi.miningpipeline.MiningPipeline
 import org.cafejojo.schaapi.miningpipeline.PatternFilter
 import org.cafejojo.schaapi.miningpipeline.miner.github.GitHubProjectMiner
@@ -106,7 +105,6 @@ internal class GitHubMiningCommandLineInterface {
         val jimpleLibraryUsageGraphGenerator = JimpleLibraryUsageGraphGenerator()
 
         MiningPipeline(
-            csvWriter = CSVWriter(output),
             outputDirectory = output,
             projectMiner = GitHubProjectMiner(token, output) { JavaMavenProject(it, mavenDir) },
             searchOptions = MavenProjectSearchOptions(groupId, artifactId, version, maxProjects).apply {
@@ -116,8 +114,11 @@ internal class GitHubMiningCommandLineInterface {
             libraryProjectCompiler = JavaJarProjectCompiler(),
             userProjectCompiler = JavaMavenProjectCompiler(),
             libraryUsageGraphGenerator = jimpleLibraryUsageGraphGenerator,
-            sequenceEnumerator = { JimplePathEnumerator(it, maxSequenceLength) },
-            patternDetector = CCSpanPatternDetector(patternDetectorMinCount, GeneralizedNodeComparator()),
+            patternDetector = CCSpanPatternDetector(
+                patternDetectorMinCount,
+                { JimplePathEnumerator(it, maxSequenceLength) },
+                GeneralizedNodeComparator()
+            ),
             patternFilter = PatternFilter(
                 IncompleteInitPatternFilterRule(),
                 LengthPatternFilterRule(),

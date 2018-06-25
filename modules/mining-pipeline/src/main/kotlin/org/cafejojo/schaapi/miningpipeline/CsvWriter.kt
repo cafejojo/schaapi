@@ -10,7 +10,7 @@ import java.io.FileWriter
  *
  * @param output output within which to contain the data file
  */
-class CSVWriter<N : Node>(output: File) {
+class CsvWriter<N : Node>(output: File) {
     companion object : KLogging()
 
     private val dataFile: File = output.resolve("data/").apply { mkdirs() }
