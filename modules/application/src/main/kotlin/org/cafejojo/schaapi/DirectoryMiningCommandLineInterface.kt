@@ -54,14 +54,14 @@ internal class DirectoryMiningCommandLineInterface {
         val maxSequenceLength =
             cmd.getOptionValue("pattern_detector_maximum_sequence_length", DEFAULT_MAX_SEQUENCE_LENGTH).toInt()
 
-        val libraryProject = JavaJarProject(library)
+        val libraryProject = JavaMavenProject(library, mavenDir)
         val jimpleLibraryUsageGraphGenerator = JimpleLibraryUsageGraphGenerator()
 
         MiningPipeline(
             outputDirectory = output,
             projectMiner = DirectoryProjectMiner { JavaMavenProject(it, mavenDir) },
             searchOptions = DirectorySearchOptions(File(userDirDirs)),
-            libraryProjectCompiler = JavaJarProjectCompiler(),
+            libraryProjectCompiler = JavaMavenProjectCompiler(),
             userProjectCompiler = JavaMavenProjectCompiler(),
             libraryUsageGraphGenerator = jimpleLibraryUsageGraphGenerator,
             patternDetector = CCSpanPatternDetector(
