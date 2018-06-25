@@ -261,7 +261,7 @@ internal object ClassGeneratorTest : Spek({
         assertThat(jimpleMethod.returnType).isEqualTo(VoidType.v())
     }
 
-    it("should generate a method with return type boolean of last statement is return boolean") {
+    it("should generate a method with return type boolean if last statement is return boolean") {
         val c = Jimple.v().newLocal("c", BooleanType.v())
 
         val assignC = Jimple.v().newAssignStmt(c, IntConstant.v(10))
@@ -285,6 +285,16 @@ internal object ClassGeneratorTest : Spek({
         }.sootClass.methods.last()
 
         assertThat(jimpleMethod.returnType).isEqualTo(c.type)
+    }
+
+    it("should generate a method with Object as return type if last statement returns null") {
+        val returnStmt = Jimple.v().newReturnStmt(NullConstant.v())
+
+        val jimpleMethod = ClassGenerator("myClass").apply {
+            generateMethod("method", listOf(JimpleNode(returnStmt)))
+        }.sootClass.methods.last()
+
+        assertThat(jimpleMethod.returnType).isEqualTo(RefType.v("java.lang.Object"))
     }
 
     it("should generate a method with only statements before return") {
