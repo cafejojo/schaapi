@@ -1,3 +1,5 @@
 dependencies {
     compile project(":models")
+
+    compile group: "me.tongfei", name: "progressbar", version: progressBarVersion
 }
