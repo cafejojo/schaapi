@@ -98,6 +98,42 @@ class IntegrationTest {
     }
 
     @Test
+    fun `it can receive a 'check run rerequested' web hook`() {
+        val (futureRequest, _) = mockHttpClient(
+            json("installation token request response") {
+                "token" to "this-is-the-installation-token"
+                "expires_at" to "end date"
+            },
+            json("report started response") {
+                "id" to 87575775
+            }
+        )[1]
+
+        val requestJson = IntegrationTest::class.java
+            .getResourceAsStream("/fixtures/github/check_run_rerequested_webhook.resp").bufferedReader().readText()
+
+        val entity = HttpEntity(
+            requestJson,
+            HttpHeaders().apply {
+                contentType = MediaType.APPLICATION_JSON
+                add("X-GitHub-Event", "check_run")
+            }
+        )
+
+        val body = restTemplate.postForObject("/process-webhook", entity, String::class.java)
+
+        with(futureRequest.get(0, TimeUnit.SECONDS)) {
+            assertThat(url.toString()).contains("cafejojo/dummy-simple-maven-library")
+            assertThat(this.headers).contains(entry("Authorization", "Token this-is-the-installation-token"))
+
+            assertThatJson(bodyContents()).node("head_branch").isEqualTo("breaking-change")
+            assertThatJson(bodyContents()).node("head_sha").isEqualTo("7eef62fb10b42c3d2bf54bba6b3658e53e79bb10")
+        }
+
+        assertThat(body).isEqualTo("Webhook received.")
+    }
+
+    @Test
     fun `it can receive an 'installation created' web hook`() {
         val requestJson = IntegrationTest::class.java
             .getResourceAsStream("/fixtures/github/installation_created_webhook.resp").bufferedReader().readText()
