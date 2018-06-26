@@ -90,6 +90,7 @@ private class ClassValueFilterRule : ValueFilterRule() {
     override fun applyOther(value: Value) =
         throw UnsupportedValueException("Value of type ${value.javaClass} is not supported by the value filter.")
 
+    override fun apply(value: DynamicInvokeExpr) = false
     override fun apply(value: NewArrayExpr) = false
     override fun apply(value: NewMultiArrayExpr) = false
     override fun apply(value: IdentityRef) = false
