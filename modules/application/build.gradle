@@ -24,7 +24,7 @@ dependencies {
 }
 
 // Distribution
-inspectClassesForKotlinIC.enabled = false
+inspectClassesForKotlinIC.enabled = false // Workaround for https://youtrack.jetbrains.com/issue/KT-24956
 
 jar {
     manifest {
