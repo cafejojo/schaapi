@@ -63,27 +63,17 @@ internal class GitHubProjectDownloader<P : Project>(
             .toList()
             .filterNotNull()
 
-    private fun downloadAndSaveProject(projectName: String): P? {
-        val connection = getConnection(projectName) ?: return null
+    private fun downloadAndSaveProject(projectName: String): P? = getInputStream(projectName)?.use { inputStream ->
+        val githubProjectZip = saveZipToFile(inputStream, projectName) ?: return null
+        val gitHubProject = unzip(githubProjectZip) ?: return null
 
         try {
-            val githubProjectZip = saveZipToFile(connection.inputStream, projectName) ?: return null
-            val gitHubProject = unzip(githubProjectZip) ?: return null
-
-            return if (gitHubProject.exists()) {
-                try {
-                    gitHubProject.extractMasterFile()
-                    projectPacker(gitHubProject).also { logger.debug { "Created project of $gitHubProject." } }
-                } catch (e: IllegalArgumentException) {
-                    logger.warn("Unable to pack $gitHubProject into project.", e)
-                    gitHubProject.deleteRecursively()
-                    null
-                }
-            } else {
-                null
-            }
-        } finally {
-            connection.disconnect()
+            gitHubProject.extractMasterFile()
+            projectPacker(gitHubProject).also { logger.debug { "Created project of $gitHubProject." } }
+        } catch (e: IllegalArgumentException) {
+            logger.warn("Unable to pack $gitHubProject into project.", e)
+            gitHubProject.deleteRecursively()
+            null
         }
     }
 
@@ -133,19 +123,20 @@ internal class GitHubProjectDownloader<P : Project>(
             projectZipFile.delete()
         }
 
-        return githubProject
+        return if (githubProject.exists()) githubProject else null
     }
 
-    internal fun getConnection(projectName: String): HttpURLConnection? {
+    internal fun getInputStream(projectName: String): InputStream? {
         val url = getURl(projectName)
 
         try {
             val connection = url.openConnection() as? HttpURLConnection ?: return null
             logger.debug { "Established a connection with '$url'." }
 
-            return connection.apply { requestMethod = "GET" }
+            connection.apply { requestMethod = "GET" }
+            return connection.inputStream
         } catch (e: IOException) {
-            logger.warn("Could not connect to project $projectName.", e)
+            logger.warn("Could not connect to project $projectName", e)
             return null
         }
     }
