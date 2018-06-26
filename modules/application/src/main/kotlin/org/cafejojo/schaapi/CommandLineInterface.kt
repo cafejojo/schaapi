@@ -7,6 +7,7 @@ import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Option
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
+import org.cafejojo.schaapi.miningpipeline.projectcompiler.javamaven.MavenInstaller
 import org.cafejojo.schaapi.models.project.JavaJarProject
 import org.cafejojo.schaapi.models.project.JavaMavenProject
 import java.io.File
@@ -34,6 +35,8 @@ fun main(args: Array<String>) {
     val output = File(cmd.getOptionValue('o')).apply { mkdirs() }
     val libraryDir = File(cmd.getOptionValue('l'))
     val libraryFlavor = cmd.getOptionValue("library_flavor", DEFAULT_LIBRARY_FLAVOR)
+
+    MavenInstaller().installMaven(mavenDir, overwrite = cmd.hasOption("repair_maven"))
 
     val flavor = cmd.getOptionValue("flavor", DEFAULT_PIPELINE_TYPE)
     val library = if (libraryFlavor == "javajar") JavaJarProject(libraryDir) else JavaMavenProject(libraryDir, mavenDir)
