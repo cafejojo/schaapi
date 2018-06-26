@@ -8,7 +8,7 @@ import java.io.FileWriter
 /**
  * CSV writer that writes the desired data to separate csv files under a data directory.
  *
- * @param output output within which to contain the data file
+ * @param output file to which to write the output
  */
 class CsvWriter<N : Node>(output: File) {
     companion object : KLogging()
@@ -16,7 +16,9 @@ class CsvWriter<N : Node>(output: File) {
     private val dataFile: File = output.resolve("data/").apply { mkdirs() }
 
     /**
-     * Write graph sizes to file.
+     * Writes graph sizes to file.
+     *
+     * @param graphs graphs whose node counts will be written to file
      */
     fun writeGraphSizes(graphs: List<N>) {
         val graphSizeFile = File(dataFile, "graphSize.csv")
@@ -26,7 +28,9 @@ class CsvWriter<N : Node>(output: File) {
     }
 
     /**
-     * Write pattern lengths to file.
+     * Writes pattern lengths to file.
+     *
+     * @param patterns patterns whose lengths will be written to file
      */
     fun writePatternLengths(patterns: List<Pattern<N>>) {
         val patternsFile = File(dataFile, "patterns.csv")
@@ -36,7 +40,9 @@ class CsvWriter<N : Node>(output: File) {
     }
 
     /**
-     * Write filtered pattern lengths to file.
+     * Writes filtered pattern lengths to file.
+     *
+     * @param patterns patterns whose lengths will be written to file
      */
     fun writeFilteredPatternLengths(patterns: List<Pattern<N>>) {
         val filteredPatternsFile = File(dataFile, "filteredPatterns.csv")
@@ -51,6 +57,8 @@ class CsvWriter<N : Node>(output: File) {
             items.forEach { values[mapToInt(it)] = values[mapToInt(it)]?.inc() ?: 1 }
 
             it.write("$type,count\n")
-            values.forEach { value -> it.write("${value.key},${value.value}\n") }
+            values
+                .toSortedMap()
+                .forEach { value -> it.write("${value.key},${value.value}\n") }
         }
 }
