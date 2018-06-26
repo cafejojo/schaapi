@@ -22,3 +22,16 @@ dependencies {
 
     compile group: "commons-cli", name: "commons-cli", version: commonsCliVersion
 }
+
+// Distribution
+inspectClassesForKotlinIC.enabled = false
+
+jar {
+    manifest {
+        attributes "Main-Class": mainClassName
+    }
+
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
