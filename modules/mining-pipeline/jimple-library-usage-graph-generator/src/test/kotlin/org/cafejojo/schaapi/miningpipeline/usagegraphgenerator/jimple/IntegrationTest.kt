@@ -485,6 +485,28 @@ internal object IntegrationTest : Spek({
             assertThat(libraryUsageGraphs).isEmpty()
         }
     }
+
+    describe("lambdas") {
+        it("filters out lambdas") {
+            val libraryUsageGraph = JimpleLibraryUsageGraphGenerator().generate(
+                libraryProject,
+                TestProject(testClassesClassPath, setOf(
+                    "$TEST_CLASSES_PACKAGE.users.LambdaTest"
+                ))
+            )[0]
+
+            assertThatStructureMatches(
+                node<JAssignStmt>(
+                    node<JInvokeStmt>(
+                        node<JInvokeStmt>(
+                            node<JReturnVoidStmt>()
+                        )
+                    )
+                ),
+                libraryUsageGraph
+            )
+        }
+    }
 })
 
 private fun assertThatStructureMatches(structure: Node, libraryUsageGraph: Node) {
