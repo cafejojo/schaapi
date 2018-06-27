@@ -7,7 +7,7 @@ import org.cafejojo.schaapi.miningpipeline.TestGenerator
 import java.io.File
 import java.io.PrintStream
 
-private const val DEFAULT_PATTERN_CLASS_NAME = "RegressionTest"
+private const val DEFAULT_PATTERN_CLASS_NAME = "Patterns"
 
 /**
  * Represents the test generator that generates tests based on patterns.
@@ -39,6 +39,6 @@ class TestGenerator(
             processErrorStream = processErrorStream
         ).run()
 
-        return File(outputDirectory, "RegressionTest_ESTest.java")
+        return File(outputDirectory, "${DEFAULT_PATTERN_CLASS_NAME}_ESTest.java")
     }
 }

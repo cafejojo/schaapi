@@ -1,8 +1,8 @@
 package org.cafejojo.schaapi.validationpipeline.githubinteractor.githubapi
 
+import org.json.JSONObject
 import java.util.ArrayDeque
 import java.util.Deque
-import org.json.JSONObject
 
 internal class JsonObjectBuilder {
     private val deque: Deque<JSONObject> = ArrayDeque()
@@ -19,4 +19,5 @@ internal class JsonObjectBuilder {
     }
 }
 
+@Suppress("UNUSED_PARAMETER") // Gives context to its usage
 internal fun json(of: String = "", build: JsonObjectBuilder.() -> Unit) = JsonObjectBuilder().json(build)

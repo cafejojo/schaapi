@@ -7,6 +7,10 @@ public class Object1 {
 
     }
 
+    public static Object1 staticMethod2() {
+        return new Object1();
+    }
+
     public double m1() {
         return Math.random();
     }

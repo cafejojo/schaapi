@@ -34,7 +34,7 @@ internal class SchaapiSmokeTest : Spek({
             "--test_generator_timeout", "3"
         ))
 
-        assertThat(target.resolve("patterns/RegressionTest.class")).isFile()
+        assertThat(target.resolve("patterns/Patterns.class")).isFile()
         assertThat(target.resolve("tests/evosuite-tests/RegressionTest_ESTest_0.java")).isFile()
     }
 })

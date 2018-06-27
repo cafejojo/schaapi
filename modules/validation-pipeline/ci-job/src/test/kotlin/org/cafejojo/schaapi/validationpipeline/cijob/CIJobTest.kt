@@ -71,7 +71,7 @@ object CIJobTest : Spek({
 
     it("throws an exception when the test code cannot be compiled") {
         File(CIJobTest::class.java.getResource(
-            "/projects/cafejojo/dummy-simple-maven-library/failing-tests/FailingRegressionTest_ESTest.java"
+            "/projects/cafejojo/dummy-simple-maven-library/failing-tests/FailingPatterns_ESTest.java"
         ).file).apply {
             copyTo(File(testsDirectory, name), overwrite = true)
         }
@@ -84,7 +84,7 @@ object CIJobTest : Spek({
         assertThatThrownBy { ciJob.call() }
             .isInstanceOf(CIJobException::class.java)
             .hasMessageContaining("test compilation")
-            .hasMessageContaining("boolean result = RegressionTest.pattern0(35);")
+            .hasMessageContaining("boolean result = Patterns.pattern0(35);")
     }
 
     it("reports test failures correctly") {

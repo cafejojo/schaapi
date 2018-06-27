@@ -11,6 +11,7 @@ import soot.SootClass
 import soot.Type
 import soot.Value
 import soot.jimple.CastExpr
+import soot.jimple.ClassConstant
 import soot.jimple.Constant
 import soot.jimple.DynamicInvokeExpr
 import soot.jimple.IdentityRef
@@ -90,6 +91,7 @@ private class ClassValueFilterRule : ValueFilterRule() {
     override fun applyOther(value: Value) =
         throw UnsupportedValueException("Value of type ${value.javaClass} is not supported by the value filter.")
 
+    override fun apply(value: Constant) = value !is ClassConstant || !isLambdaType(value.value)
     override fun apply(value: NewArrayExpr) = false
     override fun apply(value: NewMultiArrayExpr) = false
     override fun apply(value: IdentityRef) = false
@@ -105,6 +107,13 @@ private class ClassValueFilterRule : ValueFilterRule() {
      * @return true iff [result1] and [result2] are both true
      */
     override fun accumulate(result1: Boolean, result2: Boolean) = result1 && result2
+
+    /**
+     * Returns true iff [type] is a lambda type signature.
+     *
+     * @param type a JNI type descriptor
+     */
+    private fun isLambdaType(type: String) = type.startsWith('(')
 }
 
 /**
@@ -127,7 +136,7 @@ private class LibraryUsageValueFilterRule(private val libraryProject: JavaProjec
     override fun apply(value: InstanceFieldRef) = isLibraryClass(value.field.declaringClass)
     override fun apply(value: StaticFieldRef) = isLibraryClass(value.field.declaringClass)
 
-    override fun apply(value: Constant) = false
+    override fun apply(value: Constant) = value is ClassConstant && isLibraryClass(value.toSootType())
 
     override fun apply(value: InstanceOfExpr) = isLibraryClass(value.checkType)
     override fun apply(value: CastExpr) = isLibraryClass(value.castType)
@@ -166,7 +175,7 @@ private class UserUsageValueFilterRule(private val libraryProject: JavaProject) 
     override fun apply(value: InstanceFieldRef) = isNotUserClass(value.field.declaringClass)
     override fun apply(value: StaticFieldRef) = isNotUserClass(value.field.declaringClass)
 
-    override fun apply(value: Constant) = true
+    override fun apply(value: Constant) = value !is ClassConstant || isNotUserClass(value.toSootType())
 
     override fun apply(value: InstanceOfExpr) = isNotUserClass(value.checkType)
     override fun apply(value: CastExpr) = isNotUserClass(value.castType)
