@@ -20,6 +20,7 @@ import soot.jimple.AnyNewExpr
 import soot.jimple.ArrayRef
 import soot.jimple.BinopExpr
 import soot.jimple.CastExpr
+import soot.jimple.ClassConstant
 import soot.jimple.ConcreteRef
 import soot.jimple.Constant
 import soot.jimple.Expr
@@ -229,6 +230,11 @@ internal object ValueFilterTest : Spek({
 
         it("filters constant immediates") {
             assertThatItDoesNotRetain(mock<Constant>())
+        }
+
+        it("filters class constants") {
+            assertThatItRetains(ClassConstant.v("L${LIBRARY_CLASS.replace('.', '/')};"))
+            assertThatItDoesNotRetain(ClassConstant.v("L${NON_LIBRARY_CLASS.replace('.', '/')};"))
         }
 
         it("does not recognize unknown immediates") {

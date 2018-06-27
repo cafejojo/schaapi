@@ -485,6 +485,26 @@ internal object IntegrationTest : Spek({
             assertThat(libraryUsageGraphs).isEmpty()
         }
     }
+
+    describe("filtering of dynamic invokes") {
+        it("filters out lambdas that also have a library usage outside the lambda") {
+            val libraryUsageGraphs = JimpleLibraryUsageGraphGenerator().generate(
+                libraryProject,
+                TestProject(testClassesClassPath, setOf("$TEST_CLASSES_PACKAGE.users.LambdaClassConstantTest"))
+            )
+
+            assertThat(libraryUsageGraphs).isEmpty()
+        }
+
+        it("filters out lambdas that do not have a library usage outside the lambda") {
+            val libraryUsageGraphs = JimpleLibraryUsageGraphGenerator().generate(
+                libraryProject,
+                TestProject(testClassesClassPath, setOf("$TEST_CLASSES_PACKAGE.users.LambdaUsageTest"))
+            )
+
+            assertThat(libraryUsageGraphs).isEmpty()
+        }
+    }
 })
 
 private fun assertThatStructureMatches(structure: Node, libraryUsageGraph: Node) {
