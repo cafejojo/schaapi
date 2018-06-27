@@ -52,13 +52,11 @@ class CsvWriter<N : Node>(output: File) {
     }
 
     private fun <P> writeToFile(output: File, items: List<P>, mapToInt: (P) -> Int, type: String) =
-        FileWriter(output).use {
-            val values = mutableMapOf<Int, Int>()
-            items.forEach { values[mapToInt(it)] = values[mapToInt(it)]?.inc() ?: 1 }
-
-            it.write("$type,count\n")
-            values
+        FileWriter(output).use { fileWriter ->
+            fileWriter.write("$type,count\n")
+            items
+                .groupBy(mapToInt)
                 .toSortedMap()
-                .forEach { value -> it.write("${value.key},${value.value}\n") }
+                .forEach { fileWriter.write("${it.key},${it.value.size}\n") }
         }
 }
