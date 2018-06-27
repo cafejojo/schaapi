@@ -11,6 +11,7 @@ import soot.SootClass
 import soot.Type
 import soot.Value
 import soot.jimple.CastExpr
+import soot.jimple.ClassConstant
 import soot.jimple.Constant
 import soot.jimple.DynamicInvokeExpr
 import soot.jimple.IdentityRef
@@ -166,7 +167,7 @@ private class UserUsageValueFilterRule(private val libraryProject: JavaProject) 
     override fun apply(value: InstanceFieldRef) = isNotUserClass(value.field.declaringClass)
     override fun apply(value: StaticFieldRef) = isNotUserClass(value.field.declaringClass)
 
-    override fun apply(value: Constant) = true
+    override fun apply(value: Constant) = if (value is ClassConstant) isNotUserClass(value.toSootType()) else true
 
     override fun apply(value: InstanceOfExpr) = isNotUserClass(value.checkType)
     override fun apply(value: CastExpr) = isNotUserClass(value.castType)
