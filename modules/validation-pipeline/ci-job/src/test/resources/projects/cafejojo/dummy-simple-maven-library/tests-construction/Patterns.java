@@ -6,7 +6,7 @@
 
 import org.cafejojo.dummysimplemavenlibrary.Calculator;
 
-public class RegressionTest {
+public class Patterns {
     public static int pattern0(int a) {
         Calculator calculator = new Calculator();
 
