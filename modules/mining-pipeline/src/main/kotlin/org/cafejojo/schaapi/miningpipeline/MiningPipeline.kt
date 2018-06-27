@@ -1,6 +1,8 @@
 package org.cafejojo.schaapi.miningpipeline
 
 import me.tongfei.progressbar.ProgressBar
+import me.tongfei.progressbar.ProgressBarBuilder
+import me.tongfei.progressbar.ProgressBarStyle
 import mu.KLogging
 import org.cafejojo.schaapi.models.Node
 import org.cafejojo.schaapi.models.Project
@@ -28,7 +30,7 @@ class MiningPipeline<SO : SearchOptions, UP : Project, LP : Project, N : Node>(
     @Suppress("TooGenericExceptionCaught") // In this case it is relevant to catch and log an Exception
     fun run(libraryProject: LP) {
         logger.info { "Compiling library project." }
-        ProgressBar("Compilinig library Project", 1).use { progressBar ->
+        ProgressBar("Compilinig library Project", 1, ProgressBarStyle.ASCII).use { progressBar ->
             libraryProjectCompiler.compile(libraryProject)
             progressBar.step()
         }
@@ -82,12 +84,20 @@ class MiningPipeline<SO : SearchOptions, UP : Project, LP : Project, N : Node>(
     private fun <T, R> T.next(map: (T) -> R): R = map(this)
 
     private inline fun <N, reified T : Iterable<N>, R> T.nextWithProgress(map: (T) -> R, message: String): R {
-        val progressBar = ProgressBar.wrap(this, message) as? T ?: this
-        return map(progressBar)
+        val iterator = ProgressBar.wrap(this, ProgressBarBuilder().apply {
+            setTaskName(message)
+            setStyle(ProgressBarStyle.ASCII)
+        }) as? T ?: this
+        return map(iterator)
     }
 
-    private fun <P, Q, T : Iterable<P>> T.nextFlatMapWithProgress(map: (P) -> Iterable<Q>, message: String): List<Q> =
-        ProgressBar.wrap(this, message).flatMap { map(it) }
+    private fun <P, Q, T : Iterable<P>> T.nextFlatMapWithProgress(map: (P) -> Iterable<Q>, message: String): List<Q> {
+        val iterator = ProgressBar.wrap(this, ProgressBarBuilder().apply {
+            setTaskName(message)
+            setStyle(ProgressBarStyle.ASCII)
+        }) as? T ?: this
+        return iterator.flatMap { map(it) }
+    }
 
     /**
      * Calls the specified function [map] on each element in `this` and returns the result as an iterable.
@@ -97,7 +107,14 @@ class MiningPipeline<SO : SearchOptions, UP : Project, LP : Project, N : Node>(
     @Suppress("TooGenericExceptionCaught", "InstanceOfCheckForException") // This is intended behaviour
     private inline fun <reified E : RuntimeException, T, R : Any>
         Iterable<T>.nextCatchExceptions(map: (T) -> R, message: String): Iterable<R> {
-        return ProgressBar.wrap(this, message).mapNotNull {
+        val iterator = ProgressBar.wrap(
+            this,
+            ProgressBarBuilder().apply {
+                setTaskName(message)
+                setStyle(ProgressBarStyle.ASCII)
+            })
+
+        return iterator.mapNotNull {
             try {
                 map(it)
             } catch (e: RuntimeException) {
