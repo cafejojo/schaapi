@@ -19,9 +19,10 @@ import soot.jimple.internal.JReturnVoidStmt
 import soot.jimple.internal.JTableSwitchStmt
 
 private const val TEST_CLASSES_PACKAGE = "org.cafejojo.schaapi.miningpipeline.usagegraphgenerator.jimple.testclasses"
-private val testClassesClassPath = IntegrationTest::class.java.getResource("../../../../../../").toURI().path
+private val testClassesClassPath =
+    JimpleUsageGraphGeneratorIntegrationTest::class.java.getResource("../../../../../../").toURI().path
 
-internal object IntegrationTest : Spek({
+internal object JimpleUsageGraphGeneratorIntegrationTest : Spek({
     describe("the integration of different components of the package for simple classes") {
         it("converts a simple class to a library usage graph") {
             val libraryUsageGraph = JimpleLibraryUsageGraphGenerator().generate(

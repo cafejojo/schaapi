@@ -28,9 +28,9 @@ import java.util.concurrent.TimeUnit
 @ExtendWith(SpringExtension::class)
 @SpringBootTest(
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-    classes = [IntegrationTest.TestConfig::class]
+    classes = [GitHubInteractorIntegrationTest.TestConfig::class]
 )
-class IntegrationTest {
+class GitHubInteractorIntegrationTest {
     lateinit var testsStorageLocation: Path
 
     @Autowired
@@ -48,7 +48,7 @@ class IntegrationTest {
     @BeforeEach
     fun setUp() {
         System.getProperties().load(
-            IntegrationTest::class.java.getResourceAsStream("/githubtestreporter.properties")
+            GitHubInteractorIntegrationTest::class.java.getResourceAsStream("/githubtestreporter.properties")
         )
 
         testsStorageLocation = Files.createTempDirectory("schaapi-github")
@@ -73,7 +73,7 @@ class IntegrationTest {
             }
         )[1]
 
-        val requestJson = IntegrationTest::class.java
+        val requestJson = GitHubInteractorIntegrationTest::class.java
             .getResourceAsStream("/fixtures/github/check_suite_webhook.resp").bufferedReader().readText()
 
         val entity = HttpEntity(
@@ -109,7 +109,7 @@ class IntegrationTest {
             }
         )[1]
 
-        val requestJson = IntegrationTest::class.java
+        val requestJson = GitHubInteractorIntegrationTest::class.java
             .getResourceAsStream("/fixtures/github/check_run_rerequested_webhook.resp").bufferedReader().readText()
 
         val entity = HttpEntity(
@@ -135,7 +135,7 @@ class IntegrationTest {
 
     @Test
     fun `it can receive an 'installation created' web hook`() {
-        val requestJson = IntegrationTest::class.java
+        val requestJson = GitHubInteractorIntegrationTest::class.java
             .getResourceAsStream("/fixtures/github/installation_created_webhook.resp").bufferedReader().readText()
 
         val entity = HttpEntity(
@@ -155,7 +155,7 @@ class IntegrationTest {
 
     @Test
     fun `it can receive an 'installation deleted' web hook`() {
-        val requestJson = IntegrationTest::class.java
+        val requestJson = GitHubInteractorIntegrationTest::class.java
             .getResourceAsStream("/fixtures/github/installation_deleted_webhook.resp").bufferedReader().readText()
 
         val entity = HttpEntity(

@@ -11,7 +11,7 @@ import org.springframework.context.ApplicationEventPublisher
 import java.io.File
 import java.nio.file.Files
 
-object IntegrationTest : Spek({
+object CIJobIntegrationTest : Spek({
     lateinit var storageDirectory: File
     lateinit var projectDirectory: File
 
