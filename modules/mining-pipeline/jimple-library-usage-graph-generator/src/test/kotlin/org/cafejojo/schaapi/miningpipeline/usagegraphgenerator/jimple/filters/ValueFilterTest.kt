@@ -3,7 +3,6 @@ package org.cafejojo.schaapi.miningpipeline.usagegraphgenerator.jimple.filters
 import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.mock
 import org.assertj.core.api.Assertions.assertThat
-import org.cafejojo.schaapi.miningpipeline.usagegraphgenerator.jimple.libraryClasses
 import org.cafejojo.schaapi.miningpipeline.usagegraphgenerator.jimple.libraryProject
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
