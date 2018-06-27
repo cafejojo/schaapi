@@ -8,5 +8,3 @@ internal data class CheckSuiteEvent(
 ) {
     fun isRequested() = action == "requested"
 }
-
-internal data class CheckSuite(val id: Int, val headBranch: String = "", val headSha: String = "")

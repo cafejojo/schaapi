@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.PropertyNamingStrategy
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.cafejojo.schaapi.validationpipeline.events.ValidationRequestReceivedEvent
+import org.cafejojo.schaapi.validationpipeline.githubinteractor.webhookevents.CheckRunEvent
 import org.cafejojo.schaapi.validationpipeline.githubinteractor.webhookevents.CheckSuiteEvent
 import org.cafejojo.schaapi.validationpipeline.githubinteractor.webhookevents.InstallationEvent
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
@@ -36,6 +37,7 @@ class WebHookReceiver(private val checkReporter: CheckReporter, private val publ
     fun processWebHook(@RequestHeader("X-GitHub-Event") eventType: String, @RequestBody body: String): String {
         when (eventType) {
             "check_suite" -> handleCheckSuiteEvent(body)
+            "check_run" -> handleCheckRunEvent(body)
             "installation" -> handleInstallationEvent(body)
             else -> throw IncomingWebHookException("Cannot process web hooks for events of type $eventType.")
         }
@@ -62,6 +64,29 @@ class WebHookReceiver(private val checkReporter: CheckReporter, private val publ
                 directory = File(Properties.testsStorageLocation, repository.fullName),
                 downloadUrl = "https://github.com/${repository.fullName}/archive/${checkSuite.headSha}.zip",
                 metadata = GitHubCIJobProjectMetadata(checkRun.id, installation.id, repository.fullName)
+            ))
+        }
+    }
+
+    private fun handleCheckRunEvent(body: String) {
+        val checkRunEvent = mapper.readValue(body, CheckRunEvent::class.java)
+
+        if (!checkRunEvent.isRerequested()) {
+            throw IncomingWebHookException("Cannot process check run web hooks for action ${checkRunEvent.action}.")
+        }
+
+        with(checkRunEvent) {
+            val newCheckRun = checkReporter.reportStarted(
+                installation.id,
+                repository.fullName,
+                checkRun.check_suite.headBranch,
+                checkRun.check_suite.headSha
+            )
+
+            publisher.publishEvent(ValidationRequestReceivedEvent(
+                directory = File(Properties.testsStorageLocation, repository.fullName),
+                downloadUrl = "https://github.com/${repository.fullName}/archive/${checkRun.check_suite.headSha}.zip",
+                metadata = GitHubCIJobProjectMetadata(newCheckRun.id, installation.id, repository.fullName)
             ))
         }
     }
