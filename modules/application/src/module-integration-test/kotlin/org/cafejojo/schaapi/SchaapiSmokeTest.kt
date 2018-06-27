@@ -35,7 +35,7 @@ internal class SchaapiSmokeTest : Spek({
         ))
 
         assertThat(target.resolve("patterns/RegressionTest.class")).isFile()
-        assertThat(target.resolve("tests/evosuite-tests/RegressionTest_ESTest.java")).isFile()
+        assertThat(target.resolve("tests/evosuite-tests/RegressionTest_ESTest_0.java")).isFile()
     }
 })
 

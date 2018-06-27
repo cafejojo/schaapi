@@ -36,7 +36,7 @@ internal object EvoSuiteRunnerTest : Spek({
 
             evoSuiteRunner.run()
 
-            assertThat(File("${evoSuiteTestOutput.path}/org/cafejojo/schaapi/test/EvoSuiteTestClass_ESTest.java"))
+            assertThat(File("${evoSuiteTestOutput.path}/org/cafejojo/schaapi/test/EvoSuiteTestClass_ESTest_0.java"))
                 .exists()
         }
 
