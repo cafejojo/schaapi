@@ -1,5 +1,6 @@
 package org.cafejojo.schaapi
 
+import com.google.common.io.Resources.getResource
 import mu.KLogging
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.DefaultParser
@@ -8,6 +9,8 @@ import org.apache.commons.cli.Option
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import java.io.File
+import java.io.IOException
+import java.io.IOException
 import kotlin.system.exitProcess
 
 /**
@@ -16,6 +19,11 @@ import kotlin.system.exitProcess
  * @param args the path to the output directory, the path to the library project, and the paths to the user projects
  */
 fun main(args: Array<String>) {
+    try {
+        println(getResource("schaapi-text.txt").readText())
+    } catch (e: IOException) {
+        println("Schaapi")
+    }
     if (args.isEmpty()) {
         KLogging().logger.error { "At least one argument expected." }
         exitProcess(-1)
