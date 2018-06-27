@@ -499,7 +499,7 @@ internal object IntegrationTest : Spek({
         it("filters out lambdas that do not have a library usage outside the lambda") {
             val libraryUsageGraphs = JimpleLibraryUsageGraphGenerator().generate(
                 libraryProject,
-                TestProject(testClassesClassPath, setOf("$TEST_CLASSES_PACKAGE.users.LambdaClassConstantTest"))
+                TestProject(testClassesClassPath, setOf("$TEST_CLASSES_PACKAGE.users.LambdaUsageTest"))
             )
 
             assertThat(libraryUsageGraphs).isEmpty()

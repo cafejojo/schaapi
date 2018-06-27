@@ -4,7 +4,7 @@ import org.cafejojo.schaapi.miningpipeline.usagegraphgenerator.jimple.testclasse
 
 import java.util.function.Supplier;
 
-public class LambdaTest {
+public class LambdaUsageTest {
     public void test() {
         Supplier<Object1> supplier = Object1::staticMethod2;
     }
