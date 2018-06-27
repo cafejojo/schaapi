@@ -6,11 +6,11 @@
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-public class RegressionTest_ESTest {
+public class Patterns_ESTest {
 
     @Test(timeout = 4000)
     public void test0()  throws Throwable  {
-        int result = RegressionTest.pattern0(35);
+        int result = Patterns.pattern0(35);
 
         assertEquals(42, result);
     }
