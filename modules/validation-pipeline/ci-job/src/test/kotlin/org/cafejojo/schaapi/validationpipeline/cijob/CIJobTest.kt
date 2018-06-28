@@ -27,9 +27,9 @@ object CIJobTest : Spek({
         val commitHash = "ced7a679ba6337977d99effccdb4ac66b3ba34e0"
         val downloadUrl = "https://github.com/cafejojo/dummy-simple-maven-library/archive/$commitHash.zip"
 
-        val ciJob = CIJob(commitHash, projectDirectory, downloadUrl)
+        val ciJob = CIJob(commitHash, projectDirectory, downloadUrl, {}, {})
 
-        val testResults = ciJob.call()
+        val testResults = ciJob.executeJobSteps()
 
         assertThat(File(projectDirectory, "builds/$commitHash/README.md")).exists()
         assertThat(testResults.totalCount).isEqualTo(1)
@@ -39,9 +39,9 @@ object CIJobTest : Spek({
     it("throws an exception when the source code cannot be downloaded") {
         val downloadUrl = "https://non-existing-domain.test/files.zip"
 
-        val ciJob = CIJob("id", projectDirectory, downloadUrl)
+        val ciJob = CIJob("id", projectDirectory, downloadUrl, {}, {})
 
-        assertThatThrownBy { ciJob.call() }
+        assertThatThrownBy { ciJob.executeJobSteps() }
             .isInstanceOf(CIJobException::class.java)
             .hasMessageContaining("could not be downloaded")
             .hasMessageContaining(downloadUrl)
@@ -50,9 +50,9 @@ object CIJobTest : Spek({
     it("throws an exception when the source code cannot be extracted") {
         val downloadUrl = "https://httpbin.org/image"
 
-        val ciJob = CIJob("id", projectDirectory, downloadUrl)
+        val ciJob = CIJob("id", projectDirectory, downloadUrl, {}, {})
 
-        assertThatThrownBy { ciJob.call() }
+        assertThatThrownBy { ciJob.executeJobSteps() }
             .isInstanceOf(CIJobException::class.java)
             .hasMessageContaining("unzipping")
     }
@@ -61,9 +61,9 @@ object CIJobTest : Spek({
         val commitHash = "29fecd2f7391023d907957ed42949ca2bf6fedcc" // failing commit
         val downloadUrl = "https://github.com/cafejojo/dummy-simple-maven-library/archive/$commitHash.zip"
 
-        val ciJob = CIJob("id", projectDirectory, downloadUrl)
+        val ciJob = CIJob("id", projectDirectory, downloadUrl, {}, {})
 
-        assertThatThrownBy { ciJob.call() }
+        assertThatThrownBy { ciJob.executeJobSteps() }
             .isInstanceOf(CIJobException::class.java)
             .hasMessageContaining("library source code")
             .hasMessageContaining("compile")
@@ -79,9 +79,9 @@ object CIJobTest : Spek({
         val commitHash = "ced7a679ba6337977d99effccdb4ac66b3ba34e0" // passing commit
         val downloadUrl = "https://github.com/cafejojo/dummy-simple-maven-library/archive/$commitHash.zip"
 
-        val ciJob = CIJob("id", projectDirectory, downloadUrl)
+        val ciJob = CIJob("id", projectDirectory, downloadUrl, {}, {})
 
-        assertThatThrownBy { ciJob.call() }
+        assertThatThrownBy { ciJob.executeJobSteps() }
             .isInstanceOf(CIJobException::class.java)
             .hasMessageContaining("test compilation")
             .hasMessageContaining("boolean result = Patterns.pattern0(35);")
@@ -91,9 +91,9 @@ object CIJobTest : Spek({
         val commitHash = "78ab65330411737209587d790f94f12e3d9a95d0" // failing commit
         val downloadUrl = "https://github.com/cafejojo/dummy-simple-maven-library/archive/$commitHash.zip"
 
-        val ciJob = CIJob("id", projectDirectory, downloadUrl)
+        val ciJob = CIJob("id", projectDirectory, downloadUrl, {}, {})
 
-        val testResults = ciJob.call()
+        val testResults = ciJob.executeJobSteps()
 
         assertThat(testResults.totalCount).isEqualTo(1)
         assertThat(testResults.failureCount).isEqualTo(1)

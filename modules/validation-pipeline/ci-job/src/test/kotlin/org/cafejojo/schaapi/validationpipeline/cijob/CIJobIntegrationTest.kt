@@ -41,7 +41,7 @@ object CIJobIntegrationTest : Spek({
 
         initiator.handleValidateRequestReceivedEvent(
             ValidationRequestReceivedEvent(projectDirectory, downloadUrl, FakeMetadata(commitHash))
-        )
+        ).get()
 
         assertThat(event).isNotNull()
         event?.apply {
@@ -61,7 +61,7 @@ object CIJobIntegrationTest : Spek({
 
         initiator.handleValidateRequestReceivedEvent(
             ValidationRequestReceivedEvent(projectDirectory, downloadUrl, FakeMetadata(commitHash))
-        )
+        ).get()
 
         assertThat(event).isNotNull()
         event?.apply {
