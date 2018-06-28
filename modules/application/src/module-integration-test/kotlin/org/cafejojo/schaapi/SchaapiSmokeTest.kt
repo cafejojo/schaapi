@@ -31,11 +31,11 @@ internal class SchaapiSmokeTest : Spek({
             "-u", getResourcePath("/user/"),
             "--maven_dir", mavenDir.absolutePath,
             "--pattern_detector_minimum_count", "1",
-            "--test_generator_timeout", "10"
+            "--test_generator_timeout", "3"
         ))
 
         assertThat(target.resolve("patterns/Patterns.class")).isFile()
-        assertThat(target.resolve("tests/evosuite-tests/RegressionTest_ESTest_0.java")).isFile()
+        assertThat(target.resolve("tests/evosuite-tests/Patterns_ESTest_0.java")).isFile()
     }
 })
 
