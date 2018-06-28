@@ -31,7 +31,7 @@ internal class SchaapiSmokeTest : Spek({
             "-u", getResourcePath("/user/"),
             "--maven_dir", mavenDir.absolutePath,
             "--pattern_detector_minimum_count", "1",
-            "--test_generator_timeout", "3"
+            "--test_generator_timeout", "10"
         ))
 
         assertThat(target.resolve("patterns/Patterns.class")).isFile()
