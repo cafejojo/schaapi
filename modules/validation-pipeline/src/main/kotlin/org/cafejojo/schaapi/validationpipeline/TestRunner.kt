@@ -45,9 +45,9 @@ interface TestResults {
      */
     val failureCount: Int
     /**
-     * Descriptions of the failed tests.
+     * Descriptions of the failed tests and the file in which the failure occurred.
      */
-    val failures: Collection<String>
+    val failures: Map<File, String>
 
     /**
      * Equals true iff no tests were executed at this level nor in the [subResults].

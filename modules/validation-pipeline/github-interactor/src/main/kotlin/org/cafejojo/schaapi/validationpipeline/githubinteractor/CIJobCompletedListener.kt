@@ -60,7 +60,7 @@ class CIJobCompletedListener(private val checkReporter: CheckReporter) {
             | **Pass**              | $passCount                                        |
             | **Fail**              | $failureCount                                     |
             | **Ignored**           | $ignoreCount                                      |
-            | **Failure Messages**  | ${failures.joinToString("<br><br>")}              |
+            | **Failure Messages**  | ${failures.values.joinToString("<br><br>")}       |
         """.trimIndent()
     }
 }

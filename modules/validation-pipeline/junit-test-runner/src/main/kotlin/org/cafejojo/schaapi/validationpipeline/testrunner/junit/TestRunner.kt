@@ -29,15 +29,15 @@ class TestRunner : TestRunner {
 
         return TestResults(
             testFiles.map { testFile ->
-                    val className = testFile.toRelativeString(rootDir)
-                        .replace(Regex("[/\\\\]"), ".")
-                        .removeSuffix(".class")
-                    val classLoader = URLClassLoader(
-                        classpathDirectories.map { it.toURI().toURL() }.toTypedArray()
-                            + testFile.parentFile.toURI().toURL()
-                    )
-                    className to gatherResults(JUnitCore.runClasses(classLoader.loadClass(className)))
-                }.toMap()
+                val className = testFile.toRelativeString(rootDir)
+                    .replace(Regex("[/\\\\]"), ".")
+                    .removeSuffix(".class")
+                val classLoader = URLClassLoader(
+                    classpathDirectories.map { it.toURI().toURL() }.toTypedArray()
+                        + testFile.parentFile.toURI().toURL()
+                )
+                className to gatherResults(JUnitCore.runClasses(classLoader.loadClass(className)), testFile)
+            }.toMap()
         )
     }
 
@@ -46,12 +46,12 @@ class TestRunner : TestRunner {
      *
      * @param results the JUnit results to convert
      */
-    private fun gatherResults(results: JUnitResults) =
+    private fun gatherResults(results: JUnitResults, testClass: File) =
         TestResults(
             localTotalCount = results.runCount,
             localPassCount = results.runCount - results.failureCount,
             localIgnoreCount = results.ignoreCount,
-            localFailures = results.failures.map { it.testHeader }
+            localFailures = results.failures.map { testClass to it.message }.toMap()
         )
 }
 
@@ -63,7 +63,7 @@ data class TestResults(
     val localTotalCount: Int = 0,
     val localPassCount: Int = 0,
     val localIgnoreCount: Int = 0,
-    val localFailures: Collection<String> = emptyList()
+    val localFailures: Map<File, String> = mapOf()
 ) : TestResults {
     override val totalCount: Int
         get() = localTotalCount + subResults.map { (_, subResult) -> subResult.totalCount }.sum()
@@ -74,8 +74,10 @@ data class TestResults(
     override val ignoreCount: Int
         get() = localIgnoreCount + subResults.map { (_, subResult) -> subResult.ignoreCount }.sum()
 
-    override val failures: Collection<String>
-        get() = localFailures + subResults.flatMap { (_, subResult) -> subResult.failures }
+    override val failures: Map<File, String>
+        get() = localFailures + subResults.values.fold(mapOf<File, String>()) { acc, testResults ->
+            acc + testResults.failures
+        }
 
     override val failureCount: Int
         get() = failures.size
