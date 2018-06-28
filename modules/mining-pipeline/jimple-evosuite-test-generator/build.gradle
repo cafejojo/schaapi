@@ -12,5 +12,4 @@ dependencies {
     compile group: "ca.mcgill.sable", name: "soot", version: sootVersion, {
         exclude group: "org.slf4j", module: "slf4j-simple"
     }
-    compile group: "me.tongfei", name: "progressbar", version: progressBarVersion
 }
