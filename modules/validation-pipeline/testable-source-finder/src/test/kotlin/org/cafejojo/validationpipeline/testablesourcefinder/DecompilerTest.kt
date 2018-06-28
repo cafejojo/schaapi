@@ -17,7 +17,7 @@ object DecompilerTest : Spek({
         target.deleteRecursively()
     }
 
-    it("can decompile a class file to a java file") {
+    it("can decompile a class file to a Java file") {
         val classFile = File(DecompilerTest::class.java.getResource("/Patterns.class").file)
 
         val decompiled = Decompiler.decompile(classFile, target)
