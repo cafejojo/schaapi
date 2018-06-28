@@ -47,6 +47,7 @@ abstract class Snippet {
 /**
  * Behavior linked to using the Maven distribution.
  */
+@Suppress("LateinitUsage") // Values cannot be determined at initialization
 class MavenSnippet : Snippet() {
     lateinit var dir: File
     private var repair = false
@@ -83,6 +84,7 @@ class MavenSnippet : Snippet() {
  *
  * @property maven the [MavenSnippet] describing Maven-related behavior
  */
+@Suppress("LateinitUsage") // Values cannot be determined at initialization
 class GitHubMavenMinerSnippet(private val maven: MavenSnippet) : Snippet() {
     private lateinit var token: String
     private var maxProjects = 0
@@ -184,6 +186,7 @@ class GitHubMavenMinerSnippet(private val maven: MavenSnippet) : Snippet() {
  *
  * @property maven the [MavenSnippet] describing Maven-related behavior
  */
+@Suppress("LateinitUsage") // Values cannot be determined at initialization
 class DirectoryMavenMinerSnippet(private val maven: MavenSnippet) : Snippet() {
     private lateinit var userDirDir: File
 

@@ -39,6 +39,7 @@ fun main(args: Array<String>) {
  * The behavior of a [CommandLineInterface] is determined by its [snippets], which are mappings from command-line
  * arguments to actual pipeline components.
  */
+@Suppress("LateinitUsage") // Values cannot be determined at initialization
 abstract class CommandLineInterface {
     lateinit var outputDir: File
     lateinit var libraryDir: File
