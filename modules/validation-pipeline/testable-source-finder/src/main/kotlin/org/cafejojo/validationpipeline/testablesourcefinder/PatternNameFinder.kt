@@ -1,7 +1,5 @@
 package org.cafejojo.validationpipeline.testablesourcefinder
 
-import java.io.File
-
 /**
  * Finds pattern names within a test file.
  */
