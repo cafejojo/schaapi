@@ -71,7 +71,7 @@ internal class GitHubProjectDownloader<P : Project>(
             gitHubProject.extractMasterFile()
             projectPacker(gitHubProject).also { logger.debug { "Created project of $gitHubProject." } }
         } catch (e: IllegalArgumentException) {
-            logger.warn("Unable to pack $gitHubProject into project.", e)
+            logger.warn("Unable to pack $gitHubProject into project.", e.message)
             gitHubProject.deleteRecursively()
             null
         }
@@ -96,7 +96,7 @@ internal class GitHubProjectDownloader<P : Project>(
                 logger.warn { "Output file ${zipFile.path} could not be created." }
             }
         } catch (e: IOException) {
-            logger.warn("Could not save project to ${zipFile.path}.", e)
+            logger.warn("Could not save project to ${zipFile.path}.", e.message)
             return null
         }
 
@@ -114,10 +114,10 @@ internal class GitHubProjectDownloader<P : Project>(
             ZipUtil.unpack(projectZipFile, githubProject)
             logger.debug { "Successfully unzipped file ${projectZipFile.absolutePath}." }
         } catch (e: IOException) {
-            logger.warn("Could not unzip ${projectZipFile.absolutePath}.", e)
+            logger.warn("Could not unzip ${projectZipFile.absolutePath}.", e.message)
             return null
         } catch (e: ZipException) {
-            logger.warn("Could not unzip ${projectZipFile.absolutePath}.", e)
+            logger.warn("Could not unzip ${projectZipFile.absolutePath}.", e.message)
             return null
         } finally {
             projectZipFile.delete()
@@ -136,7 +136,7 @@ internal class GitHubProjectDownloader<P : Project>(
             connection.apply { requestMethod = "GET" }
             return connection.inputStream
         } catch (e: IOException) {
-            logger.warn("Could not connect to project $projectName", e)
+            logger.warn("Could not connect to project $projectName.", e.message)
             return null
         }
     }
