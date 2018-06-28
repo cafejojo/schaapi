@@ -101,10 +101,8 @@ class MiningPipeline<SO : SearchOptions, UP : Project, LP : Project, N : Node>(
             try {
                 map(it)
             } catch (e: RuntimeException) {
-                if (e is E) {
-                    logger.warn(e.message, e)
-                    null
-                } else throw e
+                if (e is E) logger.warn { e.message } else throw e
+                null
             }
         }
 
