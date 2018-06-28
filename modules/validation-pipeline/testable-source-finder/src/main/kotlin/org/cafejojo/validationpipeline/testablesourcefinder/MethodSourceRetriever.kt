@@ -17,9 +17,7 @@ class MethodSourceRetriever(private val javaFile: File) {
      */
     fun getSourceOf(methodName: String) =
         mutableListOf<String>().also { foundMethodSources ->
-            JavaParser.parse(javaFile).apply {
-                accept(MethodFinder(methodName), foundMethodSources)
-            }
+            JavaParser.parse(javaFile).accept(MethodFinder(methodName), foundMethodSources)
         }.firstOrNull()
 }
 
