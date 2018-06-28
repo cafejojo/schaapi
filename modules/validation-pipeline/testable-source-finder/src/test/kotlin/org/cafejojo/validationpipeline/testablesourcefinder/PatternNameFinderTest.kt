@@ -51,7 +51,7 @@ object PatternNameFinderTest : Spek({
         assertThat(patternNames[1]).isEqualTo("pattern234789")
     }
 
-    it("gives an empty list of no patterns can be found") {
+    it("gives an empty list if no patterns can be found") {
         val testSource = """
             public class Patterns_ESTest {
 
