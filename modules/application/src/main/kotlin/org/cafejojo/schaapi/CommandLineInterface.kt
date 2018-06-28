@@ -7,7 +7,6 @@ import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Option
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
-import org.cafejojo.schaapi.models.project.JavaMavenProject
 import java.io.File
 import kotlin.system.exitProcess
 
@@ -113,6 +112,7 @@ abstract class CommandLineInterface {
 
     fun run(args: Array<String>) {
         val cmd = parse(args)
+        snippets.forEach { it.setUp(cmd) }
 
         outputDir = File(cmd.getOptionValue('o')).apply { mkdirs() }
         libraryDir = File(cmd.getOptionValue('l'))

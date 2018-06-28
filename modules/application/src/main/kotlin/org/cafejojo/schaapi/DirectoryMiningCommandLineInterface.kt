@@ -2,7 +2,6 @@ package org.cafejojo.schaapi
 
 import mu.KLogging
 import org.apache.commons.cli.CommandLine
-import org.apache.commons.cli.Options
 import org.cafejojo.schaapi.miningpipeline.MiningPipeline
 import org.cafejojo.schaapi.miningpipeline.PatternFilter
 import org.cafejojo.schaapi.miningpipeline.miner.directory.DirectoryProjectMiner
