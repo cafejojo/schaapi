@@ -32,5 +32,6 @@ includeModule "validation-pipeline"
 includeModule "validation-pipeline", "ci-job"
 includeModule "validation-pipeline", "github-interactor"
 includeModule "validation-pipeline", "junit-test-runner"
+includeModule "validation-pipeline", "testable-source-finder"
 
 includeModule "web"
