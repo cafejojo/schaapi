@@ -30,86 +30,77 @@ internal const val DEFAULT_MAX_PROJECTS = "20"
  *
  * Assumes that the passed library is a Java JAR project.
  */
-internal class GitHubMiningCommandLineInterface {
-    internal companion object : KLogging() {
-        fun addOptionsTo(options: Options): Options =
-            options
-                .addOption(Option
-                    .builder()
-                    .longOpt("github_oauth_token")
-                    .desc("Token of GitHub account used for searching.")
-                    .hasArg()
-                    .build())
-                .addOption(Option
-                    .builder()
-                    .longOpt("max_projects")
-                    .desc("Maximum amount of projects to download from GitHub.")
-                    .hasArg()
-                    .build())
-                .addOption(Option
-                    .builder()
-                    .longOpt("library_group_id")
-                    .desc("Group id of library mined projects should have a dependency on.")
-                    .hasArg()
-                    .build())
-                .addOption(Option
-                    .builder()
-                    .longOpt("library_artifact_id")
-                    .desc("Artifact id of library mined projects should have a dependency on.")
-                    .hasArg()
-                    .build())
-                .addOption(Option
-                    .builder()
-                    .longOpt("library_version")
-                    .desc("Version of library mined projects should have a dependency on.")
-                    .hasArg()
-                    .build())
-                .addOption(Option
-                    .builder()
-                    .longOpt("sort_by_stargazers")
-                    .desc("True if GitHub projects should be sorted by stars.")
-                    .hasArg(false)
-                    .build())
-                .addOption(Option
-                    .builder()
-                    .longOpt("sort_by_watchers")
-                    .desc("True if GitHub projects should be sorted by watchers.")
-                    .hasArg(false)
-                    .build())
+internal class GitHubMiningCommandLineInterface : CommandLineInterface() {
+    companion object : KLogging()
+
+    override fun buildOptions(): Options {
+        return super.buildOptions()
+            .addOption(Option
+                .builder()
+                .longOpt("github_oauth_token")
+                .desc("Token of GitHub account used for searching.")
+                .hasArg()
+                .required()
+                .build())
+            .addOption(Option
+                .builder()
+                .longOpt("max_projects")
+                .desc("Maximum amount of projects to download from GitHub.")
+                .hasArg()
+                .build())
+            .addOption(Option
+                .builder()
+                .longOpt("library_group_id")
+                .desc("Group id of library mined projects should have a dependency on.")
+                .hasArg()
+                .required()
+                .build())
+            .addOption(Option
+                .builder()
+                .longOpt("library_artifact_id")
+                .desc("Artifact id of library mined projects should have a dependency on.")
+                .hasArg()
+                .required()
+                .build())
+            .addOption(Option
+                .builder()
+                .longOpt("library_version")
+                .desc("Version of library mined projects should have a dependency on.")
+                .hasArg()
+                .required()
+                .build())
+            .addOption(Option
+                .builder()
+                .longOpt("sort_by_stargazers")
+                .desc("True if GitHub projects should be sorted by stars.")
+                .hasArg(false)
+                .build())
+            .addOption(Option
+                .builder()
+                .longOpt("sort_by_watchers")
+                .desc("True if GitHub projects should be sorted by watchers.")
+                .hasArg(false)
+                .build())
     }
 
-    /**
-     * Mines GitHub.
-     *
-     * @throws [MissingArgumentException] if required arguments not set in [CommandLine].
-     */
-    fun run(cmd: CommandLine, mavenDir: File, library: File, output: File) {
-        val token = cmd.getOptionOrThrowException("github_oauth_token")
+    override fun doYourThing(cmd: CommandLine) {
+
+        val token = cmd.getOptionValue("github_oauth_token")
         val maxProjects = cmd.getOptionValue("max_projects", DEFAULT_MAX_PROJECTS).toInt()
-        val groupId = cmd.getOptionOrThrowException("library_group_id")
-        val artifactId = cmd.getOptionOrThrowException("library_artifact_id")
-        val version = cmd.getOptionOrThrowException("library_version")
-
-        val testGeneratorTimeout = cmd.getOptionValue("test_generator_timeout", DEFAULT_TEST_GENERATOR_TIMEOUT).toInt()
-        val testGeneratorEnableOutput = cmd.hasOption("test_generator_enable_output")
-
-        val patternDetectorMinCount =
-            cmd.getOptionValue("pattern_detector_minimum_count", DEFAULT_PATTERN_DETECTOR_MINIMUM_COUNT).toInt()
-        val maxSequenceLength =
-            cmd.getOptionValue("pattern_detector_maximum_sequence_length", DEFAULT_MAX_SEQUENCE_LENGTH).toInt()
-        val minLibraryUsageCount =
-            cmd.getOptionValue("pattern_minimum_library_usage_count", DEFAULT_MIN_LIBRARY_USAGE_COUNT).toInt()
+        val groupId = cmd.getOptionValue("library_group_id")
+        val artifactId = cmd.getOptionValue("library_artifact_id")
+        val version = cmd.getOptionValue("library_version")
 
         if (cmd.hasOption("sort_by_stargazers") && cmd.hasOption("sort_by_watchers")) {
             logger.error { "Cannot sort repositories on both stargazers and watchers." }
         }
 
-        val libraryProject = JavaJarProject(library)
+        val libraryProject = JavaJarProject(libraryDir)
         val jimpleLibraryUsageGraphGenerator = JimpleLibraryUsageGraphGenerator()
 
         MiningPipeline(
-            outputDirectory = output,
-            projectMiner = GitHubProjectMiner(token, output) { JavaMavenProject(it, mavenDir) },
+            outputDirectory = outputDir,
+            projectMiner = GitHubProjectMiner(token, outputDir) { JavaMavenProject(it, mavenDir) },
             searchOptions = MavenProjectSearchOptions(groupId, artifactId, version, maxProjects).apply {
                 this.sortByStargazers = cmd.hasOption("sort_by_stargazers")
                 this.sortByWatchers = cmd.hasOption("sort_by_watchers")
@@ -130,7 +121,7 @@ internal class GitHubMiningCommandLineInterface {
             ),
             testGenerator = TestGenerator(
                 library = libraryProject,
-                outputDirectory = output,
+                outputDirectory = outputDir,
                 timeout = testGeneratorTimeout,
                 processStandardStream = if (testGeneratorEnableOutput) System.out else null,
                 processErrorStream = if (testGeneratorEnableOutput) System.out else null

@@ -26,40 +26,29 @@ import java.io.File
  *
  * Assumes that the passed library is a Java Maven project.
  */
-internal class DirectoryMiningCommandLineInterface {
-    internal companion object : KLogging() {
-        fun addOptionsTo(options: Options): Options =
-            options.addOption(Option
+internal class DirectoryMiningCommandLineInterface : CommandLineInterface() {
+    internal companion object : KLogging()
+
+    override fun buildOptions(): Options {
+        return super.buildOptions()
+            .addOption(Option
                 .builder("u")
                 .longOpt("user_base_dir")
                 .desc("The directory containing user project directories.")
                 .hasArg()
+                .required()
                 .build())
     }
 
-    /**
-     * Mines a directory.
-     *
-     * @throws [MissingArgumentException] if required arguments not set in [CommandLine].
-     */
-    fun run(cmd: CommandLine, mavenDir: File, library: File, output: File) {
-        val userDirDirs = cmd.getOptionOrThrowException("u")
+    override fun doYourThing(cmd: CommandLine) {
 
-        val testGeneratorTimeout = cmd.getOptionValue("test_generator_timeout", DEFAULT_TEST_GENERATOR_TIMEOUT).toInt()
-        val testGeneratorEnableOutput = cmd.hasOption("test_generator_enable_output")
+        val userDirDirs = cmd.getOptionValue("u")
 
-        val patternDetectorMinCount =
-            cmd.getOptionValue("pattern_detector_minimum_count", DEFAULT_PATTERN_DETECTOR_MINIMUM_COUNT).toInt()
-        val maxSequenceLength =
-            cmd.getOptionValue("pattern_detector_maximum_sequence_length", DEFAULT_MAX_SEQUENCE_LENGTH).toInt()
-        val minLibraryUsageCount =
-            cmd.getOptionValue("pattern_minimum_library_usage_count", DEFAULT_MIN_LIBRARY_USAGE_COUNT).toInt()
-
-        val libraryProject = JavaMavenProject(library, mavenDir)
+        val libraryProject = JavaMavenProject(libraryDir, mavenDir)
         val jimpleLibraryUsageGraphGenerator = JimpleLibraryUsageGraphGenerator()
 
         MiningPipeline(
-            outputDirectory = output,
+            outputDirectory = outputDir,
             projectMiner = DirectoryProjectMiner { JavaMavenProject(it, mavenDir) },
             searchOptions = DirectorySearchOptions(File(userDirDirs)),
             libraryProjectCompiler = JavaMavenProjectCompiler(displayOutput = true),
@@ -78,7 +67,7 @@ internal class DirectoryMiningCommandLineInterface {
             ),
             testGenerator = TestGenerator(
                 library = libraryProject,
-                outputDirectory = output,
+                outputDirectory = outputDir,
                 timeout = testGeneratorTimeout,
                 processStandardStream = if (testGeneratorEnableOutput) System.out else null,
                 processErrorStream = if (testGeneratorEnableOutput) System.out else null
