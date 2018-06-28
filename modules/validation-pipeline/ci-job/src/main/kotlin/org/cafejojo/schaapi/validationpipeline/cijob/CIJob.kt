@@ -4,8 +4,8 @@ import com.github.kittinunf.fuel.Fuel
 import com.github.kittinunf.fuel.core.Request
 import com.github.kittinunf.result.Result
 import mu.KLogging
-import org.cafejojo.schaapi.miningpipeline.projectcompiler.javamaven.MavenInstaller
 import org.cafejojo.schaapi.miningpipeline.projectcompiler.javamaven.JavaMavenProjectCompiler
+import org.cafejojo.schaapi.miningpipeline.projectcompiler.javamaven.MavenInstaller
 import org.cafejojo.schaapi.models.project.JavaMavenProject
 import org.cafejojo.schaapi.validationpipeline.CIJobException
 import org.cafejojo.schaapi.validationpipeline.TestResults
@@ -13,24 +13,37 @@ import org.cafejojo.schaapi.validationpipeline.testrunner.junit.TestRunner
 import org.zeroturnaround.zip.ZipUtil
 import java.io.ByteArrayOutputStream
 import java.io.File
-import java.util.concurrent.Callable
 import javax.tools.ToolProvider
 
 /**
  * A CI job that performs the execution of all involved steps.
  */
-class CIJob(private val identifier: String, private val projectDirectory: File, private val downloadUrl: String) :
-    Callable<TestResults> {
+class CIJob(
+    private val identifier: String,
+    private val projectDirectory: File,
+    private val downloadUrl: String,
+    private val successReporter: (TestResults) -> Any,
+    private val failureReporter: (CIJobException) -> Any
+) : Runnable {
+
     private val zipFile = File(projectDirectory, "builds").let { it.mkdirs(); File(it, "$identifier.zip") }
     private val newProjectFiles = File(projectDirectory, "builds/$identifier").also { it.mkdirs() }
     private val testsDirectory = File(projectDirectory, "tests")
 
     private companion object : KLogging()
 
+    override fun run() {
+        try {
+            successReporter(executeJobSteps())
+        } catch (exception: CIJobException) {
+            failureReporter(exception)
+        }
+    }
+
     /**
      * Executes the necessary steps to run tests and report the results.
      */
-    override fun call(): TestResults {
+    internal fun executeJobSteps(): TestResults {
         if (!testsDirectory.exists()) throw CIJobException("This project has not been initialized yet. $testsDirectory")
 
         MavenInstaller().installMaven(JavaMavenProject.DEFAULT_MAVEN_HOME)
