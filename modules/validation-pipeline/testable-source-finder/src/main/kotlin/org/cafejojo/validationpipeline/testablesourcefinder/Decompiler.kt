@@ -11,7 +11,7 @@ object Decompiler {
      * Decompiles a [classFile].
      *
      * @param classFile a class file
-     * @param destinationDirectory the Java destination file
+     * @param destinationDirectory the Java destination directory
      * @return the decompiled Java source file or null if the file could not be decompiled
      */
     fun decompile(classFile: File, destinationDirectory: File): File? {
