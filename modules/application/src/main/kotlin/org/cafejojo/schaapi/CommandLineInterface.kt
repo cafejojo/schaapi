@@ -44,6 +44,16 @@ abstract class CommandLineInterface {
 
     val snippets: MutableList<Snippet> = mutableListOf()
 
+    fun run(args: Array<String>) {
+        val cmd = parse(args)
+        snippets.forEach { it.setUp(cmd) }
+
+        outputDir = File(cmd.getOptionValue('o')).apply { mkdirs() }
+        libraryDir = File(cmd.getOptionValue('l'))
+    }
+
+    abstract fun run(cmd: CommandLine)
+
     private fun buildOptions(): Options {
         return Options()
             .addOption(Option
@@ -75,16 +85,6 @@ abstract class CommandLineInterface {
             exitProcess(-1)
         }
     }
-
-    fun run(args: Array<String>) {
-        val cmd = parse(args)
-        snippets.forEach { it.setUp(cmd) }
-
-        outputDir = File(cmd.getOptionValue('o')).apply { mkdirs() }
-        libraryDir = File(cmd.getOptionValue('l'))
-    }
-
-    abstract fun run(cmd: CommandLine)
 
     private fun printHelpMessage(options: Options) {
         val helpFormatter = HelpFormatter()
