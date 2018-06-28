@@ -42,13 +42,6 @@ abstract class CommandLineInterface {
     lateinit var outputDir: File
     lateinit var libraryDir: File
 
-    var testGeneratorTimeout = 0
-    var testGeneratorEnableOutput = false
-
-    var patternDetectorMinCount = 0
-    var maxSequenceLength = 0
-    var minLibraryUsageCount = 0
-
     val snippets: MutableList<Snippet> = mutableListOf()
 
     private fun buildOptions(): Options {
@@ -66,33 +59,6 @@ abstract class CommandLineInterface {
                 .desc("The library directory.")
                 .hasArg()
                 .required()
-                .build())
-            .addOption(Option
-                .builder()
-                .longOpt("pattern_detector_minimum_count")
-                .desc("The minimum number of occurrences for a statement to be considered frequent.")
-                .type(Int::class.java)
-                .hasArg()
-                .build())
-            .addOption(Option
-                .builder()
-                .longOpt("pattern_detector_maximum_sequence_length")
-                .desc("The maximum length of sequences to be considered for pattern detection.")
-                .type(Int::class.java)
-                .hasArg()
-                .build())
-            .addOption(Option
-                .builder()
-                .longOpt("test_generator_enable_output")
-                .desc("True if test generator output should be shown.")
-                .hasArg(false)
-                .build())
-            .addOption(Option
-                .builder()
-                .longOpt("test_generator_timeout")
-                .desc("The time limit for the test generator.")
-                .type(Int::class.java)
-                .hasArg()
                 .build())
     }
 
@@ -116,16 +82,6 @@ abstract class CommandLineInterface {
 
         outputDir = File(cmd.getOptionValue('o')).apply { mkdirs() }
         libraryDir = File(cmd.getOptionValue('l'))
-
-        testGeneratorTimeout = cmd.getOptionValue("test_generator_timeout", DEFAULT_TEST_GENERATOR_TIMEOUT).toInt()
-        testGeneratorEnableOutput = cmd.hasOption("test_generator_enable_output")
-
-        patternDetectorMinCount =
-            cmd.getOptionValue("pattern_detector_minimum_count", DEFAULT_PATTERN_DETECTOR_MINIMUM_COUNT).toInt()
-        maxSequenceLength =
-            cmd.getOptionValue("pattern_detector_maximum_sequence_length", DEFAULT_MAX_SEQUENCE_LENGTH).toInt()
-        minLibraryUsageCount =
-            cmd.getOptionValue("pattern_minimum_library_usage_count", DEFAULT_MIN_LIBRARY_USAGE_COUNT).toInt()
     }
 
     abstract fun run(cmd: CommandLine)

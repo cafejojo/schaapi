@@ -28,9 +28,14 @@ internal class DirectoryMiningCommandLineInterface : CommandLineInterface() {
 
     private val maven = MavenSnippet()
     private val directory = DirectoryMinerSnippet()
+    private val patternDetector = PatternDetectorSnippet()
+    private val testGenerator = TestGeneratorSnippet()
 
     init {
         snippets.add(maven)
+        snippets.add(directory)
+        snippets.add(patternDetector)
+        snippets.add(testGenerator)
     }
 
     override fun run(cmd: CommandLine) {
@@ -45,22 +50,22 @@ internal class DirectoryMiningCommandLineInterface : CommandLineInterface() {
             userProjectCompiler = JavaMavenProjectCompiler(),
             libraryUsageGraphGenerator = jimpleLibraryUsageGraphGenerator,
             patternDetector = CCSpanPatternDetector(
-                patternDetectorMinCount,
-                { JimplePathEnumerator(it, maxSequenceLength) },
+                patternDetector.minCount,
+                { JimplePathEnumerator(it, patternDetector.maxSequenceLength) },
                 GeneralizedNodeComparator()
             ),
             patternFilter = PatternFilter(
                 IncompleteInitPatternFilterRule(),
                 LengthPatternFilterRule(),
                 EmptyLoopPatternFilterRule(),
-                InsufficientLibraryUsageFilter(libraryProject, minLibraryUsageCount)
+                InsufficientLibraryUsageFilter(libraryProject, patternDetector.minLibraryUsageCount)
             ),
             testGenerator = TestGenerator(
                 library = libraryProject,
                 outputDirectory = outputDir,
-                timeout = testGeneratorTimeout,
-                processStandardStream = if (testGeneratorEnableOutput) System.out else null,
-                processErrorStream = if (testGeneratorEnableOutput) System.out else null
+                timeout = testGenerator.timeout,
+                processStandardStream = if (testGenerator.enableOutput) System.out else null,
+                processErrorStream = if (testGenerator.enableOutput) System.out else null
             )
         ).run(libraryProject)
 
