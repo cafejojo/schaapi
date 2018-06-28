@@ -27,7 +27,9 @@ internal class GitHubMiningCommandLineInterface : CommandLineInterface() {
     init {
         snippets.add(maven)
         snippets.add(gitHub)
+        snippets.add(patternFilter)
         snippets.add(patternDetector)
+        snippets.add(testGenerator)
     }
 
     override fun run(cmd: CommandLine) {
@@ -44,8 +46,8 @@ internal class GitHubMiningCommandLineInterface : CommandLineInterface() {
             userProjectCompiler = JavaMavenProjectCompiler(),
             libraryUsageGraphGenerator = jimpleLibraryUsageGraphGenerator,
             patternDetector = patternDetector.createPatternDetector(),
-            patternFilter = patternFilter.createFilter(libraryProject),
-            testGenerator = testGenerator.create(outputDir, libraryProject)
+            patternFilter = patternFilter.createPatternFilter(libraryProject),
+            testGenerator = testGenerator.createTestGenerator(outputDir, libraryProject)
         ).run(libraryProject)
 
         logger.info { "Found ${jimpleLibraryUsageGraphGenerator.lugStatistics.concreteMethods} concrete methods." }

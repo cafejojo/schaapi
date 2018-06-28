@@ -155,7 +155,7 @@ class DirectoryMavenMinerSnippet(private val maven: MavenSnippet) : Snippet() {
         userDirDir = File(cmd.getOptionValue("u"))
     }
 
-    fun createMiner(outputDir: File) = DirectoryProjectMiner { JavaMavenProject(it, maven.dir) }
+    fun createMiner() = DirectoryProjectMiner { JavaMavenProject(it, maven.dir) }
 
     fun createOptions() = DirectorySearchOptions(userDirDir)
 }
@@ -182,7 +182,7 @@ class CCSpanPatternDetectorSnippet : Snippet() {
 
     override fun setUp(cmd: CommandLine) {
         minCount =
-            cmd.getOptionValue("pattern_detector_minimum_count", DEFAULT_PATTERN_DETECTOR_MINIMUM_COUNT).toInt()
+            cmd.getOptionValue("pattern_detector_minimum_count", DEFAULT_MINIMUM_COUNT).toInt()
         maxSequenceLength =
             cmd.getOptionValue("pattern_detector_maximum_sequence_length", DEFAULT_MAX_SEQUENCE_LENGTH).toInt()
     }
@@ -193,6 +193,11 @@ class CCSpanPatternDetectorSnippet : Snippet() {
             { JimplePathEnumerator(it, maxSequenceLength) },
             GeneralizedNodeComparator()
         )
+
+    companion object {
+        private const val DEFAULT_MINIMUM_COUNT = "2"
+        private const val DEFAULT_MAX_SEQUENCE_LENGTH = "25"
+    }
 }
 
 class PatternFilterSnippet : Snippet() {
@@ -207,12 +212,16 @@ class PatternFilterSnippet : Snippet() {
             cmd.getOptionValue("pattern_minimum_library_usage_count", DEFAULT_MIN_LIBRARY_USAGE_COUNT).toInt()
     }
 
-    fun createFilter(libraryProject: JavaProject) = PatternFilter(
+    fun createPatternFilter(libraryProject: JavaProject) = PatternFilter(
         IncompleteInitPatternFilterRule(),
         LengthPatternFilterRule(),
         EmptyLoopPatternFilterRule(),
         InsufficientLibraryUsageFilter(libraryProject, minLibraryUsageCount)
     )
+
+    companion object {
+        private const val DEFAULT_MIN_LIBRARY_USAGE_COUNT = "1"
+    }
 }
 
 class JimpleEvoSuiteTestGeneratorSnippet : Snippet() {
@@ -235,11 +244,11 @@ class JimpleEvoSuiteTestGeneratorSnippet : Snippet() {
             .build())
 
     override fun setUp(cmd: CommandLine) {
-        timeout = cmd.getOptionValue("test_generator_timeout", DEFAULT_TEST_GENERATOR_TIMEOUT).toInt()
+        timeout = cmd.getOptionValue("test_generator_timeout", DEFAULT_TIMEOUT).toInt()
         enableOutput = cmd.hasOption("test_generator_enable_output")
     }
 
-    fun create(outputDir: File, libraryProject: JavaProject) =
+    fun createTestGenerator(outputDir: File, libraryProject: JavaProject) =
         TestGenerator(
             outputDirectory = outputDir,
             library = libraryProject,
@@ -247,4 +256,8 @@ class JimpleEvoSuiteTestGeneratorSnippet : Snippet() {
             processStandardStream = if (enableOutput) System.out else null,
             processErrorStream = if (enableOutput) System.out else null
         )
+
+    companion object {
+        private const val DEFAULT_TIMEOUT = "60"
+    }
 }

@@ -25,6 +25,7 @@ internal class DirectoryMiningCommandLineInterface : CommandLineInterface() {
         snippets.add(maven)
         snippets.add(directory)
         snippets.add(patternDetector)
+        snippets.add(patternFilter)
         snippets.add(testGenerator)
     }
 
@@ -36,14 +37,14 @@ internal class DirectoryMiningCommandLineInterface : CommandLineInterface() {
 
         MiningPipeline(
             outputDirectory = outputDir,
-            projectMiner = directory.createMiner(outputDir),
+            projectMiner = directory.createMiner(),
             searchOptions = directory.createOptions(),
             libraryProjectCompiler = JavaMavenProjectCompiler(true),
             userProjectCompiler = JavaMavenProjectCompiler(),
             libraryUsageGraphGenerator = jimpleLibraryUsageGraphGenerator,
             patternDetector = patternDetector.createPatternDetector(),
-            patternFilter = patternFilter.createFilter(libraryProject),
-            testGenerator = testGenerator.create(outputDir, libraryProject)
+            patternFilter = patternFilter.createPatternFilter(libraryProject),
+            testGenerator = testGenerator.createTestGenerator(outputDir, libraryProject)
         ).run(libraryProject)
 
         logger.info { "Found ${jimpleLibraryUsageGraphGenerator.lugStatistics.concreteMethods} concrete methods." }

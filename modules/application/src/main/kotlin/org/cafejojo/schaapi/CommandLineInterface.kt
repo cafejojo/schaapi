@@ -10,11 +10,6 @@ import org.apache.commons.cli.ParseException
 import java.io.File
 import kotlin.system.exitProcess
 
-internal const val DEFAULT_TEST_GENERATOR_TIMEOUT = "60"
-internal const val DEFAULT_PATTERN_DETECTOR_MINIMUM_COUNT = "2"
-internal const val DEFAULT_MAX_SEQUENCE_LENGTH = "25"
-internal const val DEFAULT_MIN_LIBRARY_USAGE_COUNT = "1"
-
 /**
  * Runs the complete first phase of the Schaapi pipeline.
  *
@@ -54,23 +49,21 @@ abstract class CommandLineInterface {
 
     abstract fun run(cmd: CommandLine)
 
-    private fun buildOptions(): Options {
-        return Options()
-            .addOption(Option
-                .builder("o")
-                .longOpt("output_dir")
-                .desc("The output directory.")
-                .hasArg()
-                .required()
-                .build())
-            .addOption(Option
-                .builder("l")
-                .longOpt("library_dir")
-                .desc("The library directory.")
-                .hasArg()
-                .required()
-                .build())
-    }
+    private fun buildOptions(): Options = Options()
+        .addOption(Option
+            .builder("o")
+            .longOpt("output_dir")
+            .desc("The output directory.")
+            .hasArg()
+            .required()
+            .build())
+        .addOption(Option
+            .builder("l")
+            .longOpt("library_dir")
+            .desc("The library directory.")
+            .hasArg()
+            .required()
+            .build())
 
     private fun parse(args: Array<String>): CommandLine {
         val options = buildOptions()
