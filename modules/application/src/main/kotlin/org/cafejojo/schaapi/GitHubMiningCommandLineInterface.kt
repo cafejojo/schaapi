@@ -8,8 +8,6 @@ import org.cafejojo.schaapi.miningpipeline.projectcompiler.javamaven.JavaMavenPr
 import org.cafejojo.schaapi.miningpipeline.usagegraphgenerator.jimple.JimpleLibraryUsageGraphGenerator
 import org.cafejojo.schaapi.models.project.JavaJarProject
 
-internal const val DEFAULT_MAX_PROJECTS = "20"
-
 /**
  * Mines GitHub for user projects and generates tests based on these projects.
  *

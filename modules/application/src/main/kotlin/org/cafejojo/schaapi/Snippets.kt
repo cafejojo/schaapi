@@ -49,7 +49,7 @@ abstract class Snippet {
  */
 class MavenSnippet : Snippet() {
     lateinit var dir: File
-    var repair = false
+    private var repair = false
 
     override fun addOptionsTo(options: Options): Options =
         options
@@ -84,15 +84,13 @@ class MavenSnippet : Snippet() {
  * @property maven the [MavenSnippet] describing Maven-related behavior
  */
 class GitHubMavenMinerSnippet(private val maven: MavenSnippet) : Snippet() {
-    private companion object : KLogging()
-
-    lateinit var token: String
-    var maxProjects = 0
-    lateinit var groupId: String
-    lateinit var artifactId: String
-    lateinit var version: String
-    var sortByStargazers = false
-    var sortByWatchers = false
+    private lateinit var token: String
+    private var maxProjects = 0
+    private lateinit var groupId: String
+    private lateinit var artifactId: String
+    private lateinit var version: String
+    private var sortByStargazers = false
+    private var sortByWatchers = false
 
     override fun addOptionsTo(options: Options): Options = options
         .addOption(Option
@@ -175,6 +173,10 @@ class GitHubMavenMinerSnippet(private val maven: MavenSnippet) : Snippet() {
                 it.sortByStargazers = sortByStargazers
                 it.sortByWatchers = sortByWatchers
             }
+
+    private companion object : KLogging() {
+        const val DEFAULT_MAX_PROJECTS = "20"
+    }
 }
 
 /**
@@ -183,7 +185,7 @@ class GitHubMavenMinerSnippet(private val maven: MavenSnippet) : Snippet() {
  * @property maven the [MavenSnippet] describing Maven-related behavior
  */
 class DirectoryMavenMinerSnippet(private val maven: MavenSnippet) : Snippet() {
-    lateinit var userDirDir: File
+    private lateinit var userDirDir: File
 
     override fun addOptionsTo(options: Options): Options = options
         .addOption(Option
@@ -217,8 +219,8 @@ class DirectoryMavenMinerSnippet(private val maven: MavenSnippet) : Snippet() {
  * Behavior linked to detecting patterns with the CCSpan algorithm.
  */
 class CCSpanPatternDetectorSnippet : Snippet() {
-    var minCount = 0
-    var maxSequenceLength = 0
+    private var minCount = 0
+    private var maxSequenceLength = 0
 
     override fun addOptionsTo(options: Options): Options = options
         .addOption(Option
@@ -265,7 +267,7 @@ class CCSpanPatternDetectorSnippet : Snippet() {
  * Creates a pattern filter with a number of filter rules.
  */
 class PatternFilterSnippet : Snippet() {
-    var minLibraryUsageCount = 0
+    private var minLibraryUsageCount = 0
 
     override fun addOptionsTo(options: Options): Options = options
         .addOption(Option
@@ -302,8 +304,8 @@ class PatternFilterSnippet : Snippet() {
  * Behavior linked to generating tests with EvoSuite from Jimple code.
  */
 class JimpleEvoSuiteTestGeneratorSnippet : Snippet() {
-    var timeout = 0
-    var enableOutput = false
+    private var timeout = 0
+    private var enableOutput = false
 
     override fun addOptionsTo(options: Options): Options = options
         .addOption(Option
