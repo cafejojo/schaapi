@@ -4,7 +4,22 @@ import mu.KLogging
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.Option
 import org.apache.commons.cli.Options
+import org.cafejojo.schaapi.miningpipeline.PatternFilter
+import org.cafejojo.schaapi.miningpipeline.miner.directory.DirectoryProjectMiner
+import org.cafejojo.schaapi.miningpipeline.miner.directory.DirectorySearchOptions
+import org.cafejojo.schaapi.miningpipeline.miner.github.GitHubProjectMiner
+import org.cafejojo.schaapi.miningpipeline.miner.github.MavenProjectSearchOptions
+import org.cafejojo.schaapi.miningpipeline.patterndetector.ccspan.CCSpanPatternDetector
+import org.cafejojo.schaapi.miningpipeline.patternfilter.jimple.EmptyLoopPatternFilterRule
+import org.cafejojo.schaapi.miningpipeline.patternfilter.jimple.IncompleteInitPatternFilterRule
+import org.cafejojo.schaapi.miningpipeline.patternfilter.jimple.InsufficientLibraryUsageFilter
+import org.cafejojo.schaapi.miningpipeline.patternfilter.jimple.LengthPatternFilterRule
+import org.cafejojo.schaapi.miningpipeline.projectcompiler.javamaven.MavenInstaller
+import org.cafejojo.schaapi.miningpipeline.testgenerator.jimpleevosuite.TestGenerator
+import org.cafejojo.schaapi.models.libraryusagegraph.jimple.GeneralizedNodeComparator
+import org.cafejojo.schaapi.models.libraryusagegraph.jimple.JimplePathEnumerator
 import org.cafejojo.schaapi.models.project.JavaMavenProject
+import org.cafejojo.schaapi.models.project.JavaProject
 import java.io.File
 
 abstract class Snippet {
@@ -35,9 +50,13 @@ class MavenSnippet : Snippet() {
         dir = File(cmd.getOptionValue("maven_dir") ?: JavaMavenProject.DEFAULT_MAVEN_HOME.absolutePath)
         repair = cmd.hasOption("repair_maven")
     }
+
+    fun run() {
+        MavenInstaller().installMaven(dir, overwrite = repair)
+    }
 }
 
-class GitHubMinerSnippet : Snippet() {
+class GitHubMavenMinerSnippet(private val maven: MavenSnippet) : Snippet() {
     companion object : KLogging()
 
     lateinit var token: String
@@ -45,6 +64,8 @@ class GitHubMinerSnippet : Snippet() {
     lateinit var groupId: String
     lateinit var artifactId: String
     lateinit var version: String
+    var sortByStargazers = false
+    var sortByWatchers = false
 
     override fun addOptionsTo(options: Options): Options = options
         .addOption(Option
@@ -100,14 +121,25 @@ class GitHubMinerSnippet : Snippet() {
         groupId = cmd.getOptionValue("library_group_id")
         artifactId = cmd.getOptionValue("library_artifact_id")
         version = cmd.getOptionValue("library_version")
+        sortByStargazers = cmd.hasOption("sort_by_stargazers")
+        sortByWatchers = cmd.hasOption("sort_by_watchers")
 
-        if (cmd.hasOption("sort_by_stargazers") && cmd.hasOption("sort_by_watchers")) {
+        if (sortByStargazers && sortByWatchers) {
             logger.error { "Cannot sort repositories on both stargazers and watchers." }
         }
     }
+
+    fun createMiner(outputDir: File) = GitHubProjectMiner(token, outputDir) { JavaMavenProject(it, maven.dir) }
+
+    fun createOptions() =
+        MavenProjectSearchOptions(groupId, artifactId, version, maxProjects)
+            .also {
+                it.sortByStargazers = sortByStargazers
+                it.sortByWatchers = sortByWatchers
+            }
 }
 
-class DirectoryMinerSnippet : Snippet() {
+class DirectoryMavenMinerSnippet(private val maven: MavenSnippet) : Snippet() {
     lateinit var userDirDir: File
 
     override fun addOptionsTo(options: Options): Options = options
@@ -122,12 +154,15 @@ class DirectoryMinerSnippet : Snippet() {
     override fun setUp(cmd: CommandLine) {
         userDirDir = File(cmd.getOptionValue("u"))
     }
+
+    fun createMiner(outputDir: File) = DirectoryProjectMiner { JavaMavenProject(it, maven.dir) }
+
+    fun createOptions() = DirectorySearchOptions(userDirDir)
 }
 
-class PatternDetectorSnippet : Snippet() {
+class CCSpanPatternDetectorSnippet : Snippet() {
     var minCount = 0
     var maxSequenceLength = 0
-    var minLibraryUsageCount = 0
 
     override fun addOptionsTo(options: Options): Options = options
         .addOption(Option
@@ -150,12 +185,37 @@ class PatternDetectorSnippet : Snippet() {
             cmd.getOptionValue("pattern_detector_minimum_count", DEFAULT_PATTERN_DETECTOR_MINIMUM_COUNT).toInt()
         maxSequenceLength =
             cmd.getOptionValue("pattern_detector_maximum_sequence_length", DEFAULT_MAX_SEQUENCE_LENGTH).toInt()
+    }
+
+    fun createPatternDetector() =
+        CCSpanPatternDetector(
+            minCount,
+            { JimplePathEnumerator(it, maxSequenceLength) },
+            GeneralizedNodeComparator()
+        )
+}
+
+class PatternFilterSnippet : Snippet() {
+    var minLibraryUsageCount = 0
+
+    override fun addOptionsTo(options: Options): Options {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun setUp(cmd: CommandLine) {
         minLibraryUsageCount =
             cmd.getOptionValue("pattern_minimum_library_usage_count", DEFAULT_MIN_LIBRARY_USAGE_COUNT).toInt()
     }
+
+    fun createFilter(libraryProject: JavaProject) = PatternFilter(
+        IncompleteInitPatternFilterRule(),
+        LengthPatternFilterRule(),
+        EmptyLoopPatternFilterRule(),
+        InsufficientLibraryUsageFilter(libraryProject, minLibraryUsageCount)
+    )
 }
 
-class TestGeneratorSnippet : Snippet() {
+class JimpleEvoSuiteTestGeneratorSnippet : Snippet() {
     var timeout = 0
     var enableOutput = false
 
@@ -178,4 +238,13 @@ class TestGeneratorSnippet : Snippet() {
         timeout = cmd.getOptionValue("test_generator_timeout", DEFAULT_TEST_GENERATOR_TIMEOUT).toInt()
         enableOutput = cmd.hasOption("test_generator_enable_output")
     }
+
+    fun create(outputDir: File, libraryProject: JavaProject) =
+        TestGenerator(
+            outputDirectory = outputDir,
+            library = libraryProject,
+            timeout = timeout,
+            processStandardStream = if (enableOutput) System.out else null,
+            processErrorStream = if (enableOutput) System.out else null
+        )
 }
