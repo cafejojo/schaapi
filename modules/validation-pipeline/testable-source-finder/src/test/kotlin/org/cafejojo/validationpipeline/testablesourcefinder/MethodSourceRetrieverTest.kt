@@ -20,5 +20,11 @@ object MethodSourceRetrieverTest : Spek({
         """.trimIndent())
     }
 
-    it("does something when the method does not exists") {}
+    it("gives null when there is no method with the given method name") {
+        val sourceFile = File(MethodSourceRetrieverTest::class.java.getResource("/DecompiledPatterns.java").file)
+
+        val methodSource = MethodSourceRetriever(sourceFile).getSourceOf("non_existing_method")
+
+        assertThat(methodSource).isNull()
+    }
 })
