@@ -2,7 +2,6 @@ package org.cafejojo.schaapi
 
 import mu.KLogging
 import org.apache.commons.cli.CommandLine
-import org.apache.commons.cli.Option
 import org.apache.commons.cli.Options
 import org.cafejojo.schaapi.miningpipeline.MiningPipeline
 import org.cafejojo.schaapi.miningpipeline.PatternFilter
@@ -19,7 +18,6 @@ import org.cafejojo.schaapi.miningpipeline.usagegraphgenerator.jimple.JimpleLibr
 import org.cafejojo.schaapi.models.libraryusagegraph.jimple.GeneralizedNodeComparator
 import org.cafejojo.schaapi.models.libraryusagegraph.jimple.JimplePathEnumerator
 import org.cafejojo.schaapi.models.project.JavaMavenProject
-import java.io.File
 
 /**
  * Mines a directory for user projects and generates tests based on these projects.
@@ -30,33 +28,20 @@ internal class DirectoryMiningCommandLineInterface : CommandLineInterface() {
     internal companion object : KLogging()
 
     private val maven = MavenSnippet()
+    private val directory = DirectoryMinerSnippet()
 
     init {
         snippets.add(maven)
     }
 
-    override fun buildOptions(): Options {
-        return super.buildOptions()
-            .addOption(Option
-                .builder("u")
-                .longOpt("user_base_dir")
-                .desc("The directory containing user project directories.")
-                .hasArg()
-                .required()
-                .build())
-    }
-
     override fun run(cmd: CommandLine) {
-
-        val userDirDirs = cmd.getOptionValue("u")
-
         val libraryProject = JavaMavenProject(libraryDir, maven.dir)
         val jimpleLibraryUsageGraphGenerator = JimpleLibraryUsageGraphGenerator()
 
         MiningPipeline(
             outputDirectory = outputDir,
             projectMiner = DirectoryProjectMiner { JavaMavenProject(it, maven.dir) },
-            searchOptions = DirectorySearchOptions(File(userDirDirs)),
+            searchOptions = DirectorySearchOptions(directory.userDirDir),
             libraryProjectCompiler = JavaMavenProjectCompiler(displayOutput = true),
             userProjectCompiler = JavaMavenProjectCompiler(),
             libraryUsageGraphGenerator = jimpleLibraryUsageGraphGenerator,
