@@ -126,7 +126,7 @@ internal class GitHubProjectDownloader<P : Project>(
         return if (githubProject.exists()) githubProject else null
     }
 
-    internal fun getInputStream(projectName: String): InputStream? {
+    private fun getInputStream(projectName: String): InputStream? {
         val url = getURl(projectName)
 
         try {

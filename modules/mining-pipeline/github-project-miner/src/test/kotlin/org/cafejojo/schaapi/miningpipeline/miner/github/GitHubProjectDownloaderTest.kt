@@ -168,20 +168,6 @@ internal object GitHubProjectDownloaderTest : Spek({
     }
 
     describe("when downloading searchContent project") {
-        it("should create searchContent connection request with the correct url") {
-            val connection = GitHubProjectDownloader(emptyList(), output, ::testProjectPacker)
-                .getConnection("cafejojo/schaapi")
-
-            assertThat(connection?.url).isEqualTo(URL("https://github.com/cafejojo/schaapi/archive/master.zip"))
-        }
-
-        it("should create searchContent connection request with searchContent get request method") {
-            val connection = GitHubProjectDownloader(emptyList(), output, ::testProjectPacker)
-                .getConnection("cafejojo/schaapi")
-
-            assertThat(connection?.requestMethod).isEqualTo("GET")
-        }
-
         it("should save the unzipped file and delete the old zip file") {
             val zipFile = addZipFile("testProject", "content", Files.createTempDirectory("project-downloader").toFile())
 
