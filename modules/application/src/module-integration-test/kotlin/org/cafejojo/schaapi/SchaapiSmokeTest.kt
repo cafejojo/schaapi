@@ -24,7 +24,7 @@ internal class SchaapiSmokeTest : Spek({
         mavenDir.deleteRecursively()
     }
 
-    it("generates a test class from the patterns in a project using a library") {
+    it("generates a test class from the patterns in a project using a maven library") {
         main(arrayOf(
             "-o", target.absolutePath,
             "-l", getResourcePath("/library/"),
@@ -36,6 +36,21 @@ internal class SchaapiSmokeTest : Spek({
 
         assertThat(target.resolve("patterns/Patterns.class")).isFile()
         assertThat(target.resolve("tests/evosuite-tests/Patterns_ESTest_0.java")).isFile()
+    }
+
+    it("generates a test class from the patterns in a project using a jar library") {
+        main(arrayOf(
+            "-o", target.absolutePath,
+            "-l", getResourcePath("/library-jar/library-1.0.0.jar"),
+            "-u", getResourcePath("/user/"),
+            "--library_flavor", "javajar",
+            "--maven_dir", mavenDir.absolutePath,
+            "--pattern_detector_minimum_count", "1",
+            "--test_generator_timeout", "3"
+        ))
+
+        assertThat(target.resolve("patterns/RegressionTest.class")).isFile()
+        assertThat(target.resolve("tests/evosuite-tests/RegressionTest_ESTest.java")).isFile()
     }
 })
 

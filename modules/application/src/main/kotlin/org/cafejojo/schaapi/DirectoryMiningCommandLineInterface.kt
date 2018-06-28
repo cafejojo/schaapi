@@ -12,12 +12,15 @@ import org.cafejojo.schaapi.miningpipeline.patterndetector.ccspan.CCSpanPatternD
 import org.cafejojo.schaapi.miningpipeline.patternfilter.jimple.EmptyLoopPatternFilterRule
 import org.cafejojo.schaapi.miningpipeline.patternfilter.jimple.IncompleteInitPatternFilterRule
 import org.cafejojo.schaapi.miningpipeline.patternfilter.jimple.LengthPatternFilterRule
+import org.cafejojo.schaapi.miningpipeline.projectcompiler.javajar.JavaJarProjectCompiler
 import org.cafejojo.schaapi.miningpipeline.projectcompiler.javamaven.JavaMavenProjectCompiler
 import org.cafejojo.schaapi.miningpipeline.testgenerator.jimpleevosuite.TestGenerator
 import org.cafejojo.schaapi.miningpipeline.usagegraphgenerator.jimple.JimpleLibraryUsageGraphGenerator
 import org.cafejojo.schaapi.models.libraryusagegraph.jimple.GeneralizedNodeComparator
 import org.cafejojo.schaapi.models.libraryusagegraph.jimple.JimplePathEnumerator
+import org.cafejojo.schaapi.models.project.JavaJarProject
 import org.cafejojo.schaapi.models.project.JavaMavenProject
+import org.cafejojo.schaapi.models.project.JavaProject
 import java.io.File
 
 /**
@@ -41,7 +44,7 @@ internal class DirectoryMiningCommandLineInterface {
      *
      * @throws [MissingArgumentException] if required arguments not set in [CommandLine].
      */
-    fun run(cmd: CommandLine, mavenDir: File, library: File, output: File) {
+    fun run(cmd: CommandLine, mavenDir: File, library: JavaProject, output: File) {
         val userDirDirs = cmd.getOptionOrThrowException("u")
 
         val testGeneratorTimeout = cmd.getOptionValue("test_generator_timeout", DEFAULT_TEST_GENERATOR_TIMEOUT).toInt()
@@ -52,34 +55,60 @@ internal class DirectoryMiningCommandLineInterface {
         val maxSequenceLength =
             cmd.getOptionValue("pattern_detector_maximum_sequence_length", DEFAULT_MAX_SEQUENCE_LENGTH).toInt()
 
-        val libraryProject = JavaMavenProject(library, mavenDir)
         val jimpleLibraryUsageGraphGenerator = JimpleLibraryUsageGraphGenerator()
 
-        MiningPipeline(
-            outputDirectory = output,
-            projectMiner = DirectoryProjectMiner { JavaMavenProject(it, mavenDir) },
-            searchOptions = DirectorySearchOptions(File(userDirDirs)),
-            libraryProjectCompiler = JavaMavenProjectCompiler(),
-            userProjectCompiler = JavaMavenProjectCompiler(),
-            libraryUsageGraphGenerator = jimpleLibraryUsageGraphGenerator,
-            patternDetector = CCSpanPatternDetector(
-                patternDetectorMinCount,
-                { node -> JimplePathEnumerator(node, maxSequenceLength) },
-                GeneralizedNodeComparator()
-            ),
-            patternFilter = PatternFilter(
-                IncompleteInitPatternFilterRule(),
-                LengthPatternFilterRule(),
-                EmptyLoopPatternFilterRule()
-            ),
-            testGenerator = TestGenerator(
-                library = libraryProject,
+        when (library) {
+            is JavaMavenProject -> MiningPipeline(
                 outputDirectory = output,
-                timeout = testGeneratorTimeout,
-                processStandardStream = if (testGeneratorEnableOutput) System.out else null,
-                processErrorStream = if (testGeneratorEnableOutput) System.out else null
-            )
-        ).run(libraryProject)
+                projectMiner = DirectoryProjectMiner { JavaMavenProject(it, mavenDir) },
+                searchOptions = DirectorySearchOptions(File(userDirDirs)),
+                libraryProjectCompiler = JavaMavenProjectCompiler(),
+                userProjectCompiler = JavaMavenProjectCompiler(),
+                libraryUsageGraphGenerator = jimpleLibraryUsageGraphGenerator,
+                patternDetector = CCSpanPatternDetector(
+                    patternDetectorMinCount,
+                    { node -> JimplePathEnumerator(node, maxSequenceLength) },
+                    GeneralizedNodeComparator()
+                ),
+                patternFilter = PatternFilter(
+                    IncompleteInitPatternFilterRule(),
+                    LengthPatternFilterRule(),
+                    EmptyLoopPatternFilterRule()
+                ),
+                testGenerator = TestGenerator(
+                    library = library,
+                    outputDirectory = output,
+                    timeout = testGeneratorTimeout,
+                    processStandardStream = if (testGeneratorEnableOutput) System.out else null,
+                    processErrorStream = if (testGeneratorEnableOutput) System.out else null
+                )
+            ).run(library)
+            is JavaJarProject -> MiningPipeline(
+                outputDirectory = output,
+                projectMiner = DirectoryProjectMiner { JavaMavenProject(it, mavenDir) },
+                searchOptions = DirectorySearchOptions(File(userDirDirs)),
+                libraryProjectCompiler = JavaJarProjectCompiler(),
+                userProjectCompiler = JavaMavenProjectCompiler(),
+                libraryUsageGraphGenerator = jimpleLibraryUsageGraphGenerator,
+                patternDetector = CCSpanPatternDetector(
+                    patternDetectorMinCount,
+                    { node -> JimplePathEnumerator(node, maxSequenceLength) },
+                    GeneralizedNodeComparator()
+                ),
+                patternFilter = PatternFilter(
+                    IncompleteInitPatternFilterRule(),
+                    LengthPatternFilterRule(),
+                    EmptyLoopPatternFilterRule()
+                ),
+                testGenerator = TestGenerator(
+                    library = library,
+                    outputDirectory = output,
+                    timeout = testGeneratorTimeout,
+                    processStandardStream = if (testGeneratorEnableOutput) System.out else null,
+                    processErrorStream = if (testGeneratorEnableOutput) System.out else null
+                )
+            ).run(library)
+        }
 
         logger.info { "Found ${jimpleLibraryUsageGraphGenerator.lugStatistics.concreteMethods} concrete methods." }
         logger.info { "Found ${jimpleLibraryUsageGraphGenerator.lugStatistics.allStatements} statements." }
