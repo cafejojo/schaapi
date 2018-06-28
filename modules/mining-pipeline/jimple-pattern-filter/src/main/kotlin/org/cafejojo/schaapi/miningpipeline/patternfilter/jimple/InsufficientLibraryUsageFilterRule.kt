@@ -34,10 +34,10 @@ class InsufficientLibraryUsageFilter(libraryProject: JavaProject, private val mi
  */
 class LibraryUsageVisitor(private val libraryProject: JavaProject) : JimpleValueVisitor<Boolean>() {
     /**
-     * Returns false.
+     * Returns true iff the type of [value] is for a library class.
      *
      * @param value a [Value]
-     * @return false
+     * @return true iff the type of [value] is for a library class
      */
     override fun applyDefault(value: Value) = isLibraryClass(value.type.toString())
 
