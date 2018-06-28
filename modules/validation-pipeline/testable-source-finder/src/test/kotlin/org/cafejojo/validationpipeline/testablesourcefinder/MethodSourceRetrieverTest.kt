@@ -11,7 +11,7 @@ object MethodSourceRetrieverTest : Spek({
 
         val methodSource = MethodSourceRetriever(sourceFile).getSourceOf("pattern0")
 
-        assertThat(methodSource).isEqualTo("""
+        assertThat(methodSource?.replace("\r\n", "\n")).isEqualTo("""
             // Variables with automatically generated values:
             int var0;
 
