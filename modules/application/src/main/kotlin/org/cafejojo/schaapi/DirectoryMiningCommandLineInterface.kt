@@ -62,7 +62,7 @@ internal class DirectoryMiningCommandLineInterface {
             outputDirectory = output,
             projectMiner = DirectoryProjectMiner { JavaMavenProject(it, mavenDir) },
             searchOptions = DirectorySearchOptions(File(userDirDirs)),
-            libraryProjectCompiler = JavaMavenProjectCompiler(),
+            libraryProjectCompiler = JavaMavenProjectCompiler(true),
             userProjectCompiler = JavaMavenProjectCompiler(),
             libraryUsageGraphGenerator = jimpleLibraryUsageGraphGenerator,
             patternDetector = CCSpanPatternDetector(
