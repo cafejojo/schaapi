@@ -19,11 +19,19 @@ object DecompilerTest : Spek({
 
     it("can decompile a class file to a java file") {
         val classFile = File(DecompilerTest::class.java.getResource("/Patterns.class").file)
-        val destinationFile = File(target, "Patterns.java")
 
-        val decompiled = Decompiler.decompile(classFile, destinationFile)
+        val decompiled = Decompiler.decompile(classFile, target)
 
         val expectedDecompiledFile = File(DecompilerTest::class.java.getResource("/DecompiledPatterns.java").file)
-        assertThat(decompiled.readText()).isEqualTo(expectedDecompiledFile.readText())
+        assertThat(decompiled?.readText()?.replace(" ", ""))
+            .isEqualTo(expectedDecompiledFile.readText().replace(" ", ""))
+    }
+
+    it("cannot decompile a non class file") {
+        val classFile = File(DecompilerTest::class.java.getResource("/non-class-file.txt").file)
+
+        val decompiled = Decompiler.decompile(classFile, target)
+
+        assertThat(decompiled).isNull()
     }
 })
