@@ -21,7 +21,6 @@ import org.cafejojo.schaapi.models.libraryusagegraph.jimple.GeneralizedNodeCompa
 import org.cafejojo.schaapi.models.libraryusagegraph.jimple.JimplePathEnumerator
 import org.cafejojo.schaapi.models.project.JavaJarProject
 import org.cafejojo.schaapi.models.project.JavaMavenProject
-import java.io.File
 
 internal const val DEFAULT_MAX_PROJECTS = "20"
 
@@ -31,6 +30,12 @@ internal const val DEFAULT_MAX_PROJECTS = "20"
  * Assumes that the passed library is a Java JAR project.
  */
 internal class GitHubMiningCommandLineInterface : CommandLineInterface() {
+    private val maven = MavenSnippet()
+
+    init {
+        snippets.add(maven)
+    }
+
     companion object : KLogging()
 
     override fun buildOptions(): Options {
@@ -83,8 +88,7 @@ internal class GitHubMiningCommandLineInterface : CommandLineInterface() {
                 .build())
     }
 
-    override fun doYourThing(cmd: CommandLine) {
-
+    override fun run(cmd: CommandLine) {
         val token = cmd.getOptionValue("github_oauth_token")
         val maxProjects = cmd.getOptionValue("max_projects", DEFAULT_MAX_PROJECTS).toInt()
         val groupId = cmd.getOptionValue("library_group_id")
@@ -98,9 +102,11 @@ internal class GitHubMiningCommandLineInterface : CommandLineInterface() {
         val libraryProject = JavaJarProject(libraryDir)
         val jimpleLibraryUsageGraphGenerator = JimpleLibraryUsageGraphGenerator()
 
+        maven.run()
+
         MiningPipeline(
             outputDirectory = outputDir,
-            projectMiner = GitHubProjectMiner(token, outputDir) { JavaMavenProject(it, mavenDir) },
+            projectMiner = GitHubProjectMiner(token, outputDir) { JavaMavenProject(it, maven.dir) },
             searchOptions = MavenProjectSearchOptions(groupId, artifactId, version, maxProjects).apply {
                 this.sortByStargazers = cmd.hasOption("sort_by_stargazers")
                 this.sortByWatchers = cmd.hasOption("sort_by_watchers")

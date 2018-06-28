@@ -7,6 +7,7 @@ import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Option
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
+import org.cafejojo.schaapi.miningpipeline.projectcompiler.javamaven.MavenInstaller
 import org.cafejojo.schaapi.models.project.JavaMavenProject
 import java.io.File
 import kotlin.system.exitProcess
@@ -40,7 +41,6 @@ fun main(args: Array<String>) {
 }
 
 abstract class CommandLineInterface {
-    lateinit var mavenDir: File
     lateinit var outputDir: File
     lateinit var libraryDir: File
 
@@ -50,6 +50,8 @@ abstract class CommandLineInterface {
     var patternDetectorMinCount = 0
     var maxSequenceLength = 0
     var minLibraryUsageCount = 0
+
+    val snippets: MutableList<Snippet> = mutableListOf()
 
     protected open fun buildOptions(): Options {
         return Options()
@@ -66,17 +68,6 @@ abstract class CommandLineInterface {
                 .desc("The library directory.")
                 .hasArg()
                 .required()
-                .build())
-            .addOption(Option
-                .builder()
-                .longOpt("maven_dir")
-                .desc("The directory to run Maven from.")
-                .hasArg()
-                .build())
-            .addOption(Option
-                .builder()
-                .longOpt("repair_maven")
-                .desc("Repairs the Maven installation.")
                 .build())
             .addOption(Option
                 .builder()
@@ -123,7 +114,6 @@ abstract class CommandLineInterface {
     fun run(args: Array<String>) {
         val cmd = parse(args)
 
-        mavenDir = File(cmd.getOptionValue("maven_dir") ?: JavaMavenProject.DEFAULT_MAVEN_HOME.absolutePath)
         outputDir = File(cmd.getOptionValue('o')).apply { mkdirs() }
         libraryDir = File(cmd.getOptionValue('l'))
 
@@ -138,11 +128,47 @@ abstract class CommandLineInterface {
             cmd.getOptionValue("pattern_minimum_library_usage_count", DEFAULT_MIN_LIBRARY_USAGE_COUNT).toInt()
     }
 
-    abstract fun doYourThing(cmd: CommandLine)
+    abstract fun run(cmd: CommandLine)
 
     private fun printHelpMessage(options: Options) {
         val helpFormatter = HelpFormatter()
         helpFormatter.optionComparator = null
         helpFormatter.printHelp("schaapi", options, true)
+    }
+}
+
+abstract class Snippet {
+    abstract fun addOptionsTo(options: Options): Options
+
+    abstract fun setUp(cmd: CommandLine)
+
+    abstract fun run()
+}
+
+class MavenSnippet : Snippet() {
+    lateinit var dir: File
+    var repair = false
+
+    override fun addOptionsTo(options: Options): Options =
+        options
+            .addOption(Option
+                .builder()
+                .longOpt("maven_dir")
+                .desc("The directory to run Maven from.")
+                .hasArg()
+                .build())
+            .addOption(Option
+                .builder()
+                .longOpt("repair_maven")
+                .desc("Repairs the Maven installation.")
+                .build())
+
+    override fun setUp(cmd: CommandLine) {
+        dir = File(cmd.getOptionValue("maven_dir") ?: JavaMavenProject.DEFAULT_MAVEN_HOME.absolutePath)
+        repair = cmd.hasOption("repair_maven")
+    }
+
+    override fun run() {
+        MavenInstaller().installMaven(dir, overwrite = repair)
     }
 }

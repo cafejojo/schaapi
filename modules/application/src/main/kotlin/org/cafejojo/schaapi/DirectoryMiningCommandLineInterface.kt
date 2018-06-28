@@ -29,6 +29,12 @@ import java.io.File
 internal class DirectoryMiningCommandLineInterface : CommandLineInterface() {
     internal companion object : KLogging()
 
+    private val maven = MavenSnippet()
+
+    init {
+        snippets.add(maven)
+    }
+
     override fun buildOptions(): Options {
         return super.buildOptions()
             .addOption(Option
@@ -40,16 +46,16 @@ internal class DirectoryMiningCommandLineInterface : CommandLineInterface() {
                 .build())
     }
 
-    override fun doYourThing(cmd: CommandLine) {
+    override fun run(cmd: CommandLine) {
 
         val userDirDirs = cmd.getOptionValue("u")
 
-        val libraryProject = JavaMavenProject(libraryDir, mavenDir)
+        val libraryProject = JavaMavenProject(libraryDir, maven.dir)
         val jimpleLibraryUsageGraphGenerator = JimpleLibraryUsageGraphGenerator()
 
         MiningPipeline(
             outputDirectory = outputDir,
-            projectMiner = DirectoryProjectMiner { JavaMavenProject(it, mavenDir) },
+            projectMiner = DirectoryProjectMiner { JavaMavenProject(it, maven.dir) },
             searchOptions = DirectorySearchOptions(File(userDirDirs)),
             libraryProjectCompiler = JavaMavenProjectCompiler(displayOutput = true),
             userProjectCompiler = JavaMavenProjectCompiler(),
