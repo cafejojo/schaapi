@@ -267,9 +267,13 @@ class CCSpanPatternDetectorSnippet : Snippet() {
 class PatternFilterSnippet : Snippet() {
     var minLibraryUsageCount = 0
 
-    override fun addOptionsTo(options: Options): Options {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun addOptionsTo(options: Options): Options = options
+        .addOption(Option
+            .builder()
+            .longOpt("pattern_minimum_library_usage_count")
+            .desc("The minimum number of library usages per method.")
+            .hasArg()
+            .build())
 
     override fun read(cmd: CommandLine) {
         minLibraryUsageCount =
