@@ -5,7 +5,7 @@ import org.cafejojo.schaapi.models.Node
 import java.io.File
 
 /**
- * CSV writer that writes the desired data to separate csv files under a data directory.
+ * CSV writer that writes the desired data to separate CSV files under a data directory.
  *
  * @param output file to which to write the output
  */
