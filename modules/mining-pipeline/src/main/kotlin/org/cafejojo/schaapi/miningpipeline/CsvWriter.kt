@@ -3,7 +3,6 @@ package org.cafejojo.schaapi.miningpipeline
 import mu.KLogging
 import org.cafejojo.schaapi.models.Node
 import java.io.File
-import java.io.FileWriter
 
 /**
  * CSV writer that writes the desired data to separate csv files under a data directory.
@@ -20,39 +19,27 @@ class CsvWriter<N : Node>(output: File) {
      *
      * @param graphs graphs whose node counts will be written to file
      */
-    fun writeGraphSizes(graphs: List<N>) {
-        val graphSizeFile = File(dataFile, "graphSize.csv")
-        logger.debug { "Writing graph sizes to ${graphSizeFile.absolutePath}." }
-        writeToFile(graphSizeFile, graphs, { graph: N -> graph.count() }, "graph_size")
-        logger.debug { "Wrote pattern lengths to ${graphSizeFile.absolutePath}." }
-    }
+    fun writeGraphSizes(graphs: List<N>) =
+        writeToFile("graphSize.csv", graphs, { graph: N -> graph.count() }, "graph_size")
 
     /**
      * Writes pattern lengths to file.
      *
      * @param patterns patterns whose lengths will be written to file
      */
-    fun writePatternLengths(patterns: List<Pattern<N>>) {
-        val patternsFile = File(dataFile, "patterns.csv")
-        logger.debug { "Writing pattern lengths to ${patternsFile.absolutePath}." }
-        writeToFile(patternsFile, patterns, { pattern: Pattern<N> -> pattern.size }, "pattern_length")
-        logger.debug { "Wrote pattern lengths to ${patternsFile.absolutePath}." }
-    }
+    fun writePatternLengths(patterns: List<Pattern<N>>) =
+        writeToFile("patterns.csv", patterns, { pattern: Pattern<N> -> pattern.size }, "pattern_length")
 
     /**
      * Writes filtered pattern lengths to file.
      *
      * @param patterns patterns whose lengths will be written to file
      */
-    fun writeFilteredPatternLengths(patterns: List<Pattern<N>>) {
-        val filteredPatternsFile = File(dataFile, "filteredPatterns.csv")
-        logger.debug { "Writing filtered pattern lengths to ${filteredPatternsFile.absolutePath}." }
-        writeToFile(filteredPatternsFile, patterns, { pattern: Pattern<N> -> pattern.size }, "pattern_length")
-        logger.debug { "Wrote filtered pattern lengths to ${filteredPatternsFile.absolutePath}." }
-    }
+    fun writeFilteredPatternLengths(patterns: List<Pattern<N>>) =
+        writeToFile("filteredPatterns.csv", patterns, { pattern: Pattern<N> -> pattern.size }, "pattern_length")
 
-    private fun <P> writeToFile(output: File, items: List<P>, mapToInt: (P) -> Int, type: String) =
-        FileWriter(output).use { fileWriter ->
+    private fun <P> writeToFile(output: String, items: List<P>, mapToInt: (P) -> Int, type: String) =
+        File(dataFile, output).writer().use { fileWriter ->
             fileWriter.write("$type,count\n")
             items
                 .groupBy(mapToInt)
