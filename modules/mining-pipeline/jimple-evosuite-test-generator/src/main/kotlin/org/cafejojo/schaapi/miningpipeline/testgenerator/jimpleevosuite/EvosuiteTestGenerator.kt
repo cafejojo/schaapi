@@ -40,7 +40,8 @@ internal class EvoSuiteRunner(
         "-projectCP", classpath,
         "-Dno_runtime_dependency=true",
         "-Dsearch_budget=$generationTimeoutSeconds",
-        "-Dstatistics_backend=NONE"
+        "-Dstatistics_backend=NONE",
+        "-Doutput_granularity=TESTCASE"
     ).start()
 
     private fun receiveProcessOutput(process: Process) {
