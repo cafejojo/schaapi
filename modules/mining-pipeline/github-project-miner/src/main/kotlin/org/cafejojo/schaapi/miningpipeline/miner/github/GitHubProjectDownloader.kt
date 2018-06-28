@@ -133,8 +133,7 @@ internal class GitHubProjectDownloader<P : Project>(
             val connection = url.openConnection() as? HttpURLConnection ?: return null
             logger.debug { "Established a connection with '$url'." }
 
-            connection.apply { requestMethod = "GET" }
-            return connection.inputStream
+            return connection.apply { requestMethod = "GET" }.inputStream
         } catch (e: IOException) {
             logger.warn("Could not connect to project $projectName.", e.message)
             return null
