@@ -84,7 +84,7 @@ class MavenSnippet : Snippet() {
  * @property maven the [MavenSnippet] describing Maven-related behavior
  */
 class GitHubMavenMinerSnippet(private val maven: MavenSnippet) : Snippet() {
-    companion object : KLogging()
+    private companion object : KLogging()
 
     lateinit var token: String
     var maxProjects = 0
@@ -255,9 +255,9 @@ class CCSpanPatternDetectorSnippet : Snippet() {
             GeneralizedNodeComparator()
         )
 
-    companion object {
-        private const val DEFAULT_MINIMUM_COUNT = "2"
-        private const val DEFAULT_MAX_SEQUENCE_LENGTH = "25"
+    private companion object {
+        const val DEFAULT_MINIMUM_COUNT = "2"
+        const val DEFAULT_MAX_SEQUENCE_LENGTH = "25"
     }
 }
 
@@ -293,8 +293,8 @@ class PatternFilterSnippet : Snippet() {
         InsufficientLibraryUsageFilter(libraryProject, minLibraryUsageCount)
     )
 
-    companion object {
-        private const val DEFAULT_MIN_LIBRARY_USAGE_COUNT = "1"
+    private companion object {
+        const val DEFAULT_MIN_LIBRARY_USAGE_COUNT = "1"
     }
 }
 
@@ -341,7 +341,7 @@ class JimpleEvoSuiteTestGeneratorSnippet : Snippet() {
             processErrorStream = if (enableOutput) System.out else null
         )
 
-    companion object {
-        private const val DEFAULT_TIMEOUT = "60"
+    private companion object {
+        const val DEFAULT_TIMEOUT = "60"
     }
 }

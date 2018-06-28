@@ -13,7 +13,7 @@ import org.cafejojo.schaapi.models.project.JavaMavenProject
  * Assumes that the passed library is a Java Maven project.
  */
 internal class DirectoryMiningCommandLineInterface : CommandLineInterface() {
-    internal companion object : KLogging()
+    private companion object : KLogging()
 
     private val maven = MavenSnippet()
     private val directory = DirectoryMavenMinerSnippet(maven)

@@ -16,7 +16,7 @@ internal const val DEFAULT_MAX_PROJECTS = "20"
  * Assumes that the passed library is a Java JAR project.
  */
 internal class GitHubMiningCommandLineInterface : CommandLineInterface() {
-    companion object : KLogging()
+    private companion object : KLogging()
 
     private val maven = MavenSnippet()
     private val gitHub = GitHubMavenMinerSnippet(maven)
