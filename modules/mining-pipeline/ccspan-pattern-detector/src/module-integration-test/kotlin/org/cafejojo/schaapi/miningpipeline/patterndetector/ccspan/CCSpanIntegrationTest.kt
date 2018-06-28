@@ -25,7 +25,7 @@ internal object CCSpanIntegrationTest : Spek({
 
         beforeEachTest {
             val nodeComparator = GeneralizedNodeComparator()
-            patternDetector = CCSpanPatternDetector(0, { node -> JimplePathEnumerator(node, 10) }, nodeComparator)
+            patternDetector = CCSpanPatternDetector(0, { JimplePathEnumerator(it, 10) }, nodeComparator)
         }
 
         it("can detect very simple patterns") {

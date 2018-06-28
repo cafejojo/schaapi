@@ -33,6 +33,8 @@ class MiningPipeline<SO : SearchOptions, UP : Project, LP : Project, N : Node>(
         logger.info { "Mining has started." }
         logger.info { "Output directory is ${outputDirectory.absolutePath}." }
 
+        val csvWriter = CsvWriter<N>(outputDirectory)
+
         try {
             searchOptions
                 .also { logger.info { "Started mining projects." } }
@@ -46,19 +48,21 @@ class MiningPipeline<SO : SearchOptions, UP : Project, LP : Project, N : Node>(
                 .also { logger.info { "Started generating library usage graphs for ${it.count()} projects." } }
                 .flatMap { libraryUsageGraphGenerator.generate(libraryProject, it) }
                 .also { logger.info { "Successfully generated ${it.size} library usage graphs." } }
+                .also { csvWriter.writeGraphSizes(it) }
 
                 .also { logger.info { "Started finding patterns in ${it.size} library usage graphs." } }
                 .next(patternDetector::findPatterns)
                 .also { logger.info { "Successfully found ${it.size} patterns." } }
+                .also { csvWriter.writePatternLengths(it) }
 
                 .also { logger.info { "Started filtering ${it.size} patterns." } }
                 .next(patternFilter::filter)
                 .also { logger.info { "${it.size} patterns remain after filtering." } }
+                .also { csvWriter.writeFilteredPatternLengths(it) }
 
                 .also { logger.info { "Started generating test for ${it.size} usage patterns." } }
                 .next(testGenerator::generate)
                 .also { logger.info { "Test generation has finished." } }
-
             logger.info { "Tests have been successfully generated." }
         } catch (e: Exception) {
             logger.error("A critical error occurred during the mining process causing it to be aborted.", e)
@@ -84,7 +88,7 @@ class MiningPipeline<SO : SearchOptions, UP : Project, LP : Project, N : Node>(
             map(it)
         } catch (e: RuntimeException) {
             if (e is E) {
-                logger.warn(e.message, e)
+                logger.warn(e.message)
                 null
             } else throw e
         }

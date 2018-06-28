@@ -119,7 +119,7 @@ internal class GitHubMiningCommandLineInterface {
             libraryUsageGraphGenerator = jimpleLibraryUsageGraphGenerator,
             patternDetector = CCSpanPatternDetector(
                 patternDetectorMinCount,
-                { node -> JimplePathEnumerator(node, maxSequenceLength) },
+                { JimplePathEnumerator(it, maxSequenceLength) },
                 GeneralizedNodeComparator()
             ),
             patternFilter = PatternFilter(
