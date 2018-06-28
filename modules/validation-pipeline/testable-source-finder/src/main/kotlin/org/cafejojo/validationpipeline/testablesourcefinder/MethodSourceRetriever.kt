@@ -26,7 +26,13 @@ class MethodSourceRetriever(private val javaFile: File) {
 private class MethodFinder(val methodName: String) : VoidVisitorAdapter<MutableList<String>>() {
     override fun visit(method: MethodDeclaration, results: MutableList<String>) {
         if (method.name.identifier == methodName && method.body.isPresent) {
-            results.add(method.body.get().toString())
+            results.add(
+                "// Variables with automatically generated values:\n"
+                    + method.parameters.joinToString("") { "$it;\n" }
+                    + "\n"
+                    + "// Pattern:\n"
+                    + method.body.get().toString()
+            )
         }
 
         super.visit(method, results)

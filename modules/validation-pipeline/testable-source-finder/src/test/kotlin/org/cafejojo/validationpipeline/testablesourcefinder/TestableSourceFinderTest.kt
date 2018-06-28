@@ -13,6 +13,10 @@ object TestableSourceFinderTest : Spek({
         val source = TestableSourceFinder(testFile, sourceFile).find()
 
         assertThat(source).isEqualTo("""
+            // Variables with automatically generated values:
+            int var0;
+
+            // Pattern:
             {
                 Calculator var1 = new Calculator();
                 int var2 = var1.sum(var0, 5);
