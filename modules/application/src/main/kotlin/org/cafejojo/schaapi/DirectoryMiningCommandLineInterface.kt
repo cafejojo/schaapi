@@ -33,7 +33,7 @@ internal class DirectoryMiningCommandLineInterface : CommandLineInterface() {
         val libraryProject = JavaMavenProject(libraryDir, maven.dir)
         val jimpleLibraryUsageGraphGenerator = JimpleLibraryUsageGraphGenerator()
 
-        maven.run()
+        maven.install()
 
         MiningPipeline(
             outputDirectory = outputDir,

@@ -33,23 +33,42 @@ fun main(args: Array<String>) {
     }
 }
 
+/**
+ * A "flavor" of command-line interface (CLI) that runs the mining pipeline using a particular set of arguments.
+ *
+ * The behavior of a [CommandLineInterface] is determined by its [snippets], which are mappings from command-line
+ * arguments to actual pipeline components.
+ */
 abstract class CommandLineInterface {
     lateinit var outputDir: File
     lateinit var libraryDir: File
 
     val snippets: MutableList<Snippet> = mutableListOf()
 
+    /**
+     * Runs this CLI with the given arguments.
+     *
+     * @param args the arguments to run with
+     */
     fun run(args: Array<String>) {
         val cmd = parse(args)
-        snippets.forEach { it.setUp(cmd) }
+        snippets.forEach { it.read(cmd) }
 
         outputDir = File(cmd.getOptionValue('o')).apply { mkdirs() }
         libraryDir = File(cmd.getOptionValue('l'))
     }
 
+    /**
+     * Runs this CLI with the given parser arguments.
+     *
+     * @param cmd the parsed arguments to run with
+     */
     abstract fun run(cmd: CommandLine)
 
-    private fun buildOptions(): Options = Options()
+    /**
+     * The options that are common to all CLIs.
+     */
+    private fun globalOptions(): Options = Options()
         .addOption(Option
             .builder("o")
             .longOpt("output_dir")
@@ -65,8 +84,14 @@ abstract class CommandLineInterface {
             .required()
             .build())
 
+    /**
+     * Parses [args] into a [CommandLine] object. If the parsing fails, the entire process is killed.
+     *
+     * @param args the arguments to parse
+     * @return [args] parsed into a [CommandLine]
+     */
     private fun parse(args: Array<String>): CommandLine {
-        val options = buildOptions()
+        val options = globalOptions()
         snippets.forEach { it.addOptionsTo(options) }
 
         val parser = DefaultParser()

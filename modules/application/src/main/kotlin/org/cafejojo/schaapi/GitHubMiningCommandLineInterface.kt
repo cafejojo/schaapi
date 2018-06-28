@@ -36,7 +36,7 @@ internal class GitHubMiningCommandLineInterface : CommandLineInterface() {
         val libraryProject = JavaJarProject(libraryDir)
         val jimpleLibraryUsageGraphGenerator = JimpleLibraryUsageGraphGenerator()
 
-        maven.run()
+        maven.install()
 
         MiningPipeline(
             outputDirectory = outputDir,

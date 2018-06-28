@@ -22,12 +22,31 @@ import org.cafejojo.schaapi.models.project.JavaMavenProject
 import org.cafejojo.schaapi.models.project.JavaProject
 import java.io.File
 
+/**
+ * A piece of behavior for a [CommandLineInterface] that can "translate" parsed command-line arguments into components
+ * for the mining pipeline.
+ */
 abstract class Snippet {
+    /**
+     * Adds the command-line arguments specific for this snippet to [options], and then returns the updated [options]
+     * object.
+     *
+     * @param options the object to add options to
+     * @return the same instance as [options] but with extra options
+     */
     abstract fun addOptionsTo(options: Options): Options
 
-    abstract fun setUp(cmd: CommandLine)
+    /**
+     * Reads parsed command-line options into the fields of this [Snippet].
+     *
+     * @param cmd the parsed command-line options
+     */
+    abstract fun read(cmd: CommandLine)
 }
 
+/**
+ * Behavior linked to using the Maven distribution.
+ */
 class MavenSnippet : Snippet() {
     lateinit var dir: File
     var repair = false
@@ -46,16 +65,24 @@ class MavenSnippet : Snippet() {
                 .desc("Repairs the Maven installation.")
                 .build())
 
-    override fun setUp(cmd: CommandLine) {
+    override fun read(cmd: CommandLine) {
         dir = File(cmd.getOptionValue("maven_dir") ?: JavaMavenProject.DEFAULT_MAVEN_HOME.absolutePath)
         repair = cmd.hasOption("repair_maven")
     }
 
-    fun run() {
+    /**
+     * Installs Maven.
+     */
+    fun install() {
         MavenInstaller().installMaven(dir, overwrite = repair)
     }
 }
 
+/**
+ * Behavior linked to mining Maven projects with the GitHub miner.
+ *
+ * @property maven the [MavenSnippet] describing Maven-related behavior
+ */
 class GitHubMavenMinerSnippet(private val maven: MavenSnippet) : Snippet() {
     companion object : KLogging()
 
@@ -115,7 +142,7 @@ class GitHubMavenMinerSnippet(private val maven: MavenSnippet) : Snippet() {
             .hasArg(false)
             .build())
 
-    override fun setUp(cmd: CommandLine) {
+    override fun read(cmd: CommandLine) {
         token = cmd.getOptionValue("github_oauth_token")
         maxProjects = cmd.getOptionValue("max_projects", DEFAULT_MAX_PROJECTS).toInt()
         groupId = cmd.getOptionValue("library_group_id")
@@ -129,8 +156,19 @@ class GitHubMavenMinerSnippet(private val maven: MavenSnippet) : Snippet() {
         }
     }
 
+    /**
+     * Creates a GitHub miner for Maven projects.
+     *
+     * @param outputDir the directory in which the projects should be processed
+     * @return a GitHub miner for Maven projects
+     */
     fun createMiner(outputDir: File) = GitHubProjectMiner(token, outputDir) { JavaMavenProject(it, maven.dir) }
 
+    /**
+     * Creates the mining options for mining GitHub projects.
+     *
+     * @return the mining options for mining GitHub projects
+     */
     fun createOptions() =
         MavenProjectSearchOptions(groupId, artifactId, version, maxProjects)
             .also {
@@ -139,6 +177,11 @@ class GitHubMavenMinerSnippet(private val maven: MavenSnippet) : Snippet() {
             }
 }
 
+/**
+ * Behavior linked to mining Maven projects with the directory miner.
+ *
+ * @property maven the [MavenSnippet] describing Maven-related behavior
+ */
 class DirectoryMavenMinerSnippet(private val maven: MavenSnippet) : Snippet() {
     lateinit var userDirDir: File
 
@@ -151,15 +194,28 @@ class DirectoryMavenMinerSnippet(private val maven: MavenSnippet) : Snippet() {
             .required()
             .build())
 
-    override fun setUp(cmd: CommandLine) {
+    override fun read(cmd: CommandLine) {
         userDirDir = File(cmd.getOptionValue("u"))
     }
 
+    /**
+     * Creates a directory miner for Maven projects.
+     *
+     * @return a directory miner for Maven projects
+     */
     fun createMiner() = DirectoryProjectMiner { JavaMavenProject(it, maven.dir) }
 
+    /**
+     * Creates the mining options for mining projects in a directory.
+     *
+     * @return the mining options for mining projects in a directory
+     */
     fun createOptions() = DirectorySearchOptions(userDirDir)
 }
 
+/**
+ * Behavior linked to detecting patterns with the CCSpan algorithm.
+ */
 class CCSpanPatternDetectorSnippet : Snippet() {
     var minCount = 0
     var maxSequenceLength = 0
@@ -180,13 +236,18 @@ class CCSpanPatternDetectorSnippet : Snippet() {
             .hasArg()
             .build())
 
-    override fun setUp(cmd: CommandLine) {
+    override fun read(cmd: CommandLine) {
         minCount =
             cmd.getOptionValue("pattern_detector_minimum_count", DEFAULT_MINIMUM_COUNT).toInt()
         maxSequenceLength =
             cmd.getOptionValue("pattern_detector_maximum_sequence_length", DEFAULT_MAX_SEQUENCE_LENGTH).toInt()
     }
 
+    /**
+     * Creates a CCSpan pattern detector.
+     *
+     * @return a CCSpan pattern detector
+     */
     fun createPatternDetector() =
         CCSpanPatternDetector(
             minCount,
@@ -200,6 +261,9 @@ class CCSpanPatternDetectorSnippet : Snippet() {
     }
 }
 
+/**
+ * Creates a pattern filter with a number of filter rules.
+ */
 class PatternFilterSnippet : Snippet() {
     var minLibraryUsageCount = 0
 
@@ -207,11 +271,17 @@ class PatternFilterSnippet : Snippet() {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun setUp(cmd: CommandLine) {
+    override fun read(cmd: CommandLine) {
         minLibraryUsageCount =
             cmd.getOptionValue("pattern_minimum_library_usage_count", DEFAULT_MIN_LIBRARY_USAGE_COUNT).toInt()
     }
 
+    /**
+     * Creates a pattern filter with a number of filter rules.
+     *
+     * @param libraryProject the library project
+     * @return a pattern filter with a number of filter rules
+     */
     fun createPatternFilter(libraryProject: JavaProject) = PatternFilter(
         IncompleteInitPatternFilterRule(),
         LengthPatternFilterRule(),
@@ -224,6 +294,9 @@ class PatternFilterSnippet : Snippet() {
     }
 }
 
+/**
+ * Behavior linked to generating tests with EvoSuite from Jimple code.
+ */
 class JimpleEvoSuiteTestGeneratorSnippet : Snippet() {
     var timeout = 0
     var enableOutput = false
@@ -243,11 +316,18 @@ class JimpleEvoSuiteTestGeneratorSnippet : Snippet() {
             .hasArg()
             .build())
 
-    override fun setUp(cmd: CommandLine) {
+    override fun read(cmd: CommandLine) {
         timeout = cmd.getOptionValue("test_generator_timeout", DEFAULT_TIMEOUT).toInt()
         enableOutput = cmd.hasOption("test_generator_enable_output")
     }
 
+    /**
+     * Creates a test generator to generate tests with EvoSuite from Jimple code.
+     *
+     * @param outputDir the directory to store the tests in
+     * @param libraryProject the library project
+     * @return a test generator to generate tests with EvoSuite from Jimple code
+     */
     fun createTestGenerator(outputDir: File, libraryProject: JavaProject) =
         TestGenerator(
             outputDirectory = outputDir,
