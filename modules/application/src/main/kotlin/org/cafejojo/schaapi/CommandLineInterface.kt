@@ -57,6 +57,8 @@ abstract class CommandLineInterface {
 
         outputDir = File(cmd.getOptionValue('o')).apply { mkdirs() }
         libraryDir = File(cmd.getOptionValue('l'))
+
+        run(cmd)
     }
 
     /**
