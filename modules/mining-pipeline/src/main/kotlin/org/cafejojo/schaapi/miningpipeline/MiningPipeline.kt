@@ -87,6 +87,12 @@ class MiningPipeline<SO : SearchOptions, UP : Project, LP : Project, N : Node>(
     private inline fun <reified T : Iterable<*>, R> T.next(map: (T) -> R, message: String): R =
         map(progressBarIterable(this, message) as? T ?: this)
 
+    /**
+     * Calls the specified function [map] on each element in `this` and returns the result as an flat mapped iterable.
+     *
+     * Catches exceptions of type [E] and logs these. All other exceptions are thrown.
+     */
+    @Suppress("TooGenericExceptionCaught", "InstanceOfCheckForException") // This is intended behaviour
     private inline fun <reified E : Exception, P, Q, T : Iterable<P>>
         T.nextFlatMap(map: (P) -> Iterable<Q>, message: String): List<Q> =
         progressBarIterable(this, message).mapNotNull {

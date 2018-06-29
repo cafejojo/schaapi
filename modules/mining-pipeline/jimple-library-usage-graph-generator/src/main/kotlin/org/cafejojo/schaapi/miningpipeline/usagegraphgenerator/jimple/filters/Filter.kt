@@ -13,3 +13,5 @@ interface Filter {
      */
     fun apply(body: Body)
 }
+
+internal typealias FilterException = Exception

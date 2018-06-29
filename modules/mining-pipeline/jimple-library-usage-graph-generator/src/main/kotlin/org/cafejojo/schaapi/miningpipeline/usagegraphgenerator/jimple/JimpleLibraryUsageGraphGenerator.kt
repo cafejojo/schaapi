@@ -3,6 +3,7 @@ package org.cafejojo.schaapi.miningpipeline.usagegraphgenerator.jimple
 import org.cafejojo.schaapi.miningpipeline.LibraryUsageGraphGenerationException
 import org.cafejojo.schaapi.miningpipeline.LibraryUsageGraphGenerator
 import org.cafejojo.schaapi.miningpipeline.usagegraphgenerator.jimple.filters.BranchStatementFilter
+import org.cafejojo.schaapi.miningpipeline.usagegraphgenerator.jimple.filters.FilterException
 import org.cafejojo.schaapi.miningpipeline.usagegraphgenerator.jimple.filters.RecursiveGotoFilter
 import org.cafejojo.schaapi.miningpipeline.usagegraphgenerator.jimple.filters.StatementFilter
 import org.cafejojo.schaapi.miningpipeline.usagegraphgenerator.jimple.processors.UserUsageProcessor
@@ -99,7 +100,7 @@ class JimpleLibraryUsageGraphGenerator : LibraryUsageGraphGenerator<JavaProject,
                 BranchStatementFilter(libraryProject),
                 RecursiveGotoFilter()
             ).forEach { it.apply(methodBody) }
-        } catch (e: Exception) {
+        } catch (e: FilterException) {
             throw LibraryUsageGraphGenerationException("An exception occurred while filtering.", e)
         }
 
