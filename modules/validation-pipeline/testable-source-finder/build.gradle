@@ -1,0 +1,10 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+}
+
+dependencies {
+    compile group: "com.github.javaparser", name: "javaparser-core", version: javaparserVersion
+    compile group: "org.jboss.windup.decompiler", name: "decompiler-fernflower", version: fernflowerVersion
+}

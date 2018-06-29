@@ -1,0 +1,1 @@
+This is a non class file used to test the decompiler.
