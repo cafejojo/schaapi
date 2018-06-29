@@ -14,7 +14,7 @@ class CCSpanPatternDetector<N : Node>(
     private val enumerator: (N) -> PathEnumerator<N>,
     private val comparator: GeneralizedNodeComparator<N>
 ) : PatternDetector<N> {
-    override fun findPatterns(graphs: List<N>): List<Pattern<N>> {
+    override fun findPatterns(graphs: Iterable<N>): Iterable<Pattern<N>> {
         val sequences = graphs.flatMap { enumerator(it).enumerate() }
         return CCSpan(sequences, minimumCount, comparator).findFrequentPatterns()
     }

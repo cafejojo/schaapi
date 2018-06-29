@@ -1,9 +1,9 @@
 package org.cafejojo.schaapi.miningpipeline.testgenerator.jimpleevosuite
 
-import org.cafejojo.schaapi.models.libraryusagegraph.jimple.JimpleNode
-import org.cafejojo.schaapi.models.project.JavaProject
 import org.cafejojo.schaapi.miningpipeline.Pattern
 import org.cafejojo.schaapi.miningpipeline.TestGenerator
+import org.cafejojo.schaapi.models.libraryusagegraph.jimple.JimpleNode
+import org.cafejojo.schaapi.models.project.JavaProject
 import java.io.File
 import java.io.PrintStream
 
@@ -19,7 +19,7 @@ class TestGenerator(
     private val processStandardStream: PrintStream? = null,
     private val processErrorStream: PrintStream? = null
 ) : TestGenerator<JimpleNode> {
-    override fun generate(patterns: List<Pattern<JimpleNode>>): File {
+    override fun generate(patterns: Iterable<Pattern<JimpleNode>>): File {
         val outputPatterns = outputDirectory.resolve("patterns/").apply { mkdirs() }
         val outputTests = outputDirectory.resolve("tests/").apply { mkdirs() }
 

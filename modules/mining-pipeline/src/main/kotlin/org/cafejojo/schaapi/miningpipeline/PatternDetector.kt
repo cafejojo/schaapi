@@ -12,5 +12,5 @@ interface PatternDetector<N : Node> {
      * @param graphs a list of graphs, where each graph is represented by a [Node]
      * @return the list of detected patterns
      */
-    fun findPatterns(graphs: List<N>): List<Pattern<N>>
+    fun findPatterns(graphs: Iterable<N>): Iterable<Pattern<N>>
 }
