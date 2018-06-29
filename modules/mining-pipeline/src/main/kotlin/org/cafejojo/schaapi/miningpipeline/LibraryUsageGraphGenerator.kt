@@ -17,4 +17,7 @@ interface LibraryUsageGraphGenerator<in LP : Project, in UP : Project, out N : N
     fun generate(libraryProject: LP, userProject: UP): List<N>
 }
 
-class LibraryUsageGraphGenerationException(message: String? = null, e: Throwable? = null) : RuntimeException(message, e)
+/**
+ * Exception thrown when something went wrong during the creation of a library usage graph.
+ */
+typealias LibraryUsageGraphGenerationException = RuntimeException

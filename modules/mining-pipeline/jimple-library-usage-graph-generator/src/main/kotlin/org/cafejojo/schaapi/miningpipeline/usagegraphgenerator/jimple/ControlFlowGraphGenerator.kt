@@ -63,4 +63,3 @@ private fun UnitGraph.rootUnitIfExists(): SootUnit =
     if (heads.isEmpty())
         throw LibraryUsageGraphGenerationException("The control flow graph does not contain a root unit.")
     else heads[0]
-

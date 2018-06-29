@@ -51,7 +51,7 @@ internal class BranchStatementFilter(project: JavaProject) : Filter {
         fun getConditionValue(statement: Unit): Value = when (statement) {
             is IfStmt -> statement.condition
             is SwitchStmt -> statement.key
-            else -> throw IllegalArgumentException("Cannot get value of unsupported statement.")
+            else -> throw FilterException("Cannot get value of unsupported statement.")
         }
     }
 

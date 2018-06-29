@@ -204,4 +204,4 @@ private class UserUsageValueFilterRule(private val libraryProject: JavaProject) 
 /**
  * Exception for encountered values that are not supported by the [ClassValueFilterRule].
  */
-internal class UnsupportedValueException(message: String) : Exception(message)
+internal class UnsupportedValueException(message: String) : FilterException(message)
