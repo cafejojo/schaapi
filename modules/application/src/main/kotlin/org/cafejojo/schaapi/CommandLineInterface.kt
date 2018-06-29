@@ -36,7 +36,7 @@ fun main(args: Array<String>) {
 /**
  * A "flavor" of command-line interface (CLI) that runs the mining pipeline using a particular set of arguments.
  *
- * The behavior of a [CommandLineInterface] is determined by its [snippets], which are mappings from command-line
+ * The behavior of a [CommandLineInterface] is determined by its [optionSets], which are mappings from command-line
  * arguments to actual pipeline components.
  */
 @Suppress("LateinitUsage") // Values cannot be determined at initialization
@@ -44,7 +44,7 @@ abstract class CommandLineInterface {
     lateinit var outputDir: File
     lateinit var libraryDir: File
 
-    val snippets: MutableList<Snippet> = mutableListOf()
+    val optionSets: MutableList<OptionSet> = mutableListOf()
 
     /**
      * Runs this CLI with the given arguments.
@@ -53,7 +53,7 @@ abstract class CommandLineInterface {
      */
     fun run(args: Array<String>) {
         val cmd = parse(args)
-        snippets.forEach { it.read(cmd) }
+        optionSets.forEach { it.read(cmd) }
 
         outputDir = File(cmd.getOptionValue('o')).apply { mkdirs() }
         libraryDir = File(cmd.getOptionValue('l'))
@@ -95,7 +95,7 @@ abstract class CommandLineInterface {
      */
     private fun parse(args: Array<String>): CommandLine {
         val options = globalOptions()
-        snippets.forEach { it.addOptionsTo(options) }
+        optionSets.forEach { it.addOptionsTo(options) }
 
         val parser = DefaultParser()
         return try {

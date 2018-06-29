@@ -26,9 +26,9 @@ import java.io.File
  * A piece of behavior for a [CommandLineInterface] that can "translate" parsed command-line arguments into components
  * for the mining pipeline.
  */
-abstract class Snippet {
+abstract class OptionSet {
     /**
-     * Adds the command-line arguments specific for this snippet to [options], and then returns the updated [options]
+     * Adds the command-line arguments specific for this option set to [options], and then returns the updated [options]
      * object.
      *
      * @param options the object to add options to
@@ -37,7 +37,7 @@ abstract class Snippet {
     abstract fun addOptionsTo(options: Options): Options
 
     /**
-     * Reads parsed command-line options into the fields of this [Snippet].
+     * Reads parsed command-line options into the fields of this [OptionSet].
      *
      * @param cmd the parsed command-line options
      */
@@ -48,7 +48,7 @@ abstract class Snippet {
  * Behavior linked to using the Maven distribution.
  */
 @Suppress("LateinitUsage") // Values cannot be determined at initialization
-class MavenSnippet : Snippet() {
+class MavenOptionSet : OptionSet() {
     lateinit var dir: File
     private var repair = false
 
@@ -82,10 +82,10 @@ class MavenSnippet : Snippet() {
 /**
  * Behavior linked to mining Maven projects with the GitHub miner.
  *
- * @property maven the [MavenSnippet] describing Maven-related behavior
+ * @property maven the [MavenOptionSet] describing Maven-related behavior
  */
 @Suppress("LateinitUsage") // Values cannot be determined at initialization
-class GitHubMavenMinerSnippet(private val maven: MavenSnippet) : Snippet() {
+class GitHubMavenMinerOptionSet(private val maven: MavenOptionSet) : OptionSet() {
     private lateinit var token: String
     private var maxProjects = 0
     private lateinit var groupId: String
@@ -184,10 +184,10 @@ class GitHubMavenMinerSnippet(private val maven: MavenSnippet) : Snippet() {
 /**
  * Behavior linked to mining Maven projects with the directory miner.
  *
- * @property maven the [MavenSnippet] describing Maven-related behavior
+ * @property maven the [MavenOptionSet] describing Maven-related behavior
  */
 @Suppress("LateinitUsage") // Values cannot be determined at initialization
-class DirectoryMavenMinerSnippet(private val maven: MavenSnippet) : Snippet() {
+class DirectoryMavenMinerOptionSet(private val maven: MavenOptionSet) : OptionSet() {
     private lateinit var userDirDir: File
 
     override fun addOptionsTo(options: Options): Options = options
@@ -221,7 +221,7 @@ class DirectoryMavenMinerSnippet(private val maven: MavenSnippet) : Snippet() {
 /**
  * Behavior linked to detecting patterns with the CCSpan algorithm.
  */
-class CCSpanPatternDetectorSnippet : Snippet() {
+class CCSpanPatternDetectorOptionSet : OptionSet() {
     private var minCount = 0
     private var maxSequenceLength = 0
 
@@ -269,7 +269,7 @@ class CCSpanPatternDetectorSnippet : Snippet() {
 /**
  * Creates a pattern filter with a number of filter rules.
  */
-class PatternFilterSnippet : Snippet() {
+class PatternFilterOptionSet : OptionSet() {
     private var minLibraryUsageCount = 0
 
     override fun addOptionsTo(options: Options): Options = options
@@ -306,7 +306,7 @@ class PatternFilterSnippet : Snippet() {
 /**
  * Behavior linked to generating tests with EvoSuite from Jimple code.
  */
-class JimpleEvoSuiteTestGeneratorSnippet : Snippet() {
+class JimpleEvoSuiteTestGeneratorOptionSet : OptionSet() {
     private var timeout = 0
     private var enableOutput = false
 

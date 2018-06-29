@@ -15,18 +15,18 @@ import org.cafejojo.schaapi.models.project.JavaMavenProject
 internal class DirectoryMiningCommandLineInterface : CommandLineInterface() {
     private companion object : KLogging()
 
-    private val maven = MavenSnippet()
-    private val directory = DirectoryMavenMinerSnippet(maven)
-    private val patternDetector = CCSpanPatternDetectorSnippet()
-    private val patternFilter = PatternFilterSnippet()
-    private val testGenerator = JimpleEvoSuiteTestGeneratorSnippet()
+    private val maven = MavenOptionSet()
+    private val directory = DirectoryMavenMinerOptionSet(maven)
+    private val patternDetector = CCSpanPatternDetectorOptionSet()
+    private val patternFilter = PatternFilterOptionSet()
+    private val testGenerator = JimpleEvoSuiteTestGeneratorOptionSet()
 
     init {
-        snippets.add(maven)
-        snippets.add(directory)
-        snippets.add(patternDetector)
-        snippets.add(patternFilter)
-        snippets.add(testGenerator)
+        optionSets.add(maven)
+        optionSets.add(directory)
+        optionSets.add(patternDetector)
+        optionSets.add(patternFilter)
+        optionSets.add(testGenerator)
     }
 
     override fun run(cmd: CommandLine) {

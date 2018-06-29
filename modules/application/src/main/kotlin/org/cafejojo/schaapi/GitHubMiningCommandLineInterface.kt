@@ -16,18 +16,18 @@ import org.cafejojo.schaapi.models.project.JavaJarProject
 internal class GitHubMiningCommandLineInterface : CommandLineInterface() {
     private companion object : KLogging()
 
-    private val maven = MavenSnippet()
-    private val gitHub = GitHubMavenMinerSnippet(maven)
-    private val patternDetector = CCSpanPatternDetectorSnippet()
-    private val patternFilter = PatternFilterSnippet()
-    private val testGenerator = JimpleEvoSuiteTestGeneratorSnippet()
+    private val maven = MavenOptionSet()
+    private val gitHub = GitHubMavenMinerOptionSet(maven)
+    private val patternDetector = CCSpanPatternDetectorOptionSet()
+    private val patternFilter = PatternFilterOptionSet()
+    private val testGenerator = JimpleEvoSuiteTestGeneratorOptionSet()
 
     init {
-        snippets.add(maven)
-        snippets.add(gitHub)
-        snippets.add(patternFilter)
-        snippets.add(patternDetector)
-        snippets.add(testGenerator)
+        optionSets.add(maven)
+        optionSets.add(gitHub)
+        optionSets.add(patternFilter)
+        optionSets.add(patternDetector)
+        optionSets.add(testGenerator)
     }
 
     override fun run(cmd: CommandLine) {
