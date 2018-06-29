@@ -10,8 +10,10 @@ import java.io.File
 
 /**
  * Compiles a Java project using Maven.
+ *
+ * @property displayOutput true iff output should be logged at INFO level
  */
-class JavaMavenProjectCompiler : ProjectCompiler<JavaMavenProject> {
+class JavaMavenProjectCompiler(private val displayOutput: Boolean = false) : ProjectCompiler<JavaMavenProject> {
     private companion object : KLogging()
 
     override fun compile(project: JavaMavenProject): JavaMavenProject {
@@ -33,7 +35,7 @@ class JavaMavenProjectCompiler : ProjectCompiler<JavaMavenProject> {
         }
 
         val invoker = DefaultInvoker().apply {
-            setOutputHandler(null)
+            setOutputHandler(logger::info)
             mavenHome = project.mavenDir
             workingDirectory = project.projectDir
         }
