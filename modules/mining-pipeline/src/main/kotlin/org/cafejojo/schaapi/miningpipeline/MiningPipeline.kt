@@ -84,7 +84,8 @@ class MiningPipeline<SO : SearchOptions, UP : Project, LP : Project, N : Node>(
         mineProjects()
             .compileUserProjects()
             .generateLibraryUsageGraphs()
-            .findAndFilterPatterns()
+            .findPatterns()
+            .filterPatterns()
             .generateTests()
     } catch (e: Exception) {
         logger.error("A critical error occurred during the mining process causing it to be aborted.", e)
@@ -123,14 +124,18 @@ class MiningPipeline<SO : SearchOptions, UP : Project, LP : Project, N : Node>(
         return lugs
     }
 
-    private fun Iterable<N>.findAndFilterPatterns(): Iterable<Pattern<N>> {
+    private fun Iterable<N>.findPatterns(): Iterable<Pattern<N>> {
         logger.info { "Started finding patterns in ${this.count()} library usage graphs." }
         val patterns = this.next(patternDetector::findPatterns, "Finding patterns")
         logger.info { "Successfully found ${patterns.count()} patterns." }
         csvWriter.writePatternLengths(patterns)
 
-        logger.info { "Started filtering ${patterns.count()} patterns." }
-        val filtered = patterns.next(patternFilter::filter, "Filtering Patterns")
+        return patterns
+    }
+
+    private fun Iterable<Pattern<N>>.filterPatterns(): Iterable<Pattern<N>> {
+        logger.info { "Started filtering ${this.count()} patterns." }
+        val filtered = this.next(patternFilter::filter, "Filtering Patterns")
         logger.info { "${filtered.size} patterns remain after filtering." }
         csvWriter.writeFilteredPatternLengths(filtered)
 
@@ -138,7 +143,14 @@ class MiningPipeline<SO : SearchOptions, UP : Project, LP : Project, N : Node>(
     }
 
     private fun Iterable<Pattern<N>>.generateTests(): File {
-        logger.info { "Started generating test for ${this.count()} usage patterns." }
-        return testGenerator.generate(this).also { logger.info { "Test generation has finished." } }
+        ProgressBar("Generate tests for filtered patterns", this.count().toLong(), ProgressBarStyle.ASCII)
+            .use { progressBar ->
+                logger.info { "Started generating test for ${this.count()} usage patterns." }
+                val testFile = testGenerator.generate(this)
+                logger.info { "Test generation has finished." }
+                progressBar.stepTo(progressBar.max)
+
+                return testFile
+            }
     }
 }
