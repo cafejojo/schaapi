@@ -52,7 +52,8 @@ class MiningPipeline<SO : SearchOptions, UP : Project, LP : Project, N : Node>(
                 .also { logger.info { "Successfully compiled ${it.count()} projects." } }
 
                 .also { logger.info { "Started generating library usage graphs for ${it.count()} projects." } }
-                .nextFlatMap({ libraryUsageGraphGenerator.generate(libraryProject, it) },
+                .nextFlatMap<LibraryUsageGraphGenerationException, UP, N, Iterable<UP>>(
+                    { libraryUsageGraphGenerator.generate(libraryProject, it) },
                     "Generating library-usage graphs")
                 .also { logger.info { "Successfully generated ${it.size} library usage graphs." } }
                 .also { csvWriter.writeGraphSizes(it) }
@@ -83,11 +84,19 @@ class MiningPipeline<SO : SearchOptions, UP : Project, LP : Project, N : Node>(
      */
     private fun <T, R> T.next(map: (T) -> R): R = map(this)
 
-    private inline fun <N, reified T : Iterable<N>, R> T.next(map: (T) -> R, message: String): R =
+    private inline fun <reified T : Iterable<*>, R> T.next(map: (T) -> R, message: String): R =
         map(progressBarIterable(this, message) as? T ?: this)
 
-    private fun <P, Q, T : Iterable<P>> T.nextFlatMap(map: (P) -> Iterable<Q>, message: String): List<Q> =
-        progressBarIterable(this, message).flatMap { map(it) }
+    private inline fun <reified E : Exception, P, Q, T : Iterable<P>>
+        T.nextFlatMap(map: (P) -> Iterable<Q>, message: String): List<Q> =
+        progressBarIterable(this, message).mapNotNull {
+            try {
+                map(it)
+            } catch (e: RuntimeException) {
+                if (e is E) logger.warn { e.message } else throw e
+                null
+            }
+        }.flatten()
 
     /**
      * Calls the specified function [map] on each element in `this` and returns the result as an iterable.

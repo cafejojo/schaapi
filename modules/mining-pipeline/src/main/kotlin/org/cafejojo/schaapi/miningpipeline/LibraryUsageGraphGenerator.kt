@@ -16,3 +16,5 @@ interface LibraryUsageGraphGenerator<in LP : Project, in UP : Project, out N : N
      */
     fun generate(libraryProject: LP, userProject: UP): List<N>
 }
+
+class LibraryUsageGraphGenerationException(message: String? = null, e: Throwable? = null) : RuntimeException(message, e)
