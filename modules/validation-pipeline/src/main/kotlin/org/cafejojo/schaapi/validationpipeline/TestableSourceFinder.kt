@@ -3,7 +3,7 @@ package org.cafejojo.schaapi.validationpipeline
 import java.io.File
 
 /**
- * Responsible for the finding the source of the pattern present in the file under test.
+ * Responsible for finding the source of the pattern present in the file under test.
  */
 interface TestableSourceFinder {
     /**

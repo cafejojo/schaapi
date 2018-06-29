@@ -8,7 +8,7 @@ import java.io.IOException
 import java.nio.file.Files
 
 /**
- * Responsible for the finding the source of the pattern present in the file under test.
+ * Responsible for finding the source of the pattern present in the file under test.
  */
 @Component
 class SingleTestPerFileTestableSourceFinder : TestableSourceFinder {
