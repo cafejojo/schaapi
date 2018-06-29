@@ -9,5 +9,5 @@ interface ProjectMiner<in S : SearchOptions, out P : Project> {
     /**
      * Mines projects.
      */
-    fun mine(searchOptions: S): List<P>
+    fun mine(searchOptions: S): Iterable<P>
 }

@@ -19,7 +19,7 @@ class CsvWriter<N : Node>(output: File) {
      *
      * @param graphs graphs whose node counts will be written to file
      */
-    fun writeGraphSizes(graphs: List<N>) =
+    fun writeGraphSizes(graphs: Iterable<N>) =
         writeToFile("graphSize.csv", graphs, { graph: N -> graph.count() }, "graph_size")
 
     /**
@@ -27,7 +27,7 @@ class CsvWriter<N : Node>(output: File) {
      *
      * @param patterns patterns whose lengths will be written to file
      */
-    fun writePatternLengths(patterns: List<Pattern<N>>) =
+    fun writePatternLengths(patterns: Iterable<Pattern<N>>) =
         writeToFile("patterns.csv", patterns, { pattern: Pattern<N> -> pattern.size }, "pattern_length")
 
     /**
@@ -35,10 +35,10 @@ class CsvWriter<N : Node>(output: File) {
      *
      * @param patterns patterns whose lengths will be written to file
      */
-    fun writeFilteredPatternLengths(patterns: List<Pattern<N>>) =
+    fun writeFilteredPatternLengths(patterns: Iterable<Pattern<N>>) =
         writeToFile("filteredPatterns.csv", patterns, { pattern: Pattern<N> -> pattern.size }, "pattern_length")
 
-    private fun <P> writeToFile(output: String, items: List<P>, mapToInt: (P) -> Int, type: String) =
+    private fun <P> writeToFile(output: String, items: Iterable<P>, mapToInt: (P) -> Int, type: String) =
         File(dataFile, output).writer().use { fileWriter ->
             fileWriter.write("$type,count\n")
             items

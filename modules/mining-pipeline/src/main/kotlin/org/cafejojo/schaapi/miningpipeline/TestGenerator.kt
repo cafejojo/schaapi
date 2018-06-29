@@ -13,5 +13,5 @@ interface TestGenerator<in N : Node> {
      * @param patterns a list of [Pattern]s
      * @return a test file containing all generated tests
      */
-    fun generate(patterns: List<Pattern<N>>): File
+    fun generate(patterns: Iterable<Pattern<N>>): File
 }
