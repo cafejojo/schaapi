@@ -9,8 +9,7 @@ object MethodSourceRetrieverTest : Spek({
     it("can get the source of a method") {
         val sourceFile = File(MethodSourceRetrieverTest::class.java.getResource("/DecompiledPatterns.java").file)
 
-        val methodSource = MethodSourceRetriever(sourceFile)
-            .getSourceOf("pattern0")
+        val methodSource = MethodSourceRetriever(sourceFile).getSourceOf("pattern0")
 
         assertThat(methodSource?.replace("\r\n", "\n")).isEqualTo("""
             // Variables with automatically generated values:
@@ -28,8 +27,7 @@ object MethodSourceRetrieverTest : Spek({
     it("gives null when there is no method with the given method name") {
         val sourceFile = File(MethodSourceRetrieverTest::class.java.getResource("/DecompiledPatterns.java").file)
 
-        val methodSource = MethodSourceRetriever(sourceFile)
-            .getSourceOf("non_existing_method")
+        val methodSource = MethodSourceRetriever(sourceFile).getSourceOf("non_existing_method")
 
         assertThat(methodSource).isNull()
     }
