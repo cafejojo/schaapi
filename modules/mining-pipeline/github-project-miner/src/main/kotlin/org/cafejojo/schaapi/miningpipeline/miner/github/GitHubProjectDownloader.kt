@@ -71,7 +71,7 @@ internal class GitHubProjectDownloader<P : Project>(
             gitHubProject.extractMasterFile()
             projectPacker(gitHubProject).also { logger.debug { "Created project of $gitHubProject." } }
         } catch (e: IllegalArgumentException) {
-            logger.warn("Unable to pack $gitHubProject into project.", e.message)
+            logger.warn("Unable to pack $gitHubProject into project.", e)
             gitHubProject.deleteRecursively()
             null
         }
@@ -96,7 +96,7 @@ internal class GitHubProjectDownloader<P : Project>(
                 logger.warn { "Output file ${zipFile.path} could not be created." }
             }
         } catch (e: IOException) {
-            logger.warn("Could not save project to ${zipFile.path}.", e.message)
+            logger.warn("Could not save project to ${zipFile.path}.", e)
             return null
         }
 
@@ -114,10 +114,10 @@ internal class GitHubProjectDownloader<P : Project>(
             ZipUtil.unpack(projectZipFile, githubProject)
             logger.debug { "Successfully unzipped file ${projectZipFile.absolutePath}." }
         } catch (e: IOException) {
-            logger.warn("Could not unzip ${projectZipFile.absolutePath}.", e.message)
+            logger.warn("Could not unzip ${projectZipFile.absolutePath}.", e)
             return null
         } catch (e: ZipException) {
-            logger.warn("Could not unzip ${projectZipFile.absolutePath}.", e.message)
+            logger.warn("Could not unzip ${projectZipFile.absolutePath}.", e)
             return null
         } finally {
             projectZipFile.delete()
@@ -135,7 +135,7 @@ internal class GitHubProjectDownloader<P : Project>(
 
             return connection.apply { requestMethod = "GET" }.inputStream
         } catch (e: IOException) {
-            logger.warn("Could not connect to project $projectName.", e.message)
+            logger.warn("Could not connect to project $projectName.", e)
             return null
         }
     }
