@@ -8,15 +8,12 @@ import java.io.IOException
 import java.nio.file.Files
 
 /**
- * Responsible for the finding the source of the pattern present in [sourceFile] under test in the given [testFile].
+ * Responsible for the finding the source of the pattern present in the file under test.
  */
 @Component
 class SingleTestPerFileTestableSourceFinder : TestableSourceFinder {
     private companion object : KLogging()
 
-    /**
-     * Finds the source of the pattern present in [sourceFile] under test in the given [testFile].
-     */
     override fun find(testFile: File, sourceFile: File): String? {
         try {
             val patternName = PatternNameFinder(testFile.readText()).find().firstOrNull() ?: return null
