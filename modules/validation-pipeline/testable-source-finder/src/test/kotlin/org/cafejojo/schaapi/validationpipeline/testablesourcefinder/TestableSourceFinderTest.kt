@@ -10,9 +10,7 @@ object TestableSourceFinderTest : Spek({
         val testFile = File(TestableSourceFinderTest::class.java.getResource("/Patterns_ESTest.java").file)
         val sourceFile = File(TestableSourceFinderTest::class.java.getResource("/Patterns.class").file)
 
-        val source = SingleTestPerFileTestableSourceFinder(
-            testFile,
-            sourceFile).find()
+        val source = SingleTestPerFileTestableSourceFinder().find(testFile, sourceFile)
 
         assertThat(source?.replace("\r\n", "\n")).isEqualTo("""
             // Variables with automatically generated values:
