@@ -5,6 +5,7 @@ import com.nhaarman.mockito_kotlin.mock
 import net.javacrumbs.jsonunit.fluent.JsonFluentAssert.assertThatJson
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.entry
+import org.cafejojo.schaapi.validationpipeline.TestableSourceFinder
 import org.cafejojo.schaapi.validationpipeline.githubinteractor.githubapi.json
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -43,6 +44,8 @@ class GitHubInteractorIntegrationTest {
         open fun appKeyGenerator(): AppKeyGenerator = mock {
             on { create() } doReturn "this-is-the-app-key"
         }
+        @Bean
+        open fun testableSourceFinder(): TestableSourceFinder = mock()
     }
 
     @BeforeEach

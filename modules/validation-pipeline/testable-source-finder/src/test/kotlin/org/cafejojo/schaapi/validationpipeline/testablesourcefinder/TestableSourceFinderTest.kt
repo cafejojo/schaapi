@@ -1,4 +1,4 @@
-package org.cafejojo.validationpipeline.testablesourcefinder
+package org.cafejojo.schaapi.validationpipeline.testablesourcefinder
 
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.spek.api.Spek
@@ -10,7 +10,7 @@ object TestableSourceFinderTest : Spek({
         val testFile = File(TestableSourceFinderTest::class.java.getResource("/Patterns_ESTest.java").file)
         val sourceFile = File(TestableSourceFinderTest::class.java.getResource("/Patterns.class").file)
 
-        val source = TestableSourceFinder(testFile, sourceFile).find()
+        val source = SingleTestPerFileTestableSourceFinder().find(testFile, sourceFile)
 
         assertThat(source?.replace("\r\n", "\n")).isEqualTo("""
             // Variables with automatically generated values:

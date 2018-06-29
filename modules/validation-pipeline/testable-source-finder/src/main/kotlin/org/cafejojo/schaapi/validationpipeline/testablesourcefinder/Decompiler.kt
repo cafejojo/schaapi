@@ -1,4 +1,4 @@
-package org.cafejojo.validationpipeline.testablesourcefinder
+package org.cafejojo.schaapi.validationpipeline.testablesourcefinder
 
 import org.jetbrains.java.decompiler.main.decompiler.ConsoleDecompiler
 import java.io.File
