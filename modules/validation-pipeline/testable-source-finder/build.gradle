@@ -2,9 +2,20 @@ buildscript {
     repositories {
         mavenCentral()
     }
+
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
 }
 
+apply plugin: "org.springframework.boot"
+apply plugin: "io.spring.dependency-management"
+
 dependencies {
+    compile project(":validation-pipeline")
+
     compile group: "com.github.javaparser", name: "javaparser-core", version: javaparserVersion
     compile group: "org.jboss.windup.decompiler", name: "decompiler-fernflower", version: fernflowerVersion
 }
+
+bootJar.enabled = false

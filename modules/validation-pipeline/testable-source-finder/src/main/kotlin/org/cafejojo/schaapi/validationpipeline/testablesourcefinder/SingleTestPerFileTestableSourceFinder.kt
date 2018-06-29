@@ -1,6 +1,8 @@
-package org.cafejojo.validationpipeline.testablesourcefinder
+package org.cafejojo.schaapi.validationpipeline.testablesourcefinder
 
 import mu.KLogging
+import org.cafejojo.schaapi.validationpipeline.TestableSourceFinder
+import org.springframework.stereotype.Component
 import java.io.File
 import java.io.IOException
 import java.nio.file.Files
@@ -8,13 +10,14 @@ import java.nio.file.Files
 /**
  * Responsible for the finding the source of the pattern present in [sourceFile] under test in the given [testFile].
  */
-class TestableSourceFinder(private val testFile: File, private val sourceFile: File) {
+@Component
+class SingleTestPerFileTestableSourceFinder : TestableSourceFinder {
     private companion object : KLogging()
 
     /**
      * Finds the source of the pattern present in [sourceFile] under test in the given [testFile].
      */
-    fun find(): String? {
+    override fun find(testFile: File, sourceFile: File): String? {
         try {
             val patternName = PatternNameFinder(testFile.readText()).find().firstOrNull() ?: return null
 

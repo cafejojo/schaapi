@@ -1,4 +1,4 @@
-package org.cafejojo.validationpipeline.testablesourcefinder
+package org.cafejojo.schaapi.validationpipeline.testablesourcefinder
 
 import com.github.javaparser.JavaParser
 import com.github.javaparser.ast.body.MethodDeclaration

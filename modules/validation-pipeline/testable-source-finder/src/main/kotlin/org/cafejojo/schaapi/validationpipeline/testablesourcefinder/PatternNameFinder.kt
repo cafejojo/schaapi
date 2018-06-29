@@ -1,4 +1,4 @@
-package org.cafejojo.validationpipeline.testablesourcefinder
+package org.cafejojo.schaapi.validationpipeline.testablesourcefinder
 
 /**
  * Responsible for finding pattern names within a test file.

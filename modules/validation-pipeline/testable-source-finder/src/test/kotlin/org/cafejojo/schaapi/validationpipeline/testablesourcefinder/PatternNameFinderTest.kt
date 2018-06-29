@@ -1,4 +1,4 @@
-package org.cafejojo.validationpipeline.testablesourcefinder
+package org.cafejojo.schaapi.validationpipeline.testablesourcefinder
 
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.spek.api.Spek
