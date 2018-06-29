@@ -1,5 +1,6 @@
 package org.cafejojo.schaapi.miningpipeline.usagegraphgenerator.jimple
 
+import org.cafejojo.schaapi.miningpipeline.LibraryUsageGraphGenerationException
 import org.cafejojo.schaapi.models.libraryusagegraph.jimple.JimpleNode
 import soot.Body
 import soot.jimple.Stmt
@@ -39,7 +40,7 @@ internal object ControlFlowGraphGenerator {
             return mappedUnits[unit]
         }
 
-        if (unit !is Stmt) throw IllegalArgumentException("Unit must be a statement.")
+        if (unit !is Stmt) throw LibraryUsageGraphGenerationException("Unit must be a statement.")
 
         val node = JimpleNode(unit)
 
@@ -59,9 +60,7 @@ internal object ControlFlowGraphGenerator {
  * @return the root of the control flow graph.
  */
 private fun UnitGraph.rootUnitIfExists(): SootUnit =
-    if (heads.isEmpty()) throw NoRootInControlFlowGraphException() else heads[0]
+    if (heads.isEmpty())
+        throw LibraryUsageGraphGenerationException("The control flow graph does not contain a root unit.")
+    else heads[0]
 
-/**
- * Exception for control flow graphs that have no root [SootUnit].
- */
-private class NoRootInControlFlowGraphException : Exception("The control flow graph does not contain a root unit.")

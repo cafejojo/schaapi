@@ -1,5 +1,6 @@
 package org.cafejojo.schaapi.miningpipeline.usagegraphgenerator.jimple
 
+import org.cafejojo.schaapi.miningpipeline.LibraryUsageGraphGenerationException
 import org.cafejojo.schaapi.miningpipeline.LibraryUsageGraphGenerator
 import org.cafejojo.schaapi.miningpipeline.usagegraphgenerator.jimple.filters.BranchStatementFilter
 import org.cafejojo.schaapi.miningpipeline.usagegraphgenerator.jimple.filters.RecursiveGotoFilter
@@ -92,11 +93,15 @@ class JimpleLibraryUsageGraphGenerator : LibraryUsageGraphGenerator<JavaProject,
         val methodBody = method.retrieveActiveBody()
         lugStatistics.allStatements += methodBody.units.size
 
-        listOf(
-            StatementFilter(libraryProject),
-            BranchStatementFilter(libraryProject),
-            RecursiveGotoFilter()
-        ).forEach { it.apply(methodBody) }
+        try {
+            listOf(
+                StatementFilter(libraryProject),
+                BranchStatementFilter(libraryProject),
+                RecursiveGotoFilter()
+            ).forEach { it.apply(methodBody) }
+        } catch (e: Exception) {
+            throw LibraryUsageGraphGenerationException("An exception occurred while filtering.", e)
+        }
 
         listOf(
             UserUsageProcessor(libraryProject)
@@ -106,7 +111,7 @@ class JimpleLibraryUsageGraphGenerator : LibraryUsageGraphGenerator<JavaProject,
         if (methodBody.units.isEmpty()) methodBody.units.add(Jimple.v().newReturnVoidStmt())
 
         return ControlFlowGraphGenerator.create(methodBody)
-            ?: throw IllegalStateException("Control flow graph could not be generated")
+            ?: throw LibraryUsageGraphGenerationException("Control flow graph could not be generated.")
     }
 
     private fun isMeaninglessStatementWithoutContext(statement: Stmt) = when (statement) {
