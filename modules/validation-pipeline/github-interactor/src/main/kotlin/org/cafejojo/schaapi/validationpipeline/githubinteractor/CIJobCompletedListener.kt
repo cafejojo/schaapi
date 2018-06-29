@@ -52,6 +52,8 @@ class CIJobCompletedListener(private val checkReporter: CheckReporter) {
 
     private fun formatTestResults(testResults: TestResults) = with(testResults) {
         """
+            _Schaapi is an experimental tool and the accuracy of its results is not guaranteed._
+
             **$passCount** out of **$totalCount** tests passed.
 
             |                       |                                                   |
