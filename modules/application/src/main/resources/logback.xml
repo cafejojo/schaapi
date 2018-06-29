@@ -14,8 +14,10 @@
         </encoder>
     </appender>
 
-    <root>
-        <appender-ref ref="STDOUT" level="error"/>
-        <appender-ref ref="FILE" level="info"/>
+    <root level="info">
+        <appender-ref ref="FILE"/>
     </root>
+    <logger name="console" level="error">
+        <appender-ref ref="STDOUT"/>
+    </logger>
 </configuration>
