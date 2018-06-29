@@ -34,10 +34,11 @@ class JavaMavenProjectCompiler(private val displayOutput: Boolean = false) : Pro
             pomFile = project.pomFile
         }
 
-        val invoker = DefaultInvoker().apply {
-            if (displayOutput) setOutputHandler { logger.info(it) } else setOutputHandler(null)
-            mavenHome = project.mavenDir
-            workingDirectory = project.projectDir
+        val invoker = DefaultInvoker().also {
+            if (displayOutput) it.setOutputHandler(logger::info) else it.setOutputHandler(null)
+            it.setOutputHandler { logger.info(it) }
+            it.mavenHome = project.mavenDir
+            it.workingDirectory = project.projectDir
         }
 
         val result = invoker.execute(request)

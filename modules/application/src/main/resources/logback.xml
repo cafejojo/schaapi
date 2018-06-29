@@ -15,7 +15,9 @@
     </appender>
 
     <root level="info">
-        <appender-ref ref="STDOUT" />
-        <appender-ref ref="FILE" />
+        <appender-ref ref="FILE"/>
     </root>
+    <logger name="console" level="error">
+        <appender-ref ref="STDOUT"/>
+    </logger>
 </configuration>
