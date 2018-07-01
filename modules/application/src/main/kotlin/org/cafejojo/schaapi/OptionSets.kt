@@ -359,9 +359,10 @@ class ProjectOptionSet : OptionSet() {
             .builder()
             .longOpt("library_flavor")
             .desc("The type of library.")
+            .hasArg()
             .build())
 
     override fun read(cmd: CommandLine) {
-        isJavaMavenProject = cmd.hasOption("library_flavor") && cmd.getOptionValue("library_flavor") == "javamaven"
+        isJavaMavenProject = cmd.getOptionValue("library_flavor") == "javamaven"
     }
 }
