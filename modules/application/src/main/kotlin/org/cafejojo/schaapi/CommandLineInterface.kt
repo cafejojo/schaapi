@@ -11,14 +11,6 @@ import java.io.File
 import java.io.IOException
 import kotlin.system.exitProcess
 
-internal const val DEFAULT_PIPELINE_TYPE = "directory"
-internal const val DEFAULT_TEST_GENERATOR_TIMEOUT = "60"
-internal const val DEFAULT_PATTERN_DETECTOR_MINIMUM_COUNT = "2"
-internal const val DEFAULT_MAX_SEQUENCE_LENGTH = "25"
-internal const val DEFAULT_MIN_LIBRARY_USAGE_COUNT = "1"
-
-private class CommandLineInterface
-
 /**
  * Runs the complete first phase of the Schaapi pipeline.
  *
