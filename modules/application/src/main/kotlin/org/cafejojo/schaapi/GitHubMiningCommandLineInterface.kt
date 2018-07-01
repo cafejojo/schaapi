@@ -11,8 +11,6 @@ import org.cafejojo.schaapi.models.project.JavaMavenProject
 
 /**
  * Mines GitHub for user projects and generates tests based on these projects.
- *
- * Assumes that the passed library is a Java JAR project.
  */
 internal class GitHubMiningCommandLineInterface : CommandLineInterface() {
     private companion object : KLogging()

@@ -351,6 +351,9 @@ class JimpleEvoSuiteTestGeneratorOptionSet : OptionSet() {
     }
 }
 
+/**
+ * Behaviour linked to whether the library project is a maven or jar project.
+ */
 class ProjectOptionSet : OptionSet() {
     var isJavaMavenProject = true
 
@@ -363,6 +366,6 @@ class ProjectOptionSet : OptionSet() {
             .build())
 
     override fun read(cmd: CommandLine) {
-        isJavaMavenProject = cmd.getOptionValue("library_flavor") == "javamaven"
+        if (cmd.hasOption("library_flavor")) isJavaMavenProject = cmd.getOptionValue("library_flavor") == "javamaven"
     }
 }

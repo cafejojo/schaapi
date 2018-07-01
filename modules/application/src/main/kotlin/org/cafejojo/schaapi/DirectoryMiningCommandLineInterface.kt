@@ -11,8 +11,6 @@ import org.cafejojo.schaapi.models.project.JavaMavenProject
 
 /**
  * Mines a directory for user projects and generates tests based on these projects.
- *
- * Assumes that the passed library is a Java Maven library.
  */
 internal class DirectoryMiningCommandLineInterface : CommandLineInterface() {
     private companion object : KLogging()
