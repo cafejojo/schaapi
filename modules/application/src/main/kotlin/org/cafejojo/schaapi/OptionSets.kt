@@ -350,3 +350,18 @@ class JimpleEvoSuiteTestGeneratorOptionSet : OptionSet() {
         const val DEFAULT_TIMEOUT = "60"
     }
 }
+
+class ProjectOptionSet : OptionSet() {
+    var isJavaMavenProject = true
+
+    override fun addOptionsTo(options: Options): Options = options
+        .addOption(Option
+            .builder()
+            .longOpt("library_flavor")
+            .desc("The type of library.")
+            .build())
+
+    override fun read(cmd: CommandLine) {
+        isJavaMavenProject = cmd.hasOption("library_flavor") && cmd.getOptionValue("library_flavor") == "javamaven"
+    }
+}
