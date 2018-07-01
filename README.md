@@ -14,7 +14,7 @@
 [![Schaap][schaap-status]](https://github.com/cafejojo/schaapi)
 [![Built with love][baby-dont-hurt-me]](https://github.com/cafejojo/)
 
-Schaapi ensures Safe Changes for APIs of libraries. It focuses on detection of semantic breaking changes, but provides a general-purpose pipeline that is also applicable to the detection of other types of breaking changes. The default implementation detects incompatibilities between Java libraries and Java projects using that library.
+**Schaapi** ensures **S**afe **Cha**nges for **API**s of libraries. It focuses on detection of semantic breaking changes, but provides a general-purpose pipeline that is also applicable to the detection of other types of breaking changes. The default implementation detects incompatibilities between Java libraries and Java projects using that library.
 
 ## Requirements and Installation
 Schaapi requires JRE 8 and has been tested on Windows and Unix systems.
