@@ -36,7 +36,6 @@ class JavaMavenProjectCompiler(private val displayOutput: Boolean = false) : Pro
 
         val invoker = DefaultInvoker().also {
             if (displayOutput) it.setOutputHandler(logger::info) else it.setOutputHandler(null)
-            it.setOutputHandler { logger.info(it) }
             it.mavenHome = project.mavenDir
             it.workingDirectory = project.projectDir
         }
