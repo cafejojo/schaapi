@@ -1,5 +1,6 @@
 package org.cafejojo.schaapi.miningpipeline.usagegraphgenerator.jimple.filters
 
+import mu.KLogging
 import org.cafejojo.schaapi.models.libraryusagegraph.jimple.JimpleValueVisitor
 import org.cafejojo.schaapi.models.project.JavaProject
 import soot.AnySubType
@@ -63,6 +64,8 @@ internal class UserUsageValueFilter(libraryProject: JavaProject) :
  * Describes how a [Value] should be filtered.
  */
 internal abstract class ValueFilterRule : JimpleValueVisitor<Boolean>() {
+    companion object : KLogging()
+
     /**
      * Returns true iff [value] should be retained.
      *
@@ -179,7 +182,8 @@ private class UserUsageValueFilterRule(private val libraryProject: JavaProject) 
     override fun apply(value: Constant) = try {
         value !is ClassConstant || isNotUserClass(value.toSootType())
     } catch (e: RuntimeException) {
-        throw FilterException(e)
+        logger.error { "Invalid constant found: \"$value\"." }
+        false
     }
 
     override fun apply(value: InstanceOfExpr) = isNotUserClass(value.checkType)
