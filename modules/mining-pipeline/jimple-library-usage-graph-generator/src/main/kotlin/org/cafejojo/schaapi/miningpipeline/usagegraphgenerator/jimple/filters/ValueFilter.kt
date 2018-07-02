@@ -175,7 +175,12 @@ private class UserUsageValueFilterRule(private val libraryProject: JavaProject) 
     override fun apply(value: InstanceFieldRef) = isNotUserClass(value.field.declaringClass)
     override fun apply(value: StaticFieldRef) = isNotUserClass(value.field.declaringClass)
 
-    override fun apply(value: Constant) = value !is ClassConstant || isNotUserClass(value.toSootType())
+    @Suppress("TooGenericExceptionCaught")
+    override fun apply(value: Constant) = try {
+        value !is ClassConstant || isNotUserClass(value.toSootType())
+    } catch (e: RuntimeException) {
+        throw FilterException(e)
+    }
 
     override fun apply(value: InstanceOfExpr) = isNotUserClass(value.checkType)
     override fun apply(value: CastExpr) = isNotUserClass(value.castType)
