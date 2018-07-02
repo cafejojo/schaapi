@@ -352,7 +352,7 @@ class JimpleEvoSuiteTestGeneratorOptionSet : OptionSet() {
 }
 
 /**
- * Behaviour linked to whether the library project is a maven or jar project.
+ * Behaviour linked to whether the library project is a Maven or JAR project.
  */
 class ProjectOptionSet : OptionSet() {
     var isJavaMavenProject = true
