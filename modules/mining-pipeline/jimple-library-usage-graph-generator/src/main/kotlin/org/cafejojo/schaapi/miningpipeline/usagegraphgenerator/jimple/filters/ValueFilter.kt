@@ -64,7 +64,7 @@ internal class UserUsageValueFilter(libraryProject: JavaProject) :
  * Describes how a [Value] should be filtered.
  */
 internal abstract class ValueFilterRule : JimpleValueVisitor<Boolean>() {
-    companion object : KLogging()
+    internal companion object : KLogging()
 
     /**
      * Returns true iff [value] should be retained.
