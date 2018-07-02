@@ -17,7 +17,7 @@ class JavaMavenProjectCompiler(private val displayOutput: Boolean = false) : Pro
     private companion object : KLogging()
 
     override fun compile(project: JavaMavenProject): JavaMavenProject {
-        runMaven(project)
+//        runMaven(project)
         analyzeCompiledProject(project)
 
         logger.debug { "`maven install` of ${project.projectDir} was successful." }

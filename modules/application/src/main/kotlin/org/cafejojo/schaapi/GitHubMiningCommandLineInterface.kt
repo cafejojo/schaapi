@@ -42,13 +42,14 @@ internal class GitHubMiningCommandLineInterface : CommandLineInterface() {
                 outputDirectory = outputDir,
                 projectMiner = gitHub.createMiner(outputDir),
                 searchOptions = gitHub.createOptions(),
+                libraryProject = libraryProject,
                 libraryProjectCompiler = JavaMavenProjectCompiler(true),
                 userProjectCompiler = JavaMavenProjectCompiler(),
                 libraryUsageGraphGenerator = jimpleLibraryUsageGraphGenerator,
                 patternDetector = patternDetector.createPatternDetector(),
                 patternFilter = patternFilter.createPatternFilter(libraryProject),
                 testGenerator = testGenerator.createTestGenerator(outputDir, libraryProject)
-            ).run(libraryProject)
+            ).run()
         } else {
             val libraryProject = JavaJarProject(libraryDir)
 
@@ -56,13 +57,14 @@ internal class GitHubMiningCommandLineInterface : CommandLineInterface() {
                 outputDirectory = outputDir,
                 projectMiner = gitHub.createMiner(outputDir),
                 searchOptions = gitHub.createOptions(),
+                libraryProject = libraryProject,
                 libraryProjectCompiler = JavaJarProjectCompiler(),
                 userProjectCompiler = JavaMavenProjectCompiler(),
                 libraryUsageGraphGenerator = jimpleLibraryUsageGraphGenerator,
                 patternDetector = patternDetector.createPatternDetector(),
                 patternFilter = patternFilter.createPatternFilter(libraryProject),
                 testGenerator = testGenerator.createTestGenerator(outputDir, libraryProject)
-            ).run(libraryProject)
+            ).run()
         }
 
         logger.info { "Found ${jimpleLibraryUsageGraphGenerator.lugStatistics.concreteMethods} concrete methods." }
