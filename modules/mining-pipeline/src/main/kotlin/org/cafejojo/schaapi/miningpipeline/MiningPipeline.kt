@@ -27,6 +27,15 @@ class MiningPipeline<SO : SearchOptions, UP : Project, LP : Project, N : Node>(
         private inline fun <reified T : Iterable<*>, R> T.next(map: (T) -> R, message: String): R =
             map(progressBarIterable(this, message) as? T ?: this)
 
+        private inline fun <reified T : Iterable<*>, R : Iterable<*>>
+            T.nextProgressUnknown(map: (T) -> R, message: String): R =
+            ProgressBar(message, -1, ProgressBarStyle.ASCII).use { progressBar ->
+                map(this).also {
+                    progressBar.maxHint(it.count().toLong())
+                    progressBar.stepTo(it.count().toLong())
+                }
+            }
+
         /**
          * Calls the specified function [map] on each element in `this` and returns the result as an iterable.
          *
@@ -126,7 +135,7 @@ class MiningPipeline<SO : SearchOptions, UP : Project, LP : Project, N : Node>(
 
     private fun Iterable<N>.findPatterns(): Iterable<Pattern<N>> {
         logger.info { "Started finding patterns in ${this.count()} library usage graphs." }
-        val patterns = this.next(patternDetector::findPatterns, "Finding patterns")
+        val patterns = this.nextProgressUnknown(patternDetector::findPatterns, "Finding patterns")
         logger.info { "Successfully found ${patterns.count()} patterns." }
         csvWriter.writePatternLengths(patterns)
 
@@ -143,14 +152,10 @@ class MiningPipeline<SO : SearchOptions, UP : Project, LP : Project, N : Node>(
     }
 
     private fun Iterable<Pattern<N>>.generateTests(): File {
-        ProgressBar("Generate tests for filtered patterns", this.count().toLong(), ProgressBarStyle.ASCII)
-            .use { progressBar ->
-                logger.info { "Started generating test for ${this.count()} usage patterns." }
-                val testFile = testGenerator.generate(this)
-                logger.info { "Test generation has finished." }
-                progressBar.stepTo(progressBar.max)
+        logger.info { "Started generating test for ${this.count()} usage patterns." }
+        val testFile = testGenerator.generate(this)
+        logger.info { "Test generation has finished." }
 
-                return testFile
-            }
+        return testFile
     }
 }
