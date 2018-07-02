@@ -23,6 +23,7 @@ import soot.Unit
 import soot.Value
 import soot.VoidType
 import soot.jimple.ArrayRef
+import soot.jimple.AssignStmt
 import soot.jimple.DoubleConstant
 import soot.jimple.FieldRef
 import soot.jimple.FloatConstant
@@ -147,8 +148,16 @@ internal class ClassGenerator(className: String) {
                 else lastStatement.op.type
             is JReturnVoidStmt -> VoidType.v()
             else -> {
-                jimpleBody.units.add(Jimple.v().newReturnVoidStmt())
-                VoidType.v()
+                val lastAss = jimpleBody.units
+                    .filterIsInstance<AssignStmt>()
+                    .lastOrNull()
+                if (lastAss == null) {
+                    jimpleBody.units.add(Jimple.v().newReturnVoidStmt())
+                    VoidType.v()
+                } else {
+                    jimpleBody.units.add(Jimple.v().newReturnStmt(lastAss.leftOp))
+                    lastAss.leftOp.type
+                }
             }
         }
     }
