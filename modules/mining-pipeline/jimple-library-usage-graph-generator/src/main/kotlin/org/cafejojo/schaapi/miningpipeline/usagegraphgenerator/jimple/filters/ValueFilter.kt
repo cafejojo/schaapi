@@ -182,7 +182,7 @@ private class UserUsageValueFilterRule(private val libraryProject: JavaProject) 
     override fun apply(value: Constant) = try {
         value !is ClassConstant || isNotUserClass(value.toSootType())
     } catch (e: RuntimeException) {
-        logger.error { "Invalid constant found: \"$value\"." }
+        logger.warn { "Invalid constant found: \"$value\"." }
         false
     }
 
