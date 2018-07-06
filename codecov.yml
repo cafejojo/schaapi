@@ -5,5 +5,6 @@ codecov:
 coverage:
   status:
     project:
-      default
+      default:
         target: 10
+        threshold: 100
