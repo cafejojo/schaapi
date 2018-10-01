@@ -381,6 +381,13 @@ enum class ProjectType(val type: String) {
     JAVA_JAR("javajar");
 
     companion object {
+        /**
+         * Returns the enum value corresponding to the string [type].
+         *
+         * If no enum value can be found matching the given string, null is returned.
+         *
+         * @param type a string describing the library project type
+         */
         fun fromString(type: String) =
             ProjectType.values()
                 .filter { type == it.type }
