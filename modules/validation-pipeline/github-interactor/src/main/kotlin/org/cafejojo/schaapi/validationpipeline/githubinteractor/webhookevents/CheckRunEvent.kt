@@ -9,4 +9,4 @@ internal data class CheckRunEvent(
     fun isRerequested() = action == "rerequested"
 }
 
-internal data class CheckRun(val check_suite: CheckSuite)
+internal data class CheckRun(val checkSuite: CheckSuite)
