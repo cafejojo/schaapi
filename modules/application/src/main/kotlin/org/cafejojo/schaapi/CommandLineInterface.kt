@@ -23,6 +23,8 @@ fun main(args: Array<String>) {
         exitProcess(-1)
     }
 
+
+
     val flavor = args[0]
     val remainingArgs = args.drop(1).toTypedArray()
     when (flavor) {
