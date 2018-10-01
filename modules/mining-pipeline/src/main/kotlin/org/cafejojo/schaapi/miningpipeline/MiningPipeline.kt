@@ -39,7 +39,8 @@ class MiningPipeline<SO : SearchOptions, UP : Project, LP : Project, N : Node>(
                 try {
                     map(it)
                 } catch (e: RuntimeException) {
-                    if (e is E) logger.warn { e.message } else throw e
+                    if (e !is E) throw e
+                    logger.warn { e.message }
                     null
                 }
             }
@@ -57,7 +58,8 @@ class MiningPipeline<SO : SearchOptions, UP : Project, LP : Project, N : Node>(
                 try {
                     map(it)
                 } catch (e: RuntimeException) {
-                    if (e is E) logger.warn { e.message } else throw e
+                    if (e !is E) throw e
+                    logger.warn { e.message }
                     null
                 }
             }.flatten()
@@ -104,7 +106,8 @@ class MiningPipeline<SO : SearchOptions, UP : Project, LP : Project, N : Node>(
 
     private fun mineProjects(): Iterable<UP> {
         logger.info { "Started mining projects." }
-        return projectMiner.mine(searchOptions).also { logger.info { "Successfully mined ${it.count()} projects." } }
+        return projectMiner.mine(searchOptions)
+            .also { logger.info { "Successfully mined ${it.count()} projects." } }
     }
 
     private fun Iterable<UP>.compileUserProjects(): Iterable<UP> {
@@ -116,7 +119,9 @@ class MiningPipeline<SO : SearchOptions, UP : Project, LP : Project, N : Node>(
     private fun Iterable<UP>.generateLibraryUsageGraphs(): Iterable<N> {
         logger.info { "Started generating library usage graphs for ${this.count()} projects." }
         val lugs = this.nextFlatMap<LibraryUsageGraphGenerationException, UP, N, Iterable<UP>>(
-            { libraryUsageGraphGenerator.generate(libraryProject, it) }, "Generating library-usage graphs")
+            map = { libraryUsageGraphGenerator.generate(libraryProject, it) },
+            message = "Generating library-usage graphs"
+        )
 
         logger.info { "Successfully generated ${lugs.count()} library usage graphs." }
         csvWriter.writeGraphSizes(lugs)
