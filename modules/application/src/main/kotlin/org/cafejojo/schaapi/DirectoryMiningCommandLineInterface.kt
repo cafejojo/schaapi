@@ -17,21 +17,7 @@ import org.cafejojo.schaapi.models.project.JavaMavenProject
 internal class DirectoryMiningCommandLineInterface : CommandLineInterface() {
     private companion object : KLogging()
 
-    private val directoryMinerCLI = object : OptionSet() {
-        var skipUserCompile = false
-
-        override fun addOptionsTo(options: Options): Options =
-            options
-                .addOption(Option
-                    .builder()
-                    .longOpt("skip_user_compile")
-                    .desc("Skip compilation of user projects.")
-                    .build())
-
-        override fun read(cmd: CommandLine) {
-            skipUserCompile = cmd.hasOption("skip_user_compile")
-        }
-    }
+    private val directoryMinerCLI = DirectoryMiningCliOptionSet()
     private val maven = MavenOptionSet()
     private val directory = DirectoryMavenMinerOptionSet(maven)
     private val library = ProjectOptionSet()
@@ -89,5 +75,24 @@ internal class DirectoryMiningCommandLineInterface : CommandLineInterface() {
         logger.info { "Found ${jimpleLibraryUsageGraphGenerator.lugStatistics.concreteMethods} concrete methods." }
         logger.info { "Found ${jimpleLibraryUsageGraphGenerator.lugStatistics.allStatements} statements." }
         logger.info { "Found ${jimpleLibraryUsageGraphGenerator.lugStatistics.validStatements} valid statements." }
+    }
+}
+
+/**
+ * Behavior linked to [DirectoryMiningCommandLineInterface].
+ */
+private class DirectoryMiningCliOptionSet : OptionSet() {
+    var skipUserCompile = false
+
+    override fun addOptionsTo(options: Options): Options =
+        options
+            .addOption(Option
+                .builder()
+                .longOpt("skip_user_compile")
+                .desc("Skip compilation of user projects.")
+                .build())
+
+    override fun read(cmd: CommandLine) {
+        skipUserCompile = cmd.hasOption("skip_user_compile")
     }
 }
