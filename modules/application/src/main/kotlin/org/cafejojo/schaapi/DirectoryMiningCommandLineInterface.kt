@@ -2,6 +2,8 @@ package org.cafejojo.schaapi
 
 import mu.KLogging
 import org.apache.commons.cli.CommandLine
+import org.apache.commons.cli.Option
+import org.apache.commons.cli.Options
 import org.cafejojo.schaapi.miningpipeline.MiningPipeline
 import org.cafejojo.schaapi.miningpipeline.projectcompiler.javajar.JavaJarProjectCompiler
 import org.cafejojo.schaapi.miningpipeline.projectcompiler.javamaven.JavaMavenProjectCompiler
@@ -15,6 +17,21 @@ import org.cafejojo.schaapi.models.project.JavaMavenProject
 internal class DirectoryMiningCommandLineInterface : CommandLineInterface() {
     private companion object : KLogging()
 
+    private val directoryMinerCLI = object : OptionSet() {
+        var skipUserCompile = false
+
+        override fun addOptionsTo(options: Options): Options =
+            options
+                .addOption(Option
+                    .builder()
+                    .longOpt("skip_user_compile")
+                    .desc("Skip compilation of user projects.")
+                    .build())
+
+        override fun read(cmd: CommandLine) {
+            skipUserCompile = cmd.hasOption("skip_user_compile")
+        }
+    }
     private val maven = MavenOptionSet()
     private val directory = DirectoryMavenMinerOptionSet(maven)
     private val library = ProjectOptionSet()
@@ -23,6 +40,7 @@ internal class DirectoryMiningCommandLineInterface : CommandLineInterface() {
     private val testGenerator = JimpleEvoSuiteTestGeneratorOptionSet()
 
     init {
+        optionSets.add(directoryMinerCLI)
         optionSets.add(maven)
         optionSets.add(directory)
         optionSets.add(library)
@@ -43,8 +61,8 @@ internal class DirectoryMiningCommandLineInterface : CommandLineInterface() {
                     outputDirectory = outputDir,
                     projectMiner = directory.createMiner(),
                     searchOptions = directory.createOptions(),
-                    libraryProjectCompiler = JavaMavenProjectCompiler(true),
-                    userProjectCompiler = JavaMavenProjectCompiler(),
+                    libraryProjectCompiler = JavaMavenProjectCompiler(displayOutput = true),
+                    userProjectCompiler = JavaMavenProjectCompiler(skipCompile = directoryMinerCLI.skipUserCompile),
                     libraryUsageGraphGenerator = jimpleLibraryUsageGraphGenerator,
                     patternDetector = patternDetector.createPatternDetector(),
                     patternFilter = patternFilter.createPatternFilter(libraryProject),
@@ -59,7 +77,7 @@ internal class DirectoryMiningCommandLineInterface : CommandLineInterface() {
                     projectMiner = directory.createMiner(),
                     searchOptions = directory.createOptions(),
                     libraryProjectCompiler = JavaJarProjectCompiler(),
-                    userProjectCompiler = JavaMavenProjectCompiler(),
+                    userProjectCompiler = JavaMavenProjectCompiler(skipCompile = directoryMinerCLI.skipUserCompile),
                     libraryUsageGraphGenerator = jimpleLibraryUsageGraphGenerator,
                     patternDetector = patternDetector.createPatternDetector(),
                     patternFilter = patternFilter.createPatternFilter(libraryProject),
