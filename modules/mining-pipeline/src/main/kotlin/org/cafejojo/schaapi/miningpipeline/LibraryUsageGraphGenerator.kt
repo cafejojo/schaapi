@@ -20,4 +20,4 @@ interface LibraryUsageGraphGenerator<in LP : Project, in UP : Project, out N : N
 /**
  * Exception thrown when something went wrong during the creation of a library usage graph.
  */
-typealias LibraryUsageGraphGenerationException = RuntimeException
+class LibraryUsageGraphGenerationException(override val message: String?) : RuntimeException(message)

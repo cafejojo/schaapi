@@ -14,4 +14,4 @@ interface Filter {
     fun apply(body: Body)
 }
 
-internal typealias FilterException = Exception
+internal open class FilterException(override val message: String?) : Exception(message)
