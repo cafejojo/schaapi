@@ -1,5 +1,8 @@
 package org.cafejojo.schaapi.miningpipeline
 
+import me.tongfei.progressbar.ProgressBar
+import me.tongfei.progressbar.ProgressBarBuilder
+import me.tongfei.progressbar.ProgressBarStyle
 import mu.KLogging
 import org.cafejojo.schaapi.models.Node
 import org.cafejojo.schaapi.models.Project
@@ -27,7 +30,10 @@ class MiningPipeline<SO : SearchOptions, UP : Project, LP : Project, N : Node>(
     @Suppress("TooGenericExceptionCaught") // In this case it is relevant to catch and log an Exception
     fun run(libraryProject: LP) {
         logger.info { "Compiling library project." }
-        libraryProjectCompiler.compile(libraryProject)
+        ProgressBar("Compile library Project", 1, ProgressBarStyle.ASCII).use { progressBar ->
+            libraryProjectCompiler.compile(libraryProject)
+            progressBar.step()
+        }
         logger.info { "Compiled library project." }
 
         logger.info { "Mining has started." }
@@ -42,21 +48,22 @@ class MiningPipeline<SO : SearchOptions, UP : Project, LP : Project, N : Node>(
                 .also { logger.info { "Successfully mined ${it.size} projects." } }
 
                 .also { logger.info { "Started compiling ${it.size} projects." } }
-                .nextCatchExceptions<CompilationException, UP, UP>(userProjectCompiler::compile)
+                .nextCatchExceptions<CompilationException, UP, UP>(userProjectCompiler::compile, "Compiling projects")
                 .also { logger.info { "Successfully compiled ${it.count()} projects." } }
 
                 .also { logger.info { "Started generating library usage graphs for ${it.count()} projects." } }
-                .flatMap { libraryUsageGraphGenerator.generate(libraryProject, it) }
+                .nextFlatMap({ libraryUsageGraphGenerator.generate(libraryProject, it) },
+                    "Generating library-usage graphs")
                 .also { logger.info { "Successfully generated ${it.size} library usage graphs." } }
                 .also { csvWriter.writeGraphSizes(it) }
 
                 .also { logger.info { "Started finding patterns in ${it.size} library usage graphs." } }
-                .next(patternDetector::findPatterns)
+                .next(patternDetector::findPatterns, "Finding patterns")
                 .also { logger.info { "Successfully found ${it.size} patterns." } }
                 .also { csvWriter.writePatternLengths(it) }
 
                 .also { logger.info { "Started filtering ${it.size} patterns." } }
-                .next(patternFilter::filter)
+                .next(patternFilter::filter, "Filtering patterns")
                 .also { logger.info { "${it.size} patterns remain after filtering." } }
                 .also { csvWriter.writeFilteredPatternLengths(it) }
 
@@ -76,6 +83,12 @@ class MiningPipeline<SO : SearchOptions, UP : Project, LP : Project, N : Node>(
      */
     private fun <T, R> T.next(map: (T) -> R): R = map(this)
 
+    private inline fun <N, reified T : Iterable<N>, R> T.next(map: (T) -> R, message: String): R =
+        map(progressBarIterable(this, message) as? T ?: this)
+
+    private fun <P, Q, T : Iterable<P>> T.nextFlatMap(map: (P) -> Iterable<Q>, message: String): List<Q> =
+        progressBarIterable(this, message).flatMap { map(it) }
+
     /**
      * Calls the specified function [map] on each element in `this` and returns the result as an iterable.
      *
@@ -83,14 +96,19 @@ class MiningPipeline<SO : SearchOptions, UP : Project, LP : Project, N : Node>(
      */
     @Suppress("TooGenericExceptionCaught", "InstanceOfCheckForException") // This is intended behaviour
     private inline fun <reified E : RuntimeException, T, R : Any>
-        Iterable<T>.nextCatchExceptions(map: (T) -> R): Iterable<R> = this.mapNotNull {
-        try {
-            map(it)
-        } catch (e: RuntimeException) {
-            if (e is E) {
-                logger.warn(e.message)
+        Iterable<T>.nextCatchExceptions(map: (T) -> R, message: String): Iterable<R> =
+        progressBarIterable(this, message).mapNotNull {
+            try {
+                map(it)
+            } catch (e: RuntimeException) {
+                if (e is E) logger.warn { e.message } else throw e
                 null
-            } else throw e
+            }
         }
-    }
+
+    private fun <N> progressBarIterable(iterable: Iterable<N>, taskName: String): Iterable<N> =
+        ProgressBar.wrap(iterable, ProgressBarBuilder().apply {
+            setTaskName(taskName)
+            setStyle(ProgressBarStyle.ASCII)
+        })
 }
