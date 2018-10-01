@@ -48,7 +48,7 @@ class MiningPipeline<SO : SearchOptions, UP : Project, LP : Project, N : Node>(
                 .also { logger.info { "Successfully mined ${it.size} projects." } }
 
                 .also { logger.info { "Started compiling ${it.size} projects." } }
-                .nextCatchExceptions<CompilationException, UP, UP>(userProjectCompiler::compile, "Compiling Projects")
+                .nextCatchExceptions<CompilationException, UP, UP>(userProjectCompiler::compile, "Compiling projects")
                 .also { logger.info { "Successfully compiled ${it.count()} projects." } }
 
                 .also { logger.info { "Started generating library usage graphs for ${it.count()} projects." } }
@@ -63,7 +63,7 @@ class MiningPipeline<SO : SearchOptions, UP : Project, LP : Project, N : Node>(
                 .also { csvWriter.writePatternLengths(it) }
 
                 .also { logger.info { "Started filtering ${it.size} patterns." } }
-                .next(patternFilter::filter, "Filtering Patterns")
+                .next(patternFilter::filter, "Filtering patterns")
                 .also { logger.info { "${it.size} patterns remain after filtering." } }
                 .also { csvWriter.writeFilteredPatternLengths(it) }
 
