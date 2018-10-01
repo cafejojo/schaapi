@@ -79,13 +79,13 @@ class WebHookReceiver(private val checkReporter: CheckReporter, private val publ
             val newCheckRun = checkReporter.reportStarted(
                 installation.id,
                 repository.fullName,
-                checkRun.check_suite.headBranch,
-                checkRun.check_suite.headSha
+                checkRun.checkSuite.headBranch,
+                checkRun.checkSuite.headSha
             )
 
             publisher.publishEvent(ValidationRequestReceivedEvent(
                 directory = File(Properties.testsStorageLocation, repository.fullName),
-                downloadUrl = "https://github.com/${repository.fullName}/archive/${checkRun.check_suite.headSha}.zip",
+                downloadUrl = "https://github.com/${repository.fullName}/archive/${checkRun.checkSuite.headSha}.zip",
                 metadata = GitHubCIJobProjectMetadata(newCheckRun.id, installation.id, repository.fullName)
             ))
         }

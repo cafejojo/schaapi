@@ -107,7 +107,9 @@ internal class BranchStatementFilter(project: JavaProject) : Filter {
         }
 
         private fun collectSuccessors(
-            cfg: UnitGraph, unit: Unit, collection: MutableList<Unit> = mutableListOf()
+            cfg: UnitGraph,
+            unit: Unit,
+            collection: MutableList<Unit> = mutableListOf()
         ): MutableList<Unit> {
             if (collection.contains(unit)) return collection
 
