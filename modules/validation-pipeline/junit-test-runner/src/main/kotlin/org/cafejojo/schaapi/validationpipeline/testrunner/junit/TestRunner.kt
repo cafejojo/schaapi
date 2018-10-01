@@ -33,8 +33,8 @@ class TestRunner : TestRunner {
                     .replace(Regex("[/\\\\]"), ".")
                     .removeSuffix(".class")
                 val classLoader = URLClassLoader(
-                    classpathDirectories.map { it.toURI().toURL() }.toTypedArray()
-                        + testFile.parentFile.toURI().toURL()
+                    classpathDirectories.map { it.toURI().toURL() }.toTypedArray() +
+                        testFile.parentFile.toURI().toURL()
                 )
                 className to gatherResults(JUnitCore.runClasses(classLoader.loadClass(className)), testFile)
             }.toMap()

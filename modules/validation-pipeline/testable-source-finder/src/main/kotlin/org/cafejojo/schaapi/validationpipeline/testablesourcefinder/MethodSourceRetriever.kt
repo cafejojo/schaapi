@@ -25,11 +25,11 @@ private class MethodFinder(val methodName: String) : VoidVisitorAdapter<MutableL
     override fun visit(method: MethodDeclaration, results: MutableList<String>) {
         if (method.name.identifier == methodName && method.body.isPresent) {
             results.add(
-                "// Variables with automatically generated values:\n"
-                    + method.parameters.joinToString("") { "$it;\n" }
-                    + "\n"
-                    + "// Pattern:\n"
-                    + method.body.get().toString()
+                "// Variables with automatically generated values:\n" +
+                    method.parameters.joinToString("") { "$it;\n" } +
+                    "\n" +
+                    "// Pattern:\n" +
+                    method.body.get().toString()
             )
         }
 

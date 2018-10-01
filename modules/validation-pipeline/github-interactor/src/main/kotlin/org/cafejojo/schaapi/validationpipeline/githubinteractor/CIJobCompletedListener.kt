@@ -76,12 +76,12 @@ class CIJobCompletedListener(
                 file.parentFile.resolve("Patterns.class")
             )
 
-            ("**Failure ${index + 1}**\n"
-                + message + "\n\n"
-                + "The failure occurred in the following pattern:\n"
-                + "```java \n"
-                + testableSource + "\n"
-                + "```")
+            ("**Failure ${index + 1}**\n" +
+                message + "\n\n" +
+                "The failure occurred in the following pattern:\n" +
+                "```java \n" +
+                testableSource + "\n" +
+                "```")
         }.joinToString("\n\n")
     }
 }

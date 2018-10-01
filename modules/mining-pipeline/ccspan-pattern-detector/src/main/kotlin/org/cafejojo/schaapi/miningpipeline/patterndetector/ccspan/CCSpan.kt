@@ -1,3 +1,4 @@
+// ktlint-disable op-spacing
 package org.cafejojo.schaapi.miningpipeline.patterndetector.ccspan
 
 import org.cafejojo.schaapi.miningpipeline.Pattern
@@ -73,8 +74,8 @@ internal class CCSpan<N : Node>(
     }
 
     private fun checkSupportOfSubSequence(subSequence: List<N>) {
-        if (sequencesOfPreviousLength.any { it.sequence == subSequence.pre() }
-            && sequencesOfPreviousLength.any { it.sequence == subSequence.post() }) {
+        if (sequencesOfPreviousLength.any { it.sequence == subSequence.pre() } &&
+            sequencesOfPreviousLength.any { it.sequence == subSequence.post() }) {
             val support = calculateSupport(subSequence)
             if (support >= minimumSupport) sequencesOfCurrentLength += SequenceTriple(subSequence, support)
         }
@@ -84,9 +85,9 @@ internal class CCSpan<N : Node>(
         sequencesOfCurrentLength.forEach { (sequence, sequenceSupport, _) ->
             sequencesOfPreviousLength.parallelStream()
                 .filter {
-                    it.isClosedSequence
-                        && (it.sequence == sequence.pre() || it.sequence == sequence.post())
-                        && sequenceSupport >= it.support
+                    it.isClosedSequence &&
+                        (it.sequence == sequence.pre() || it.sequence == sequence.post()) &&
+                        sequenceSupport >= it.support
                 }
                 .forEach { it.isClosedSequence = false }
         }
