@@ -350,3 +350,47 @@ class JimpleEvoSuiteTestGeneratorOptionSet : OptionSet() {
         const val DEFAULT_TIMEOUT = "60"
     }
 }
+
+/**
+ * Behavior linked to whether the library project is a Maven or JAR project.
+ */
+class ProjectOptionSet : OptionSet() {
+    var projectType = ProjectType.JAVA_MAVEN
+
+    override fun addOptionsTo(options: Options): Options = options
+        .addOption(Option
+            .builder()
+            .longOpt("library_type")
+            .desc("The type of library.")
+            .hasArg()
+            .build())
+
+    override fun read(cmd: CommandLine) {
+        if (cmd.hasOption("library_type")) {
+            projectType = ProjectType.fromString(cmd.getOptionValue("library_type"))
+                ?: throw IllegalArgumentException("Unknown library project type.")
+        }
+    }
+}
+
+/**
+ * The type of the library project.
+ */
+enum class ProjectType(val type: String) {
+    JAVA_MAVEN("javamaven"),
+    JAVA_JAR("javajar");
+
+    companion object {
+        /**
+         * Returns the enum value corresponding to the string [type].
+         *
+         * If no enum value can be found matching the given string, null is returned.
+         *
+         * @param type a string describing the library project type
+         */
+        fun fromString(type: String) =
+            ProjectType.values()
+                .filter { type == it.type }
+                .getOrNull(0)
+    }
+}
