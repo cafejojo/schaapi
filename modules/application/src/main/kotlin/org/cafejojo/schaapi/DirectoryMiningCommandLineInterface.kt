@@ -35,8 +35,8 @@ internal class DirectoryMiningCommandLineInterface : CommandLineInterface() {
         val jimpleLibraryUsageGraphGenerator = JimpleLibraryUsageGraphGenerator()
         maven.install()
 
-        when (library.projectFlavor) {
-            ProjectFlavor.JAVA_MAVEN -> {
+        when (library.projectType) {
+            ProjectType.JAVA_MAVEN -> {
                 val libraryProject = JavaMavenProject(libraryDir, maven.dir)
 
                 MiningPipeline(
@@ -51,7 +51,7 @@ internal class DirectoryMiningCommandLineInterface : CommandLineInterface() {
                     testGenerator = testGenerator.createTestGenerator(outputDir, libraryProject)
                 ).run(libraryProject)
             }
-            ProjectFlavor.JAVA_JAR -> {
+            ProjectType.JAVA_JAR -> {
                 val libraryProject = JavaJarProject(libraryDir)
 
                 MiningPipeline(

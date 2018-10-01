@@ -352,38 +352,38 @@ class JimpleEvoSuiteTestGeneratorOptionSet : OptionSet() {
 }
 
 /**
- * Behaviour linked to whether the library project is a Maven or JAR project.
+ * Behavior linked to whether the library project is a Maven or JAR project.
  */
 class ProjectOptionSet : OptionSet() {
-    var projectFlavor = ProjectFlavor.JAVA_MAVEN
+    var projectType = ProjectType.JAVA_MAVEN
 
     override fun addOptionsTo(options: Options): Options = options
         .addOption(Option
             .builder()
-            .longOpt("library_flavor")
+            .longOpt("library_type")
             .desc("The type of library.")
             .hasArg()
             .build())
 
     override fun read(cmd: CommandLine) {
-        if (cmd.hasOption("library_flavor")) {
-            projectFlavor = ProjectFlavor.fromString(cmd.getOptionValue("library_flavor"))
-                ?: throw IllegalArgumentException("Unknown library project flavor.")
+        if (cmd.hasOption("library_type")) {
+            projectType = ProjectType.fromString(cmd.getOptionValue("library_type"))
+                ?: throw IllegalArgumentException("Unknown library project type.")
         }
     }
 }
 
 /**
- * The flavor of the library project.
+ * The type of the library project.
  */
-enum class ProjectFlavor(val flavor: String) {
+enum class ProjectType(val type: String) {
     JAVA_MAVEN("javamaven"),
     JAVA_JAR("javajar");
 
     companion object {
-        fun fromString(flavor: String) =
-            ProjectFlavor.values()
-                .filter { flavor == it.flavor }
+        fun fromString(type: String) =
+            ProjectType.values()
+                .filter { type == it.type }
                 .getOrNull(0)
     }
 }
