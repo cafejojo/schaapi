@@ -35,34 +35,37 @@ internal class DirectoryMiningCommandLineInterface : CommandLineInterface() {
         val jimpleLibraryUsageGraphGenerator = JimpleLibraryUsageGraphGenerator()
         maven.install()
 
-        if (library.isJavaMavenProject) {
-            val libraryProject = JavaMavenProject(libraryDir, maven.dir)
+        when (library.projectFlavor) {
+            ProjectFlavor.JAVA_MAVEN -> {
+                val libraryProject = JavaMavenProject(libraryDir, maven.dir)
 
-            MiningPipeline(
-                outputDirectory = outputDir,
-                projectMiner = directory.createMiner(),
-                searchOptions = directory.createOptions(),
-                libraryProjectCompiler = JavaMavenProjectCompiler(true),
-                userProjectCompiler = JavaMavenProjectCompiler(),
-                libraryUsageGraphGenerator = jimpleLibraryUsageGraphGenerator,
-                patternDetector = patternDetector.createPatternDetector(),
-                patternFilter = patternFilter.createPatternFilter(libraryProject),
-                testGenerator = testGenerator.createTestGenerator(outputDir, libraryProject)
-            ).run(libraryProject)
-        } else {
-            val libraryProject = JavaJarProject(libraryDir)
+                MiningPipeline(
+                    outputDirectory = outputDir,
+                    projectMiner = directory.createMiner(),
+                    searchOptions = directory.createOptions(),
+                    libraryProjectCompiler = JavaMavenProjectCompiler(true),
+                    userProjectCompiler = JavaMavenProjectCompiler(),
+                    libraryUsageGraphGenerator = jimpleLibraryUsageGraphGenerator,
+                    patternDetector = patternDetector.createPatternDetector(),
+                    patternFilter = patternFilter.createPatternFilter(libraryProject),
+                    testGenerator = testGenerator.createTestGenerator(outputDir, libraryProject)
+                ).run(libraryProject)
+            }
+            ProjectFlavor.JAVA_JAR -> {
+                val libraryProject = JavaJarProject(libraryDir)
 
-            MiningPipeline(
-                outputDirectory = outputDir,
-                projectMiner = directory.createMiner(),
-                searchOptions = directory.createOptions(),
-                libraryProjectCompiler = JavaJarProjectCompiler(),
-                userProjectCompiler = JavaMavenProjectCompiler(),
-                libraryUsageGraphGenerator = jimpleLibraryUsageGraphGenerator,
-                patternDetector = patternDetector.createPatternDetector(),
-                patternFilter = patternFilter.createPatternFilter(libraryProject),
-                testGenerator = testGenerator.createTestGenerator(outputDir, libraryProject)
-            ).run(libraryProject)
+                MiningPipeline(
+                    outputDirectory = outputDir,
+                    projectMiner = directory.createMiner(),
+                    searchOptions = directory.createOptions(),
+                    libraryProjectCompiler = JavaJarProjectCompiler(),
+                    userProjectCompiler = JavaMavenProjectCompiler(),
+                    libraryUsageGraphGenerator = jimpleLibraryUsageGraphGenerator,
+                    patternDetector = patternDetector.createPatternDetector(),
+                    patternFilter = patternFilter.createPatternFilter(libraryProject),
+                    testGenerator = testGenerator.createTestGenerator(outputDir, libraryProject)
+                ).run(libraryProject)
+            }
         }
 
         logger.info { "Found ${jimpleLibraryUsageGraphGenerator.lugStatistics.concreteMethods} concrete methods." }

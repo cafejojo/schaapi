@@ -355,7 +355,7 @@ class JimpleEvoSuiteTestGeneratorOptionSet : OptionSet() {
  * Behaviour linked to whether the library project is a Maven or JAR project.
  */
 class ProjectOptionSet : OptionSet() {
-    var isJavaMavenProject = true
+    var projectFlavor = ProjectFlavor.JAVA_MAVEN
 
     override fun addOptionsTo(options: Options): Options = options
         .addOption(Option
@@ -366,6 +366,24 @@ class ProjectOptionSet : OptionSet() {
             .build())
 
     override fun read(cmd: CommandLine) {
-        if (cmd.hasOption("library_flavor")) isJavaMavenProject = cmd.getOptionValue("library_flavor") == "javamaven"
+        if (cmd.hasOption("library_flavor")) {
+            projectFlavor = ProjectFlavor.fromString(cmd.getOptionValue("library_flavor"))
+                ?: throw IllegalArgumentException("Unknown library project flavor.")
+        }
+    }
+}
+
+/**
+ * The flavor of the library project.
+ */
+enum class ProjectFlavor(val flavor: String) {
+    JAVA_MAVEN("javamaven"),
+    JAVA_JAR("javajar");
+
+    companion object {
+        fun fromString(flavor: String) =
+            ProjectFlavor.values()
+                .filter { flavor == it.flavor }
+                .getOrNull(0)
     }
 }
