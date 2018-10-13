@@ -83,9 +83,9 @@ abstract class GitHubSearchOptions(private val maxProjects: Int) : SearchOptions
  * @property maxProjects maximum amount of project names it should return
  */
 class MavenProjectSearchOptions(
-    private val groupId: String,
-    private val artifactId: String,
-    private val version: String,
+    val groupId: String,
+    val artifactId: String,
+    val version: String,
     private val maxProjects: Int
 ) : GitHubSearchOptions(maxProjects) {
     private companion object : KLogging()
