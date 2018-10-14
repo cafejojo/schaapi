@@ -20,7 +20,7 @@
 Schaapi requires JRE 8 and has been tested on Windows and Unix systems.
 
 ## Usage
-Run the JAR as `schaapi.jar <args>` or run a local build with `gradlew :application:run --args='<args>'`.
+Run the JAR as `java -jar schaapi.jar <args>` or run a local build with `gradlew :application:run --args='<args>'`.
 
 Schaapi recognizes two pipeline "flavors" which have their own behavior. Click the flavor below for a list of command-line options.
 
