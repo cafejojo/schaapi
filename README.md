@@ -29,15 +29,16 @@ Schaapi recognizes two pipeline "flavors" which have their own behavior. Click t
 <p>
 
 ```
-usage: schaapi directory -o <arg> -l <arg> [--maven_dir <arg>] [--repair_maven] -u
-       <arg> [--library_type <arg>] [--pattern_detector_minimum_count
-       <arg>] [--pattern_detector_maximum_sequence_length <arg>]
-       [--pattern_minimum_library_usage_count <arg>]
-       [--test_generator_enable_output] [--test_generator_timeout <arg>]
+usage: schaapi -o <arg> -l <arg> [--skip_user_compile] [--maven_dir <arg>]
+       [--repair_maven] -u <arg> [--library_type <arg>]
+       [--pattern_detector_minimum_count <arg>]
+       [--pattern_detector_maximum_sequence_length <arg>]
  -o,--output_dir <arg>                                 The output
                                                        directory.
  -l,--library_dir <arg>                                The library
                                                        directory.
+    --skip_user_compile                                Skip compilation of
+                                                       user projects.
     --maven_dir <arg>                                  The directory to
                                                        run Maven from.
     --repair_maven                                     Repairs the Maven
