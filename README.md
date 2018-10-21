@@ -20,7 +20,7 @@
 Schaapi requires JRE 8 and has been tested on Windows and Unix systems.
 
 ## Usage
-Run the JAR as `java -jar schaapi.jar <args>` or run a local build with `gradlew :application:run --args='<args>'`.
+Run the JAR as `java -jar schaapi.jar <flavor> <args>` or run a local build with `gradlew :application:run --args='<flavor> <args>'`.
 
 Schaapi recognizes two pipeline "flavors" which have their own behavior. Click the flavor below for a list of command-line options.
 
@@ -29,7 +29,7 @@ Schaapi recognizes two pipeline "flavors" which have their own behavior. Click t
 <p>
 
 ```
-usage: schaapi -o <arg> -l <arg> [--maven_dir <arg>] [--repair_maven] -u
+usage: schaapi directory -o <arg> -l <arg> [--maven_dir <arg>] [--repair_maven] -u
        <arg> [--library_type <arg>] [--pattern_detector_minimum_count
        <arg>] [--pattern_detector_maximum_sequence_length <arg>]
        [--pattern_minimum_library_usage_count <arg>]
@@ -75,7 +75,7 @@ usage: schaapi -o <arg> -l <arg> [--maven_dir <arg>] [--repair_maven] -u
 <p>
 
 ```
-usage: schaapi -o <arg> -l <arg> [--maven_dir <arg>] [--repair_maven]
+usage: schaapi github -o <arg> -l <arg> [--maven_dir <arg>] [--repair_maven]
        --github_oauth_token <arg> [--max_projects <arg>]
        --library_group_id <arg> --library_artifact_id <arg>
        --library_version <arg> [--sort_by_stargazers] [--sort_by_watchers]
