@@ -199,7 +199,6 @@ usage: schaapi github -o <arg> -l <arg> [--maven_dir <arg>] [--repair_maven]
 | -------------------------- | --- |
 | **2.1 Execute Tests**      | Run generated tests against a new library version |
 | **2.2 Notify Developers**  | Notify library developer of possibly affected users |
-| **2.3 Notify Users**       | Notify library users of breaking changes |
 
 #### 2.1 Execute Tests
 | | |
@@ -212,13 +211,6 @@ usage: schaapi github -o <arg> -l <arg> [--maven_dir <arg>] [--repair_maven]
 | | |
 | ------------------ | ------------- |
 | Description        | Notify library developer of possibly affected users |
-| Interface          | `--` |
-| Implementations    | |
-
-#### 2.3 Notify Users
-| | |
-| ------------------ | ------------- |
-| Description        | Notify affected library users of possibly breaking changes |
 | Interface          | `--` |
 | Implementations    | |
 
