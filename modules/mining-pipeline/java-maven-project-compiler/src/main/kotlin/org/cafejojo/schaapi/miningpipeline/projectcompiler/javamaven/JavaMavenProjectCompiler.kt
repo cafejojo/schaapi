@@ -12,12 +12,16 @@ import java.io.File
  * Compiles a Java project using Maven.
  *
  * @property displayOutput true iff output should be logged at INFO level
+ * @property skipCompile true iff compilation should be skipped
  */
-class JavaMavenProjectCompiler(private val displayOutput: Boolean = false) : ProjectCompiler<JavaMavenProject> {
+class JavaMavenProjectCompiler(
+    private val displayOutput: Boolean = false,
+    private val skipCompile: Boolean = false
+) : ProjectCompiler<JavaMavenProject> {
     private companion object : KLogging()
 
     override fun compile(project: JavaMavenProject): JavaMavenProject {
-        runMaven(project)
+        if (!skipCompile) runMaven(project)
         analyzeCompiledProject(project)
 
         logger.debug { "`maven install` of ${project.projectDir} was successful." }
