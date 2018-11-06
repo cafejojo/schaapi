@@ -8,7 +8,7 @@ apply plugin: "io.gitlab.arturbosch.detekt"
 // https://arturbosch.github.io/detekt/kotlindsl.html
 detekt {
     defaultProfile {
-        config = file("$rootDir/detekt.yml")
+        config = file("$rootDir/.detekt.yml")
     }
 }
 
