@@ -83,7 +83,7 @@ internal class ClassGenerator(className: String) {
         addStatementsToBody(jimpleBody, statements, methodParams)
         sootMethod.returnType = addReturnStatement(jimpleBody)
 
-        replaceInvalidTargets(statements)
+        replaceInvalidTargets(sootMethod.activeBody.units.toList())
     }
 
     private fun createSootMethod(name: String, parameters: Set<Value>) =
