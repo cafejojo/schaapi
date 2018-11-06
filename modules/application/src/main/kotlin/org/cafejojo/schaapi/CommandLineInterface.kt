@@ -18,21 +18,22 @@ import kotlin.system.exitProcess
  */
 fun main(args: Array<String>) {
     printAsciiArt()
+
+    val flavors = mapOf(
+        "directory" to { arguments: Array<String> -> DirectoryMiningCommandLineInterface().run(arguments) },
+        "github" to { arguments: Array<String> -> GitHubMiningCommandLineInterface().run(arguments) }
+    )
+
     if (args.isEmpty()) {
-        KLogging().logger.error { "At least one argument expected." }
+        KLogging().logger.error { "Please specify the flavor as first argument [${flavors.keys.joinToString(", ")}]." }
         exitProcess(-1)
     }
 
     val flavor = args[0]
     val remainingArgs = args.drop(1).toTypedArray()
-    when (flavor) {
-        "directory" -> DirectoryMiningCommandLineInterface().run(remainingArgs)
-        "github" -> GitHubMiningCommandLineInterface().run(remainingArgs)
-        else -> {
-            KLogging().logger.error { "Unrecognized pipeline flavor: $flavor." }
-            exitProcess(-1)
-        }
-    }
+
+    flavors[flavor]?.invoke(remainingArgs)
+        ?: KLogging().logger.error { "Unrecognized pipeline flavor: $flavor." }
 }
 
 private fun printAsciiArt() = try {
