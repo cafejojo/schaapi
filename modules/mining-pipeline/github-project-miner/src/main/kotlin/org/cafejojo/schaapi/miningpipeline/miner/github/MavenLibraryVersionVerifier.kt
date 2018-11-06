@@ -9,9 +9,9 @@ import java.io.File
 /**
  * Verifies (dynamically) if projects are using the correct library version.
  *
- * @param groupId group id of library maven project should depend on
- * @param artifactId artifact id of library maven project should depend on
- * @param version version of library maven project should depend on
+ * @param groupId group id of the library that the maven project should depend on
+ * @param artifactId artifact id of the library that the maven project should depend on
+ * @param version version of the library that the maven project should depend on
  * @property displayOutput true iff output should be logged at INFO level
  */
 class MavenLibraryVersionVerifier(
