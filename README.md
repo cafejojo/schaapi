@@ -124,7 +124,6 @@ usage: schaapi -o <arg> -l <arg> [--skip_user_compile] [--maven_dir <arg>]
 </details>
 
 ### Library Type
-
 Schaapi can work with different library formats. This "library type" can be one of the following: `javajar` (a library JAR is provided) or `javamaven` (the Java Maven project of that library is provided).
 
 
