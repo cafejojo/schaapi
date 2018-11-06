@@ -68,9 +68,9 @@ internal object DirectoryProjectMinerTest : Spek({
         }
 
         it("excludes hidden files") {
+            getResourceAsFile("/hidden-projects/.hiddenfile").toPath().hideFileOnWindows()
+
             miner.mine(DirectorySearchOptions(getResourceAsFile("/hidden-projects")))
-            val path = getResourceAsFile("/hidden-projects/.hiddenfile").toPath()
-            path.hideFileOnWindows()
 
             verify(packer, times(1)).invoke(any())
         }
@@ -79,10 +79,7 @@ internal object DirectoryProjectMinerTest : Spek({
 
 fun Path.hideFileOnWindows() {
     try {
-        val hidden = Files.getAttribute(this, "dos:hidden", LinkOption.NOFOLLOW_LINKS) as Boolean?
-        if (hidden != null && !hidden) {
-            Files.setAttribute(this, "dos:hidden", true, LinkOption.NOFOLLOW_LINKS)
-        }
+        Files.setAttribute(this, "dos:hidden", true, LinkOption.NOFOLLOW_LINKS)
     } catch (e: UnsupportedOperationException) {
         // DOS view not available on UNIX
     }
