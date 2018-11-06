@@ -13,5 +13,8 @@ import java.io.File
 class DirectoryProjectMiner<P : Project>(private val projectPacker: (File) -> P) :
     ProjectMiner<DirectorySearchOptions, P> {
     override fun mine(searchOptions: DirectorySearchOptions) =
-        searchOptions.directory.listFiles()?.map { projectPacker(it) } ?: emptyList()
+        searchOptions.directory.listFiles()
+            ?.filter { it.isHidden }
+            ?.map { projectPacker(it) }
+            ?: emptyList()
 }
