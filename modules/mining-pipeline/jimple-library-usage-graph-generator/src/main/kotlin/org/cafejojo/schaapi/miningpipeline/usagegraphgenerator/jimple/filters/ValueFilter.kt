@@ -178,10 +178,11 @@ private class UserUsageValueFilterRule(private val libraryProject: JavaProject) 
     override fun apply(value: InstanceFieldRef) = isNotUserClass(value.field.declaringClass)
     override fun apply(value: StaticFieldRef) = isNotUserClass(value.field.declaringClass)
 
+    @Suppress("TooGenericExceptionCaught") // We want to catch RuntimeExceptions as Soot only throws RuntimeExceptions
     override fun apply(value: Constant) = try {
         value !is ClassConstant || isNotUserClass(value.toSootType())
     } catch (e: RuntimeException) {
-        logger.warn { "Invalid constant found: \"$value\"." }
+        logger.warn { e.message }
         false
     }
 
