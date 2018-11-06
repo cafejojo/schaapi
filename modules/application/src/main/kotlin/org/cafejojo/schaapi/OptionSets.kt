@@ -361,7 +361,7 @@ class ProjectOptionSet : OptionSet() {
         .addOption(Option
             .builder()
             .longOpt("library_type")
-            .desc("The type of library.")
+            .desc("The type of library [${ProjectType.values().joinToString(", ") { it.type }}].")
             .hasArg()
             .build())
 
