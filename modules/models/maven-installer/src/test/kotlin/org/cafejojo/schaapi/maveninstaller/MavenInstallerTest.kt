@@ -1,4 +1,4 @@
-package org.cafejojo.schaapi.miningpipeline.projectcompiler.javamaven
+package org.cafejojo.schaapi.maveninstaller
 
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.spek.api.Spek

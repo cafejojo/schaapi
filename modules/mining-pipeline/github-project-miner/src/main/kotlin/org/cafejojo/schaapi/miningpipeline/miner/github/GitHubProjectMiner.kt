@@ -3,6 +3,7 @@ package org.cafejojo.schaapi.miningpipeline.miner.github
 import mu.KLogging
 import org.cafejojo.schaapi.miningpipeline.ProjectMiner
 import org.cafejojo.schaapi.models.Project
+import org.cafejojo.schaapi.models.project.JavaMavenProject
 import org.kohsuke.github.GitHub
 import java.io.File
 
@@ -19,11 +20,11 @@ import java.io.File
  * is created
  * @property projectPacker packer which determines what type of [Project] to wrap the project directory in
  */
-class GitHubProjectMiner<P : Project>(
+class GitHubProjectMiner<P : JavaMavenProject>(
     private var token: String,
     private val outputDirectory: File,
     private val projectPacker: (File) -> P
-) : ProjectMiner<GitHubSearchOptions, P> {
+) : ProjectMiner<MavenProjectSearchOptions, P> {
     private companion object : KLogging()
 
     init {
@@ -34,17 +35,24 @@ class GitHubProjectMiner<P : Project>(
      * Mine GitHub for projects with `pom.xml` files which contain searchContent dependency on searchContent library
      * with searchContent given group id, artifact id and version (number).
      *
-     * @param searchOptions search options, which must be of type [GitHubSearchOptions]
+     * @param searchOptions search options, which must be of type [MavenProjectSearchOptions]
      * @return list of [Project]s which likely depend on said library
      * @see GitHubProjectDownloader.download
      */
-    override fun mine(searchOptions: GitHubSearchOptions): List<P> {
+    override fun mine(searchOptions: MavenProjectSearchOptions): List<P> {
         val gitHub: GitHub = GitHub.connectUsingOAuth(token)
         logger.info { "Successfully authenticated using token." }
 
         val outProjects = outputDirectory.resolve("projects/").apply { mkdirs() }
 
         val projectNames = searchOptions.searchContent(gitHub)
-        return GitHubProjectDownloader(projectNames, outProjects, projectPacker).download()
+
+        val versionVerifier = MavenLibraryVersionVerifier(
+            searchOptions.groupId, searchOptions.artifactId, searchOptions.version, false
+        )
+
+        return GitHubProjectDownloader(projectNames, outProjects, projectPacker)
+            .download()
+            .filter(versionVerifier::verify)
     }
 }

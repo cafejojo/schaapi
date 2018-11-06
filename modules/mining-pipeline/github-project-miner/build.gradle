@@ -1,9 +1,9 @@
 dependencies {
     compile project(":mining-pipeline")
     compile project(":models:java-project")
+    compile project(":models:maven-installer")
 
     compile group: "org.kohsuke", name: "github-api", version: kohsukeVersion
-    compile group: "org.zeroturnaround", name: "zt-zip", version: ztZipVersion
 
     testCompile group: "com.nhaarman", name: "mockito-kotlin", version: mockitoKotlinVersion
 }

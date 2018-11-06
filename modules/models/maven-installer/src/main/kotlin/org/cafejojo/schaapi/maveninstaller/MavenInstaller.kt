@@ -1,4 +1,4 @@
-package org.cafejojo.schaapi.miningpipeline.projectcompiler.javamaven
+package org.cafejojo.schaapi.maveninstaller
 
 import org.zeroturnaround.zip.ZipUtil
 import java.io.File
