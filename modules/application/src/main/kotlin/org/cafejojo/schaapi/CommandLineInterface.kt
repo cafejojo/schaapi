@@ -19,9 +19,9 @@ import kotlin.system.exitProcess
 fun main(args: Array<String>) {
     printAsciiArt()
 
-    val flavors = mapOf(
-        "directory" to { arguments: Array<String> -> DirectoryMiningCommandLineInterface().run(arguments) },
-        "github" to { arguments: Array<String> -> GitHubMiningCommandLineInterface().run(arguments) }
+    val flavors = mapOf<String, (Array<String>) -> Unit> (
+        "directory" to DirectoryMiningCommandLineInterface()::run,
+        "github" to GitHubMiningCommandLineInterface()::run
     )
 
     if (args.isEmpty()) {
