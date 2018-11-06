@@ -10,7 +10,11 @@ import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 import java.io.File
+import java.lang.UnsupportedOperationException
 import java.net.URLDecoder
+import java.nio.file.Files
+import java.nio.file.LinkOption
+import java.nio.file.Path
 
 internal object DirectoryProjectMinerTest : Spek({
     fun getResourceAsFile(path: String) =
@@ -62,5 +66,21 @@ internal object DirectoryProjectMinerTest : Spek({
 
             verify(packer, times(4)).invoke(any())
         }
+
+        it("excludes hidden files") {
+            getResourceAsFile("/hidden-projects/.hiddenfile").toPath().hideFileOnWindows()
+
+            miner.mine(DirectorySearchOptions(getResourceAsFile("/hidden-projects")))
+
+            verify(packer, times(1)).invoke(any())
+        }
     }
 })
+
+fun Path.hideFileOnWindows() {
+    try {
+        Files.setAttribute(this, "dos:hidden", true, LinkOption.NOFOLLOW_LINKS)
+    } catch (e: UnsupportedOperationException) {
+        // DOS view not available on UNIX
+    }
+}
