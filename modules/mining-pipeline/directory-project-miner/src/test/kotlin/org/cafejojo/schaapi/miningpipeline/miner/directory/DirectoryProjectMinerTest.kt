@@ -62,5 +62,11 @@ internal object DirectoryProjectMinerTest : Spek({
 
             verify(packer, times(4)).invoke(any())
         }
+
+        it("excludes hidden files") {
+            miner.mine(DirectorySearchOptions(getResourceAsFile("/hidden-projects")))
+
+            verify(packer, times(1)).invoke(any())
+        }
     }
 })
