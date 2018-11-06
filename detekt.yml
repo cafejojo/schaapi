@@ -27,6 +27,8 @@ style:
     active: false
   UnnecessaryAbstractClass:
     active: false
+  UnnecessaryApply:
+    active: false
   UnusedPrivateMember:
     active: false
 
