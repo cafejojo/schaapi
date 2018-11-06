@@ -45,9 +45,9 @@ class MiningPipeline<SO : SearchOptions, UP : Project, LP : Project, N : Node>(
             searchOptions
                 .also { logger.info { "Started mining projects." } }
                 .next(projectMiner::mine)
-                .also { logger.info { "Successfully mined ${it.size} projects." } }
+                .also { logger.info { "Successfully mined ${it.count()} projects." } }
 
-                .also { logger.info { "Started compiling ${it.size} projects." } }
+                .also { logger.info { "Started compiling ${it.count()} projects." } }
                 .nextCatchExceptions<CompilationException, UP, UP>(userProjectCompiler::compile, "Compiling projects")
                 .also { logger.info { "Successfully compiled ${it.count()} projects." } }
 
@@ -59,10 +59,10 @@ class MiningPipeline<SO : SearchOptions, UP : Project, LP : Project, N : Node>(
 
                 .also { logger.info { "Started finding patterns in ${it.size} library usage graphs." } }
                 .next(patternDetector::findPatterns, "Finding patterns")
-                .also { logger.info { "Successfully found ${it.size} patterns." } }
+                .also { logger.info { "Successfully found ${it.count()} patterns." } }
                 .also { csvWriter.writePatternLengths(it) }
 
-                .also { logger.info { "Started filtering ${it.size} patterns." } }
+                .also { logger.info { "Started filtering ${it.count()} patterns." } }
                 .next(patternFilter::filter, "Filtering patterns")
                 .also { logger.info { "${it.size} patterns remain after filtering." } }
                 .also { csvWriter.writeFilteredPatternLengths(it) }

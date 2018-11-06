@@ -14,5 +14,6 @@ class PatternFilter<N : Node>(private vararg val rules: PatternFilterRule<N>) {
      * @param patterns the list of patterns to be filtered
      * @return the patterns that were retained by the filters
      */
-    fun filter(patterns: List<Pattern<N>>) = patterns.filter { pattern -> rules.all { rule -> rule.retain(pattern) } }
+    fun filter(patterns: Iterable<Pattern<N>>) =
+        patterns.filter { pattern -> rules.all { rule -> rule.retain(pattern) } }
 }

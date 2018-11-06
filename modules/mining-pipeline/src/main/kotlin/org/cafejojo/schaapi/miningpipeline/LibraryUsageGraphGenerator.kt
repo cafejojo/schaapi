@@ -14,5 +14,5 @@ interface LibraryUsageGraphGenerator<in LP : Project, in UP : Project, out N : N
      * @param userProject library user project
      * @return list of graphs
      */
-    fun generate(libraryProject: LP, userProject: UP): List<N>
+    fun generate(libraryProject: LP, userProject: UP): Iterable<N>
 }
