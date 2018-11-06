@@ -17,6 +17,7 @@ includeModule "application"
 includeModule "models"
 includeModule "models", "jimple-library-usage-graph"
 includeModule "models", "java-project"
+includeModule "models", "maven-installer"
 
 includeModule "mining-pipeline"
 includeModule "mining-pipeline", "directory-project-miner"

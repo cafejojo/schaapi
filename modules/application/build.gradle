@@ -10,6 +10,7 @@ repositories {
 dependencies {
     compile project(":models:java-project")
     compile project(":models:jimple-library-usage-graph")
+    compile project(":models:maven-installer")
 
     compile project(":mining-pipeline:github-project-miner")
     compile project(":mining-pipeline:directory-project-miner")

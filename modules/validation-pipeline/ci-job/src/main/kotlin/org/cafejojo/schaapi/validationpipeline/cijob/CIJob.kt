@@ -4,8 +4,8 @@ import com.github.kittinunf.fuel.Fuel
 import com.github.kittinunf.fuel.core.Request
 import com.github.kittinunf.result.Result
 import mu.KLogging
+import org.cafejojo.schaapi.maveninstaller.MavenInstaller
 import org.cafejojo.schaapi.miningpipeline.projectcompiler.javamaven.JavaMavenProjectCompiler
-import org.cafejojo.schaapi.miningpipeline.projectcompiler.javamaven.MavenInstaller
 import org.cafejojo.schaapi.models.project.JavaMavenProject
 import org.cafejojo.schaapi.validationpipeline.CIJobException
 import org.cafejojo.schaapi.validationpipeline.TestResults

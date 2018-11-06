@@ -1,6 +1,7 @@
 package org.cafejojo.schaapi.miningpipeline.miner.github
 
 import org.assertj.core.api.Assertions.assertThat
+import org.cafejojo.schaapi.maveninstaller.MavenInstaller
 import org.cafejojo.schaapi.models.project.JavaMavenProject
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.it

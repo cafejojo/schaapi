@@ -1,0 +1,4 @@
+dependencies {
+    compile group: "org.apache.maven.shared", name: "maven-invoker", version: mavenInvokerVersion
+    compile group: "org.zeroturnaround", name: "zt-zip", version: ztZipVersion
+}

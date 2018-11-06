@@ -16,6 +16,7 @@ dependencies {
     compile project(":validation-pipeline:junit-test-runner")
     compile project(":mining-pipeline:java-maven-project-compiler")
     compile project(":models:java-project")
+    compile project(":models:maven-installer")
 
     compile group: "com.github.kittinunf.fuel", name: "fuel", version: fuelVersion // for JVM
     compile group: "com.github.kittinunf.fuel", name: "fuel-jackson", version: fuelVersion // for Jackson support
