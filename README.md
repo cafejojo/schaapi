@@ -22,7 +22,8 @@ Schaapi requires JRE 8 and has been tested on Windows and Unix systems.
 ## Usage
 Run the JAR as `java -jar schaapi.jar <flavor> <args>` or run a local build with `gradlew :application:run --args='<flavor> <args>'`.
 
-Schaapi recognizes two pipeline "flavors" which have their own behavior. Click the flavor below for a list of command-line options.
+### Pipeline Flavor
+Schaapi allows you to mine projects from different sources, such as GitHub. In particular, it recognizes two such pipeline "flavors": `directory` (locally sourced projects) and `github` (projects mined from GitHub). Each of these have their own behavior and options. Click on one of the flavors below for a list of command-line options.
 
 <details>
 <summary>Directory flavor options</summary>
@@ -121,6 +122,11 @@ usage: schaapi -o <arg> -l <arg> [--skip_user_compile] [--maven_dir <arg>]
 
 </p>
 </details>
+
+### Library Type
+
+Schaapi can work with different library formats. This "library type" can be one of the following: `javajar` (a library JAR is provided) or `javamaven` (the Java Maven project of that library is provided).
+
 
 ## Pipeline Stages
 ### 1 Mining Pipeline
