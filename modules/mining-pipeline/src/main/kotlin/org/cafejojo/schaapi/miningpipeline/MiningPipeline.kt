@@ -15,6 +15,7 @@ class MiningPipeline<SO : SearchOptions, UP : Project, LP : Project, N : Node>(
     private val outputDirectory: File,
     private val projectMiner: ProjectMiner<SO, UP>,
     private val searchOptions: SO,
+    private val libraryProject: LP,
     private val libraryProjectCompiler: ProjectCompiler<LP>,
     private val userProjectCompiler: ProjectCompiler<UP>,
     private val libraryUsageGraphGenerator: LibraryUsageGraphGenerator<LP, UP, N>,
@@ -28,7 +29,7 @@ class MiningPipeline<SO : SearchOptions, UP : Project, LP : Project, N : Node>(
      * Executes all steps in the pipeline.
      */
     @Suppress("TooGenericExceptionCaught") // In this case it is relevant to catch and log an Exception
-    fun run(libraryProject: LP) {
+    fun run() {
         logger.info { "Compiling library project." }
         ProgressBar("Compile library project", 1, ProgressBarStyle.ASCII).use { progressBar ->
             libraryProjectCompiler.compile(libraryProject)
