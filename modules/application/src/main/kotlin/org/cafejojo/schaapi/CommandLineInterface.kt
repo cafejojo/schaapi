@@ -24,8 +24,10 @@ fun main(args: Array<String>) {
         "github" to GitHubMiningCommandLineInterface()::run
     )
 
-    if (args.isEmpty()) {
-        KLogging().logger.error { "Please specify the flavor as first argument [${flavors.keys.joinToString(", ")}]." }
+    if (args.isEmpty() || !flavors.containsKey(args[0])) {
+        KLogging().logger.error {
+            "Please specify a valid flavor as first argument (supported flavors: ${flavors.keys.joinToString(", ")})."
+        }
         exitProcess(-1)
     }
 
@@ -33,7 +35,6 @@ fun main(args: Array<String>) {
     val remainingArgs = args.drop(1).toTypedArray()
 
     flavors[flavor]?.invoke(remainingArgs)
-        ?: KLogging().logger.error { "Unrecognized pipeline flavor: $flavor." }
 }
 
 private fun printAsciiArt() = try {
