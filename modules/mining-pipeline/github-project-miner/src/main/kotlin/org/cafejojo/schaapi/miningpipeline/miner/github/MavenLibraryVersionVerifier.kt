@@ -41,7 +41,7 @@ class MavenLibraryVersionVerifier(
         mavenOpts = """
             -DoutputFile=${getDependenciesListLocation(project)}
             -Dtokens=whitespace
-        """.trimIndent()
+        """.trimIndent().replace("\n", " ")
     }
 
     private fun createMavenInvoker(project: JavaMavenProject) = DefaultInvoker().also {
