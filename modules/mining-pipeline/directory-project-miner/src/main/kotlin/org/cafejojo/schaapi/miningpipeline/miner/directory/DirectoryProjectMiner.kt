@@ -14,7 +14,7 @@ class DirectoryProjectMiner<P : Project>(private val projectPacker: (File) -> P)
     ProjectMiner<DirectorySearchOptions, P> {
     override fun mine(searchOptions: DirectorySearchOptions) =
         searchOptions.directory.listFiles()
-            ?.filter { it.isHidden }
+            ?.filterNot { it.isHidden }
             ?.map { projectPacker(it) }
             ?: emptyList()
 }
