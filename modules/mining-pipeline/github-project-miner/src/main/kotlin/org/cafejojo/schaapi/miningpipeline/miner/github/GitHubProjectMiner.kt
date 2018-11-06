@@ -47,7 +47,7 @@ class GitHubProjectMiner<P : JavaMavenProject>(
 
         val projectNames = searchOptions.searchContent(gitHub)
 
-        val versionVerifier = VersionVerifier(
+        val versionVerifier = MavenLibraryVersionVerifier(
             searchOptions.groupId, searchOptions.artifactId, searchOptions.version, false
         )
 

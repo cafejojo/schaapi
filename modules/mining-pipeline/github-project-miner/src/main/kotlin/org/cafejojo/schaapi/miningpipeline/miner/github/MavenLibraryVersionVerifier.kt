@@ -14,7 +14,12 @@ import java.io.File
  * @param version version of library maven project should depend on
  * @property displayOutput true iff output should be logged at INFO level
  */
-class VersionVerifier(groupId: String, artifactId: String, version: String, private val displayOutput: Boolean = true) {
+class MavenLibraryVersionVerifier(
+    groupId: String,
+    artifactId: String,
+    version: String,
+    private val displayOutput: Boolean = true
+) {
     private companion object : KLogging()
 
     private val query = "$groupId:$artifactId:jar:$version"

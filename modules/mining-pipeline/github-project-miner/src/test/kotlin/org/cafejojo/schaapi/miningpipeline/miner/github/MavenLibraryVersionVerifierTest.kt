@@ -8,7 +8,7 @@ import java.io.File
 import java.io.FileNotFoundException
 import java.nio.file.Files
 
-internal object VersionVerifierTest : Spek({
+internal object MavenLibraryVersionVerifierTest : Spek({
     lateinit var mavenHome: File
     lateinit var target: File
 
@@ -33,7 +33,7 @@ internal object VersionVerifierTest : Spek({
         setUpTestFiles("/verifiable-project", target)
 
         assertThat(
-            VersionVerifier("net.lingala.zip4j", "zip4j", "1.3.2")
+            MavenLibraryVersionVerifier("net.lingala.zip4j", "zip4j", "1.3.2")
                 .verify(JavaMavenProject(target, mavenHome))
         ).isTrue()
     }
@@ -42,7 +42,7 @@ internal object VersionVerifierTest : Spek({
         setUpTestFiles("/verifiable-project", target)
 
         assertThat(
-            VersionVerifier("net.lingala.zip4j", "zip4j", "1.3.1")
+            MavenLibraryVersionVerifier("net.lingala.zip4j", "zip4j", "1.3.1")
                 .verify(JavaMavenProject(target, mavenHome))
         ).isFalse()
     }
@@ -51,14 +51,14 @@ internal object VersionVerifierTest : Spek({
         setUpTestFiles("/verifiable-project", target)
 
         assertThat(
-            VersionVerifier("com.example", "app", "1.0.1")
+            MavenLibraryVersionVerifier("com.example", "app", "1.0.1")
                 .verify(JavaMavenProject(target, mavenHome))
         ).isFalse()
     }
 })
 
 private fun setUpTestFiles(resourceString: String, target: File) {
-    val projectURI = VersionVerifierTest::class.java.getResource(resourceString)
+    val projectURI = MavenLibraryVersionVerifierTest::class.java.getResource(resourceString)
         ?: throw FileNotFoundException("Could not find test resources at $resourceString.")
 
     val projectFiles = File(projectURI.toURI())
