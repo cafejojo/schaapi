@@ -30,7 +30,7 @@ class MiningPipeline<SO : SearchOptions, UP : Project, LP : Project, N : Node>(
     @Suppress("TooGenericExceptionCaught") // In this case it is relevant to catch and log an Exception
     fun run(libraryProject: LP) {
         logger.info { "Compiling library project." }
-        ProgressBar("Compile library Project", 1, ProgressBarStyle.ASCII).use { progressBar ->
+        ProgressBar("Compile library Project", 1).use { progressBar ->
             libraryProjectCompiler.compile(libraryProject)
             progressBar.step()
         }
@@ -109,6 +109,5 @@ class MiningPipeline<SO : SearchOptions, UP : Project, LP : Project, N : Node>(
     private fun <N> progressBarIterable(iterable: Iterable<N>, taskName: String): Iterable<N> =
         ProgressBar.wrap(iterable, ProgressBarBuilder().apply {
             setTaskName(taskName)
-            setStyle(ProgressBarStyle.ASCII)
         })
 }
