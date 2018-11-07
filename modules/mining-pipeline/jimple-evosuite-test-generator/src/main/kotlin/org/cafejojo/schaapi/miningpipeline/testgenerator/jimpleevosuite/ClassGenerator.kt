@@ -72,8 +72,9 @@ internal class ClassGenerator(className: String) {
      *
      * @param methodName the name the method should have
      * @param nodes a list of [Node]s which should be converted into a method
+     * @return the generated method
      */
-    fun generateMethod(methodName: String, nodes: List<JimpleNode>) {
+    fun generateMethod(methodName: String, nodes: List<JimpleNode>): SootMethod {
         val statements = nodes.duplicate().map { it.statement }
         val methodParams = findUnboundVariables(statements)
         val sootMethod = createSootMethod(methodName, methodParams)
@@ -87,9 +88,17 @@ internal class ClassGenerator(className: String) {
 
         replaceInvalidTargets(sootMethod.activeBody.units.toList())
 
-        // Enable and run Soot optimalizations on the Jimple body
+        return sootMethod
+    }
+
+    /**
+     * Optimizes the given method with the JOP optimizer.
+     *
+     * @param method the method to optimize
+     */
+    fun optimizeMethod(method: SootMethod) {
         PhaseOptions.v().setPhaseOption("jop", "enabled:true")
-        PackManager.v().getPack("jop").apply(jimpleBody)
+        PackManager.v().getPack("jop").apply(method.activeBody)
     }
 
     private fun createSootMethod(name: String, parameters: Set<Value>) =

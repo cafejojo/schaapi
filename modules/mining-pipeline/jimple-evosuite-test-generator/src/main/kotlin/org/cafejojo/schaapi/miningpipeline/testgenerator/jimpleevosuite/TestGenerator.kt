@@ -1,9 +1,9 @@
 package org.cafejojo.schaapi.miningpipeline.testgenerator.jimpleevosuite
 
-import org.cafejojo.schaapi.models.libraryusagegraph.jimple.JimpleNode
-import org.cafejojo.schaapi.models.project.JavaProject
 import org.cafejojo.schaapi.miningpipeline.Pattern
 import org.cafejojo.schaapi.miningpipeline.TestGenerator
+import org.cafejojo.schaapi.models.libraryusagegraph.jimple.JimpleNode
+import org.cafejojo.schaapi.models.project.JavaProject
 import java.io.File
 import java.io.PrintStream
 
@@ -25,7 +25,10 @@ class TestGenerator(
 
         ClassGenerator(DEFAULT_PATTERN_CLASS_NAME).apply {
             patterns.forEachIndexed { index, pattern ->
-                generateMethod("pattern$index", pattern)
+                run {
+                    val method = generateMethod("pattern$index", pattern)
+                    optimizeMethod(method)
+                }
             }
             writeToFile(outputPatterns.absolutePath)
         }
