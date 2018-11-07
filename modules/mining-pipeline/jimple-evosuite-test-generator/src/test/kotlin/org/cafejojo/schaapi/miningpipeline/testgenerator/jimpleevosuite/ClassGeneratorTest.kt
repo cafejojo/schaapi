@@ -32,6 +32,7 @@ import soot.jimple.NullConstant
 import soot.jimple.Stmt
 import soot.jimple.StringConstant
 import soot.jimple.SwitchStmt
+import soot.jimple.internal.JAssignStmt
 import soot.jimple.internal.JEqExpr
 import soot.options.Options
 import java.io.File
@@ -214,6 +215,25 @@ internal object ClassGeneratorTest : Spek({
 
         val throwable = catchThrowable { jimpleMethod.activeBody.validate() }
         assertThat(throwable).isNull()
+    }
+
+    it("should optimize a method body") {
+        val a = Jimple.v().newLocal("a", IntType.v())
+        val b = Jimple.v().newLocal("b", IntType.v())
+        val c = Jimple.v().newLocal("c", IntType.v())
+
+        val assignC1 = Jimple.v().newAssignStmt(c, IntConstant.v(1))
+        val assignC2 = Jimple.v().newAssignStmt(c, Jimple.v().newAddExpr(a, b))
+
+        val returnStmt = Jimple.v().newReturnStmt(c)
+
+        val jimpleMethod = ClassGenerator("myClass").apply {
+            val method = generateMethod("method", listOf(assignC1, assignC2, returnStmt)
+                .map { JimpleNode(it) })
+            optimizeMethod(method)
+        }.sootClass.methods.last()
+
+        assertThat(jimpleMethod.activeBody.units.filter { it is JAssignStmt }).hasSize(1)
     }
 
     it("should generate parameters for variables only bound after their use") {

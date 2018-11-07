@@ -28,7 +28,9 @@ import java.io.File
 class JimpleLibraryUsageGraphGenerator : LibraryUsageGraphGenerator<JavaProject, JavaProject, JimpleNode> {
     companion object {
         init {
+            Options.v().set_verbose(true)
             SootNameEquivalenceChanger.activate()
+
             Options.v().set_whole_program(true)
             Options.v().set_allow_phantom_refs(true)
         }
