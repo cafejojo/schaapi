@@ -307,14 +307,14 @@ class PatternFilterOptionSet : OptionSet() {
  * Behavior linked to generating tests with EvoSuite from Jimple code.
  */
 class JimpleEvoSuiteTestGeneratorOptionSet : OptionSet() {
-    private var enableOutput = true
+    private var disableOutput = false
     private var timeout = 0
 
     override fun addOptionsTo(options: Options): Options = options
         .addOption(Option
             .builder()
-            .longOpt("test_generator_enable_output")
-            .desc("True if test generator output should be shown.")
+            .longOpt("test_generator_disable_output")
+            .desc("True if test generator output should be hidden.")
             .hasArg(false)
             .build())
         .addOption(Option
@@ -327,7 +327,7 @@ class JimpleEvoSuiteTestGeneratorOptionSet : OptionSet() {
 
     override fun read(cmd: CommandLine) {
         timeout = cmd.getOptionValue("test_generator_timeout", DEFAULT_TIMEOUT).toInt()
-        enableOutput = cmd.hasOption("test_generator_enable_output")
+        disableOutput = cmd.hasOption("test_generator_disable_output")
     }
 
     /**
@@ -342,8 +342,8 @@ class JimpleEvoSuiteTestGeneratorOptionSet : OptionSet() {
             outputDirectory = outputDir,
             library = libraryProject,
             timeout = timeout,
-            processStandardStream = if (enableOutput) System.out else null,
-            processErrorStream = if (enableOutput) System.out else null
+            processStandardStream = if (disableOutput) null else System.out,
+            processErrorStream = if (disableOutput) null else System.out
         )
 
     private companion object {

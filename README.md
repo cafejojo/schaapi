@@ -35,7 +35,7 @@ usage: schaapi -o <arg> -l <arg> [--skip_user_compile] [--maven_dir <arg>]
        [--pattern_detector_minimum_count <arg>]
        [--pattern_detector_maximum_sequence_length <arg>]
        [--pattern_minimum_library_usage_count <arg>]
-       [--test_generator_enable_output] [--test_generator_timeout <arg>]
+       [--test_generator_disable_output] [--test_generator_timeout <arg>]
  -o,--output_dir <arg>                                 The output
                                                        directory.
  -l,--library_dir <arg>                                The library
@@ -66,9 +66,9 @@ usage: schaapi -o <arg> -l <arg> [--skip_user_compile] [--maven_dir <arg>]
     --pattern_minimum_library_usage_count <arg>        The minimum number
                                                        of library usages
                                                        per method.
-    --test_generator_enable_output                     True if test
+    --test_generator_disable_output                    True if test
                                                        generator output
-                                                       should be shown.
+                                                       should be hidden.
     --test_generator_timeout <arg>                     The time limit for
                                                        the test generator.
 ```
@@ -81,30 +81,55 @@ usage: schaapi -o <arg> -l <arg> [--skip_user_compile] [--maven_dir <arg>]
 <p>
 
 ```
-usage: schaapi -o <arg> -l <arg> [--skip_user_compile] [--maven_dir <arg>]
-       [--repair_maven] -u <arg> [--library_type <arg>]
-       [--pattern_detector_minimum_count <arg>]
+usage: schaapi -o <arg> -l <arg> [--maven_dir <arg>] [--repair_maven]
+       --github_oauth_token <arg> [--max_projects <arg>]
+       --library_group_id <arg> --library_artifact_id <arg>
+       --library_version <arg> [--sort_by_stargazers] [--sort_by_watchers]
+       [--library_type <arg>] [--pattern_minimum_library_usage_count
+       <arg>] [--pattern_detector_minimum_count <arg>]
        [--pattern_detector_maximum_sequence_length <arg>]
-       [--pattern_minimum_library_usage_count <arg>]
-       [--test_generator_enable_output] [--test_generator_timeout <arg>]
+       [--test_generator_disable_output] [--test_generator_timeout <arg>]
  -o,--output_dir <arg>                                 The output
                                                        directory.
  -l,--library_dir <arg>                                The library
                                                        directory.
-    --skip_user_compile                                Skip compilation of
-                                                       user projects.
     --maven_dir <arg>                                  The directory to
                                                        run Maven from.
     --repair_maven                                     Repairs the Maven
                                                        installation.
- -u,--user_base_dir <arg>                              The directory
-                                                       containing user
-                                                       project
-                                                       directories.
+    --github_oauth_token <arg>                         Token of GitHub
+                                                       account used for
+                                                       searching.
+    --max_projects <arg>                               Maximum amount of
+                                                       projects to
+                                                       download from
+                                                       GitHub.
+    --library_group_id <arg>                           Group id of library
+                                                       mined projects
+                                                       should have a
+                                                       dependency on.
+    --library_artifact_id <arg>                        Artifact id of
+                                                       library mined
+                                                       projects should
+                                                       have a dependency
+                                                       on.
+    --library_version <arg>                            Version of library
+                                                       mined projects
+                                                       should have a
+                                                       dependency on.
+    --sort_by_stargazers                               True if GitHub
+                                                       projects should be
+                                                       sorted by stars.
+    --sort_by_watchers                                 True if GitHub
+                                                       projects should be
+                                                       sorted by watchers.
     --library_type <arg>                               The type of
                                                        library.
                                                        [javamaven,
                                                        javajar]
+    --pattern_minimum_library_usage_count <arg>        The minimum number
+                                                       of library usages
+                                                       per method.
     --pattern_detector_minimum_count <arg>             The minimum number
                                                        of occurrences for
                                                        a statement to be
@@ -114,12 +139,9 @@ usage: schaapi -o <arg> -l <arg> [--skip_user_compile] [--maven_dir <arg>]
                                                        of sequences to be
                                                        considered for
                                                        pattern detection.
-    --pattern_minimum_library_usage_count <arg>        The minimum number
-                                                       of library usages
-                                                       per method.
-    --test_generator_enable_output                     True if test
+    --test_generator_disable_output                    True if test
                                                        generator output
-                                                       should be shown.
+                                                       should be hidden.
     --test_generator_timeout <arg>                     The time limit for
                                                        the test generator.
 ```
