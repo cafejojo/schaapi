@@ -42,14 +42,14 @@ class JimpleLibraryUsageGraphGenerator : LibraryUsageGraphGenerator<JavaProject,
     override fun generate(libraryProject: JavaProject, userProject: JavaProject): List<JimpleNode> {
         setUpSootEnvironment(libraryProject, userProject)
 
-        return userProject.classNames.flatMap {
-            val sootClass = createSootClass(it)
+        return userProject.classNames.flatMap { className ->
+            val sootClass = createSootClass(className)
 
             sootClass.methods
                 .filter { it.isConcrete }.also { lugStatistics.concreteMethods += it.size }
                 .map { generateMethodGraph(libraryProject, it) }
-                .filter {
-                    DfsIterator(it).asSequence().toList().any {
+                .filter { methodGraph ->
+                    DfsIterator(methodGraph).asSequence().toList().any {
                         it !is JimpleNode || !isMeaninglessStatementWithoutContext(it.statement)
                     }
                 }
