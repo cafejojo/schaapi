@@ -307,8 +307,8 @@ class PatternFilterOptionSet : OptionSet() {
  * Behavior linked to generating tests with EvoSuite from Jimple code.
  */
 class JimpleEvoSuiteTestGeneratorOptionSet : OptionSet() {
+    private var enableOutput = true
     private var timeout = 0
-    private var enableOutput = false
 
     override fun addOptionsTo(options: Options): Options = options
         .addOption(Option
