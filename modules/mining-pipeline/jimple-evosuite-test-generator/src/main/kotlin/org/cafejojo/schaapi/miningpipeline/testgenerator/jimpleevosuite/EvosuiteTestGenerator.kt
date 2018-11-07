@@ -42,7 +42,9 @@ internal class EvoSuiteRunner(
         "-Dsearch_budget=$generationTimeoutSeconds",
         "-Dstatistics_backend=NONE",
         "-Doutput_granularity=TESTCASE"
-    ).start()
+    ).apply {
+        environment()["JAVA_HOME"] = System.getProperty("java.home")
+    }.start()
 
     private fun receiveProcessOutput(process: Process) {
         val lastLine = pipeAllLines(process.inputStream, processStandardStream)
