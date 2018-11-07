@@ -31,24 +31,20 @@ internal class EvoSuiteRunner(
      */
     fun run() = receiveProcessOutput(buildProcess())
 
-    private fun buildProcess(): Process {
-        val processBuilder = ProcessBuilder(
-            "java",
-            "-cp", System.getProperty("java.class.path"),
-            "org.evosuite.EvoSuite",
-            "-class", fullyQualifiedClassName,
-            "-base_dir", outputDirectory,
-            "-projectCP", classpath,
-            "-Dno_runtime_dependency=true",
-            "-Dsearch_budget=$generationTimeoutSeconds",
-            "-Dstatistics_backend=NONE",
-            "-Doutput_granularity=TESTCASE"
-        )
-
-        processBuilder.environment()["JAVA_HOME"] = System.getProperty("java.home")
-
-        return processBuilder.start()
-    }
+    private fun buildProcess() = ProcessBuilder(
+        "java",
+        "-cp", System.getProperty("java.class.path"),
+        "org.evosuite.EvoSuite",
+        "-class", fullyQualifiedClassName,
+        "-base_dir", outputDirectory,
+        "-projectCP", classpath,
+        "-Dno_runtime_dependency=true",
+        "-Dsearch_budget=$generationTimeoutSeconds",
+        "-Dstatistics_backend=NONE",
+        "-Doutput_granularity=TESTCASE"
+    ).apply {
+        environment()["JAVA_HOME"] = System.getProperty("java.home")
+    }.start()
 
     private fun receiveProcessOutput(process: Process) {
         val lastLine = pipeAllLines(process.inputStream, processStandardStream)
