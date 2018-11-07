@@ -194,16 +194,9 @@ internal class ClassGenerator(className: String) {
         return methodParams
     }
 
-    private fun getEmptyIfStatements(statements: List<Unit>) =
-        statements.dropLast(1).filterIndexed { index, statement ->
-            val nextStatement = statements[index + 1]
-            if (statement is IfStmt && nextStatement.boxesPointingToThis.contains(statement.targetBox)) {
-                nextStatement.removeBoxPointingToThis(statement.targetBox)
-                true
-            } else {
-                false
-            }
-        }
+    private fun getEmptyIfStatements(statements: List<Unit>) = statements.dropLast(1).filterIndexed { i, statement ->
+        statement is IfStmt && statements[i + 1].boxesPointingToThis.contains(statement.targetBox)
+    }
 
     /**
      * Replaces invalid targets in [statements] with targets to the last statement.
