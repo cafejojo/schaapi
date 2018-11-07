@@ -51,6 +51,8 @@ usage: schaapi -o <arg> -l <arg> [--skip_user_compile] [--maven_dir <arg>]
                                                        directories.
     --library_type <arg>                               The type of
                                                        library.
+                                                       [javamaven,
+                                                       javajar]
     --pattern_detector_minimum_count <arg>             The minimum number
                                                        of occurrences for
                                                        a statement to be
@@ -100,6 +102,8 @@ usage: schaapi -o <arg> -l <arg> [--skip_user_compile] [--maven_dir <arg>]
                                                        directories.
     --library_type <arg>                               The type of
                                                        library.
+                                                       [javamaven,
+                                                       javajar]
     --pattern_detector_minimum_count <arg>             The minimum number
                                                        of occurrences for
                                                        a statement to be
