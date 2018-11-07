@@ -9,7 +9,9 @@ import org.cafejojo.schaapi.models.DfsIterator
 import org.cafejojo.schaapi.models.libraryusagegraph.jimple.JimpleNode
 import org.cafejojo.schaapi.models.libraryusagegraph.jimple.SootNameEquivalenceChanger
 import org.cafejojo.schaapi.models.project.JavaProject
-import soot.*
+import soot.Scene
+import soot.SootClass
+import soot.SootMethod
 import soot.jimple.GotoStmt
 import soot.jimple.IfStmt
 import soot.jimple.Jimple
