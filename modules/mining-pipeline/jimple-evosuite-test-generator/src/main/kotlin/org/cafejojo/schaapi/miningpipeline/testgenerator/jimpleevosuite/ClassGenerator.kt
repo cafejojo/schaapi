@@ -129,6 +129,19 @@ internal class ClassGenerator(className: String) {
         }
     }
 
+    private fun removeDuplicateConsecutiveAssignments(jimpleBody: Body) {
+        val statements = jimpleBody.units.toList()
+        val duplicatesToBeRemoved = statements
+            .drop(1)
+            .filterIndexed { index, statement ->
+                val nextStatement = statements[index + 1]
+                (statement is IdentityStmt && nextStatement is IdentityStmt &&
+                    statement.leftOp == nextStatement.leftOp && statement.rightOp == nextStatement.rightOp)
+            }
+
+        jimpleBody.units.removeAll(duplicatesToBeRemoved)
+    }
+
     private fun addLocalInitializationsAfterIdentityStatements(jimpleBody: Body, local: Local) {
         val defaultValue = getDefaultValueForType(local.type)
         val assignStatement = Jimple.v().newAssignStmt(local, defaultValue)

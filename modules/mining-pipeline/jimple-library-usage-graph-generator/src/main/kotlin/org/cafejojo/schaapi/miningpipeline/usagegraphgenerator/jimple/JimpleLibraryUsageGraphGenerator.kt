@@ -9,9 +9,7 @@ import org.cafejojo.schaapi.models.DfsIterator
 import org.cafejojo.schaapi.models.libraryusagegraph.jimple.JimpleNode
 import org.cafejojo.schaapi.models.libraryusagegraph.jimple.SootNameEquivalenceChanger
 import org.cafejojo.schaapi.models.project.JavaProject
-import soot.Scene
-import soot.SootClass
-import soot.SootMethod
+import soot.*
 import soot.jimple.GotoStmt
 import soot.jimple.IfStmt
 import soot.jimple.Jimple
@@ -22,13 +20,24 @@ import soot.jimple.SwitchStmt
 import soot.options.Options
 import java.io.File
 
+
 /**
  * Library usage graph generator based on Soot.
  */
 class JimpleLibraryUsageGraphGenerator : LibraryUsageGraphGenerator<JavaProject, JavaProject, JimpleNode> {
     companion object {
         init {
+//            PackManager.v().getPack("jop").add(
+//                Transform("jop.dae", object : BodyTransformer() {
+//                    override fun internalTransform(b: Body?, phaseName: String?, options: MutableMap<String, String>?) {
+//
+//                    }
+//                }))
+            Options.v().parse(arrayOf("-p", "jop", "enabled:true"))
+            Options.v().set_verbose(true)
+            PhaseOptions.v().setPhaseOption("jop.dae", "true")
             SootNameEquivalenceChanger.activate()
+
             Options.v().set_whole_program(true)
             Options.v().set_allow_phantom_refs(true)
         }
