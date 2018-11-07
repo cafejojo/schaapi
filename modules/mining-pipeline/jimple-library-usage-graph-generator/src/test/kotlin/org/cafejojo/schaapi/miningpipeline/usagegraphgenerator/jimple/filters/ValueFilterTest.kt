@@ -351,7 +351,7 @@ private fun assertThatItDoesNotRecognize(value: Value) =
 
 @Suppress("SpreadOperator") // Inputs are small
 private fun assertThatItRetains(vararg values: Value) =
-    assertThat(ValueFilter(libraryProject).retain(*values)).isTrue()
+    assertThat(ValueFilter(libraryProject).retain(*values)).isFalse()
 
 @Suppress("SpreadOperator") // Inputs are small
 private fun assertThatItDoesNotRetain(vararg values: Value) =
