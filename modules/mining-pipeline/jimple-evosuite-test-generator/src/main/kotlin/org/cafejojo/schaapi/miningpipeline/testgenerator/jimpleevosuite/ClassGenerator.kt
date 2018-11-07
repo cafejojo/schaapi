@@ -88,12 +88,8 @@ internal class ClassGenerator(className: String) {
 
         replaceInvalidTargets(sootMethod.activeBody.units.toList())
 
-        val statementsExcludingEmptyIfs = filterNotEmptyIfStatements(sootMethod.activeBody.units.toList())
-        val returnStatement = sootMethod.activeBody.units.last
-
-        sootMethod.activeBody.units.clear()
-        sootMethod.activeBody.units.addAll(statementsExcludingEmptyIfs)
-        sootMethod.activeBody.units.add(returnStatement)
+        val emptyIfStatements = getEmptyIfStatements(sootMethod.activeBody.units.toList())
+        sootMethod.activeBody.units.removeAll(emptyIfStatements)
 
         return sootMethod
     }
@@ -198,16 +194,14 @@ internal class ClassGenerator(className: String) {
         return methodParams
     }
 
-    private fun filterNotEmptyIfStatements(statements: List<Unit>) =
+    private fun getEmptyIfStatements(statements: List<Unit>) =
         statements.dropLast(1).filterIndexed { index, statement ->
             val nextStatement = statements[index + 1]
-            if (statement is IfStmt && nextStatement.boxesPointingToThis.contains(statement.targetBox) &&
-                nextStatement.branches()
-            ) {
+            if (statement is IfStmt && nextStatement.boxesPointingToThis.contains(statement.targetBox)) {
                 nextStatement.removeBoxPointingToThis(statement.targetBox)
-                false
-            } else {
                 true
+            } else {
+                false
             }
         }
 
