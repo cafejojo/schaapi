@@ -2,26 +2,8 @@ package org.cafejojo.schaapi.miningpipeline.testgenerator.jimpleevosuite
 
 import org.cafejojo.schaapi.models.Node
 import org.cafejojo.schaapi.models.libraryusagegraph.jimple.JimpleNode
-import soot.Body
-import soot.BooleanType
-import soot.ByteType
-import soot.CharType
-import soot.DoubleType
-import soot.FloatType
-import soot.IntType
-import soot.Local
-import soot.LongType
-import soot.Modifier
-import soot.NullType
-import soot.RefType
-import soot.Scene
-import soot.ShortType
-import soot.SootClass
-import soot.SootMethod
-import soot.Type
+import soot.*
 import soot.Unit
-import soot.Value
-import soot.VoidType
 import soot.jimple.ArrayRef
 import soot.jimple.DoubleConstant
 import soot.jimple.FieldRef
@@ -84,6 +66,10 @@ internal class ClassGenerator(className: String) {
         sootMethod.returnType = addReturnStatement(jimpleBody)
 
         replaceInvalidTargets(sootMethod.activeBody.units.toList())
+
+        // Enable and run Soot optimalizations on the Jimple body
+        PhaseOptions.v().setPhaseOption("jop", "enabled:true")
+        PackManager.v().getPack("jop").apply(jimpleBody)
     }
 
     private fun createSootMethod(name: String, parameters: Set<Value>) =
@@ -127,19 +113,6 @@ internal class ClassGenerator(className: String) {
 
             if (statement is JReturnStmt) return
         }
-    }
-
-    private fun removeDuplicateConsecutiveAssignments(jimpleBody: Body) {
-        val statements = jimpleBody.units.toList()
-        val duplicatesToBeRemoved = statements
-            .drop(1)
-            .filterIndexed { index, statement ->
-                val nextStatement = statements[index + 1]
-                (statement is IdentityStmt && nextStatement is IdentityStmt &&
-                    statement.leftOp == nextStatement.leftOp && statement.rightOp == nextStatement.rightOp)
-            }
-
-        jimpleBody.units.removeAll(duplicatesToBeRemoved)
     }
 
     private fun addLocalInitializationsAfterIdentityStatements(jimpleBody: Body, local: Local) {

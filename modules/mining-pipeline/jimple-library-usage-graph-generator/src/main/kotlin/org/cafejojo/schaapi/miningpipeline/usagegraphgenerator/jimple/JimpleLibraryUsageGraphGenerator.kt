@@ -27,15 +27,7 @@ import java.io.File
 class JimpleLibraryUsageGraphGenerator : LibraryUsageGraphGenerator<JavaProject, JavaProject, JimpleNode> {
     companion object {
         init {
-//            PackManager.v().getPack("jop").add(
-//                Transform("jop.dae", object : BodyTransformer() {
-//                    override fun internalTransform(b: Body?, phaseName: String?, options: MutableMap<String, String>?) {
-//
-//                    }
-//                }))
-            Options.v().parse(arrayOf("-p", "jop", "enabled:true"))
             Options.v().set_verbose(true)
-            PhaseOptions.v().setPhaseOption("jop.dae", "true")
             SootNameEquivalenceChanger.activate()
 
             Options.v().set_whole_program(true)
