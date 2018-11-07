@@ -47,7 +47,7 @@ internal object ValueFilterTest : Spek({
         on { sootClass } doReturn SootClass(NON_LIBRARY_CLASS, Modifier.PUBLIC)
     }
 
-    describe("filtering of expression values based on library usage usage usage usage usage usage usage usage usage usage usage") {
+    describe("filtering of expression values based on library usage") {
         it("filters invoke expressions") {
             assertThatItRetains(libraryInvokeExpr)
             assertThatItDoesNotRetain(nonLibraryInvokeExpr)
