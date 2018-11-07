@@ -22,7 +22,6 @@ import soot.jimple.SwitchStmt
 import soot.options.Options
 import java.io.File
 
-
 /**
  * Library usage graph generator based on Soot.
  */
