@@ -28,7 +28,7 @@ internal object EvoSuiteRunnerTest : Spek({
     describe("execution of the EvoSuite test generator") {
         it("generates tests for a test class") {
             val evoSuiteRunner = EvoSuiteRunner(
-                "org.cafejojo.schaapi.test.EvoSuiteTestClass",
+                "org.cafejojo.schaapi.test",
                 classpath,
                 classpath,
                 generationTimeoutSeconds = 5
@@ -40,30 +40,15 @@ internal object EvoSuiteRunnerTest : Spek({
                 .exists()
         }
 
-        it("throws an exception when the class can't be found on the given classpath") {
+        it("throws an exception when no classes exist") {
             val evoSuiteRunner = EvoSuiteRunner(
-                "org.cafejojo.schaapi.test.EvoSuiteTestClass",
-                ".",
-                classpath,
-                generationTimeoutSeconds = 5
-            )
-
-            assertThatThrownBy {
-                evoSuiteRunner.run()
-            }.isInstanceOf(EvoSuiteRuntimeException::class.java)
-        }
-
-        it("throws an exception when the class doesn't exist") {
-            val evoSuiteRunner = EvoSuiteRunner(
-                "no.way.this.exists.SampleClass",
+                "no.way.this.exists",
                 classpath,
                 classpath,
                 generationTimeoutSeconds = 5
             )
 
-            assertThatThrownBy {
-                evoSuiteRunner.run()
-            }.isInstanceOf(EvoSuiteRuntimeException::class.java)
+            assertThatThrownBy { evoSuiteRunner.run() }.isInstanceOf(EvoSuiteRuntimeException::class.java)
         }
     }
 })
