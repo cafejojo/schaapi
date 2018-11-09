@@ -69,8 +69,9 @@ usage: schaapi -o <arg> -l <arg> [--skip_user_compile] [--maven_dir <arg>]
     --test_generator_disable_output                    True if test
                                                        generator output
                                                        should be hidden.
-    --test_generator_timeout <arg>                     The time limit for
-                                                       the test generator.
+    --test_generator_timeout <arg>                     The time limit per
+                                                       pattern for the
+                                                       test generator.
 ```
 
 </p>
@@ -142,8 +143,9 @@ usage: schaapi -o <arg> -l <arg> [--maven_dir <arg>] [--repair_maven]
     --test_generator_disable_output                    True if test
                                                        generator output
                                                        should be hidden.
-    --test_generator_timeout <arg>                     The time limit for
-                                                       the test generator.
+    --test_generator_timeout <arg>                     The time limit per
+                                                       pattern for the
+                                                       test generator.
 ```
 
 </p>

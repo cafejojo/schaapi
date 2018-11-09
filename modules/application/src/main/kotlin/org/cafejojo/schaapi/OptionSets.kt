@@ -320,7 +320,7 @@ class JimpleEvoSuiteTestGeneratorOptionSet : OptionSet() {
         .addOption(Option
             .builder()
             .longOpt("test_generator_timeout")
-            .desc("The time limit for the test generator.")
+            .desc("The time limit per pattern for the test generator.")
             .type(Int::class.java)
             .hasArg()
             .build())

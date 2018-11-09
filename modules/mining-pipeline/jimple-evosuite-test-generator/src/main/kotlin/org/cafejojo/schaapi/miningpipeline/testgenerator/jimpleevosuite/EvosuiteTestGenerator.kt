@@ -11,7 +11,7 @@ import java.nio.charset.Charset
  *
  * Executes the EvoSuite test generator on a new process and returns once that process finishes.
  *
- * @property fullyQualifiedClassName the class that EvoSuite should generate tests for
+ * @property fullyQualifiedClassPrefix the prefix of the classes that EvoSuite should generate tests for
  * @property classpath the classpath on which to find the class that should be tested
  * @property outputDirectory the output directory path for the generated EvoSuite tests
  * @property generationTimeoutSeconds how long to let the EvoSuite test generator run (in seconds)
@@ -19,7 +19,7 @@ import java.nio.charset.Charset
  * @property processErrorStream a stream to output EvoSuite's error messages to
  */
 internal class EvoSuiteRunner(
-    private val fullyQualifiedClassName: String,
+    private val fullyQualifiedClassPrefix: String,
     private val classpath: String,
     private val outputDirectory: String,
     private val generationTimeoutSeconds: Int = 60,
@@ -35,14 +35,16 @@ internal class EvoSuiteRunner(
         "java",
         "-cp", System.getProperty("java.class.path"),
         "org.evosuite.EvoSuite",
-        "-class", fullyQualifiedClassName,
+        "-prefix", fullyQualifiedClassPrefix,
         "-base_dir", outputDirectory,
         "-projectCP", classpath,
         "-Dno_runtime_dependency=true",
         "-Dsearch_budget=$generationTimeoutSeconds",
         "-Dstatistics_backend=NONE",
         "-Doutput_granularity=TESTCASE"
-    ).start()
+    ).apply {
+        environment()["JAVA_HOME"] = System.getProperty("java.home")
+    }.start()
 
     private fun receiveProcessOutput(process: Process) {
         val lastLine = pipeAllLines(process.inputStream, processStandardStream)
