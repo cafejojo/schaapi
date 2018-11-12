@@ -1,10 +1,10 @@
 dependencies {
     compile project(":mining-pipeline")
 
-    compile project(":models:java-project")
+    compile group: "org.cafejojo.schaapi.models", name: "java-project", version: version
 
     compile group: "org.apache.maven.shared", name: "maven-invoker", version: mavenInvokerVersion
     compile group: "org.zeroturnaround", name: "zt-zip", version: ztZipVersion
 
-    testCompile project(":models:maven-installer")
+    testCompile group: "org.cafejojo.schaapi.models", name: "maven-installer", version: version
 }

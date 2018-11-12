@@ -1,6 +1,7 @@
 dependencies {
     compile project(":mining-pipeline")
 
-    testCompile project(":models:java-project")
+    testCompile group: "org.cafejojo.schaapi.models", name: "java-project", version: version
+
     testCompile group: "com.nhaarman", name: "mockito-kotlin", version: mockitoKotlinVersion
 }

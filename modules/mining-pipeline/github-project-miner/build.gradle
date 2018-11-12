@@ -1,7 +1,8 @@
 dependencies {
     compile project(":mining-pipeline")
-    compile project(":models:java-project")
-    compile project(":models:maven-installer")
+
+    compile group: "org.cafejojo.schaapi.models", name: "java-project", version: version
+    compile group: "org.cafejojo.schaapi.models", name: "maven-installer", version: version
 
     compile group: "org.kohsuke", name: "github-api", version: kohsukeVersion
 

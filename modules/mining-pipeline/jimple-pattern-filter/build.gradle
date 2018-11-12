@@ -5,8 +5,8 @@ repositories {
 dependencies {
     compile project(":mining-pipeline")
 
-    compile project(":models:java-project")
-    compile project(":models:jimple-library-usage-graph")
+    compile group: "org.cafejojo.schaapi.models", name: "java-project", version: version
+    compile group: "org.cafejojo.schaapi.models", name: "jimple-library-usage-graph", version: version
 
     compile group: "ca.mcgill.sable", name: "soot", version: sootVersion, {
         exclude group: "org.slf4j", module: "slf4j-simple"
