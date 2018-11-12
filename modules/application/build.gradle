@@ -4,7 +4,6 @@ apply from: "$rootDir/gradle/tests/module-integration.gradle"
 mainClassName = "org.cafejojo.schaapi.CommandLineInterfaceKt"
 
 repositories {
-    mavenCentral()
     maven { url "https://soot-build.cs.uni-paderborn.de/nexus/repository/soot-release/" }
 }
 
