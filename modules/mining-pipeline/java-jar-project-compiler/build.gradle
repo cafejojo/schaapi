@@ -1,5 +1,5 @@
 dependencies {
     compile project(":mining-pipeline")
-
-    compile project(":models:java-project")
+    
+    compile group: "org.cafejojo.schaapi.models", name: "java-project", version: version
 }

@@ -1,5 +1,5 @@
 dependencies {
-    compile project(":models")
+    compile group: "org.cafejojo.schaapi", name: "models", version: version
 
     compile group: "me.tongfei", name: "progressbar", version: progressBarVersion
 }

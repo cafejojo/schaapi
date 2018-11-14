@@ -9,5 +9,5 @@ dependencies {
 
     testCompile group: "com.nhaarman", name: "mockito-kotlin", version: mockitoKotlinVersion
 
-    moduleIntegrationTestCompile project(":models:jimple-library-usage-graph")
+    moduleIntegrationTestCompile group: "org.cafejojo.schaapi.models", name: "jimple-library-usage-graph", version: version
 }

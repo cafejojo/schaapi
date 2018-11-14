@@ -8,10 +8,6 @@ repositories {
 }
 
 dependencies {
-    compile project(":models:java-project")
-    compile project(":models:jimple-library-usage-graph")
-    compile project(":models:maven-installer")
-
     compile project(":mining-pipeline:github-project-miner")
     compile project(":mining-pipeline:directory-project-miner")
     compile project(":mining-pipeline:java-jar-project-compiler")
@@ -20,6 +16,10 @@ dependencies {
     compile project(":mining-pipeline:jimple-library-usage-graph-generator")
     compile project(":mining-pipeline:jimple-pattern-filter")
     compile project(":mining-pipeline:ccspan-pattern-detector")
+
+    compile group: "org.cafejojo.schaapi.models", name: "java-project", version: version
+    compile group: "org.cafejojo.schaapi.models", name: "jimple-library-usage-graph", version: version
+    compile group: "org.cafejojo.schaapi.models", name: "maven-installer", version: version
 
     compile group: "commons-cli", name: "commons-cli", version: commonsCliVersion
 }
