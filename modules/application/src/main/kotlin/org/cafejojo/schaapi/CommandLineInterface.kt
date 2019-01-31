@@ -40,6 +40,7 @@ fun main(args: Array<String>) {
 private fun printAsciiArt() = try {
     println(CommandLineInterface::class.java.getResource("/schaapi-ascii-art.txt")?.readText())
 } catch (e: IOException) {
+    KLogging().logger.warn("Failed to load Schaapi ASCII art.", e)
     println("Schaapi")
 }
 

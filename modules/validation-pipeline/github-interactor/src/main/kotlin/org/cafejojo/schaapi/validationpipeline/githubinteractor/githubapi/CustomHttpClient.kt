@@ -47,7 +47,7 @@ import javax.net.ssl.HttpsURLConnection
  * removed.
  */
 @Service
-@Suppress("TooGenericExceptionCaught")
+@Suppress("TooGenericExceptionCaught", "SwallowedException") // Expected behavior
 internal class CustomHttpClient(private val proxy: Proxy? = null) : Client {
     init {
         allowMethods("PATCH")
