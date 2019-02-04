@@ -2,6 +2,7 @@ package org.cafejojo.schaapi.miningpipeline.usagegraphgenerator.jimple
 
 import org.cafejojo.schaapi.models.libraryusagegraph.jimple.JimpleNode
 import soot.Body
+import soot.jimple.IfStmt
 import soot.jimple.Stmt
 import soot.toolkits.graph.BriefUnitGraph
 import soot.toolkits.graph.UnitGraph
@@ -17,7 +18,8 @@ internal object ControlFlowGraphGenerator {
      * @param body a Soot method [Body]
      * @return the [Body]'s root [Stmt] wrapped in a [JimpleNode]
      */
-    fun create(body: Body): JimpleNode? = BriefUnitGraph(body).let { transform(it, HashMap(), it.rootUnitIfExists()) }
+    fun create(body: Body): JimpleNode? =
+        postProcess(BriefUnitGraph(body).let { transform(it, HashMap(), it.rootUnitIfExists()) })
 
     /**
      * Wraps the control flow graph recursively within [JimpleNode] objects.
@@ -50,6 +52,20 @@ internal object ControlFlowGraphGenerator {
         cfg.getSuccsOf(unit).forEach { transform(cfg, mappedUnits, it, node) }
 
         return node
+    }
+
+    /**
+     * Duplicates successors of [IfStmt]s that have only one successor.
+     *
+     * @param root the root node
+     */
+    private fun postProcess(root: JimpleNode?): JimpleNode? {
+        (root ?: return null).iterator().asSequence().toList()
+            .filterIsInstance<JimpleNode>()
+            .filter { it.statement is IfStmt && it.successors.size == 1 }
+            .forEach { node -> node.successors.add(node.successors.first()) }
+
+        return root
     }
 }
 
