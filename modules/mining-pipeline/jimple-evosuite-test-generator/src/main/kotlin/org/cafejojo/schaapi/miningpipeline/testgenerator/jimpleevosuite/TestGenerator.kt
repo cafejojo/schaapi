@@ -27,6 +27,7 @@ class TestGenerator(
         val outputPatterns = outputDirectory.resolve("patterns/").apply { mkdirs() }
         val outputTests = outputDirectory.resolve("tests/").apply { mkdirs() }
 
+        logger.info { "Writing patterns to class files." }
         if (patterns.isEmpty()) {
             logger.warn { "No patterns were found in the user programs." }
 
@@ -42,7 +43,9 @@ class TestGenerator(
                 }
             }
         }
+        logger.info { "Finished writing patterns to class files." }
 
+        logger.info { "Running EvoSuite." }
         EvoSuiteRunner(
             fullyQualifiedClassPrefix = DEFAULT_PATTERN_CLASS_PACKAGE,
             classpath = outputPatterns.absolutePath + File.pathSeparator + library.classpath,
@@ -51,5 +54,6 @@ class TestGenerator(
             processStandardStream = processStandardStream,
             processErrorStream = processErrorStream
         ).run()
+        logger.info { "Finished running EvoSuite." }
     }
 }

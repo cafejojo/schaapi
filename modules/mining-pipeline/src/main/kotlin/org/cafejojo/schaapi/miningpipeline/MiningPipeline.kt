@@ -67,9 +67,10 @@ class MiningPipeline<SO : SearchOptions, UP : Project, LP : Project, N : Node>(
                 .also { logger.info { "${it.size} patterns remain after filtering." } }
                 .also { csvWriter.writeFilteredPatternLengths(it) }
 
-                .also { logger.info { "Started generating test for ${it.size} usage patterns." } }
+                .also { logger.info { "Started generating tests for ${it.size} usage patterns." } }
                 .next(testGenerator::generate)
                 .also { logger.info { "Test generation has finished." } }
+
             logger.info { "Tests have been successfully generated." }
         } catch (e: Exception) {
             logger.error("A critical error occurred during the mining process causing it to be aborted.", e)
