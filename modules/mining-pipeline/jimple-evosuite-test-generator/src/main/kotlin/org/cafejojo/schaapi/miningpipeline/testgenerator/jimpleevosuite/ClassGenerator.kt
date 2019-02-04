@@ -88,6 +88,9 @@ internal class ClassGenerator(className: String) {
 
         replaceInvalidTargets(sootMethod.activeBody.units.toList())
 
+        val emptyIfStatements = getEmptyIfStatements(sootMethod.activeBody.units.toList())
+        sootMethod.activeBody.units.removeAll(emptyIfStatements)
+
         return sootMethod
     }
 
@@ -189,6 +192,10 @@ internal class ClassGenerator(className: String) {
         }
 
         return methodParams
+    }
+
+    private fun getEmptyIfStatements(statements: List<Unit>) = statements.dropLast(1).filterIndexed { i, statement ->
+        statement is IfStmt && statements[i + 1].boxesPointingToThis.contains(statement.targetBox)
     }
 
     /**

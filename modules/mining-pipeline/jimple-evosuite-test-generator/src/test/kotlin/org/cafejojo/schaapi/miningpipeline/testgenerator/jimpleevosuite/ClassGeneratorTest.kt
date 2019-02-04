@@ -382,6 +382,38 @@ internal object ClassGeneratorTest : Spek({
         }
     }
 
+    describe("if statements") {
+        it("should be removed if empty") {
+            val value = Jimple.v().newLocal("value", RefType.v("myClass"))
+            val ifCondition = Jimple.v().newConditionExprBox(JEqExpr(value, value)).value
+
+            val returnStmt = Jimple.v().newReturnStmt(value)
+            val ifStmt = Jimple.v().newIfStmt(ifCondition, returnStmt)
+
+            val method = ClassGenerator("test").apply {
+                generateMethod("method", listOf(ifStmt, returnStmt).map { JimpleNode(it) })
+            }.sootClass.methods.last()
+
+            assertThat(method.activeBody.units).doesNotHaveAnyElementsOfTypes(IfStmt::class.java)
+        }
+
+        it("should not be removed if not empty") {
+            val value = Jimple.v().newLocal("value", RefType.v("myClass"))
+            val ifCondition = Jimple.v().newConditionExprBox(JEqExpr(value, value)).value
+
+            val returnStmt = Jimple.v().newReturnStmt(value)
+            val addExpression = Jimple.v().newAddExpr(IntConstant.v(10), IntConstant.v(5))
+            val assignStmt = Jimple.v().newAssignStmt(Jimple.v().newLocal("b", IntType.v()), addExpression)
+            val ifStmt = Jimple.v().newIfStmt(ifCondition, returnStmt)
+
+            val method = ClassGenerator("test").apply {
+                generateMethod("method", listOf(ifStmt, assignStmt, returnStmt).map { JimpleNode(it) })
+            }.sootClass.methods.last()
+
+            assertThat(method.activeBody.units).hasAtLeastOneElementOfType(IfStmt::class.java)
+        }
+    }
+
     describe("duplication of statements") {
         it("should replace all statements with new instances") {
             val a = Jimple.v().newLocal("a", CharType.v())
@@ -430,23 +462,6 @@ internal object ClassGeneratorTest : Spek({
 
             val newIfStmt = method.activeBody.units.first() as IfStmt
             assertThat(newIfStmt.target).isEqualTo(newIfStmt)
-        }
-
-        it("should replace statement target instances in if statements") {
-            val value = Jimple.v().newLocal("value", RefType.v("myClass"))
-            val ifCondition = Jimple.v().newConditionExprBox(JEqExpr(value, value)).value
-
-            val returnStmt = Jimple.v().newReturnStmt(value)
-            val ifStmt = Jimple.v().newIfStmt(ifCondition, returnStmt)
-
-            val method = ClassGenerator("test").apply {
-                generateMethod("method", listOf(ifStmt, returnStmt).map { JimpleNode(it) })
-            }.sootClass.methods.last()
-
-            val newIfStmt = method.activeBody.units.elementAt(1) as IfStmt
-            assertThat(newIfStmt.target)
-                .isNotEqualTo(returnStmt)
-                .isEqualToComparingFieldByFieldRecursively(returnStmt)
         }
 
         it("should replace statement target instances in switch statements") {
