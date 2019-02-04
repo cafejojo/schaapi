@@ -1,5 +1,6 @@
 package org.cafejojo.schaapi.miningpipeline.testgenerator.jimpleevosuite
 
+import mu.KLogging
 import org.cafejojo.schaapi.miningpipeline.Pattern
 import org.cafejojo.schaapi.miningpipeline.TestGenerator
 import org.cafejojo.schaapi.models.libraryusagegraph.jimple.JimpleNode
@@ -20,15 +21,25 @@ class TestGenerator(
     private val processStandardStream: PrintStream? = null,
     private val processErrorStream: PrintStream? = null
 ) : TestGenerator<JimpleNode> {
+    private companion object : KLogging()
+
     override fun generate(patterns: List<Pattern<JimpleNode>>) {
         val outputPatterns = outputDirectory.resolve("patterns/").apply { mkdirs() }
         val outputTests = outputDirectory.resolve("tests/").apply { mkdirs() }
 
-        patterns.forEachIndexed { index, pattern ->
-            ClassGenerator("$DEFAULT_PATTERN_CLASS_PACKAGE.${DEFAULT_PATTERN_CLASS_NAME_PREFIX}_$index").apply {
-                val method = generateMethod("pattern$index", pattern)
-                optimizeMethod(method)
+        if (patterns.isEmpty()) {
+            logger.warn { "No patterns were found in the user programs." }
+
+            ClassGenerator("$DEFAULT_PATTERN_CLASS_PACKAGE.${DEFAULT_PATTERN_CLASS_NAME_PREFIX}_NONE").apply {
                 writeToFile(outputPatterns.absolutePath)
+            }
+        } else {
+            patterns.forEachIndexed { index, pattern ->
+                ClassGenerator("$DEFAULT_PATTERN_CLASS_PACKAGE.${DEFAULT_PATTERN_CLASS_NAME_PREFIX}_$index").apply {
+                    val method = generateMethod("pattern$index", pattern)
+                    optimizeMethod(method)
+                    writeToFile(outputPatterns.absolutePath)
+                }
             }
         }
 
