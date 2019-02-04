@@ -115,9 +115,11 @@ internal class GitHubProjectDownloader<P : Project>(
             logger.debug { "Successfully unzipped file ${projectZipFile.absolutePath}." }
         } catch (e: IOException) {
             logger.warn("Could not unzip ${projectZipFile.absolutePath}.", e)
+            githubProject.deleteRecursively()
             return null
         } catch (e: ZipException) {
             logger.warn("Could not unzip ${projectZipFile.absolutePath}.", e)
+            githubProject.deleteRecursively()
             return null
         } finally {
             projectZipFile.delete()
