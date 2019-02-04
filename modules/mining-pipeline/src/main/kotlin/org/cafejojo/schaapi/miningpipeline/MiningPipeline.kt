@@ -48,12 +48,20 @@ class MiningPipeline<SO : SearchOptions, UP : Project, LP : Project, N : Node>(
                 .also { logger.info { "Successfully mined ${it.count()} projects." } }
 
                 .also { logger.info { "Started compiling ${it.count()} projects." } }
-                .nextCatchExceptions<CompilationException, UP, UP>(userProjectCompiler::compile, "Compiling projects")
+                .nextMapNotNull(
+                    catchWrapper<CompilationException, UP, UP?>(userProjectCompiler::compile, null),
+                    "Compiling projects"
+                )
                 .also { logger.info { "Successfully compiled ${it.count()} projects." } }
 
                 .also { logger.info { "Started generating library usage graphs for ${it.count()} projects." } }
-                .nextFlatMap({ libraryUsageGraphGenerator.generate(libraryProject, it) },
-                    "Generating library-usage graphs")
+                .nextFlatMap(
+                    catchWrapper<RuntimeException, UP, Iterable<N>>(
+                        { libraryUsageGraphGenerator.generate(libraryProject, it) },
+                        emptyList()
+                    ),
+                    "Generating library-usage graphs"
+                )
                 .also { logger.info { "Successfully generated ${it.size} library usage graphs." } }
                 .also { csvWriter.writeGraphSizes(it) }
 
@@ -79,33 +87,27 @@ class MiningPipeline<SO : SearchOptions, UP : Project, LP : Project, N : Node>(
         }
     }
 
-    /**
-     * Calls the specified function [map] with `this` value as its argument and returns its result.
-     */
     private fun <T, R> T.next(map: (T) -> R): R = map(this)
 
-    private inline fun <N, reified T : Iterable<N>, R> T.next(map: (T) -> R, message: String): R =
-        map(progressBarIterable(this, message) as? T ?: this)
+    private inline fun <T, R> Iterable<T>.next(map: (Iterable<T>) -> R, message: String): R =
+        map(progressBarIterable(this, message) as? Iterable<T> ?: this)
 
-    private fun <P, Q, T : Iterable<P>> T.nextFlatMap(map: (P) -> Iterable<Q>, message: String): List<Q> =
+    private inline fun <T, R : Any> Iterable<T>.nextMapNotNull(map: (T) -> R?, message: String): List<R> =
+        progressBarIterable(this, message).mapNotNull(map)
+
+    private fun <T, R> Iterable<T>.nextFlatMap(map: (T) -> Iterable<R>, message: String): List<R> =
         progressBarIterable(this, message).flatMap { map(it) }
 
-    /**
-     * Calls the specified function [map] on each element in `this` and returns the result as an iterable.
-     *
-     * Catches exceptions of type [E] and logs these. All other exceptions are thrown.
-     */
     @Suppress("TooGenericExceptionCaught", "InstanceOfCheckForException") // This is intended behaviour
-    private inline fun <reified E : RuntimeException, T, R : Any>
-        Iterable<T>.nextCatchExceptions(map: (T) -> R, message: String): Iterable<R> =
-        progressBarIterable(this, message).mapNotNull {
-            try {
-                map(it)
-            } catch (e: RuntimeException) {
-                if (e is E) logger.warn { e.message } else throw e
-                null
-            }
+    private inline fun <reified E : RuntimeException, T, R>
+        catchWrapper(crossinline map: (T) -> R, default: R): (T) -> R = {
+        try {
+            map(it)
+        } catch (e: RuntimeException) {
+            if (e is E) logger.warn { e.message } else throw e
+            default
         }
+    }
 
     private fun <N> progressBarIterable(iterable: Iterable<N>, taskName: String): Iterable<N> =
         ProgressBar.wrap(iterable, ProgressBarBuilder().apply {
