@@ -1,5 +1,6 @@
 package org.cafejojo.schaapi.miningpipeline.usagegraphgenerator.jimple
 
+import mu.KLogging
 import org.cafejojo.schaapi.miningpipeline.LibraryUsageGraphGenerator
 import org.cafejojo.schaapi.miningpipeline.usagegraphgenerator.jimple.filters.BranchStatementFilter
 import org.cafejojo.schaapi.miningpipeline.usagegraphgenerator.jimple.filters.RecursiveGotoFilter
@@ -9,6 +10,7 @@ import org.cafejojo.schaapi.models.DfsIterator
 import org.cafejojo.schaapi.models.libraryusagegraph.jimple.JimpleNode
 import org.cafejojo.schaapi.models.libraryusagegraph.jimple.SootNameEquivalenceChanger
 import org.cafejojo.schaapi.models.project.JavaProject
+import soot.Body
 import soot.Scene
 import soot.SootClass
 import soot.SootMethod
@@ -26,7 +28,7 @@ import java.io.File
  * Library usage graph generator based on Soot.
  */
 class JimpleLibraryUsageGraphGenerator : LibraryUsageGraphGenerator<JavaProject, JavaProject, JimpleNode> {
-    companion object {
+    companion object : KLogging() {
         init {
             Options.v().set_verbose(true)
             SootNameEquivalenceChanger.activate()
@@ -49,7 +51,7 @@ class JimpleLibraryUsageGraphGenerator : LibraryUsageGraphGenerator<JavaProject,
 
             sootClass.methods
                 .filter { it.isConcrete }.also { lugStatistics.concreteMethods += it.size }
-                .map { generateMethodGraph(libraryProject, it) }
+                .mapNotNull { generateMethodGraph(libraryProject, it) }
                 .filter { methodGraph ->
                     DfsIterator(methodGraph).asSequence().toList().any {
                         it !is JimpleNode || !isMeaninglessStatementWithoutContext(it.statement)
@@ -90,8 +92,14 @@ class JimpleLibraryUsageGraphGenerator : LibraryUsageGraphGenerator<JavaProject,
      * @param method method for which to generate the graph
      * @return library usage graph
      */
-    private fun generateMethodGraph(libraryProject: JavaProject, method: SootMethod): JimpleNode {
-        val methodBody = method.retrieveActiveBody()
+    private fun generateMethodGraph(libraryProject: JavaProject, method: SootMethod): JimpleNode? {
+        val methodBody: Body
+        try {
+            methodBody = method.retrieveActiveBody()
+        } catch (e: RuntimeException) {
+            logger.warn { e.message }
+            return null
+        }
         lugStatistics.allStatements += methodBody.units.size
 
         listOf(

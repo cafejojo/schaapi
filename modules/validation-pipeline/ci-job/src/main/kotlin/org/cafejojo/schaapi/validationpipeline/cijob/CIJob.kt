@@ -25,7 +25,6 @@ class CIJob(
     private val successReporter: (TestResults) -> Any,
     private val failureReporter: (CIJobException) -> Any
 ) : Runnable {
-
     private val zipFile = File(projectDirectory, "builds").let { it.mkdirs(); File(it, "$identifier.zip") }
     private val newProjectFiles = File(projectDirectory, "builds/$identifier").also { it.mkdirs() }
     private val testsDirectory = File(projectDirectory, "tests")
