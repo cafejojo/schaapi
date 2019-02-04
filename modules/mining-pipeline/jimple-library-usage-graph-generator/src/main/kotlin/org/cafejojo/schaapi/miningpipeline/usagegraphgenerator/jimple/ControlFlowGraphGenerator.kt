@@ -58,6 +58,7 @@ internal object ControlFlowGraphGenerator {
      * Duplicates successors of [IfStmt]s that have only one successor.
      *
      * @param root the root node
+     * @return the root node
      */
     private fun postProcess(root: JimpleNode?): JimpleNode? {
         (root ?: return null).iterator().asSequence().toList()
