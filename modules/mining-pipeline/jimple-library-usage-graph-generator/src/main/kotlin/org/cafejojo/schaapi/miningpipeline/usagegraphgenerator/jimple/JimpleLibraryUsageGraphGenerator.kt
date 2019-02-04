@@ -92,6 +92,7 @@ class JimpleLibraryUsageGraphGenerator : LibraryUsageGraphGenerator<JavaProject,
      * @param method method for which to generate the graph
      * @return library usage graph
      */
+    @Suppress("TooGenericExceptionCaught") // Soot throws generic exceptions
     private fun generateMethodGraph(libraryProject: JavaProject, method: SootMethod): JimpleNode? {
         val methodBody: Body
         try {
