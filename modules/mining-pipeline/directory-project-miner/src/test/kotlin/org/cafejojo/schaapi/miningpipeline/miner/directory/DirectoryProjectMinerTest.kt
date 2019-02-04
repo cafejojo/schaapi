@@ -77,6 +77,7 @@ internal object DirectoryProjectMinerTest : Spek({
     }
 })
 
+@Suppress("SwallowedException") // Expected behavior
 fun Path.hideFileOnWindows() {
     try {
         Files.setAttribute(this, "dos:hidden", true, LinkOption.NOFOLLOW_LINKS)
