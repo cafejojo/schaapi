@@ -11,7 +11,6 @@ import org.cafejojo.schaapi.miningpipeline.miner.directory.DirectorySearchOption
 import org.cafejojo.schaapi.miningpipeline.miner.github.GitHubProjectMiner
 import org.cafejojo.schaapi.miningpipeline.miner.github.MavenProjectSearchOptions
 import org.cafejojo.schaapi.miningpipeline.patterndetector.ccspan.CCSpanPatternDetector
-import org.cafejojo.schaapi.miningpipeline.patternfilter.jimple.EmptyLoopPatternFilterRule
 import org.cafejojo.schaapi.miningpipeline.patternfilter.jimple.IncompleteInitPatternFilterRule
 import org.cafejojo.schaapi.miningpipeline.patternfilter.jimple.InsufficientLibraryUsageFilter
 import org.cafejojo.schaapi.miningpipeline.patternfilter.jimple.LengthPatternFilterRule
@@ -294,7 +293,6 @@ class PatternFilterOptionSet : OptionSet() {
     fun createPatternFilter(libraryProject: JavaProject) = PatternFilter(
         IncompleteInitPatternFilterRule(),
         LengthPatternFilterRule(),
-        EmptyLoopPatternFilterRule(),
         InsufficientLibraryUsageFilter(libraryProject, minLibraryUsageCount)
     )
 
