@@ -1,6 +1,7 @@
 package org.cafejojo.schaapi.miningpipeline.miner.github
 
 import mu.KLogging
+import org.apache.commons.codec.digest.DigestUtils
 import org.cafejojo.schaapi.models.Project
 import org.zeroturnaround.zip.ZipException
 import org.zeroturnaround.zip.ZipUtil
@@ -55,7 +56,7 @@ internal class GitHubProjectDownloader<P : Project>(
         val alphaNumericRegex = Regex("[^A-Za-z0-9]")
         val zipFile = File(
             outputDirectory,
-            "${alphaNumericRegex.replace(projectName, "")}.zip"
+            "${alphaNumericRegex.replace(projectName, "")}-${DigestUtils.md5Hex(projectName)}.zip"
         )
 
         try {
