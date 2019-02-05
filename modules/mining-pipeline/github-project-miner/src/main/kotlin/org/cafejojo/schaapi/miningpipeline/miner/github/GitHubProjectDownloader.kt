@@ -45,8 +45,8 @@ internal class GitHubProjectDownloader<P : Project>(
 
     private fun downloadAndSaveProject(projectName: String): P? =
         getInputStream(projectName)?.use { inputStream ->
-            val githubProjectZip = saveZipToFile(inputStream, projectName) ?: return null
-            val gitHubProject = unzip(githubProjectZip) ?: return null
+            val gitHubProjectZip = saveZipToFile(inputStream, projectName) ?: return null
+            val gitHubProject = unzip(gitHubProjectZip) ?: return null
 
             return projectPacker(gitHubProject)
         }
