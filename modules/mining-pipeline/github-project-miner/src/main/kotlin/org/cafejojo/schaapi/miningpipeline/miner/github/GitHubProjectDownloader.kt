@@ -111,7 +111,7 @@ internal class GitHubProjectDownloader<P : Project>(
         }
 
         try {
-            ZipUtil.unpack(projectZipFile, githubProject)
+            ZipUtil.unpack(projectZipFile, githubProject) { it.replace(":", "_") }
             logger.debug { "Successfully unzipped file ${projectZipFile.absolutePath}." }
         } catch (e: IOException) {
             logger.warn("Could not unzip ${projectZipFile.absolutePath}.", e)
