@@ -42,6 +42,7 @@ internal class DirectoryMiningCommandLineInterface : CommandLineInterface() {
         when (library.projectType) {
             ProjectType.JAVA_MAVEN -> {
                 val libraryProject = JavaMavenProject(libraryDir, maven.dir)
+
                 MiningPipeline(
                     projectMiner = directory.createMiner(),
                     libraryProjectCompiler = JavaMavenProjectCompiler(displayOutput = true),
@@ -58,6 +59,7 @@ internal class DirectoryMiningCommandLineInterface : CommandLineInterface() {
             }
             ProjectType.JAVA_JAR -> {
                 val libraryProject = JavaJarProject(libraryDir)
+
                 MiningPipeline(
                     projectMiner = directory.createMiner(),
                     libraryProjectCompiler = JavaJarProjectCompiler(),
@@ -88,13 +90,11 @@ private class DirectoryMiningCliOptionSet : OptionSet() {
 
     override fun addOptionsTo(options: Options): Options =
         options
-            .addOption(
-                Option
-                    .builder()
-                    .longOpt("skip_user_compile")
-                    .desc("Skip compilation of user projects.")
-                    .build()
-            )
+            .addOption(Option
+                .builder()
+                .longOpt("skip_user_compile")
+                .desc("Skip compilation of user projects.")
+                .build())
 
     override fun read(cmd: CommandLine) {
         skipUserCompile = cmd.hasOption("skip_user_compile")

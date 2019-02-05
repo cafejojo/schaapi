@@ -38,6 +38,7 @@ internal class GitHubMiningCommandLineInterface : CommandLineInterface() {
         when (library.projectType) {
             ProjectType.JAVA_MAVEN -> {
                 val libraryProject = JavaMavenProject(libraryDir, maven.dir)
+
                 MiningPipeline(
                     projectMiner = gitHub.createMiner(outputDir),
                     libraryProjectCompiler = JavaMavenProjectCompiler(true),
@@ -54,6 +55,7 @@ internal class GitHubMiningCommandLineInterface : CommandLineInterface() {
             }
             ProjectType.JAVA_JAR -> {
                 val libraryProject = JavaJarProject(libraryDir)
+
                 MiningPipeline(
                     projectMiner = gitHub.createMiner(outputDir),
                     libraryProjectCompiler = JavaJarProjectCompiler(),
