@@ -38,35 +38,35 @@ internal class GitHubMiningCommandLineInterface : CommandLineInterface() {
         when (library.projectType) {
             ProjectType.JAVA_MAVEN -> {
                 val libraryProject = JavaMavenProject(libraryDir, maven.dir)
-
                 MiningPipeline(
-                    outputDirectory = outputDir,
                     projectMiner = gitHub.createMiner(outputDir),
-                    searchOptions = gitHub.createOptions(),
-                    libraryProject = libraryProject,
                     libraryProjectCompiler = JavaMavenProjectCompiler(true),
                     userProjectCompiler = JavaMavenProjectCompiler(),
                     libraryUsageGraphGenerator = jimpleLibraryUsageGraphGenerator,
                     patternDetector = patternDetector.createPatternDetector(),
                     patternFilter = patternFilter.createPatternFilter(libraryProject),
                     testGenerator = testGenerator.createTestGenerator(outputDir, libraryProject)
-                ).run()
+                ).run(
+                    outputDirectory = outputDir,
+                    searchOptions = gitHub.createOptions(),
+                    libraryProject = libraryProject
+                )
             }
             ProjectType.JAVA_JAR -> {
                 val libraryProject = JavaJarProject(libraryDir)
-
                 MiningPipeline(
-                    outputDirectory = outputDir,
                     projectMiner = gitHub.createMiner(outputDir),
-                    searchOptions = gitHub.createOptions(),
-                    libraryProject = libraryProject,
                     libraryProjectCompiler = JavaJarProjectCompiler(),
                     userProjectCompiler = JavaMavenProjectCompiler(),
                     libraryUsageGraphGenerator = jimpleLibraryUsageGraphGenerator,
                     patternDetector = patternDetector.createPatternDetector(),
                     patternFilter = patternFilter.createPatternFilter(libraryProject),
                     testGenerator = testGenerator.createTestGenerator(outputDir, libraryProject)
-                ).run()
+                ).run(
+                    outputDirectory = outputDir,
+                    searchOptions = gitHub.createOptions(),
+                    libraryProject = libraryProject
+                )
             }
         }
 

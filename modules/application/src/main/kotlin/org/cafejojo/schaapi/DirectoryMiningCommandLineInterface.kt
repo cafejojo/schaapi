@@ -42,35 +42,35 @@ internal class DirectoryMiningCommandLineInterface : CommandLineInterface() {
         when (library.projectType) {
             ProjectType.JAVA_MAVEN -> {
                 val libraryProject = JavaMavenProject(libraryDir, maven.dir)
-
                 MiningPipeline(
-                    outputDirectory = outputDir,
                     projectMiner = directory.createMiner(),
-                    searchOptions = directory.createOptions(),
-                    libraryProject = libraryProject,
                     libraryProjectCompiler = JavaMavenProjectCompiler(displayOutput = true),
                     userProjectCompiler = JavaMavenProjectCompiler(skipCompile = directoryMinerCli.skipUserCompile),
                     libraryUsageGraphGenerator = jimpleLibraryUsageGraphGenerator,
                     patternDetector = patternDetector.createPatternDetector(),
                     patternFilter = patternFilter.createPatternFilter(libraryProject),
                     testGenerator = testGenerator.createTestGenerator(outputDir, libraryProject)
-                ).run()
+                ).run(
+                    outputDirectory = outputDir,
+                    searchOptions = directory.createOptions(),
+                    libraryProject = libraryProject
+                )
             }
             ProjectType.JAVA_JAR -> {
                 val libraryProject = JavaJarProject(libraryDir)
-
                 MiningPipeline(
-                    outputDirectory = outputDir,
                     projectMiner = directory.createMiner(),
-                    searchOptions = directory.createOptions(),
-                    libraryProject = libraryProject,
                     libraryProjectCompiler = JavaJarProjectCompiler(),
                     userProjectCompiler = JavaMavenProjectCompiler(skipCompile = directoryMinerCli.skipUserCompile),
                     libraryUsageGraphGenerator = jimpleLibraryUsageGraphGenerator,
                     patternDetector = patternDetector.createPatternDetector(),
                     patternFilter = patternFilter.createPatternFilter(libraryProject),
                     testGenerator = testGenerator.createTestGenerator(outputDir, libraryProject)
-                ).run()
+                ).run(
+                    outputDirectory = outputDir,
+                    searchOptions = directory.createOptions(),
+                    libraryProject = libraryProject
+                )
             }
         }
 
@@ -88,11 +88,13 @@ private class DirectoryMiningCliOptionSet : OptionSet() {
 
     override fun addOptionsTo(options: Options): Options =
         options
-            .addOption(Option
-                .builder()
-                .longOpt("skip_user_compile")
-                .desc("Skip compilation of user projects.")
-                .build())
+            .addOption(
+                Option
+                    .builder()
+                    .longOpt("skip_user_compile")
+                    .desc("Skip compilation of user projects.")
+                    .build()
+            )
 
     override fun read(cmd: CommandLine) {
         skipUserCompile = cmd.hasOption("skip_user_compile")
