@@ -9,7 +9,6 @@ import java.io.IOException
 import java.io.InputStream
 import java.net.HttpURLConnection
 import java.net.URL
-import java.nio.file.Files
 import kotlin.streams.toList
 
 /**
@@ -25,25 +24,6 @@ internal class GitHubProjectDownloader<P : Project>(
     private val projectPacker: (File) -> P
 ) {
     private companion object : KLogging()
-
-    private fun File.moveUpOneLevel() = Files.move(this.toPath(), File(this.parentFile.parentFile, this.name).toPath())
-
-    /**
-     * Extracts the directory denoting the master branch in a GitHub project by moving the up one level.
-     */
-    private fun File.extractMasterFile() {
-        require(this.listFiles().size == 1) {
-            "GitHub project must contain exactly one file, but contained ${this.listFiles().size} files."
-        }
-
-        val masterFile = this.listFiles().first()
-        require(masterFile.isDirectory) { "GitHub Project must contain a directory for master." }
-
-        if (masterFile.listFiles().isEmpty()) logger.warn { "${masterFile.absolutePath} did not contain any files." }
-        masterFile.listFiles().forEach { it.moveUpOneLevel() }
-
-        masterFile.delete()
-    }
 
     /**
      * Starts downloading repositories.
@@ -63,19 +43,13 @@ internal class GitHubProjectDownloader<P : Project>(
             .toList()
             .filterNotNull()
 
-    private fun downloadAndSaveProject(projectName: String): P? = getInputStream(projectName)?.use { inputStream ->
-        val githubProjectZip = saveZipToFile(inputStream, projectName) ?: return null
-        val gitHubProject = unzip(githubProjectZip) ?: return null
+    private fun downloadAndSaveProject(projectName: String): P? =
+        getInputStream(projectName)?.use { inputStream ->
+            val githubProjectZip = saveZipToFile(inputStream, projectName) ?: return null
+            val gitHubProject = unzip(githubProjectZip) ?: return null
 
-        try {
-            gitHubProject.extractMasterFile()
-            projectPacker(gitHubProject).also { logger.debug { "Created project of $gitHubProject." } }
-        } catch (e: IllegalArgumentException) {
-            logger.warn("Unable to pack $gitHubProject into project.", e)
-            gitHubProject.deleteRecursively()
-            null
+            return projectPacker(gitHubProject)
         }
-    }
 
     internal fun saveZipToFile(input: InputStream, projectName: String): File? {
         val alphaNumericRegex = Regex("[^A-Za-z0-9]")
@@ -111,7 +85,7 @@ internal class GitHubProjectDownloader<P : Project>(
         }
 
         try {
-            ZipUtil.unpack(projectZipFile, githubProject) { it.replace(":", "_") }
+            ZipUtil.unpack(projectZipFile, githubProject) { it.drop(it.indexOf('/') + 1).replace(':', '_') }
             logger.debug { "Successfully unzipped file ${projectZipFile.absolutePath}." }
         } catch (e: IOException) {
             logger.warn("Could not unzip ${projectZipFile.absolutePath}.", e)

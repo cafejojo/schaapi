@@ -127,7 +127,7 @@ internal object GitHubProjectDownloaderTest : Spek({
             val zipFile = addZipFile("testZipDirectory", "test text")
             val unzippedFile = GitHubProjectDownloader(emptyList(), output, ::testProjectPacker).unzip(zipFile)
 
-            assertThat(unzippedFile?.listFiles()?.first()?.listFiles()?.first()?.readText()).isEqualTo("test text")
+            assertThat(unzippedFile?.listFiles()?.first()?.readText()).isEqualTo("test text")
         }
 
         it("should delete the zip file after extraction") {
