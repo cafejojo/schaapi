@@ -30,10 +30,13 @@ class MiningPipeline<SO : SearchOptions, UP : Project, LP : Project, N : Node>(
     @Suppress("TooGenericExceptionCaught") // In this case it is relevant to catch and log an Exception
     fun run(libraryProject: LP) {
         logger.info { "Compiling library project." }
-        ProgressBar("Compile library project", 1, ProgressBarStyle.ASCII).use { progressBar ->
-            libraryProjectCompiler.compile(libraryProject)
-            progressBar.step()
-        }
+        createProgressBarBuilder("Compile library project")
+            .also { it.setInitialMax(1) }
+            .build()
+            .use { progressBar ->
+                libraryProjectCompiler.compile(libraryProject)
+                progressBar.step()
+            }
         logger.info { "Compiled library project." }
 
         logger.info { "Mining has started." }
@@ -110,8 +113,17 @@ class MiningPipeline<SO : SearchOptions, UP : Project, LP : Project, N : Node>(
     }
 
     private fun <N> progressBarIterable(iterable: Iterable<N>, taskName: String): Iterable<N> =
-        ProgressBar.wrap(iterable, ProgressBarBuilder().apply {
-            setTaskName(taskName)
-            setStyle(ProgressBarStyle.ASCII)
-        })
+        ProgressBar.wrap(iterable, createProgressBarBuilder(taskName))
 }
+
+/**
+ * Creates a progress bar builder with the default settings for progress bars in the mining pipeline set.
+ *
+ * @param taskName the name of the progress bar
+ */
+fun createProgressBarBuilder(taskName: String) =
+    ProgressBarBuilder().apply {
+        setTaskName(taskName)
+        setStyle(ProgressBarStyle.ASCII)
+        setPrintStream(System.out)
+    }

@@ -9,17 +9,18 @@ import java.io.IOException
 import java.io.InputStream
 import java.net.HttpURLConnection
 import java.net.URL
+import java.util.stream.Stream
 import kotlin.streams.toList
 
 /**
  * Downloads the zip files of the given GitHub repositories and returns searchContent list of Java projects.
  *
- * @property projectNames the names of all repositories to be downloaded
+ * @property projectNames a stream of the names of all repositories to be downloaded
  * @property outputDirectory the directory to store all the project directories
  * @property projectPacker packer which determines what type of [Project] to wrap the project directory in
  */
 internal class GitHubProjectDownloader<P : Project>(
-    private val projectNames: Collection<String>,
+    private val projectNames: Stream<String>,
     private val outputDirectory: File,
     private val projectPacker: (File) -> P
 ) {
@@ -38,7 +39,6 @@ internal class GitHubProjectDownloader<P : Project>(
      */
     fun download(): List<P> =
         projectNames
-            .parallelStream()
             .map { downloadAndSaveProject(it) }
             .toList()
             .filterNotNull()
@@ -55,7 +55,7 @@ internal class GitHubProjectDownloader<P : Project>(
         val alphaNumericRegex = Regex("[^A-Za-z0-9]")
         val zipFile = File(
             outputDirectory,
-            "${alphaNumericRegex.replace(projectName, "")}${projectNames.indexOf(projectName)}.zip"
+            "${alphaNumericRegex.replace(projectName, "")}.zip"
         )
 
         try {
@@ -103,7 +103,7 @@ internal class GitHubProjectDownloader<P : Project>(
     }
 
     private fun getInputStream(projectName: String): InputStream? {
-        val url = getURl(projectName)
+        val url = getUrl(projectName)
 
         try {
             val connection = url.openConnection() as? HttpURLConnection ?: return null
@@ -116,5 +116,5 @@ internal class GitHubProjectDownloader<P : Project>(
         }
     }
 
-    internal fun getURl(projectName: String) = URL("https://github.com/$projectName/archive/master.zip")
+    internal fun getUrl(projectName: String) = URL("https://github.com/$projectName/archive/master.zip")
 }
