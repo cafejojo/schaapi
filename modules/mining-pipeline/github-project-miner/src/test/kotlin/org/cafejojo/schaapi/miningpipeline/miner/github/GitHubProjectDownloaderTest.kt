@@ -16,7 +16,7 @@ import java.nio.file.Files
 import java.util.stream.Stream
 
 internal object GitHubProjectDownloaderTest : Spek({
-    var output = Files.createTempDirectory("project-downloader").toFile()
+    lateinit var output: File
 
     /**
      * Creates a ZIP file with the given directory name (+ZIP extension) in [customOutput] containing a single text file
@@ -172,9 +172,10 @@ internal object GitHubProjectDownloaderTest : Spek({
 
     describe("when downloading searchContent project") {
         it("should save the unzipped file and delete the old zip file") {
-            val zipFile = addZipFile("testProject", "content", Files.createTempDirectory("project-downloader").toFile())
+            val zipFile = addZipFile("testProject", "content", output)
 
-            val downloader = spy(GitHubProjectDownloader(Stream.of("testProject"), output, ::testProjectPacker))
+            val workDir = File(output, "downloads").apply { mkdirs() }
+            val downloader = spy(GitHubProjectDownloader(Stream.of("testProject"), workDir, ::testProjectPacker))
             val mockHttpURLConnection = mock<HttpURLConnection> {
                 on(it.inputStream) doReturn FileInputStream(zipFile)
             }
@@ -182,12 +183,12 @@ internal object GitHubProjectDownloaderTest : Spek({
 
             doReturn(mockURL).`when`(downloader).getUrl("testProject")
 
-            assertThat(output.listFiles()).isEmpty()
+            assertThat(workDir.listFiles()).isEmpty()
 
             downloader.download()
 
-            assertThat(output.listFiles()).hasSize(1)
-            assertThat(output.listFiles().first().listFiles().first().readText()).isEqualTo("content")
+            assertThat(workDir.listFiles()).hasSize(1)
+            assertThat(workDir.listFiles().first().listFiles().first().readText()).isEqualTo("content")
         }
     }
 })
