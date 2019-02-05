@@ -44,31 +44,35 @@ internal class DirectoryMiningCommandLineInterface : CommandLineInterface() {
                 val libraryProject = JavaMavenProject(libraryDir, maven.dir)
 
                 MiningPipeline(
-                    outputDirectory = outputDir,
                     projectMiner = directory.createMiner(),
-                    searchOptions = directory.createOptions(),
                     libraryProjectCompiler = JavaMavenProjectCompiler(displayOutput = true),
                     userProjectCompiler = JavaMavenProjectCompiler(skipCompile = directoryMinerCli.skipUserCompile),
                     libraryUsageGraphGenerator = jimpleLibraryUsageGraphGenerator,
                     patternDetector = patternDetector.createPatternDetector(),
                     patternFilter = patternFilter.createPatternFilter(libraryProject),
                     testGenerator = testGenerator.createTestGenerator(outputDir, libraryProject)
-                ).run(libraryProject)
+                ).run(
+                    outputDirectory = outputDir,
+                    searchOptions = directory.createOptions(),
+                    libraryProject = libraryProject
+                )
             }
             ProjectType.JAVA_JAR -> {
                 val libraryProject = JavaJarProject(libraryDir)
 
                 MiningPipeline(
-                    outputDirectory = outputDir,
                     projectMiner = directory.createMiner(),
-                    searchOptions = directory.createOptions(),
                     libraryProjectCompiler = JavaJarProjectCompiler(),
                     userProjectCompiler = JavaMavenProjectCompiler(skipCompile = directoryMinerCli.skipUserCompile),
                     libraryUsageGraphGenerator = jimpleLibraryUsageGraphGenerator,
                     patternDetector = patternDetector.createPatternDetector(),
                     patternFilter = patternFilter.createPatternFilter(libraryProject),
                     testGenerator = testGenerator.createTestGenerator(outputDir, libraryProject)
-                ).run(libraryProject)
+                ).run(
+                    outputDirectory = outputDir,
+                    searchOptions = directory.createOptions(),
+                    libraryProject = libraryProject
+                )
             }
         }
 

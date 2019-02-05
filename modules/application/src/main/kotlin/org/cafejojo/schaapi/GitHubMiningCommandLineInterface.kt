@@ -40,31 +40,35 @@ internal class GitHubMiningCommandLineInterface : CommandLineInterface() {
                 val libraryProject = JavaMavenProject(libraryDir, maven.dir)
 
                 MiningPipeline(
-                    outputDirectory = outputDir,
                     projectMiner = gitHub.createMiner(outputDir),
-                    searchOptions = gitHub.createOptions(),
                     libraryProjectCompiler = JavaMavenProjectCompiler(true),
                     userProjectCompiler = JavaMavenProjectCompiler(),
                     libraryUsageGraphGenerator = jimpleLibraryUsageGraphGenerator,
                     patternDetector = patternDetector.createPatternDetector(),
                     patternFilter = patternFilter.createPatternFilter(libraryProject),
                     testGenerator = testGenerator.createTestGenerator(outputDir, libraryProject)
-                ).run(libraryProject)
+                ).run(
+                    outputDirectory = outputDir,
+                    searchOptions = gitHub.createOptions(),
+                    libraryProject = libraryProject
+                )
             }
             ProjectType.JAVA_JAR -> {
                 val libraryProject = JavaJarProject(libraryDir)
 
                 MiningPipeline(
-                    outputDirectory = outputDir,
                     projectMiner = gitHub.createMiner(outputDir),
-                    searchOptions = gitHub.createOptions(),
                     libraryProjectCompiler = JavaJarProjectCompiler(),
                     userProjectCompiler = JavaMavenProjectCompiler(),
                     libraryUsageGraphGenerator = jimpleLibraryUsageGraphGenerator,
                     patternDetector = patternDetector.createPatternDetector(),
                     patternFilter = patternFilter.createPatternFilter(libraryProject),
                     testGenerator = testGenerator.createTestGenerator(outputDir, libraryProject)
-                ).run(libraryProject)
+                ).run(
+                    outputDirectory = outputDir,
+                    searchOptions = gitHub.createOptions(),
+                    libraryProject = libraryProject
+                )
             }
         }
 
