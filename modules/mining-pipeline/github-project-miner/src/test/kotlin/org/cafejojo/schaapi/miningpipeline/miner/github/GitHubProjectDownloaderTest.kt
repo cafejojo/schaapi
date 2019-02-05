@@ -56,32 +56,34 @@ internal object GitHubProjectDownloaderTest : Spek({
     describe("When saving searchContent stream to file") {
         it("should save the contents of the file to stream") {
             val repoName = "testRepo"
-            val repoNames = listOf(repoName)
+            val repoNameDigest = "b4a4714e718a2fef94071ae2d42d87e7"
             val zipStreamContent = "testZip"
             val repoZipStream = zipStreamContent.byteInputStream()
 
-            GitHubProjectDownloader(repoNames.stream(), output, ::testProjectPacker)
+            GitHubProjectDownloader(listOf(repoName).stream(), output, ::testProjectPacker)
                 .saveZipToFile(repoZipStream, repoName)
 
-            assertThat(File(output, "$repoName.zip")).exists()
-            assertThat(File(output, "$repoName.zip").readText()).isEqualTo(zipStreamContent)
+            assertThat(File(output, "$repoName-$repoNameDigest.zip")).exists()
+            assertThat(File(output, "$repoName-$repoNameDigest.zip").readText()).isEqualTo(zipStreamContent)
         }
 
         it("should remove illegal characters from the repo name") {
             val repoName = ",./<>?;':\"a[]{}-=_+!@b#$%^&*()"
-            val repoNames = listOf(repoName)
+            val repoNameDigest = "0ff8c4342658756c2f319f74836b5d1e"
             val zipStreamContent = "testZip"
             val repoZipStream = zipStreamContent.byteInputStream()
 
-            GitHubProjectDownloader(repoNames.stream(), output, ::testProjectPacker)
+            GitHubProjectDownloader(listOf(repoName).stream(), output, ::testProjectPacker)
                 .saveZipToFile(repoZipStream, repoName)
 
-            assertThat(File(output, "ab.zip")).exists()
+            assertThat(File(output, "ab-$repoNameDigest.zip")).exists()
         }
 
         it("should be able to save multiple projects") {
             val repoName1 = "testRepo1"
             val repoName2 = "testRepo2"
+            val repoNameDigest1 = "7b3a34debd09d6bf34c5a59f742cbc86"
+            val repoNameDigest2 = "69e3cf922a4ae3c6e4010608fac69f52"
             val zip1StreamContent = "testZip1"
             val zip2StreamContent = "testZip2"
             val repo1ZipStream = zip1StreamContent.byteInputStream()
@@ -92,23 +94,23 @@ internal object GitHubProjectDownloaderTest : Spek({
                 .apply { saveZipToFile(repo1ZipStream, repoName1) }
                 .apply { saveZipToFile(repo2ZipStream, repoName2) }
 
-            assertThat(File(output, "$repoName1.zip")).exists()
-            assertThat(File(output, "$repoName2.zip")).exists()
+            assertThat(File(output, "$repoName1-$repoNameDigest1.zip")).exists()
+            assertThat(File(output, "$repoName2-$repoNameDigest2.zip")).exists()
 
-            assertThat(File(output, "$repoName1.zip").readText()).isEqualTo(zip1StreamContent)
-            assertThat(File(output, "$repoName2.zip").readText()).isEqualTo(zip2StreamContent)
+            assertThat(File(output, "$repoName1-$repoNameDigest1.zip").readText()).isEqualTo(zip1StreamContent)
+            assertThat(File(output, "$repoName2-$repoNameDigest2.zip").readText()).isEqualTo(zip2StreamContent)
         }
 
         it("should overwrite directories which exist") {
             val repoName = "testRepo"
-            val repoNames = listOf(repoName)
+            val repoNameDigest = "b4a4714e718a2fef94071ae2d42d87e7"
             val zipStreamContent = "testZip"
             val repoZipStream = zipStreamContent.byteInputStream()
-            File(output, "testRepo.zip").createNewFile()
+            File(output, "$repoName-$repoNameDigest.zip").createNewFile()
 
             assertThat(output.listFiles().size).isEqualTo(1)
 
-            GitHubProjectDownloader(repoNames.stream(), output, ::testProjectPacker)
+            GitHubProjectDownloader(listOf(repoName).stream(), output, ::testProjectPacker)
                 .saveZipToFile(repoZipStream, repoName)
 
             assertThat(output.listFiles().size).isEqualTo(1)
