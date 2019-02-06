@@ -39,6 +39,8 @@ internal class EvoSuiteRunner(
         "-base_dir", outputDirectory,
         "-projectCP", classpath,
         "-Dno_runtime_dependency=true",
+        "-Dvirtual_fs=false",
+        "-Dvirtual_net=false",
         "-Dsearch_budget=$generationTimeoutSeconds",
         "-Dstatistics_backend=NONE",
         "-Doutput_granularity=TESTCASE"
