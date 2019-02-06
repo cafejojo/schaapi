@@ -1,4 +1,4 @@
-package org.cafejojo.schaapi.miningpipeline.usagegraphgenerator.jimple.filters
+package org.cafejojo.schaapi.miningpipeline.patternfilter.jimple.libraryusagefilters
 
 import soot.Body
 

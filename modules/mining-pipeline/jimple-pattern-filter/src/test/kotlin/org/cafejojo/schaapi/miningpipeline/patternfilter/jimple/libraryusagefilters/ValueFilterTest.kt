@@ -1,9 +1,8 @@
-package org.cafejojo.schaapi.miningpipeline.usagegraphgenerator.jimple.filters
+package org.cafejojo.schaapi.miningpipeline.patternfilter.jimple.libraryusagefilters
 
 import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.mock
 import org.assertj.core.api.Assertions.assertThat
-import org.cafejojo.schaapi.miningpipeline.usagegraphgenerator.jimple.libraryProject
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
@@ -140,7 +139,8 @@ internal object ValueFilterTest : Spek({
         }
 
         it("does not recognize unknown new expressions") {
-            assertThatItDoesNotRecognize(mock<AnyNewExpr>())
+            assertThatItDoesNotRecognize(
+                mock<AnyNewExpr>())
         }
 
         it("filters cast expressions") {
@@ -163,13 +163,16 @@ internal object ValueFilterTest : Spek({
         }
 
         it("does not recognize unknown expressions") {
-            assertThatItDoesNotRecognize(mock<Expr>())
+            assertThatItDoesNotRecognize(
+                mock<Expr>())
         }
     }
 
     describe("filtering of ref values based on library usage") {
-        val libraryClass = constructDeclaringClass(LIBRARY_CLASS)
-        val nonLibraryClass = constructDeclaringClass(NON_LIBRARY_CLASS)
+        val libraryClass =
+            constructDeclaringClass(LIBRARY_CLASS)
+        val nonLibraryClass =
+            constructDeclaringClass(NON_LIBRARY_CLASS)
 
         val libraryField = mock<SootField> {
             on { declaringClass } doReturn libraryClass
@@ -209,11 +212,13 @@ internal object ValueFilterTest : Spek({
         }
 
         it("does not recognize unknown refs") {
-            assertThatItDoesNotRecognize(mock<Ref>())
+            assertThatItDoesNotRecognize(
+                mock<Ref>())
         }
 
         it("does not recognize unknown concrete refs") {
-            assertThatItDoesNotRecognize(mock<ConcreteRef>())
+            assertThatItDoesNotRecognize(
+                mock<ConcreteRef>())
         }
     }
 
@@ -233,12 +238,19 @@ internal object ValueFilterTest : Spek({
         }
 
         it("filters class constants") {
-            assertThatItRetains(ClassConstant.v("L${LIBRARY_CLASS.replace('.', '/')};"))
-            assertThatItDoesNotRetain(ClassConstant.v("L${NON_LIBRARY_CLASS.replace('.', '/')};"))
+            assertThatItRetains(
+                ClassConstant.v("L${LIBRARY_CLASS.replace(
+                    '.',
+                    '/')};"))
+            assertThatItDoesNotRetain(
+                ClassConstant.v("L${NON_LIBRARY_CLASS.replace(
+                    '.',
+                    '/')};"))
         }
 
         it("does not recognize unknown immediates") {
-            assertThatItDoesNotRecognize(mock<Immediate>())
+            assertThatItDoesNotRecognize(
+                mock<Immediate>())
         }
     }
 
@@ -256,7 +268,8 @@ internal object ValueFilterTest : Spek({
 
     describe("filtering of unrecognized values based on library usage") {
         it("does not recognize unknown values") {
-            assertThatItDoesNotRecognize(mock {})
+            assertThatItDoesNotRecognize(
+                mock {})
         }
     }
 

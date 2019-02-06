@@ -1,4 +1,4 @@
-package org.cafejojo.schaapi.miningpipeline.usagegraphgenerator.jimple.filters
+package org.cafejojo.schaapi.miningpipeline.patternfilter.jimple.libraryusagefilters
 
 import org.cafejojo.schaapi.models.project.JavaProject
 import soot.Body
@@ -17,7 +17,7 @@ import soot.jimple.ThrowStmt
  *
  * @param project library project
  */
-internal class StatementFilter(project: JavaProject) : Filter {
+class StatementFilter(project: JavaProject) : Filter {
     private val valueFilter = ValueFilter(project)
     private val userUsageFilter = UserUsageValueFilter(project)
 

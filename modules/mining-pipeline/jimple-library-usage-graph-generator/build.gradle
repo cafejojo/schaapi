@@ -4,6 +4,7 @@ repositories {
 
 dependencies {
     compile project(":mining-pipeline")
+    compile project(":mining-pipeline:jimple-pattern-filter")
 
     compile group: "org.cafejojo.schaapi.models", name: "java-project", version: version
     compile group: "org.cafejojo.schaapi.models", name: "jimple-library-usage-graph", version: version

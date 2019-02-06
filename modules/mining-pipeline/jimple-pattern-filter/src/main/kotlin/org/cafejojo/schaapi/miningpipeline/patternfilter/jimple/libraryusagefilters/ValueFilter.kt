@@ -1,4 +1,4 @@
-package org.cafejojo.schaapi.miningpipeline.usagegraphgenerator.jimple.filters
+package org.cafejojo.schaapi.miningpipeline.patternfilter.jimple.libraryusagefilters
 
 import mu.KLogging
 import org.cafejojo.schaapi.models.libraryusagegraph.jimple.JimpleValueVisitor
@@ -32,7 +32,7 @@ import soot.jimple.toolkits.thread.synchronization.NewStaticLock
  *
  * @property filterRules the rules to apply to the values
  */
-internal open class ValueFilter(private val filterRules: List<ValueFilterRule>) {
+open class ValueFilter(private val filterRules: List<ValueFilterRule>) {
     constructor(libraryProject: JavaProject) : this(
         listOf(
             ClassValueFilterRule(),
@@ -57,13 +57,12 @@ internal open class ValueFilter(private val filterRules: List<ValueFilterRule>) 
 /**
  * Filters [Value]s based only on their usage of classes from user projects.
  */
-internal class UserUsageValueFilter(libraryProject: JavaProject) :
-    ValueFilter(listOf(UserUsageValueFilterRule(libraryProject)))
+class UserUsageValueFilter(libraryProject: JavaProject) : ValueFilter(listOf(UserUsageValueFilterRule(libraryProject)))
 
 /**
  * Describes how a [Value] should be filtered.
  */
-internal abstract class ValueFilterRule : JimpleValueVisitor<Boolean>() {
+abstract class ValueFilterRule : JimpleValueVisitor<Boolean>() {
     companion object : KLogging()
 
     /**

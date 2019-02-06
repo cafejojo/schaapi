@@ -1,4 +1,4 @@
-package org.cafejojo.schaapi.miningpipeline.usagegraphgenerator.jimple.filters
+package org.cafejojo.schaapi.miningpipeline.patternfilter.jimple.libraryusagefilters
 
 import soot.Body
 import soot.Unit
@@ -7,7 +7,7 @@ import soot.jimple.GotoStmt
 /**
  * Removes recursive [GotoStmt]s.
  */
-internal class RecursiveGotoFilter : Filter {
+class RecursiveGotoFilter : Filter {
     /**
      * Removes recursive [GotoStmt]s.
      *
