@@ -1,7 +1,9 @@
 package org.cafejojo.schaapi.miningpipeline.miner.github
 
+import me.tongfei.progressbar.ProgressBar
 import mu.KLogging
 import org.cafejojo.schaapi.miningpipeline.ProjectMiner
+import org.cafejojo.schaapi.miningpipeline.createProgressBarBuilder
 import org.cafejojo.schaapi.models.Project
 import org.cafejojo.schaapi.models.project.JavaMavenProject
 import org.kohsuke.github.GitHub
@@ -51,7 +53,12 @@ class GitHubProjectMiner<P : JavaMavenProject>(
             searchOptions.groupId, searchOptions.artifactId, searchOptions.version, false
         )
 
-        return GitHubProjectDownloader(projectNames, outProjects, projectPacker)
+        val projectNameStream = ProgressBar.wrap(
+            projectNames.parallelStream(),
+            createProgressBarBuilder("Downloading user projects")
+        )
+
+        return GitHubProjectDownloader(projectNameStream, outProjects, projectPacker)
             .download()
             .filter(versionVerifier::verify)
     }

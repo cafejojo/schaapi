@@ -13,9 +13,10 @@ import java.io.FileInputStream
 import java.net.HttpURLConnection
 import java.net.URL
 import java.nio.file.Files
+import java.util.stream.Stream
 
 internal object GitHubProjectDownloaderTest : Spek({
-    var output = Files.createTempDirectory("project-downloader").toFile()
+    lateinit var output: File
 
     /**
      * Creates a ZIP file with the given directory name (+ZIP extension) in [customOutput] containing a single text file
@@ -55,59 +56,61 @@ internal object GitHubProjectDownloaderTest : Spek({
     describe("When saving searchContent stream to file") {
         it("should save the contents of the file to stream") {
             val repoName = "testRepo"
-            val repoNames = listOf(repoName)
+            val repoNameDigest = "b4a4714e718a2fef94071ae2d42d87e7"
             val zipStreamContent = "testZip"
             val repoZipStream = zipStreamContent.byteInputStream()
 
-            GitHubProjectDownloader(repoNames, output, ::testProjectPacker)
+            GitHubProjectDownloader(listOf(repoName).stream(), output, ::testProjectPacker)
                 .saveZipToFile(repoZipStream, repoName)
 
-            assertThat(File(output, "${repoName}0.zip")).exists()
-            assertThat(File(output, "${repoName}0.zip").readText()).isEqualTo(zipStreamContent)
+            assertThat(File(output, "$repoName-$repoNameDigest.zip")).exists()
+            assertThat(File(output, "$repoName-$repoNameDigest.zip").readText()).isEqualTo(zipStreamContent)
         }
 
         it("should remove illegal characters from the repo name") {
-            val repoName = ",./<>?;':\"[]{}-=_+!@#$%^&*()"
-            val repoNames = listOf(repoName)
+            val repoName = ",./<>?;':\"a[]{}-=_+!@b#$%^&*()"
+            val repoNameDigest = "0ff8c4342658756c2f319f74836b5d1e"
             val zipStreamContent = "testZip"
             val repoZipStream = zipStreamContent.byteInputStream()
 
-            GitHubProjectDownloader(repoNames, output, ::testProjectPacker)
+            GitHubProjectDownloader(listOf(repoName).stream(), output, ::testProjectPacker)
                 .saveZipToFile(repoZipStream, repoName)
 
-            assertThat(File(output, "0.zip")).exists()
+            assertThat(File(output, "ab-$repoNameDigest.zip")).exists()
         }
 
         it("should be able to save multiple projects") {
             val repoName1 = "testRepo1"
             val repoName2 = "testRepo2"
+            val repoNameDigest1 = "7b3a34debd09d6bf34c5a59f742cbc86"
+            val repoNameDigest2 = "69e3cf922a4ae3c6e4010608fac69f52"
             val zip1StreamContent = "testZip1"
             val zip2StreamContent = "testZip2"
             val repo1ZipStream = zip1StreamContent.byteInputStream()
             val repo2ZipStream = zip2StreamContent.byteInputStream()
 
             val repoNames = listOf(repoName1, repoName2)
-            GitHubProjectDownloader(repoNames, output, ::testProjectPacker)
+            GitHubProjectDownloader(repoNames.stream(), output, ::testProjectPacker)
                 .apply { saveZipToFile(repo1ZipStream, repoName1) }
                 .apply { saveZipToFile(repo2ZipStream, repoName2) }
 
-            assertThat(File(output, "${repoName1}0.zip")).exists()
-            assertThat(File(output, "${repoName2}1.zip")).exists()
+            assertThat(File(output, "$repoName1-$repoNameDigest1.zip")).exists()
+            assertThat(File(output, "$repoName2-$repoNameDigest2.zip")).exists()
 
-            assertThat(File(output, "${repoName1}0.zip").readText()).isEqualTo(zip1StreamContent)
-            assertThat(File(output, "${repoName2}1.zip").readText()).isEqualTo(zip2StreamContent)
+            assertThat(File(output, "$repoName1-$repoNameDigest1.zip").readText()).isEqualTo(zip1StreamContent)
+            assertThat(File(output, "$repoName2-$repoNameDigest2.zip").readText()).isEqualTo(zip2StreamContent)
         }
 
         it("should overwrite directories which exist") {
             val repoName = "testRepo"
-            val repoNames = listOf(repoName)
+            val repoNameDigest = "b4a4714e718a2fef94071ae2d42d87e7"
             val zipStreamContent = "testZip"
             val repoZipStream = zipStreamContent.byteInputStream()
-            File(output, "testRepo0.zip").createNewFile()
+            File(output, "$repoName-$repoNameDigest.zip").createNewFile()
 
             assertThat(output.listFiles().size).isEqualTo(1)
 
-            GitHubProjectDownloader(repoNames, output, ::testProjectPacker)
+            GitHubProjectDownloader(listOf(repoName).stream(), output, ::testProjectPacker)
                 .saveZipToFile(repoZipStream, repoName)
 
             assertThat(output.listFiles().size).isEqualTo(1)
@@ -117,7 +120,7 @@ internal object GitHubProjectDownloaderTest : Spek({
     describe("when unzipping searchContent file") {
         it("should create searchContent new directory and remove the old") {
             val zipFile = addZipFile("testZipDirectory", "")
-            val unzippedFile = GitHubProjectDownloader(emptyList(), output, ::testProjectPacker).unzip(zipFile)
+            val unzippedFile = GitHubProjectDownloader(Stream.of(), output, ::testProjectPacker).unzip(zipFile)
 
             assertThat(output.listFiles()).doesNotContain(zipFile)
             assertThat(output.listFiles()).contains(unzippedFile)
@@ -125,7 +128,7 @@ internal object GitHubProjectDownloaderTest : Spek({
 
         it("should create searchContent new directory which has searchContent file with the expected content") {
             val zipFile = addZipFile("testZipDirectory", "test text")
-            val unzippedFile = GitHubProjectDownloader(emptyList(), output, ::testProjectPacker).unzip(zipFile)
+            val unzippedFile = GitHubProjectDownloader(Stream.of(), output, ::testProjectPacker).unzip(zipFile)
 
             assertThat(unzippedFile?.listFiles()?.first()?.readText()).isEqualTo("test text")
         }
@@ -135,7 +138,7 @@ internal object GitHubProjectDownloaderTest : Spek({
 
             assertThat(output.listFiles()).containsExactly(zipFile)
 
-            val unzippedFile = GitHubProjectDownloader(emptyList(), output, ::testProjectPacker).unzip(zipFile)
+            val unzippedFile = GitHubProjectDownloader(Stream.of(), output, ::testProjectPacker).unzip(zipFile)
 
             assertThat(output.listFiles()).containsExactly(unzippedFile)
         }
@@ -146,7 +149,7 @@ internal object GitHubProjectDownloaderTest : Spek({
 
             assertThat(output.listFiles().size).isEqualTo(2)
 
-            GitHubProjectDownloader(emptyList(), output, ::testProjectPacker).unzip(zipFile)
+            GitHubProjectDownloader(Stream.of(), output, ::testProjectPacker).unzip(zipFile)
 
             assertThat(output.listFiles().size).isEqualTo(1)
         }
@@ -154,7 +157,7 @@ internal object GitHubProjectDownloaderTest : Spek({
         it("should return null if the zip file does not exist") {
             val invisibleFile = File(output, "invisibleFile")
 
-            assertThat(GitHubProjectDownloader(emptyList(), output, ::testProjectPacker).unzip(invisibleFile)).isNull()
+            assertThat(GitHubProjectDownloader(Stream.of(), output, ::testProjectPacker).unzip(invisibleFile)).isNull()
             assertThat(output.listFiles()).isEmpty()
         }
 
@@ -162,29 +165,30 @@ internal object GitHubProjectDownloaderTest : Spek({
             val notAZipFile = File(output, "notAZipFile")
             notAZipFile.createNewFile()
 
-            assertThat(GitHubProjectDownloader(emptyList(), output, ::testProjectPacker).unzip(notAZipFile)).isNull()
+            assertThat(GitHubProjectDownloader(Stream.of(), output, ::testProjectPacker).unzip(notAZipFile)).isNull()
             assertThat(output.listFiles()).isEmpty()
         }
     }
 
     describe("when downloading searchContent project") {
         it("should save the unzipped file and delete the old zip file") {
-            val zipFile = addZipFile("testProject", "content", Files.createTempDirectory("project-downloader").toFile())
+            val zipFile = addZipFile("testProject", "content", output)
 
-            val downloader = spy(GitHubProjectDownloader(listOf("testProject"), output, ::testProjectPacker))
+            val workDir = File(output, "downloads").apply { mkdirs() }
+            val downloader = spy(GitHubProjectDownloader(Stream.of("testProject"), workDir, ::testProjectPacker))
             val mockHttpURLConnection = mock<HttpURLConnection> {
                 on(it.inputStream) doReturn FileInputStream(zipFile)
             }
             val mockURL = mock<URL> { on(it.openConnection()) doReturn mockHttpURLConnection }
 
-            doReturn(mockURL).`when`(downloader).getURl("testProject")
+            doReturn(mockURL).`when`(downloader).getUrl("testProject")
 
-            assertThat(output.listFiles()).isEmpty()
+            assertThat(workDir.listFiles()).isEmpty()
 
             downloader.download()
 
-            assertThat(output.listFiles()).hasSize(1)
-            assertThat(output.listFiles().first().listFiles().first().readText()).isEqualTo("content")
+            assertThat(workDir.listFiles()).hasSize(1)
+            assertThat(workDir.listFiles().first().listFiles().first().readText()).isEqualTo("content")
         }
     }
 })
