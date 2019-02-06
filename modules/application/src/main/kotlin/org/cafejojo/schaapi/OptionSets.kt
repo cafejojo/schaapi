@@ -20,6 +20,7 @@ import org.cafejojo.schaapi.models.libraryusagegraph.jimple.JimplePathEnumerator
 import org.cafejojo.schaapi.models.project.JavaMavenProject
 import org.cafejojo.schaapi.models.project.JavaProject
 import java.io.File
+import kotlin.system.exitProcess
 
 /**
  * A piece of behavior for a [CommandLineInterface] that can "translate" parsed command-line arguments into components
@@ -37,6 +38,8 @@ abstract class OptionSet {
 
     /**
      * Reads parsed command-line options into the fields of this [OptionSet].
+     *
+     * This function will call [exitProcess] if the command-line options are invalid.
      *
      * @param cmd the parsed command-line options
      */
@@ -152,6 +155,7 @@ class GitHubMavenMinerOptionSet(private val maven: MavenOptionSet) : OptionSet()
 
         if (sortByStargazers && sortByWatchers) {
             logger.error { "Cannot sort repositories on both stargazers and watchers." }
+            exitProcess(-1)
         }
     }
 
@@ -337,6 +341,7 @@ class JimpleEvoSuiteTestGeneratorOptionSet : OptionSet() {
 
         if (parallel && !disableOutput) {
             logger.error { "Cannot run test generator in parallel if output is not disabled." }
+            exitProcess(-1)
         }
     }
 
