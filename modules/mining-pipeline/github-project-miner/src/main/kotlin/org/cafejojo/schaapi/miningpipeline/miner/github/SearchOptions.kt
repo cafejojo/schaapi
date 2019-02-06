@@ -36,7 +36,7 @@ abstract class GitHubSearchOptions(private val maxProjects: Int) : SearchOptions
             .apply { if (sortByStargazers) sortByStargazers(this) }
             .apply { if (sortByWatchers) sortByWatchers(this) }
             .take(maxProjects)
-            .map { it.owner.fullName to it.owner.defaultBranch }
+            .map { it.owner.fullName to (it.owner.defaultBranch ?: "master") }
 
         logger.info { "Found ${names.size} projects names using the GitHub v3 Search API." }
         return names
