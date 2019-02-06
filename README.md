@@ -35,7 +35,8 @@ usage: schaapi -o <arg> -l <arg> [--skip_user_compile] [--maven_dir <arg>]
        [--pattern_detector_minimum_count <arg>]
        [--pattern_detector_maximum_sequence_length <arg>]
        [--pattern_minimum_library_usage_count <arg>]
-       [--test_generator_disable_output] [--test_generator_timeout <arg>]
+       [--test_generator_parallel] [--test_generator_disable_output]
+       [--test_generator_timeout <arg>]
  -o,--output_dir <arg>                                 The output
                                                        directory.
  -l,--library_dir <arg>                                The library
@@ -66,6 +67,12 @@ usage: schaapi -o <arg> -l <arg> [--skip_user_compile] [--maven_dir <arg>]
     --pattern_minimum_library_usage_count <arg>        The minimum number
                                                        of library usages
                                                        per method.
+    --test_generator_parallel                          True if test
+                                                       generator should
+                                                       run in parallel.
+                                                       Requires that test
+                                                       generator output is
+                                                       disabled.
     --test_generator_disable_output                    True if test
                                                        generator output
                                                        should be hidden.
@@ -89,7 +96,8 @@ usage: schaapi -o <arg> -l <arg> [--maven_dir <arg>] [--repair_maven]
        [--library_type <arg>] [--pattern_minimum_library_usage_count
        <arg>] [--pattern_detector_minimum_count <arg>]
        [--pattern_detector_maximum_sequence_length <arg>]
-       [--test_generator_disable_output] [--test_generator_timeout <arg>]
+       [--test_generator_parallel] [--test_generator_disable_output]
+       [--test_generator_timeout <arg>]
  -o,--output_dir <arg>                                 The output
                                                        directory.
  -l,--library_dir <arg>                                The library
@@ -140,6 +148,12 @@ usage: schaapi -o <arg> -l <arg> [--maven_dir <arg>] [--repair_maven]
                                                        of sequences to be
                                                        considered for
                                                        pattern detection.
+    --test_generator_parallel                          True if test
+                                                       generator should
+                                                       run in parallel.
+                                                       Requires that test
+                                                       generator output is
+                                                       disabled.
     --test_generator_disable_output                    True if test
                                                        generator output
                                                        should be hidden.

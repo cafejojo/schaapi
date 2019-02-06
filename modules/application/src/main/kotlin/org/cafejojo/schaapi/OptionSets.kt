@@ -20,6 +20,7 @@ import org.cafejojo.schaapi.models.libraryusagegraph.jimple.JimplePathEnumerator
 import org.cafejojo.schaapi.models.project.JavaMavenProject
 import org.cafejojo.schaapi.models.project.JavaProject
 import java.io.File
+import kotlin.system.exitProcess
 
 /**
  * A piece of behavior for a [CommandLineInterface] that can "translate" parsed command-line arguments into components
@@ -37,6 +38,8 @@ abstract class OptionSet {
 
     /**
      * Reads parsed command-line options into the fields of this [OptionSet].
+     *
+     * This function will call [exitProcess] if the command-line options are invalid.
      *
      * @param cmd the parsed command-line options
      */
@@ -152,6 +155,7 @@ class GitHubMavenMinerOptionSet(private val maven: MavenOptionSet) : OptionSet()
 
         if (sortByStargazers && sortByWatchers) {
             logger.error { "Cannot sort repositories on both stargazers and watchers." }
+            exitProcess(-1)
         }
     }
 
@@ -305,10 +309,17 @@ class PatternFilterOptionSet : OptionSet() {
  * Behavior linked to generating tests with EvoSuite from Jimple code.
  */
 class JimpleEvoSuiteTestGeneratorOptionSet : OptionSet() {
+    private var parallel = false
     private var disableOutput = false
     private var timeout = 0
 
     override fun addOptionsTo(options: Options): Options = options
+        .addOption(Option
+            .builder()
+            .longOpt("test_generator_parallel")
+            .desc("True if test generator should run in parallel. Requires that test generator output is disabled.")
+            .hasArg(false)
+            .build())
         .addOption(Option
             .builder()
             .longOpt("test_generator_disable_output")
@@ -324,8 +335,14 @@ class JimpleEvoSuiteTestGeneratorOptionSet : OptionSet() {
             .build())
 
     override fun read(cmd: CommandLine) {
+        parallel = cmd.hasOption("test_generator_parallel")
         timeout = cmd.getOptionValue("test_generator_timeout", DEFAULT_TIMEOUT).toInt()
         disableOutput = cmd.hasOption("test_generator_disable_output")
+
+        if (parallel && !disableOutput) {
+            logger.error { "Cannot run test generator in parallel if output is not disabled." }
+            exitProcess(-1)
+        }
     }
 
     /**
@@ -340,11 +357,12 @@ class JimpleEvoSuiteTestGeneratorOptionSet : OptionSet() {
             outputDirectory = outputDir,
             library = libraryProject,
             timeout = timeout,
+            parallel = parallel,
             processStandardStream = if (disableOutput) null else System.out,
             processErrorStream = if (disableOutput) null else System.out
         )
 
-    private companion object {
+    private companion object : KLogging() {
         const val DEFAULT_TIMEOUT = "60"
     }
 }

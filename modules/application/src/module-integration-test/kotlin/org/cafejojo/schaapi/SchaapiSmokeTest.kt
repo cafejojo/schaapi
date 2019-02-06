@@ -35,9 +35,9 @@ internal class SchaapiSmokeTest : Spek({
             "--test_generator_timeout", "3"
         ))
 
-        assertThat(target.resolve("patterns/org/cafejojo/schaapi/patterns/Patterns_0.class")).isFile()
+        assertThat(target.resolve("patterns/pattern0/org/cafejojo/schaapi/patterns/Pattern_0.class")).isFile()
         assertThat(
-            target.resolve("tests/evosuite-tests/org/cafejojo/schaapi/patterns/Patterns_0_ESTest_0.java")
+            target.resolve("tests/evosuite-tests/org/cafejojo/schaapi/patterns/Pattern_0_ESTest_0.java")
         ).isFile()
     }
 })
