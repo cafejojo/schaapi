@@ -39,7 +39,7 @@ class MavenLibraryVersionVerifier(
         isBatchMode = true
         javaHome = File(System.getProperty("java.home"))
         mavenOpts = """
-            -DoutputFile=${getDependenciesListLocation(project)}
+            -DoutputFile=${getDependenciesListLocation(project).absolutePath}
             -Dtokens=whitespace
         """.trimIndent().replace("\n", " ")
     }
