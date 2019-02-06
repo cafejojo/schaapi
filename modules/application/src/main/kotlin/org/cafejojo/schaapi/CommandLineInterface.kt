@@ -97,7 +97,7 @@ abstract class CommandLineInterface {
             .build())
         .addOption(Option
             .builder()
-            .longOpt("delete_output_dir")
+            .longOpt("delete_old_output")
             .desc("Deletes the output directory before running the pipeline.")
             .hasArg(false)
             .build())

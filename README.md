@@ -30,7 +30,7 @@ Schaapi allows you to mine projects from different sources, such as GitHub. In p
 <p>
 
 ```
-usage: schaapi -o <arg> [--delete_output_dir] -l <arg>
+usage: schaapi -o <arg> [--delete_old_output] -l <arg>
        [--skip_user_compile] [--maven_dir <arg>] [--repair_maven] -u <arg>
        [--library_type <arg>] [--pattern_detector_minimum_count <arg>]
        [--pattern_detector_maximum_sequence_length <arg>]
@@ -38,7 +38,7 @@ usage: schaapi -o <arg> [--delete_output_dir] -l <arg>
        [--test_generator_disable_output] [--test_generator_timeout <arg>]
  -o,--output_dir <arg>                                 The output
                                                        directory.
-    --delete_output_dir                                Deletes the output
+    --delete_old_output                                Deletes the output
                                                        directory before
                                                        running the
                                                        pipeline.
@@ -86,7 +86,7 @@ usage: schaapi -o <arg> [--delete_output_dir] -l <arg>
 <p>
 
 ```
-usage: schaapi -o <arg> [--delete_output_dir] -l <arg> [--maven_dir <arg>]
+usage: schaapi -o <arg> [--delete_old_output] -l <arg> [--maven_dir <arg>]
        [--repair_maven] --github_oauth_token <arg> [--max_projects <arg>]
        --library_group_id <arg> --library_artifact_id <arg>
        --library_version <arg> [--sort_by_stargazers] [--sort_by_watchers]
@@ -96,7 +96,7 @@ usage: schaapi -o <arg> [--delete_output_dir] -l <arg> [--maven_dir <arg>]
        [--test_generator_disable_output] [--test_generator_timeout <arg>]
  -o,--output_dir <arg>                                 The output
                                                        directory.
-    --delete_output_dir                                Deletes the output
+    --delete_old_output                                Deletes the output
                                                        directory before
                                                        running the
                                                        pipeline.
