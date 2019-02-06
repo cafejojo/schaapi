@@ -6,6 +6,7 @@ import org.cafejojo.schaapi.models.libraryusagegraph.jimple.JimpleNode
 import org.cafejojo.schaapi.models.libraryusagegraph.jimple.JimpleValueVisitor
 import org.cafejojo.schaapi.models.project.JavaProject
 import soot.Value
+import soot.jimple.StaticInvokeExpr
 import soot.jimple.internal.JStaticInvokeExpr
 
 /**
@@ -35,21 +36,27 @@ class InsufficientLibraryUsageFilter(libraryProject: JavaProject, private val mi
  */
 class LibraryUsageVisitor(private val libraryProject: JavaProject) : JimpleValueVisitor<Boolean>() {
     /**
-     * Returns true iff the type of [value] is for a library class or [JStaticInvokeExpr] declaring class is for a
-     * library.
+     * Returns true iff the type of [value] is for a library class.
      *
      * @param value a [Value]
      * @return true iff the type of [value] is for a library class
      */
-    override fun applyDefault(value: Value) = isLibraryClass(value.type.toString()) ||
-        (value is JStaticInvokeExpr) && isLibraryClass(value.methodRef.declaringClass().toString())
+    override fun applyDefault(value: Value) = isLibraryClass(value.type.toString())
 
     /**
-     * Returns true iff [result1] or [result2] are true.
+     * Returns true iff [JStaticInvokeExpr] declaring class is for a library.
+     *
+     * @param value a [StaticInvokeExpr]
+     * @return true iff [JStaticInvokeExpr] declaring class is for a library
+     */
+    override fun apply(value: StaticInvokeExpr) = isLibraryClass(value.methodRef.declaringClass().toString())
+
+    /**
+     * Returns true iff [result1] or [result2] is true.
      *
      * @param result1 a [Boolean]
      * @param result2 a [Boolean]
-     * @return true iff [result1] or [result2] are true
+     * @return true iff [result1] or [result2] is true
      */
     override fun accumulate(result1: Boolean, result2: Boolean) = result1 || result2
 
