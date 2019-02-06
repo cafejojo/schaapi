@@ -40,7 +40,7 @@ internal class GitHubProjectDownloader<P : Project>(
      */
     fun download(): List<P> =
         projectNames
-            .map { downloadAndSaveProject(it.first, it.second) }
+            .map { (projectName, branchName) -> downloadAndSaveProject(projectName, branchName) }
             .toList()
             .filterNotNull()
 
