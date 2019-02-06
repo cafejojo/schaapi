@@ -30,14 +30,18 @@ Schaapi allows you to mine projects from different sources, such as GitHub. In p
 <p>
 
 ```
-usage: schaapi -o <arg> -l <arg> [--skip_user_compile] [--maven_dir <arg>]
-       [--repair_maven] -u <arg> [--library_type <arg>]
-       [--pattern_detector_minimum_count <arg>]
+usage: schaapi -o <arg> [--delete_output_dir] -l <arg>
+       [--skip_user_compile] [--maven_dir <arg>] [--repair_maven] -u <arg>
+       [--library_type <arg>] [--pattern_detector_minimum_count <arg>]
        [--pattern_detector_maximum_sequence_length <arg>]
        [--pattern_minimum_library_usage_count <arg>]
        [--test_generator_disable_output] [--test_generator_timeout <arg>]
  -o,--output_dir <arg>                                 The output
                                                        directory.
+    --delete_output_dir                                Deletes the output
+                                                       directory before
+                                                       running the
+                                                       pipeline.
  -l,--library_dir <arg>                                The library
                                                        directory.
     --skip_user_compile                                Skip compilation of
@@ -82,8 +86,8 @@ usage: schaapi -o <arg> -l <arg> [--skip_user_compile] [--maven_dir <arg>]
 <p>
 
 ```
-usage: schaapi -o <arg> -l <arg> [--maven_dir <arg>] [--repair_maven]
-       --github_oauth_token <arg> [--max_projects <arg>]
+usage: schaapi -o <arg> [--delete_output_dir] -l <arg> [--maven_dir <arg>]
+       [--repair_maven] --github_oauth_token <arg> [--max_projects <arg>]
        --library_group_id <arg> --library_artifact_id <arg>
        --library_version <arg> [--sort_by_stargazers] [--sort_by_watchers]
        [--library_type <arg>] [--pattern_minimum_library_usage_count
@@ -92,6 +96,10 @@ usage: schaapi -o <arg> -l <arg> [--maven_dir <arg>] [--repair_maven]
        [--test_generator_disable_output] [--test_generator_timeout <arg>]
  -o,--output_dir <arg>                                 The output
                                                        directory.
+    --delete_output_dir                                Deletes the output
+                                                       directory before
+                                                       running the
+                                                       pipeline.
  -l,--library_dir <arg>                                The library
                                                        directory.
     --maven_dir <arg>                                  The directory to

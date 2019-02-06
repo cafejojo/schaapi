@@ -53,6 +53,7 @@ private fun printAsciiArt() = try {
 @Suppress("LateinitUsage") // Values cannot be determined at initialization
 abstract class CommandLineInterface {
     lateinit var outputDir: File
+    private var deleteOutputDir = false
     lateinit var libraryDir: File
 
     val optionSets: MutableList<OptionSet> = mutableListOf()
@@ -66,8 +67,12 @@ abstract class CommandLineInterface {
         val cmd = parse(args)
         optionSets.forEach { it.read(cmd) }
 
-        outputDir = File(cmd.getOptionValue('o')).apply { mkdirs() }
+        outputDir = File(cmd.getOptionValue('o'))
+        deleteOutputDir = cmd.hasOption("delete_output_dir")
         libraryDir = File(cmd.getOptionValue('l'))
+
+        if (deleteOutputDir) outputDir.deleteRecursively()
+        outputDir.mkdirs()
 
         run(cmd)
     }
@@ -89,6 +94,12 @@ abstract class CommandLineInterface {
             .desc("The output directory.")
             .hasArg()
             .required()
+            .build())
+        .addOption(Option
+            .builder()
+            .longOpt("delete_output_dir")
+            .desc("Deletes the output directory before running the pipeline.")
+            .hasArg(false)
             .build())
         .addOption(Option
             .builder("l")
