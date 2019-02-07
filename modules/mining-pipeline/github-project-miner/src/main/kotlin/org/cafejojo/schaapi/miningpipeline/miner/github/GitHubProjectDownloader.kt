@@ -104,9 +104,8 @@ internal class GitHubProjectDownloader<P : Project>(
     }
 
     private fun getInputStream(projectName: String, branchName: String): InputStream? {
-        val url = getUrl(projectName, branchName)
-
         try {
+            val url = getUrl(projectName, branchName)
             val connection = url.openConnection() as? HttpURLConnection ?: return null
             logger.debug { "Established a connection with '$url'." }
 
