@@ -8,6 +8,7 @@ import org.cafejojo.schaapi.models.Project
 import org.cafejojo.schaapi.models.project.MavenProject
 import org.kohsuke.github.GitHub
 import java.io.File
+import kotlin.streams.toList
 
 /**
  * Mines projects on GitHub using the GitHub REST API v3.
@@ -45,21 +46,34 @@ class GitHubProjectMiner<P : MavenProject>(
         val gitHub: GitHub = GitHub.connectUsingOAuth(token)
         logger.info { "Successfully authenticated using token." }
 
-        val outProjects = outputDirectory.resolve("projects/").apply { mkdirs() }
-
         val projectNames = searchOptions.searchContent(gitHub)
 
-        val versionVerifier = MavenLibraryVersionVerifier(
-            searchOptions.groupId, searchOptions.artifactId, searchOptions.version, false
-        )
+        logger.info { "Started downloading user projects." }
+        val projectFiles = downloadProjects(projectNames)
+        logger.info { "Finished downloading user projects." }
+
+        logger.info { "Started verifying library versions in user projects." }
+        val versionVerifier =
+            MavenLibraryVersionVerifier(searchOptions.groupId, searchOptions.artifactId, searchOptions.version, false)
+        val verifiedProjectFiles = verifyProjects(versionVerifier, projectFiles)
+        logger.info { "Finished verifying library versions in user projects." }
+
+        return verifiedProjectFiles
+    }
+
+    private fun downloadProjects(projectNames: List<Pair<String, String>>): List<P> {
+        val outProjects = outputDirectory.resolve("projects/").apply { mkdirs() }
 
         val projectNameStream = ProgressBar.wrap(
             projectNames.parallelStream(),
             createProgressBarBuilder("Downloading user projects")
         )
 
-        return GitHubProjectDownloader(projectNameStream, outProjects, projectPacker)
-            .download()
-            .filter(versionVerifier::verify)
+        return GitHubProjectDownloader(projectNameStream, outProjects, projectPacker).download()
     }
+
+    private fun verifyProjects(versionVerifier: MavenLibraryVersionVerifier, projectFiles: List<P>) =
+        ProgressBar.wrap(projectFiles.parallelStream(), createProgressBarBuilder("Verifying user projects"))
+            .filter(versionVerifier::verify)
+            .toList()
 }

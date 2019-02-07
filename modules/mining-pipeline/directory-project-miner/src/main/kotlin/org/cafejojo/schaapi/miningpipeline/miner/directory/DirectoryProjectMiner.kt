@@ -3,6 +3,7 @@ package org.cafejojo.schaapi.miningpipeline.miner.directory
 import org.cafejojo.schaapi.miningpipeline.ProjectMiner
 import org.cafejojo.schaapi.models.Project
 import java.io.File
+import kotlin.streams.toList
 
 /**
  * Mines the projects in the given directory.
@@ -15,6 +16,8 @@ class DirectoryProjectMiner<P : Project>(private val projectPacker: (File) -> P)
     override fun mine(searchOptions: DirectorySearchOptions) =
         searchOptions.directory.listFiles()
             ?.filterNot { it.isHidden }
+            ?.parallelStream()
             ?.map { projectPacker(it) }
+            ?.toList()
             ?: emptyList()
 }

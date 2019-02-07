@@ -41,7 +41,7 @@ abstract class GitHubSearchOptions(private val maxProjects: Int) : SearchOptions
                 else null
             }
 
-        logger.info { "Found ${names.size} projects names using the GitHub v3 Search API." }
+        logger.info { "Found ${names.size} project names using the GitHub v3 Search API." }
         return names
     }
 
