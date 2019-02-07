@@ -60,7 +60,7 @@ internal object GitHubProjectDownloaderTest : Spek({
             val zipStreamContent = "testZip"
             val repoZipStream = zipStreamContent.byteInputStream()
 
-            GitHubProjectDownloader(listOf(repoName).stream(), output, ::testProjectPacker)
+            GitHubProjectDownloader(Stream.of(repoName to "master"), output, ::testProjectPacker)
                 .saveZipToFile(repoZipStream, repoName)
 
             assertThat(File(output, "$repoName-$repoNameDigest.zip")).exists()
@@ -73,7 +73,7 @@ internal object GitHubProjectDownloaderTest : Spek({
             val zipStreamContent = "testZip"
             val repoZipStream = zipStreamContent.byteInputStream()
 
-            GitHubProjectDownloader(listOf(repoName).stream(), output, ::testProjectPacker)
+            GitHubProjectDownloader(Stream.of(repoName to "master"), output, ::testProjectPacker)
                 .saveZipToFile(repoZipStream, repoName)
 
             assertThat(File(output, "ab-$repoNameDigest.zip")).exists()
@@ -89,7 +89,7 @@ internal object GitHubProjectDownloaderTest : Spek({
             val repo1ZipStream = zip1StreamContent.byteInputStream()
             val repo2ZipStream = zip2StreamContent.byteInputStream()
 
-            val repoNames = listOf(repoName1, repoName2)
+            val repoNames = listOf(repoName1 to "master", repoName2 to "master")
             GitHubProjectDownloader(repoNames.stream(), output, ::testProjectPacker)
                 .apply { saveZipToFile(repo1ZipStream, repoName1) }
                 .apply { saveZipToFile(repo2ZipStream, repoName2) }
@@ -110,7 +110,7 @@ internal object GitHubProjectDownloaderTest : Spek({
 
             assertThat(output.listFiles().size).isEqualTo(1)
 
-            GitHubProjectDownloader(listOf(repoName).stream(), output, ::testProjectPacker)
+            GitHubProjectDownloader(Stream.of(repoName to "master"), output, ::testProjectPacker)
                 .saveZipToFile(repoZipStream, repoName)
 
             assertThat(output.listFiles().size).isEqualTo(1)
@@ -175,13 +175,14 @@ internal object GitHubProjectDownloaderTest : Spek({
             val zipFile = addZipFile("testProject", "content", output)
 
             val workDir = File(output, "downloads").apply { mkdirs() }
-            val downloader = spy(GitHubProjectDownloader(Stream.of("testProject"), workDir, ::testProjectPacker))
+            val downloader =
+                spy(GitHubProjectDownloader(Stream.of("testProject" to "master"), workDir, ::testProjectPacker))
             val mockHttpURLConnection = mock<HttpURLConnection> {
                 on(it.inputStream) doReturn FileInputStream(zipFile)
             }
             val mockURL = mock<URL> { on(it.openConnection()) doReturn mockHttpURLConnection }
 
-            doReturn(mockURL).`when`(downloader).getUrl("testProject")
+            doReturn(mockURL).`when`(downloader).getUrl("testProject", "master")
 
             assertThat(workDir.listFiles()).isEmpty()
 

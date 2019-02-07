@@ -21,7 +21,7 @@ import kotlin.streams.toList
  * @property projectPacker packer which determines what type of [Project] to wrap the project directory in
  */
 internal class GitHubProjectDownloader<P : Project>(
-    private val projectNames: Stream<String>,
+    private val projectNames: Stream<Pair<String, String>>,
     private val outputDirectory: File,
     private val projectPacker: (File) -> P
 ) {
@@ -40,12 +40,12 @@ internal class GitHubProjectDownloader<P : Project>(
      */
     fun download(): List<P> =
         projectNames
-            .map { downloadAndSaveProject(it) }
+            .map { (projectName, branchName) -> downloadAndSaveProject(projectName, branchName) }
             .toList()
             .filterNotNull()
 
-    private fun downloadAndSaveProject(projectName: String): P? =
-        getInputStream(projectName)?.use { inputStream ->
+    private fun downloadAndSaveProject(projectName: String, branchName: String): P? =
+        getInputStream(projectName, branchName)?.use { inputStream ->
             val gitHubProjectZip = saveZipToFile(inputStream, projectName) ?: return null
             val gitHubProject = unzip(gitHubProjectZip) ?: return null
 
@@ -103,8 +103,8 @@ internal class GitHubProjectDownloader<P : Project>(
         return if (githubProject.exists()) githubProject else null
     }
 
-    private fun getInputStream(projectName: String): InputStream? {
-        val url = getUrl(projectName)
+    private fun getInputStream(projectName: String, branchName: String): InputStream? {
+        val url = getUrl(projectName, branchName)
 
         try {
             val connection = url.openConnection() as? HttpURLConnection ?: return null
@@ -117,5 +117,6 @@ internal class GitHubProjectDownloader<P : Project>(
         }
     }
 
-    internal fun getUrl(projectName: String) = URL("https://github.com/$projectName/archive/master.zip")
+    internal fun getUrl(projectName: String, branchName: String) =
+        URL("https://github.com/$projectName/archive/$branchName.zip")
 }

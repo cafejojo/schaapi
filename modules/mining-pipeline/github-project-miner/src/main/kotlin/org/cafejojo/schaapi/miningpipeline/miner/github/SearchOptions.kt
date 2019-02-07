@@ -26,7 +26,7 @@ abstract class GitHubSearchOptions(private val maxProjects: Int) : SearchOptions
      *
      * @return list of full names of found repositories on [GitHub] based on the passed options
      */
-    fun searchContent(gitHub: GitHub): List<String> {
+    fun searchContent(gitHub: GitHub): List<Pair<String, String>> {
         val searchResults = buildGitHubSearchContent(gitHub).list()
 
         logger.info { "Found ${searchResults.totalCount} projects." }
@@ -36,7 +36,10 @@ abstract class GitHubSearchOptions(private val maxProjects: Int) : SearchOptions
             .apply { if (sortByStargazers) sortByStargazers(this) }
             .apply { if (sortByWatchers) sortByWatchers(this) }
             .take(maxProjects)
-            .map { it.owner.fullName }
+            .mapNotNull {
+                if (it.owner.branches.contains("master")) it.owner.fullName to "master"
+                else null
+            }
 
         logger.info { "Found ${names.size} projects names using the GitHub v3 Search API." }
         return names
