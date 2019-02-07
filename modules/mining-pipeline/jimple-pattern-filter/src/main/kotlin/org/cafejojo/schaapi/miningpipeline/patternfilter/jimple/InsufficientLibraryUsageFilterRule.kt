@@ -16,15 +16,14 @@ class InsufficientLibraryUsageFilterRule(
     private val libraryProject: JavaProject,
     private val minUseCount: Int
 ) : PatternFilterRule<JimpleNode> {
+    private val statementFilter = StatementFilter(libraryProject)
+
     /**
      * Returns true iff there are at least [minUseCount] nodes in [pattern] that use classes from the library project.
      *
      * @param pattern the pattern to check for library usages
      * @return true iff there are at least [minUseCount] nodes in [pattern] that use classes from the library project
      */
-    override fun retain(pattern: Pattern<JimpleNode>): Boolean {
-        val statementFilter = StatementFilter(libraryProject)
-
-        return pattern.count { statementFilter.retain(it.statement) } >= minUseCount
-    }
+    override fun retain(pattern: Pattern<JimpleNode>) =
+        pattern.count { statementFilter.retain(it.statement) } >= minUseCount
 }

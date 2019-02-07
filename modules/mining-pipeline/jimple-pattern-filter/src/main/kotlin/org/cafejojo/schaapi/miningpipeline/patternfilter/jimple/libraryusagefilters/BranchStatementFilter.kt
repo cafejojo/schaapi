@@ -28,7 +28,7 @@ class BranchStatementFilter(project: JavaProject) : Filter {
             changed = false
 
             body.units.snapshotIterator().asSequence()
-                .filter(Companion::isBranchStatement)
+                .filter(::isBranchStatement)
                 .map { BranchStatement(body, it) }
                 .filter { !retain(it) }
                 .forEach {

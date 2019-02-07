@@ -9,7 +9,6 @@ import soot.SootMethod
 import soot.jimple.StaticInvokeExpr
 import java.io.File
 
-internal const val NON_LIBRARY_CLASS = "java.lang.String"
 internal const val USER_CLASS =
     "org.cafejojo.schaapi.miningpipeline.usagegraphgenerator.jimple.testclasses.users.SimpleTest"
 internal const val LIBRARY_CLASS =
