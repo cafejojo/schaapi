@@ -67,7 +67,23 @@ internal object GitHubProjectDownloaderTest : Spek({
             assertThat(File(output, "$repoName-$repoNameDigest.zip").readText()).isEqualTo(zipStreamContent)
         }
 
-        it("should remove illegal characters from the repo name") {
+        it("should skip repos that do not exist") {
+            val projectNames = Stream.of("cafejojo/doesnotexist" to "master")
+
+            val projects = GitHubProjectDownloader(projectNames, output, ::testProjectPacker).download()
+
+            assertThat(projects).isEmpty()
+        }
+
+        it("should skip branches that do not exist") {
+            val projectNames = Stream.of("cafejojo/schaapi" to "thisbranchdoesnotexist")
+
+            val projects = GitHubProjectDownloader(projectNames, output, ::testProjectPacker).download()
+
+            assertThat(projects).isEmpty()
+        }
+
+        it("should remove illegal characters from the repo name in the output name") {
             val repoName = ",./<>?;':\"a[]{}-=_+!@b#$%^&*()"
             val repoNameDigest = "0ff8c4342658756c2f319f74836b5d1e"
             val zipStreamContent = "testZip"
