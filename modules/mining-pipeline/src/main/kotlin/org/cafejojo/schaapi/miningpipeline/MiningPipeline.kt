@@ -28,7 +28,7 @@ class MiningPipeline<SO : SearchOptions, UP : Project, LP : Project, N : Node>(
     @Suppress("TooGenericExceptionCaught") // In this case it is relevant to catch and log an Exception
     fun run(outputDirectory: File, searchOptions: SO, libraryProject: LP) {
         logger.info { "Compiling library project." }
-        createProgressBarBuilder("Compile library project")
+        createProgressBarBuilder("Compiling library project")
             .also { it.setInitialMax(1) }
             .build()
             .use { progressBar ->
@@ -48,14 +48,14 @@ class MiningPipeline<SO : SearchOptions, UP : Project, LP : Project, N : Node>(
                 .next(projectMiner::mine)
                 .also { logger.info { "Successfully mined ${it.count()} projects." } }
 
-                .also { logger.info { "Started compiling ${it.count()} projects." } }
+                .also { logger.info { "Started compiling ${it.count()} user projects." } }
                 .nextMapNotNull(
                     catchWrapper<CompilationException, UP, UP?>(userProjectCompiler::compile, null),
-                    "Compiling projects"
+                    "Compiling user projects"
                 )
-                .also { logger.info { "Successfully compiled ${it.count()} projects." } }
+                .also { logger.info { "Successfully compiled ${it.count()} user projects." } }
 
-                .also { logger.info { "Started generating library usage graphs for ${it.count()} projects." } }
+                .also { logger.info { "Started generating library-usage graphs for ${it.count()} projects." } }
                 .nextFlatMap(
                     catchWrapper<RuntimeException, UP, Iterable<N>>(
                         { libraryUsageGraphGenerator.generate(libraryProject, it) },
@@ -63,10 +63,10 @@ class MiningPipeline<SO : SearchOptions, UP : Project, LP : Project, N : Node>(
                     ),
                     "Generating library-usage graphs"
                 )
-                .also { logger.info { "Successfully generated ${it.size} library usage graphs." } }
+                .also { logger.info { "Successfully generated ${it.size} library-usage graphs." } }
                 .also { csvWriter.writeGraphSizes(it) }
 
-                .also { logger.info { "Started finding patterns in ${it.size} library usage graphs." } }
+                .also { logger.info { "Started finding patterns in ${it.size} library-usage graphs." } }
                 .next(patternDetector::findPatterns, "Finding patterns")
                 .also { logger.info { "Successfully found ${it.count()} patterns." } }
                 .also { csvWriter.writePatternLengths(it) }
