@@ -3,7 +3,7 @@ package org.cafejojo.schaapi.miningpipeline.miner.github
 import mu.KLogging
 import org.apache.maven.shared.invoker.DefaultInvocationRequest
 import org.apache.maven.shared.invoker.DefaultInvoker
-import org.cafejojo.schaapi.models.project.JavaMavenProject
+import org.cafejojo.schaapi.models.project.MavenProject
 import java.io.File
 
 /**
@@ -29,11 +29,11 @@ class MavenLibraryVersionVerifier(
      *
      * @param project a user project of the library
      */
-    fun verify(project: JavaMavenProject) =
+    fun verify(project: MavenProject) =
         if (createMavenInvoker(project).execute(createMavenInvocationRequest(project)).exitCode != 0) false
         else getDependencies(project).any { it.startsWith(query) }
 
-    private fun createMavenInvocationRequest(project: JavaMavenProject) = DefaultInvocationRequest().apply {
+    private fun createMavenInvocationRequest(project: MavenProject) = DefaultInvocationRequest().apply {
         baseDirectory = project.projectDir
         goals = listOf("dependency:tree")
         isBatchMode = true
@@ -44,15 +44,15 @@ class MavenLibraryVersionVerifier(
         """.trimIndent().replace("\n", " ")
     }
 
-    private fun createMavenInvoker(project: JavaMavenProject) = DefaultInvoker().also {
+    private fun createMavenInvoker(project: MavenProject) = DefaultInvoker().also {
         if (displayOutput) it.setOutputHandler(logger::info) else it.setOutputHandler(null)
         it.mavenHome = project.mavenDir
         it.workingDirectory = project.projectDir
     }
 
-    private fun getDependenciesListLocation(project: JavaMavenProject) =
+    private fun getDependenciesListLocation(project: MavenProject) =
         File(project.projectDir, "_schaapi_project_dependencies.txt")
 
-    private fun getDependencies(project: JavaMavenProject) =
+    private fun getDependencies(project: MavenProject) =
         getDependenciesListLocation(project).readText().trim().split("\\s+".toRegex()).drop(1)
 }

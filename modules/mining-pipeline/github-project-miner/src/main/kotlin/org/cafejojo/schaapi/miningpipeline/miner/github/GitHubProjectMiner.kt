@@ -5,7 +5,7 @@ import mu.KLogging
 import org.cafejojo.schaapi.miningpipeline.ProjectMiner
 import org.cafejojo.schaapi.miningpipeline.createProgressBarBuilder
 import org.cafejojo.schaapi.models.Project
-import org.cafejojo.schaapi.models.project.JavaMavenProject
+import org.cafejojo.schaapi.models.project.MavenProject
 import org.kohsuke.github.GitHub
 import java.io.File
 
@@ -22,7 +22,7 @@ import java.io.File
  * is created
  * @property projectPacker packer which determines what type of [Project] to wrap the project directory in
  */
-class GitHubProjectMiner<P : JavaMavenProject>(
+class GitHubProjectMiner<P : MavenProject>(
     private var token: String,
     private val outputDirectory: File,
     private val projectPacker: (File) -> P
