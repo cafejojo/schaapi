@@ -1,6 +1,6 @@
 package org.cafejojo.schaapi.miningpipeline.usagegraphgenerator.jimple.processors
 
-import org.cafejojo.schaapi.miningpipeline.usagegraphgenerator.jimple.filters.UserUsageValueFilter
+import org.cafejojo.schaapi.miningpipeline.patternfilter.jimple.libraryusagefilters.UserUsageValueFilter
 import org.cafejojo.schaapi.models.project.JavaProject
 import soot.Body
 import soot.BooleanType

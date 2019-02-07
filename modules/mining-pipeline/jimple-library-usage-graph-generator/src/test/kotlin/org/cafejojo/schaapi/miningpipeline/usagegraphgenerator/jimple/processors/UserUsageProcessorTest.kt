@@ -7,9 +7,9 @@ import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.never
 import com.nhaarman.mockito_kotlin.verify
 import org.assertj.core.api.Assertions.assertThat
-import org.cafejojo.schaapi.miningpipeline.usagegraphgenerator.jimple.filters.LIBRARY_CLASS
-import org.cafejojo.schaapi.miningpipeline.usagegraphgenerator.jimple.filters.USER_CLASS
-import org.cafejojo.schaapi.miningpipeline.usagegraphgenerator.jimple.filters.constructInvokeExprMock
+import org.cafejojo.schaapi.miningpipeline.usagegraphgenerator.jimple.LIBRARY_CLASS
+import org.cafejojo.schaapi.miningpipeline.usagegraphgenerator.jimple.USER_CLASS
+import org.cafejojo.schaapi.miningpipeline.usagegraphgenerator.jimple.constructInvokeExprMock
 import org.cafejojo.schaapi.miningpipeline.usagegraphgenerator.jimple.libraryProject
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe

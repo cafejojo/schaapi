@@ -2,9 +2,9 @@ package org.cafejojo.schaapi.miningpipeline.usagegraphgenerator.jimple
 
 import mu.KLogging
 import org.cafejojo.schaapi.miningpipeline.LibraryUsageGraphGenerator
-import org.cafejojo.schaapi.miningpipeline.usagegraphgenerator.jimple.filters.BranchStatementFilter
-import org.cafejojo.schaapi.miningpipeline.usagegraphgenerator.jimple.filters.RecursiveGotoFilter
-import org.cafejojo.schaapi.miningpipeline.usagegraphgenerator.jimple.filters.StatementFilter
+import org.cafejojo.schaapi.miningpipeline.patternfilter.jimple.libraryusagefilters.BranchStatementFilter
+import org.cafejojo.schaapi.miningpipeline.patternfilter.jimple.libraryusagefilters.RecursiveGotoFilter
+import org.cafejojo.schaapi.miningpipeline.patternfilter.jimple.libraryusagefilters.StatementFilter
 import org.cafejojo.schaapi.miningpipeline.usagegraphgenerator.jimple.processors.UserUsageProcessor
 import org.cafejojo.schaapi.models.DfsIterator
 import org.cafejojo.schaapi.models.libraryusagegraph.jimple.JimpleNode

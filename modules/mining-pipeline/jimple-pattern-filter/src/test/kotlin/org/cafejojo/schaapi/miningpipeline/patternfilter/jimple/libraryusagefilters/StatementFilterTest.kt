@@ -1,9 +1,8 @@
-package org.cafejojo.schaapi.miningpipeline.usagegraphgenerator.jimple.filters
+package org.cafejojo.schaapi.miningpipeline.patternfilter.jimple.libraryusagefilters
 
 import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.mock
 import org.assertj.core.api.Assertions.assertThat
-import org.cafejojo.schaapi.miningpipeline.usagegraphgenerator.jimple.libraryProject
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it

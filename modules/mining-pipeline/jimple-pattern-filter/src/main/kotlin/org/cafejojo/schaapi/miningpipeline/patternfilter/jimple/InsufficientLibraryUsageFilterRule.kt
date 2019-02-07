@@ -2,10 +2,9 @@ package org.cafejojo.schaapi.miningpipeline.patternfilter.jimple
 
 import org.cafejojo.schaapi.miningpipeline.Pattern
 import org.cafejojo.schaapi.miningpipeline.PatternFilterRule
+import org.cafejojo.schaapi.miningpipeline.patternfilter.jimple.libraryusagefilters.StatementFilter
 import org.cafejojo.schaapi.models.libraryusagegraph.jimple.JimpleNode
-import org.cafejojo.schaapi.models.libraryusagegraph.jimple.JimpleValueVisitor
 import org.cafejojo.schaapi.models.project.JavaProject
-import soot.Value
 
 /**
  * Filters out patterns that do not have enough calls to the library project.
@@ -13,9 +12,11 @@ import soot.Value
  * @param libraryProject the project that should be used
  * @property minUseCount the minimum number of usages per pattern to be qualified as a "sufficient user"
  */
-class InsufficientLibraryUsageFilter(libraryProject: JavaProject, private val minUseCount: Int) :
-    PatternFilterRule<JimpleNode> {
-    private val libraryUsageVisitor = LibraryUsageVisitor(libraryProject)
+class InsufficientLibraryUsageFilterRule(
+    private val libraryProject: JavaProject,
+    private val minUseCount: Int
+) : PatternFilterRule<JimpleNode> {
+    private val statementFilter = StatementFilter(libraryProject)
 
     /**
      * Returns true iff there are at least [minUseCount] nodes in [pattern] that use classes from the library project.
@@ -24,37 +25,5 @@ class InsufficientLibraryUsageFilter(libraryProject: JavaProject, private val mi
      * @return true iff there are at least [minUseCount] nodes in [pattern] that use classes from the library project
      */
     override fun retain(pattern: Pattern<JimpleNode>) =
-        pattern.count { it.getTopLevelValues().any { libraryUsageVisitor.visit(it) } } >= minUseCount
-}
-
-/**
- * A visitor that determines whether a given [Value] uses [libraryProject].
- *
- * @property libraryProject the project that should be used
- */
-class LibraryUsageVisitor(private val libraryProject: JavaProject) : JimpleValueVisitor<Boolean>() {
-    /**
-     * Returns true iff the type of [value] is for a library class.
-     *
-     * @param value a [Value]
-     * @return true iff the type of [value] is for a library class
-     */
-    override fun applyDefault(value: Value) = isLibraryClass(value.type.toString())
-
-    /**
-     * Returns true iff [result1] and [result2] are both true.
-     *
-     * @param result1 a [Boolean]
-     * @param result2 a [Boolean]
-     * @return true iff [result1] and [result2] are both true
-     */
-    override fun accumulate(result1: Boolean, result2: Boolean) = result1 && result2
-
-    /**
-     * Returns true iff [className] is a class defined in [libraryProject].
-     *
-     * @param className a class name
-     * @return true iff [className] is a class defined in [libraryProject]
-     */
-    private fun isLibraryClass(className: String) = libraryProject.classNames.contains(className)
+        pattern.count { statementFilter.retain(it.statement) } >= minUseCount
 }

@@ -13,7 +13,7 @@ import soot.Value
 import soot.jimple.Jimple
 
 /**
- * Unit tests for [InsufficientLibraryUsageFilter].
+ * Unit tests for [InsufficientLibraryUsageFilterRule].
  */
 internal object InsufficientLibraryUsageFilterRuleTest : Spek({
     fun createLocal(name: String, type: String) = Jimple.v().newLocal(name, RefType.v(type))
@@ -23,13 +23,13 @@ internal object InsufficientLibraryUsageFilterRuleTest : Spek({
     fun createEqExpr(op1: Value, op2: Value) = Jimple.v().newEqExpr(op1, op2)
 
     describe("insufficient library usage filter") {
-        lateinit var filter: InsufficientLibraryUsageFilter
+        lateinit var filter: InsufficientLibraryUsageFilterRule
 
         beforeEachTest {
             val project = mock<JavaProject> {
                 on { it.classNames } doReturn setOf("ClassA", "ClassB", "ClassC")
             }
-            filter = InsufficientLibraryUsageFilter(project, 2)
+            filter = InsufficientLibraryUsageFilterRule(project, 2)
         }
 
         it("filters out empty patterns") {
@@ -71,7 +71,7 @@ internal object InsufficientLibraryUsageFilterRuleTest : Spek({
         it("retains patterns with exactly enough usages") {
             val pattern = listOf(
                 createAssignStmt(createLocal("localA", "ClassA"), createLocal("localB", "ClassB")),
-                createAssignStmt(createLocal("localC", "ClassC"), createLocal("localD", "InvalidA"))
+                createAssignStmt(createLocal("localC", "ClassC"), createLocal("localD", "ClassA"))
             ).map { JimpleNode(it) }
 
             assertThat(filter.retain(pattern)).isTrue()

@@ -1,4 +1,4 @@
-package org.cafejojo.schaapi.miningpipeline.usagegraphgenerator.jimple.filters
+package org.cafejojo.schaapi.miningpipeline.patternfilter.jimple.libraryusagefilters
 
 import org.cafejojo.schaapi.models.project.JavaProject
 import soot.Body
@@ -18,7 +18,7 @@ import soot.toolkits.graph.UnitGraph
  *
  * @param project library project
  */
-internal class BranchStatementFilter(project: JavaProject) : Filter {
+class BranchStatementFilter(project: JavaProject) : Filter {
     internal val valueFilter = ValueFilter(project)
 
     override fun apply(body: Body) {
@@ -42,13 +42,13 @@ internal class BranchStatementFilter(project: JavaProject) : Filter {
         branch.hasNonEmptyBranches || valueFilter.retain(getConditionValue(branch.statement))
 
     private companion object {
-        fun isBranchStatement(statement: Unit) = when (statement) {
+        internal fun isBranchStatement(statement: Unit) = when (statement) {
             is IfStmt -> true
             is SwitchStmt -> true
             else -> false
         }
 
-        fun getConditionValue(statement: Unit): Value = when (statement) {
+        internal fun getConditionValue(statement: Unit): Value = when (statement) {
             is IfStmt -> statement.condition
             is SwitchStmt -> statement.key
             else -> throw IllegalArgumentException("Cannot get value of unsupported statement.")

@@ -1,4 +1,4 @@
-package org.cafejojo.schaapi.miningpipeline.usagegraphgenerator.jimple.filters
+package org.cafejojo.schaapi.miningpipeline.patternfilter.jimple.libraryusagefilters
 
 import com.nhaarman.mockito_kotlin.doAnswer
 import com.nhaarman.mockito_kotlin.doReturn
