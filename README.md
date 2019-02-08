@@ -22,6 +22,8 @@ Schaapi requires JRE 8 and has been tested on Windows and Unix systems.
 ## Usage
 Run the JAR as `java -jar schaapi.jar <flavor> <args>` or run a local build with `gradlew :application:run --args='<flavor> <args>'`.
 
+Set the system property `log.level` to `debug` to enable debug output in the log file. 
+
 ### Pipeline Flavor
 Schaapi allows you to mine projects from different sources, such as GitHub. In particular, it recognizes two such pipeline "flavors": `directory` (locally sourced projects) and `github` (projects mined from GitHub). Each of these have their own behavior and options. Click on one of the flavors below for a list of command-line options.
 

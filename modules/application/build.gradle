@@ -24,6 +24,12 @@ dependencies {
     compile group: "commons-cli", name: "commons-cli", version: commonsCliVersion
 }
 
+// Application
+run {
+    if (System.getProperty("log.level") != null)
+        systemProperty "log.level", System.getProperty("log.level")
+}
+
 // Distribution
 inspectClassesForKotlinIC.enabled = false // Workaround for https://youtrack.jetbrains.com/issue/KT-24956
 
