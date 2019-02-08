@@ -175,7 +175,12 @@ class GitHubMavenMinerOptionSet(private val maven: MavenOptionSet) : OptionSet()
      * @return a GitHub miner for Maven projects
      */
     fun createMiner(outputDir: File) =
-        GitHubProjectMiner(token, outputDir, verifierTimeout) { JavaMavenProject(it, maven.dir) }
+        GitHubProjectMiner(token, outputDir, verifierTimeout) { dir ->
+            if (dir.listFiles { file -> file.name == "pom.xml" }.size == 1)
+                JavaMavenProject(dir, maven.dir)
+            else
+                null
+        }
 
     /**
      * Creates the mining options for mining GitHub projects.

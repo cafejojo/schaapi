@@ -29,7 +29,7 @@ class GitHubProjectMiner<P : MavenProject>(
     private var token: String,
     private val outputDirectory: File,
     private val verifierTimeout: Long = 0L,
-    private val projectPacker: (File) -> P
+    private val projectPacker: (File) -> P?
 ) : ProjectMiner<MavenProjectSearchOptions, P> {
     private companion object : KLogging()
 
