@@ -23,7 +23,7 @@ import kotlin.streams.toList
 internal class GitHubProjectDownloader<P : Project>(
     private val projectNames: Stream<Pair<String, String>>,
     private val outputDirectory: File,
-    private val projectPacker: (File) -> P
+    private val projectPacker: (File) -> P?
 ) {
     private companion object : KLogging()
 
