@@ -12,11 +12,12 @@ import java.util.jar.JarInputStream
 class JavaJarProjectCompiler : ProjectCompiler<JavaJarProject> {
     private companion object : KLogging()
 
-    override fun compile(project: JavaJarProject) = with(project) {
-        classNames = findClasses(JarInputStream(FileInputStream(project.classDir)))
-        if (classes.isEmpty()) logger.warn { "Jar project at ${projectDir.path} is empty." }
-        project
-    }
+    override fun compile(project: JavaJarProject) =
+        with(project) {
+            classNames = findClasses(JarInputStream(FileInputStream(project.classDir)))
+            if (classNames.isEmpty()) logger.warn { "Jar project at ${projectDir.path} is empty." }
+            project
+        }
 
     private fun findClasses(jarInputStream: JarInputStream): Set<String> {
         val classNames = mutableSetOf<String>()
