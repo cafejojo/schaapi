@@ -3,6 +3,7 @@ package org.cafejojo.schaapi.miningpipeline.miner.github
 import me.tongfei.progressbar.ProgressBar
 import mu.KLogging
 import org.cafejojo.schaapi.miningpipeline.ProjectMiner
+import org.cafejojo.schaapi.miningpipeline.TimedCallable
 import org.cafejojo.schaapi.miningpipeline.createProgressBarBuilder
 import org.cafejojo.schaapi.models.Project
 import org.cafejojo.schaapi.models.project.MavenProject
@@ -21,11 +22,13 @@ import kotlin.streams.toList
  * @property token GitHub token
  * @property outputDirectory directory to store all the project directories. If directory doesn't exit new directory
  * is created
+ * @property verifierTimeout the time after which version verification should be interrupted
  * @property projectPacker packer which determines what type of [Project] to wrap the project directory in
  */
 class GitHubProjectMiner<P : MavenProject>(
     private var token: String,
     private val outputDirectory: File,
+    private val verifierTimeout: Long = 0L,
     private val projectPacker: (File) -> P
 ) : ProjectMiner<MavenProjectSearchOptions, P> {
     private companion object : KLogging()
@@ -74,9 +77,11 @@ class GitHubProjectMiner<P : MavenProject>(
 
     private fun verifyProjects(versionVerifier: MavenLibraryVersionVerifier, projectFiles: List<P>) =
         ProgressBar.wrap(projectFiles.parallelStream(), createProgressBarBuilder("Verifying user projects"))
-            .filter {
-                logger.debug { "Verifying user project ${it.projectDir.absolutePath}." }
-                versionVerifier.verify(it)
+            .filter { project ->
+                logger.debug { "Verifying user project ${project.projectDir.absolutePath}." }
+
+                TimedCallable(verifierTimeout) { versionVerifier.verify(project) }.call()
+                    ?: false.also { logger.warn { "Timed out while verifying ${project.projectDir.name}." } }
             }
             .toList()
 }

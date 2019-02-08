@@ -21,6 +21,7 @@ internal class DirectoryMiningCommandLineInterface : CommandLineInterface() {
     private val maven = MavenOptionSet()
     private val directory = DirectoryMavenMinerOptionSet(maven)
     private val library = ProjectOptionSet()
+    private val user = UserOptionSet()
     private val patternDetector = CCSpanPatternDetectorOptionSet()
     private val patternFilter = PatternFilterOptionSet()
     private val testGenerator = JimpleEvoSuiteTestGeneratorOptionSet()
@@ -30,6 +31,7 @@ internal class DirectoryMiningCommandLineInterface : CommandLineInterface() {
         optionSets.add(maven)
         optionSets.add(directory)
         optionSets.add(library)
+        optionSets.add(user)
         optionSets.add(patternDetector)
         optionSets.add(patternFilter)
         optionSets.add(testGenerator)
@@ -46,7 +48,10 @@ internal class DirectoryMiningCommandLineInterface : CommandLineInterface() {
                 MiningPipeline(
                     projectMiner = directory.createMiner(),
                     libraryProjectCompiler = JavaMavenProjectCompiler(displayOutput = true),
-                    userProjectCompiler = JavaMavenProjectCompiler(skipCompile = directoryMinerCli.skipUserCompile),
+                    userProjectCompiler = JavaMavenProjectCompiler(
+                        skipCompile = directoryMinerCli.skipUserCompile,
+                        timeout = user.timeout
+                    ),
                     libraryUsageGraphGenerator = jimpleLibraryUsageGraphGenerator,
                     patternDetector = patternDetector.createPatternDetector(),
                     patternFilter = patternFilter.createPatternFilter(libraryProject),
@@ -63,7 +68,10 @@ internal class DirectoryMiningCommandLineInterface : CommandLineInterface() {
                 MiningPipeline(
                     projectMiner = directory.createMiner(),
                     libraryProjectCompiler = JavaJarProjectCompiler(),
-                    userProjectCompiler = JavaMavenProjectCompiler(skipCompile = directoryMinerCli.skipUserCompile),
+                    userProjectCompiler = JavaMavenProjectCompiler(
+                        skipCompile = directoryMinerCli.skipUserCompile,
+                        timeout = user.timeout
+                    ),
                     libraryUsageGraphGenerator = jimpleLibraryUsageGraphGenerator,
                     patternDetector = patternDetector.createPatternDetector(),
                     patternFilter = patternFilter.createPatternFilter(libraryProject),

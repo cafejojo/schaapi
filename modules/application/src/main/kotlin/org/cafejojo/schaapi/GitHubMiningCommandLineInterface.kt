@@ -18,6 +18,7 @@ internal class GitHubMiningCommandLineInterface : CommandLineInterface() {
     private val maven = MavenOptionSet()
     private val gitHub = GitHubMavenMinerOptionSet(maven)
     private val library = ProjectOptionSet()
+    private val user = UserOptionSet()
     private val patternDetector = CCSpanPatternDetectorOptionSet()
     private val patternFilter = PatternFilterOptionSet()
     private val testGenerator = JimpleEvoSuiteTestGeneratorOptionSet()
@@ -26,6 +27,7 @@ internal class GitHubMiningCommandLineInterface : CommandLineInterface() {
         optionSets.add(maven)
         optionSets.add(gitHub)
         optionSets.add(library)
+        optionSets.add(user)
         optionSets.add(patternFilter)
         optionSets.add(patternDetector)
         optionSets.add(testGenerator)
@@ -42,7 +44,7 @@ internal class GitHubMiningCommandLineInterface : CommandLineInterface() {
                 MiningPipeline(
                     projectMiner = gitHub.createMiner(outputDir),
                     libraryProjectCompiler = JavaMavenProjectCompiler(true),
-                    userProjectCompiler = JavaMavenProjectCompiler(),
+                    userProjectCompiler = JavaMavenProjectCompiler(timeout = user.timeout),
                     libraryUsageGraphGenerator = jimpleLibraryUsageGraphGenerator,
                     patternDetector = patternDetector.createPatternDetector(),
                     patternFilter = patternFilter.createPatternFilter(libraryProject),
@@ -59,7 +61,7 @@ internal class GitHubMiningCommandLineInterface : CommandLineInterface() {
                 MiningPipeline(
                     projectMiner = gitHub.createMiner(outputDir),
                     libraryProjectCompiler = JavaJarProjectCompiler(),
-                    userProjectCompiler = JavaMavenProjectCompiler(),
+                    userProjectCompiler = JavaMavenProjectCompiler(timeout = user.timeout),
                     libraryUsageGraphGenerator = jimpleLibraryUsageGraphGenerator,
                     patternDetector = patternDetector.createPatternDetector(),
                     patternFilter = patternFilter.createPatternFilter(libraryProject),
