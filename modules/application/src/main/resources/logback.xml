@@ -10,7 +10,7 @@
         </encoder>
     </appender>
 
-    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+    <appender name="FILE" class="org.cafejojo.schaapi.LazyFileAppender">
         <file>schaapi-${bySecond}.log</file>
         <encoder>
             <pattern>%date [%thread] %-5level %logger{36} [%file:%line] - %msg%n</pattern>
