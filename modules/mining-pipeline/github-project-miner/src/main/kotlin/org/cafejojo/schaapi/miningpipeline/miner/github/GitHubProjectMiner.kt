@@ -68,7 +68,7 @@ class GitHubProjectMiner<P : MavenProject>(
         val outProjects = outputDirectory.resolve("projects/").apply { mkdirs() }
 
         val projectNameStream = ProgressBar.wrap(
-            projectNames.parallelStream(),
+            projectNames.stream(),
             createProgressBarBuilder("Downloading user projects")
         )
 
@@ -76,7 +76,7 @@ class GitHubProjectMiner<P : MavenProject>(
     }
 
     private fun verifyProjects(versionVerifier: MavenLibraryVersionVerifier, projectFiles: List<P>) =
-        ProgressBar.wrap(projectFiles.parallelStream(), createProgressBarBuilder("Verifying user projects"))
+        ProgressBar.wrap(projectFiles.stream(), createProgressBarBuilder("Verifying user projects"))
             .filter { project ->
                 logger.debug { "Verifying user project ${project.projectDir.absolutePath}." }
 
