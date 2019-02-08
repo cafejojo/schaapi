@@ -401,6 +401,26 @@ class ProjectOptionSet : OptionSet() {
 }
 
 /**
+ * Behavior linked to compiling user projects.
+ */
+class UserOptionSet : OptionSet() {
+    var timeout: Long = 0L
+
+    override fun addOptionsTo(options: Options): Options = options
+        .addOption(Option
+            .builder()
+            .longOpt("user_compile_timeout")
+            .desc("The maximum number of seconds the compilation of a user project may take. Set to 0 to disable the " +
+                "timeout.")
+            .hasArg()
+            .build())
+
+    override fun read(cmd: CommandLine) {
+        timeout = cmd.getOptionValue("user_compile_timeout", "120").toLong()
+    }
+}
+
+/**
  * The type of the library project.
  */
 enum class ProjectType(val type: String) {

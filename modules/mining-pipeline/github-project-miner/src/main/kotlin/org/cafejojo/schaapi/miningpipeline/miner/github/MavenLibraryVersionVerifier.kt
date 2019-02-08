@@ -3,6 +3,7 @@ package org.cafejojo.schaapi.miningpipeline.miner.github
 import mu.KLogging
 import org.apache.maven.shared.invoker.DefaultInvocationRequest
 import org.apache.maven.shared.invoker.DefaultInvoker
+import org.cafejojo.schaapi.miningpipeline.TimedCallable
 import org.cafejojo.schaapi.models.project.MavenProject
 import java.io.File
 
@@ -12,13 +13,15 @@ import java.io.File
  * @param groupId group id of the library that the maven project should depend on
  * @param artifactId artifact id of the library that the maven project should depend on
  * @param version version of the library that the maven project should depend on
+ * @property timeout the time after which version verification should be interrupted
  * @property displayOutput true iff output should be logged at INFO level
  */
 class MavenLibraryVersionVerifier(
     groupId: String,
     artifactId: String,
     version: String,
-    private val displayOutput: Boolean = true
+    private val displayOutput: Boolean = true,
+    private val timeout: Long = 0L
 ) {
     private companion object : KLogging()
 
@@ -29,9 +32,14 @@ class MavenLibraryVersionVerifier(
      *
      * @param project a user project of the library
      */
-    fun verify(project: MavenProject) =
-        if (createMavenInvoker(project).execute(createMavenInvocationRequest(project)).exitCode != 0) false
+    fun verify(project: MavenProject): Boolean {
+        val result = TimedCallable(timeout) {
+            createMavenInvoker(project).execute(createMavenInvocationRequest(project))
+        }.call()
+
+        return if (result?.exitCode != 0) false
         else getDependencies(project).any { it.startsWith(query) }
+    }
 
     private fun createMavenInvocationRequest(project: MavenProject) =
         DefaultInvocationRequest().apply {

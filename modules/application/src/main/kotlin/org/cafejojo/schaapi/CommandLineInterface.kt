@@ -108,13 +108,6 @@ abstract class CommandLineInterface {
             .hasArg()
             .required()
             .build())
-        .addOption(Option
-            .builder()
-            .longOpt("user_compile_timeout")
-            .desc("The maximum number of seconds the compilation of a user project may take. Set to 0 to disable the " +
-                "timeout.")
-            .hasArg()
-            .build())
 
     /**
      * Parses [args] into a [CommandLine] object. If the parsing fails, the entire process is killed.

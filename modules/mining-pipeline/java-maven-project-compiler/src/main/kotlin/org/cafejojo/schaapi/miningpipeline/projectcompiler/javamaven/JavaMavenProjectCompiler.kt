@@ -5,6 +5,7 @@ import org.apache.maven.shared.invoker.DefaultInvocationRequest
 import org.apache.maven.shared.invoker.DefaultInvoker
 import org.cafejojo.schaapi.miningpipeline.CompilationException
 import org.cafejojo.schaapi.miningpipeline.ProjectCompiler
+import org.cafejojo.schaapi.miningpipeline.TimedCallable
 import org.cafejojo.schaapi.models.project.JavaMavenProject
 import java.io.File
 
@@ -16,7 +17,8 @@ import java.io.File
  */
 class JavaMavenProjectCompiler(
     private val displayOutput: Boolean = false,
-    private val skipCompile: Boolean = false
+    private val skipCompile: Boolean = false,
+    private val timeout: Long = 0L
 ) : ProjectCompiler<JavaMavenProject> {
     private companion object : KLogging()
 
@@ -46,7 +48,9 @@ class JavaMavenProjectCompiler(
             it.workingDirectory = project.projectDir
         }
 
-        val result = invoker.execute(request)
+        val result = TimedCallable(timeout) { invoker.execute(request) }.call()
+            ?: throw ProjectCompilationException("`maven install` of ${project.projectDir} failed: Timeout")
+
         if (result.exitCode != 0)
             throw ProjectCompilationException("`maven install` of ${project.projectDir} failed: " +
                 (result.executionException?.message ?: "Cause unknown."))
