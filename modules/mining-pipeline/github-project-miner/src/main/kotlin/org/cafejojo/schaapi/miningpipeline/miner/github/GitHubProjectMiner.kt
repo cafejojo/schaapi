@@ -74,6 +74,9 @@ class GitHubProjectMiner<P : MavenProject>(
 
     private fun verifyProjects(versionVerifier: MavenLibraryVersionVerifier, projectFiles: List<P>) =
         ProgressBar.wrap(projectFiles.parallelStream(), createProgressBarBuilder("Verifying user projects"))
-            .filter(versionVerifier::verify)
+            .filter {
+                logger.debug { "Verifying user project ${it.projectDir.absolutePath}." }
+                versionVerifier.verify(it)
+            }
             .toList()
 }

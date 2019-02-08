@@ -44,6 +44,8 @@ class JimpleLibraryUsageGraphGenerator : LibraryUsageGraphGenerator<JavaProject,
     val lugStatistics = LugStatistics()
 
     override fun generate(libraryProject: JavaProject, userProject: JavaProject): List<JimpleNode> {
+        logger.debug { "Generating library-usage graphs for ${userProject.projectDir.absolutePath}." }
+
         setUpSootEnvironment(libraryProject, userProject)
 
         return userProject.classNames.flatMap { className ->

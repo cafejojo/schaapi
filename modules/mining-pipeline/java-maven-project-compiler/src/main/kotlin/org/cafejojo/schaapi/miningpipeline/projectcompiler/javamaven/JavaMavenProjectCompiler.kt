@@ -21,6 +21,8 @@ class JavaMavenProjectCompiler(
     private companion object : KLogging()
 
     override fun compile(project: JavaMavenProject): JavaMavenProject {
+        logger.debug { "Compiling ${project.projectDir.absolutePath}." }
+
         if (!skipCompile) runMaven(project)
         analyzeCompiledProject(project)
 
