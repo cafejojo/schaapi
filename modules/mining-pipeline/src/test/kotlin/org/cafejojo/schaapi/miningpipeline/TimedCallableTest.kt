@@ -10,7 +10,7 @@ import org.jetbrains.spek.api.dsl.it
  */
 internal object TimedCallableTest : Spek({
     describe("a timed callable") {
-        it("returns the task's value if the task finishes withing the time limit") {
+        it("returns the task's value if the task finishes within the time limit") {
             val callable = TimedCallable(10) { 4 }
 
             assertThat(callable.call()).isEqualTo(4)

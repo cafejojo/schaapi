@@ -416,7 +416,11 @@ class UserOptionSet : OptionSet() {
             .build())
 
     override fun read(cmd: CommandLine) {
-        timeout = cmd.getOptionValue("user_compile_timeout", "120").toLong()
+        timeout = cmd.getOptionValue("user_compile_timeout", DEFAULT_TIMEOUT).toLong()
+    }
+
+    private companion object {
+        const val DEFAULT_TIMEOUT = "120"
     }
 }
 

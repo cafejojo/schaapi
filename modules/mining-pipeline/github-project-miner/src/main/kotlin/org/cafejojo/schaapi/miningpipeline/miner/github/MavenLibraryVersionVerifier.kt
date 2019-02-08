@@ -13,7 +13,7 @@ import java.io.File
  * @param groupId group id of the library that the maven project should depend on
  * @param artifactId artifact id of the library that the maven project should depend on
  * @param version version of the library that the maven project should depend on
- * @property timeout the time after which version verification should be interrupted
+ * @property timeout the time after which version verification should be interrupted, or 0 if there should be no limit
  * @property displayOutput true iff output should be logged at INFO level
  */
 class MavenLibraryVersionVerifier(

@@ -33,8 +33,8 @@ Schaapi allows you to mine projects from different sources, such as GitHub. In p
 
 ```
 usage: schaapi -o <arg> [--delete_old_output] -l <arg>
-       [--user_compile_timeout <arg>] [--skip_user_compile] [--maven_dir
-       <arg>] [--repair_maven] -u <arg> [--library_type <arg>]
+       [--skip_user_compile] [--maven_dir <arg>] [--repair_maven] -u <arg>
+       [--library_type <arg>] [--user_compile_timeout <arg>]
        [--pattern_detector_minimum_count <arg>]
        [--pattern_detector_maximum_sequence_length <arg>]
        [--pattern_minimum_library_usage_count <arg>]
@@ -48,13 +48,6 @@ usage: schaapi -o <arg> [--delete_old_output] -l <arg>
                                                        pipeline.
  -l,--library_dir <arg>                                The library
                                                        directory.
-    --user_compile_timeout <arg>                       The maximum number
-                                                       of seconds the
-                                                       compilation of a
-                                                       user project may
-                                                       take. Set to 0 to
-                                                       disable the
-                                                       timeout.
     --skip_user_compile                                Skip compilation of
                                                        user projects.
     --maven_dir <arg>                                  The directory to
@@ -69,6 +62,13 @@ usage: schaapi -o <arg> [--delete_old_output] -l <arg>
                                                        library.
                                                        [javamaven,
                                                        javajar]
+    --user_compile_timeout <arg>                       The maximum number
+                                                       of seconds the
+                                                       compilation of a
+                                                       user project may
+                                                       take. Set to 0 to
+                                                       disable the
+                                                       timeout.
     --pattern_detector_minimum_count <arg>             The minimum number
                                                        of occurrences for
                                                        a statement to be
@@ -103,12 +103,12 @@ usage: schaapi -o <arg> [--delete_old_output] -l <arg>
 <p>
 
 ```
-usage: schaapi -o <arg> [--delete_old_output] -l <arg>
-       [--user_compile_timeout <arg>] [--maven_dir <arg>] [--repair_maven]
-       --github_oauth_token <arg> [--max_projects <arg>]
+usage: schaapi -o <arg> [--delete_old_output] -l <arg> [--maven_dir <arg>]
+       [--repair_maven] --github_oauth_token <arg> [--max_projects <arg>]
        --library_group_id <arg> --library_artifact_id <arg>
        --library_version <arg> [--sort_by_stargazers] [--sort_by_watchers]
        [--version_verification_timeout <arg>] [--library_type <arg>]
+       [--user_compile_timeout <arg>]
        [--pattern_minimum_library_usage_count <arg>]
        [--pattern_detector_minimum_count <arg>]
        [--pattern_detector_maximum_sequence_length <arg>]
@@ -122,13 +122,6 @@ usage: schaapi -o <arg> [--delete_old_output] -l <arg>
                                                        pipeline.
  -l,--library_dir <arg>                                The library
                                                        directory.
-    --user_compile_timeout <arg>                       The maximum number
-                                                       of seconds the
-                                                       compilation of a
-                                                       user project may
-                                                       take. Set to 0 to
-                                                       disable the
-                                                       timeout.
     --maven_dir <arg>                                  The directory to
                                                        run Maven from.
     --repair_maven                                     Repairs the Maven
@@ -170,6 +163,13 @@ usage: schaapi -o <arg> [--delete_old_output] -l <arg>
                                                        library.
                                                        [javamaven,
                                                        javajar]
+    --user_compile_timeout <arg>                       The maximum number
+                                                       of seconds the
+                                                       compilation of a
+                                                       user project may
+                                                       take. Set to 0 to
+                                                       disable the
+                                                       timeout.
     --pattern_minimum_library_usage_count <arg>        The minimum number
                                                        of library usages
                                                        per method.

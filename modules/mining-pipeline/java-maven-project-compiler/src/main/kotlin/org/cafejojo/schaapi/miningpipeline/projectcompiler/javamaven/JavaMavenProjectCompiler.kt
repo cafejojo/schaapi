@@ -14,6 +14,7 @@ import java.io.File
  *
  * @property displayOutput true iff output should be logged at INFO level
  * @property skipCompile true iff compilation should be skipped
+ * @property timeout the time after which compilation should be interrupted, or 0 if there should be no limit
  */
 class JavaMavenProjectCompiler(
     private val displayOutput: Boolean = false,

@@ -81,7 +81,7 @@ class GitHubProjectMiner<P : MavenProject>(
                 logger.debug { "Verifying user project ${project.projectDir.absolutePath}." }
 
                 TimedCallable(verifierTimeout) { versionVerifier.verify(project) }.call()
-                    ?: false.also { logger.info { "Timed out while verifying ${project.projectDir.name}." } }
+                    ?: false.also { logger.warn { "Timed out while verifying ${project.projectDir.name}." } }
             }
             .toList()
 }
