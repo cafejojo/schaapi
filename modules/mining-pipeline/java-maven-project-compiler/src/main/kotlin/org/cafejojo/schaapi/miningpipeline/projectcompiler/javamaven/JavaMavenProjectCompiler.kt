@@ -34,7 +34,7 @@ class JavaMavenProjectCompiler(
             goals = listOf("clean", "install")
             isBatchMode = true
             javaHome = File(System.getProperty("java.home"))
-            mavenOpts = "-DskipTests=true"
+            mavenOpts = "-Dmaven.test.skip=true"
             pomFile = project.pomFile
         }
 
