@@ -95,6 +95,7 @@ class GitHubMavenMinerOptionSet(private val maven: MavenOptionSet) : OptionSet()
     private lateinit var version: String
     private var sortByStargazers = false
     private var sortByWatchers = false
+    private var verifierTimeout = 0L
 
     override fun addOptionsTo(options: Options): Options = options
         .addOption(Option
@@ -143,6 +144,13 @@ class GitHubMavenMinerOptionSet(private val maven: MavenOptionSet) : OptionSet()
             .desc("True if GitHub projects should be sorted by watchers.")
             .hasArg(false)
             .build())
+        .addOption(Option
+            .builder()
+            .longOpt("version_verification_timeout")
+            .desc("The maximum number of seconds the verification that a project uses the library may take. Set to 0 " +
+                "to disable the timeout.")
+            .hasArg(true)
+            .build())
 
     override fun read(cmd: CommandLine) {
         token = cmd.getOptionValue("github_oauth_token")
@@ -152,6 +160,7 @@ class GitHubMavenMinerOptionSet(private val maven: MavenOptionSet) : OptionSet()
         version = cmd.getOptionValue("library_version")
         sortByStargazers = cmd.hasOption("sort_by_stargazers")
         sortByWatchers = cmd.hasOption("sort_by_watchers")
+        verifierTimeout = cmd.getOptionValue("version_verifier_timeout", DEFAULT_VERIFIER_TIMEOUT).toLong()
 
         if (sortByStargazers && sortByWatchers) {
             logger.error { "Cannot sort repositories on both stargazers and watchers." }
@@ -165,7 +174,8 @@ class GitHubMavenMinerOptionSet(private val maven: MavenOptionSet) : OptionSet()
      * @param outputDir the directory in which the projects should be processed
      * @return a GitHub miner for Maven projects
      */
-    fun createMiner(outputDir: File) = GitHubProjectMiner(token, outputDir) { JavaMavenProject(it, maven.dir) }
+    fun createMiner(outputDir: File) =
+        GitHubProjectMiner(token, outputDir, verifierTimeout) { JavaMavenProject(it, maven.dir) }
 
     /**
      * Creates the mining options for mining GitHub projects.
@@ -181,6 +191,7 @@ class GitHubMavenMinerOptionSet(private val maven: MavenOptionSet) : OptionSet()
 
     private companion object : KLogging() {
         const val DEFAULT_MAX_PROJECTS = "20"
+        const val DEFAULT_VERIFIER_TIMEOUT = "120"
     }
 }
 

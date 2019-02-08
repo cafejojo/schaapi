@@ -50,7 +50,9 @@ class MiningPipeline<SO : SearchOptions, UP : Project, LP : Project, N : Node>(
 
                 .also { logger.info { "Started compiling ${it.count()} user projects." } }
                 .nextMapNotNull(
-                    catchWrapper<CompilationException, UP, UP?>(userProjectCompiler::compile, null),
+                    catchWrapper<CompilationException, UP, UP?>({
+                        TimedCallable(120) { userProjectCompiler.compile(it) }.call()
+                    }, null),
                     "Compiling user projects"
                 )
                 .also { logger.info { "Successfully compiled ${it.count()} user projects." } }
