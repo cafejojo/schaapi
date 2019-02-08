@@ -80,6 +80,7 @@ internal class GitHubProjectDownloader<P : Project>(
         return zipFile
     }
 
+    @Suppress("TooGenericExceptionCaught") // Standard `ZipUtil.unpack` behavior
     internal fun unzip(projectZipFile: File): File? {
         logger.debug { "Unzipping ${projectZipFile.absolutePath}." }
 
@@ -92,6 +93,10 @@ internal class GitHubProjectDownloader<P : Project>(
         try {
             ZipUtil.unpack(projectZipFile, githubProject) { it.drop(it.indexOf('/') + 1).replace(':', '_') }
             logger.debug { "Successfully unzipped file ${projectZipFile.absolutePath}." }
+        } catch (e: IllegalArgumentException) {
+            logger.warn("Could not unzip ${projectZipFile.absolutePath}.", e)
+            githubProject.deleteRecursively()
+            return null
         } catch (e: IOException) {
             logger.warn("Could not unzip ${projectZipFile.absolutePath}.", e)
             githubProject.deleteRecursively()
