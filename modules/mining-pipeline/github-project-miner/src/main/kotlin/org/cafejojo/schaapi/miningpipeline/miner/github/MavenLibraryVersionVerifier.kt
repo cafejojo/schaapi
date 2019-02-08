@@ -35,10 +35,11 @@ class MavenLibraryVersionVerifier(
 
     private fun createMavenInvocationRequest(project: MavenProject) = DefaultInvocationRequest().apply {
         baseDirectory = project.projectDir
-        goals = listOf("dependency:tree")
+        goals = listOf("dependency:list")
         isBatchMode = true
         javaHome = File(System.getProperty("java.home"))
         mavenOpts = """
+            -DexcludeTransitive=true
             -DoutputFile=${getDependenciesListLocation(project).absolutePath}
             -Dtokens=whitespace
         """.trimIndent().replace("\n", " ")
@@ -54,5 +55,5 @@ class MavenLibraryVersionVerifier(
         File(project.projectDir, "_schaapi_project_dependencies.txt")
 
     private fun getDependencies(project: MavenProject) =
-        getDependenciesListLocation(project).readText().trim().split("\\s+".toRegex()).drop(1)
+        getDependenciesListLocation(project).readText().trim().lines().drop(1).map { it.trim() }
 }
