@@ -14,6 +14,8 @@ class JavaJarProjectCompiler : ProjectCompiler<JavaJarProject> {
 
     override fun compile(project: JavaJarProject) =
         with(project) {
+            logger.debug { "Compiling ${project.projectDir.absolutePath}." }
+
             classNames = findClasses(JarInputStream(FileInputStream(project.classDir)))
             if (classNames.isEmpty()) logger.warn { "Jar project at ${projectDir.path} is empty." }
             project

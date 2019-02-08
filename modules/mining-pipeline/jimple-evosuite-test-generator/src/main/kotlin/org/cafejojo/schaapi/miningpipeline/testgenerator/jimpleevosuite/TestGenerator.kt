@@ -46,6 +46,8 @@ class TestGenerator(
 
         ProgressBar.wrap(patterns, createProgressBarBuilder("Creating pattern classes"))
             .forEachIndexed { i, pattern ->
+                logger.debug { "Writing pattern $i to class file." }
+
                 ClassGenerator("$DEFAULT_PATTERN_CLASS_PACKAGE.${DEFAULT_PATTERN_CLASS_NAME_PREFIX}_$i").apply {
                     val method = generateMethod("pattern$i", pattern)
                     optimizeMethod(method)
@@ -65,6 +67,8 @@ class TestGenerator(
             .let { if (processStandardStream == null) ProgressBar.wrap(it, progressBarBuilder) else it }
 
         patternIndices.forEach { index ->
+            logger.debug { "Generating tests for pattern $index." }
+
             EvoSuiteRunner(
                 fullyQualifiedClassPrefix = DEFAULT_PATTERN_CLASS_PACKAGE,
                 classpath = patternPath(index) + File.pathSeparator + library.classpath,

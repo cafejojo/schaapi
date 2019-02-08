@@ -53,6 +53,8 @@ internal class GitHubProjectDownloader<P : Project>(
         }
 
     internal fun saveZipToFile(input: InputStream, projectName: String): File? {
+        logger.debug { "Downloading user project $projectName." }
+
         val alphaNumericRegex = Regex("[^A-Za-z0-9]")
         val zipFile = File(
             outputDirectory,
@@ -79,6 +81,8 @@ internal class GitHubProjectDownloader<P : Project>(
     }
 
     internal fun unzip(projectZipFile: File): File? {
+        logger.debug { "Unzipping ${projectZipFile.absolutePath}." }
+
         val githubProject = File(projectZipFile.parent, projectZipFile.nameWithoutExtension)
         if (githubProject.exists()) {
             logger.debug { "File ${githubProject.path} already exists and will be overwritten." }
@@ -104,6 +108,8 @@ internal class GitHubProjectDownloader<P : Project>(
     }
 
     private fun getInputStream(projectName: String, branchName: String): InputStream? {
+        logger.debug { "Downloading user project $projectName, branch $branchName." }
+
         try {
             val url = getUrl(projectName, branchName)
             val connection = url.openConnection() as? HttpURLConnection ?: return null
