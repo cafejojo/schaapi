@@ -10,10 +10,19 @@ import org.jetbrains.spek.api.dsl.it
  */
 internal object TimedCallableTest : Spek({
     describe("a timed callable") {
-        it("returns the callable's value if the task finishes withing the time limit") {
+        it("returns the task's value if the task finishes withing the time limit") {
             val callable = TimedCallable(10) { 4 }
 
             assertThat(callable.call()).isEqualTo(4)
+        }
+
+        it("returns the task's value if the timeout is set to 0") {
+            val callable = TimedCallable(0) {
+                Thread.sleep(3000)
+                58
+            }
+
+            assertThat(callable.call()).isEqualTo(58)
         }
 
         it("returns null if the task does not finish within the time limit") {
