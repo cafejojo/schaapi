@@ -90,7 +90,7 @@ class BranchStatementFilter(project: JavaProject) : Filter {
 
             val bodiesUntilMethodEnd = cfg.getSuccsOf(statement).map { collectSuccessors(cfg, it) }
             val intersectedBodies =
-                bodiesUntilMethodEnd.fold(bodiesUntilMethodEnd[0], { acc, list -> acc.intersect(list).toMutableList() })
+                bodiesUntilMethodEnd.fold(bodiesUntilMethodEnd[0]) { acc, list -> acc.intersect(list).toMutableList() }
 
             if (intersectedBodies.isEmpty()) return null
 
