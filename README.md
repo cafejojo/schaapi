@@ -298,7 +298,7 @@ If you discover any security-related issues, please email security@cafejojo.org 
 - [Joël Abrahams](https://github.com/JSAbrahams)
 - [Georgios Andreadis](https://github.com/gandreadis)
 - [Casper Boone](https://github.com/casperboone)
-- [Felix Dekker](https://github.com/FWDekker)
+- [F.W. Dekker](https://github.com/FWDekker)
 - [All contributors](../../contributors)
 
 ## License
