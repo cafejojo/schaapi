@@ -17,7 +17,7 @@ internal class GitHubMiningCommandLineInterface : CommandLineInterface() {
 
     private val maven = MavenOptionSet()
     private val gitHub = GitHubMavenMinerOptionSet(maven)
-    private val library = ProjectOptionSet()
+    private val library = LibraryOptionSet()
     private val user = UserOptionSet()
     private val patternDetector = CCSpanPatternDetectorOptionSet()
     private val patternFilter = PatternFilterOptionSet()
